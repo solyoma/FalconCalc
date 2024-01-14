@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ImportGroup Label="PropertySheets" />
+  <PropertyGroup Label="UserMacros">
+    <ZoliDir>$(ProjectDir)..\..\nlib\</ZoliDir>
+    <Common>s:\common\</Common>
+    <LibDir Condition="'$(Configuration)'=='Debug'">$(ProjectDir)..\DebugLibraryBuild</LibDir>
+    <LibDir Condition="'$(Configuration)'=='Release'">$(ProjectDir)..\LibraryBuild</LibDir>
+  </PropertyGroup>
+  <PropertyGroup>
+    <IncludePath>$(Common);$(ZoliDir)headers;$(IncludePath)</IncludePath>
+    <SourcePath>$(ZoliDir)src;$(SourcePath)</SourcePath>
+    <LibraryPath>$(ZoliDir)lib;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;WIN32;_WINDOWS;ZLIB_WINAPI;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+    </ClCompile>
+    <Manifest>
+      <AdditionalManifestFiles>$(ProjectDir)DeclareDPIAware.manifest</AdditionalManifestFiles>
+    </Manifest>
+    <Link>
+      <EntryPointSymbol>wWinMainCRTStartup</EntryPointSymbol>
+      <AdditionalLibraryDirectories>$(LibDir)</AdditionalLibraryDirectories>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <BuildMacro Include="ZoliDir">
+      <Value>$(ZoliDir)</Value>
+    </BuildMacro>
+    <BuildMacro Include="Common">
+      <Value>$(Common)</Value>
+    </BuildMacro>
+  </ItemGroup>
+</Project>

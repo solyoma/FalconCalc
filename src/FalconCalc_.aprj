@@ -1,0 +1,1577 @@
+﻿project "FalconCalc.aprj"
+{
+    SourcePath = "."
+    ResourcePath = "."
+    ProjectName = "FalconCalc"
+    AppIcon = "300043003A005C00500072006F006A0065006300740073005C006C006900740074006C006500630061006C0063002B002B005C005200410044002000530074007500640069006F005C00630061006C00630075006C00610074002E00690063006F00FE020000789CB592310EC3200C457FA28AB95367C61E83A10761A858938D95A3711AD43153BBD5B5814821129D92F731C6B66C240430B0B4BE42788DC08DFD9D4DB319B601975C0B233A84BC104271223EC418D94B86F20251712249C97630EAF9D86254725B8C7A5BAC02384ED35CE5FD2CF569A9225ADCDF7EDBF6B39A7ED629FDBE50E36429F3E9D6EBCBD4F8DB60D08C77B6FBB027413B227FB780FA9D0E3099B7BF63CB0F892FD8B7"
+    type Form
+    {
+        Name = "frmMain"
+        Left = "1949"
+        Top = "190"
+        Text = "FalconCalc"
+        class Font
+        {
+            Family = "Tahoma"
+            Size = "10"
+        }
+        WantedKeyTypes = "wkArrows, wkTab, wkEnter, wkEscape, wkOthers"
+        BorderStyle = "fbsSingle"
+        UnitName = "main"
+        DesignVisible = "True"
+        LastExportedName = "frmMain"
+        LastExportedEvents = "3900310035007C00789C9554DB4E8340103D9F84467DD76253A346134D7C16582969A54DC148133FDE339BB65C7616B60F4DE1DC6676D8DD1A09EED1A0408D19D6FC4FB1C21FDF743C3A700B22159F36D861EF38FDECD13F23B7559C1A7EF4BCE2D3A61AC7A533E233C8883FA0C417F106EF441ABBA6253D2572AB08D769998F44F688D9F92FB169FE8ABF848A127362E560C27E466A579C4EC92C432C2693DB2F5479FB3D572F35767C1247DEABAEA3A24F99B1C233B1123FCC964C73E0C7B80BDC5845C26E965CAFF0D24B86376AB64E6FE1CAE834C717B2E6340179ABD98BCCB652A61EAA76F317769EA1F953EA365FD00D591358215CAFD5089B52B8BEDD1DC7EFD4723EBCEB49896A9E21DE7ADC9DEEFAC7356DD62D993B9E5CB957B41C3F2F19737BFB7D77A6A56397B856CFC9B09ACEB5DD3ED9B5D4E40C6F6E391B853D136E5288B23F850FDB77E69D82CEF733E2C9149FA2BB230A7BCAD7839B7E9CEDEE0EB93B128FDFC746F807108E6972"
+        Menu = "mnuMain"
+        ClientWidth = "544"
+        ClientHeight = "380"
+        event OnClose = "FormClose"
+
+        type FontDialog
+        {
+            Name = "FontDialog1"
+            AccessLevel = "alPublic"
+            class Font
+            {
+                Family = "Tahoma"
+                Size = "8"
+            }
+        }
+
+        type PopupMenu
+        {
+            Name = "pmCopy"
+            AccessLevel = "alPublic"
+        }
+
+        type Menubar
+        {
+            Name = "mnuMain"
+            AccessLevel = "alPublic"
+
+            subtype Items::MenuItem
+            {
+                Name = "MenuItem1"
+                AccessLevel = "alPublic"
+                Text = "MenuItem1"
+            }
+        }
+
+        type Panel
+        {
+            Name = "pToolbar"
+            AccessLevel = "alPublic"
+            Left = "0"
+            Top = "0"
+            Width = "544"
+            Height = "29"
+            Alignment = "alTop"
+            TabOrder = "0"
+            InnerBorderStyle = "pbsNone"
+
+            type FlatButton
+            {
+                Name = "tbExit"
+                AccessLevel = "alPublic"
+                Left = "0"
+                Top = "0"
+                Width = "23"
+                Height = "23"
+                class Font
+                {
+                    Family = "Tahoma"
+                    Size = "10"
+                }
+                ParentFont = "False"
+                TabOrder = "0"
+                class Image
+                {
+                    Bitmap = "080065007800690074002E0062006D007000380200000100EFEFEF00789C73F2B5606200033320D6006201286604930C0C4C4079216E088681BDE5A4C05976104CBAFC7FFF5976FFEB21F220FABF3FBA4E900A883C848DA6BF1E260AA1FFD723EB854190A910732090585F21F46FE4C5AE1F62FF465E1044B71FE67E882C4C0536FF43CCC7E67F982A903C6E9742CCC62DB79197B4F8DC5BCEC00000F8A822E8"
+                }
+                event OnClick = "tbExitClick"
+            }
+
+            type Bevel
+            {
+                Name = "Bevel1"
+                AccessLevel = "alPublic"
+                Left = "26"
+                Top = "1"
+                Width = "2"
+                Height = "21"
+                Text = "Bevel1"
+                class Font
+                {
+                    Family = "Tahoma"
+                    Size = "10"
+                }
+                ParentFont = "False"
+                ShapeType = "bstLeftLine"
+            }
+
+            type FlatButton
+            {
+                Name = "tbHistory"
+                AccessLevel = "alPublic"
+                Left = "31"
+                Top = "0"
+                Width = "23"
+                Height = "23"
+                class Font
+                {
+                    Family = "Tahoma"
+                    Size = "10"
+                }
+                ParentFont = "False"
+                TabOrder = "1"
+                class Image
+                {
+                    Bitmap = "0B006C006900620072006100720079002E0062006D007000380200000100FFFFFF00789C73F2B5606200033320D6006201286604930C0C4C4079216E088681FFF5F82148CD7BDBEAFCFFF59AAA101D10BA3A1FC67F500FE281E46334E521F23510F9FFCCA8F2E8FA61F2EF6D413660D70F928398805D1EE442C2F2205370C9C36CC0250FB5C109531E167E3079B8FFD0F4BFB78588E3D20F81E8FA71C5082CFCF0C813A11F11BF001221B778"
+                }
+                event OnClick = "tbHistoryClick"
+            }
+
+            type FlatButton
+            {
+                Name = "tbCopy"
+                AccessLevel = "alPublic"
+                Left = "55"
+                Top = "0"
+                Width = "23"
+                Height = "23"
+                class Font
+                {
+                    Family = "Tahoma"
+                    Size = "10"
+                }
+                ParentFont = "False"
+                TabOrder = "2"
+                class Image
+                {
+                    Bitmap = "080063006F00700079002E0062006D007000380200000100EFEFEF00789C73F2B5606200033320D6006201286604930C0C4C4079216E088681BDE53078D9944F111D226441F2F78BF765EFCB9E970E81B5C9E8F2FBF263E3C1301A08E36DE231E5E5BD1110260FB317647E5C7C5C3408DA85D726C7C407A822DB0BA4CBEBA0F271D175C931C9307988BD207964F36BD327EA22DB7BD9F47FF5FCF4FAE43A20AC4FDE9F1F9D5EA80B331F642F50BE1E04EF55DFAB8E49BF1116E2B519260FB61726FFBFFA7FF565530884C943CDAF87C1CBA673B4AEE9C2FC0DB117A60702B79A22C205BBBDE8F2E8F662C8A3D98B90C76E2F043230000011200314"
+                }
+                event OnClick = "tbCopyClick"
+            }
+
+            type FlatButton
+            {
+                Name = "tbPaste"
+                AccessLevel = "alPublic"
+                Left = "79"
+                Top = "0"
+                Width = "23"
+                Height = "23"
+                Enabled = "False"
+                class Font
+                {
+                    Family = "Tahoma"
+                    Size = "10"
+                }
+                ParentFont = "False"
+                TabOrder = "3"
+                class Image
+                {
+                    Bitmap = "0900700061007300740065002E0062006D007000380200000100EFEFEF00789C65D1CF4A02411CC0F1CD6B5891BD40EC2502E9A4449081076F5D0C567071F7B0B01E065A2A700E3FDCDF134497FEDCB6374844240B5A9FA083456C22E81B045D95B4DFAC4E23345F662F9FF9C3EEE68FF7135A3CB23477686E2CE64AFCD4B404F9E6EA7CCAF1C245BAABBB67E9FF495DBB48F2C8B867A117B28005D57973A79DD0C0078C0CBFEA3B9659A10E4B15B3EE28BFC24BE1CCB773A5B893653F872636C8034FECA76805F9DFF9D7D0C266EC01F31DDFF66DCBAE3BCA6FA08D2DF22E47E76871BE65069EF45B88F0837CC4473CF4C42901BD0930E977D0C728F619CE700443A8B34EB15690DE8109F6858370D1B85CDE9D6ECBAFF304539C88FBBD2EEFF2901A146B59DD553EC31FF2E55E5DE5CF10F277EB2DAE67F5CAA9EA18D35CF980EECBE41F8D45C5AD1C787B205DAC48B1F5C2813304D1A7912C7C9D2A95FFF73B23D35DA59AF60B7FF8FFAC"
+                }
+                event OnClick = "tbPasteClick"
+            }
+        }
+
+        type Edit
+        {
+            Name = "edtInfix"
+            AccessLevel = "alPublic"
+            Left = "8"
+            Top = "29"
+            Width = "505"
+            Height = "21"
+            class Font
+            {
+                Family = "Tahoma"
+                Size = "10"
+            }
+            ParentFont = "False"
+            TabOrder = "1"
+            event OnKeyDown = "edtInfixKeyDown"
+            event OnTextChanged = "edtInfixTextChanged"
+        }
+
+        type Groupbox
+        {
+            Name = "gbResults"
+            AccessLevel = "alPublic"
+            Left = "16"
+            Top = "52"
+            Width = "505"
+            Height = "123"
+            Text = "Result"
+            class Font
+            {
+                Family = "Tahoma"
+                Size = "10"
+            }
+            ParentFont = "False"
+            TabOrder = "2"
+
+            type Panel
+            {
+                Name = "Panel1"
+                AccessLevel = "alPublic"
+                Left = "6"
+                Top = "15"
+                Width = "78"
+                Height = "25"
+                Text = "Decimal"
+                class Font
+                {
+                    Family = "Tahoma"
+                    Size = "10"
+                }
+                ParentFont = "False"
+                TabOrder = "0"
+                TextAlignment = "taLeft"
+            }
+
+            type Panel
+            {
+                Name = "Panel2"
+                AccessLevel = "alPublic"
+                Left = "6"
+                Top = "41"
+                Width = "78"
+                Height = "25"
+                Text = "Hexadecimal"
+                class Font
+                {
+                    Family = "Tahoma"
+                    Size = "10"
+                }
+                ParentFont = "False"
+                TabOrder = "1"
+                TextAlignment = "taLeft"
+            }
+
+            type Panel
+            {
+                Name = "Panel3"
+                AccessLevel = "alPublic"
+                Left = "6"
+                Top = "67"
+                Width = "78"
+                Height = "25"
+                Text = "Octal"
+                class Font
+                {
+                    Family = "Tahoma"
+                    Size = "10"
+                }
+                ParentFont = "False"
+                TabOrder = "2"
+                TextAlignment = "taLeft"
+            }
+
+            type Panel
+            {
+                Name = "Panel4"
+                AccessLevel = "alPublic"
+                Left = "6"
+                Top = "93"
+                Width = "78"
+                Height = "25"
+                Text = "Binary"
+                class Font
+                {
+                    Family = "Tahoma"
+                    Size = "10"
+                }
+                ParentFont = "False"
+                TabOrder = "3"
+                TextAlignment = "taLeft"
+            }
+
+            type Panel
+            {
+                Name = "pnlDec"
+                AccessLevel = "alPublic"
+                Left = "83"
+                Top = "15"
+                Width = "417"
+                Height = "25"
+                class Font
+                {
+                    Family = "System"
+                    Size = "10"
+                }
+                ParentFont = "False"
+                TabOrder = "4"
+                PopupMenu = "pmCopy"
+                InnerBorderStyle = "pbsSunken"
+                TextAlignment = "taRight"
+            }
+
+            type Panel
+            {
+                Name = "pnlHex"
+                AccessLevel = "alPublic"
+                Left = "83"
+                Top = "41"
+                Width = "417"
+                Height = "25"
+                class Font
+                {
+                    Family = "System"
+                    Size = "10"
+                }
+                ParentFont = "False"
+                TabOrder = "5"
+                PopupMenu = "pmCopy"
+                InnerBorderStyle = "pbsSunken"
+                TextAlignment = "taRight"
+            }
+
+            type Panel
+            {
+                Name = "pnlOct"
+                AccessLevel = "alPublic"
+                Left = "83"
+                Top = "67"
+                Width = "417"
+                Height = "25"
+                class Font
+                {
+                    Family = "System"
+                    Size = "10"
+                }
+                ParentFont = "False"
+                TabOrder = "6"
+                PopupMenu = "pmCopy"
+                InnerBorderStyle = "pbsSunken"
+                TextAlignment = "taRight"
+            }
+
+            type Panel
+            {
+                Name = "pnlBin"
+                AccessLevel = "alPublic"
+                Left = "83"
+                Top = "93"
+                Width = "417"
+                Height = "25"
+                class Font
+                {
+                    Family = "System"
+                    Size = "10"
+                }
+                ParentFont = "False"
+                TabOrder = "7"
+                PopupMenu = "pmCopy"
+                InnerBorderStyle = "pbsSunken"
+                TextAlignment = "taRight"
+            }
+        }
+
+        type Panel
+        {
+            Name = "pnlDecOpt"
+            AccessLevel = "alPublic"
+            Left = "8"
+            Top = "191"
+            Width = "505"
+            Height = "86"
+            TabOrder = "3"
+            InnerBorderStyle = "pbsNone"
+
+            type Groupbox
+            {
+                Name = "Groupbox1"
+                AccessLevel = "alPublic"
+                Left = "11"
+                Top = "1"
+                Width = "219"
+                Height = "88"
+                Text = "Decimal options"
+                class Font
+                {
+                    Family = "Tahoma"
+                    Size = "10"
+                }
+                ParentFont = "False"
+                TabOrder = "0"
+
+                type Checkbox
+                {
+                    Name = "chkSep"
+                    AccessLevel = "alPublic"
+                    Left = "8"
+                    Top = "16"
+                    Width = "157"
+                    Height = "17"
+                    Text = "Use thousand separator:"
+                    class Font
+                    {
+                        Family = "Tahoma"
+                        Size = "10"
+                    }
+                    ParentFont = "False"
+                    TabOrder = "0"
+                    State = "csChecked"
+                    event OnClick = "chkSepClick"
+                }
+
+                type Combobox
+                {
+                    Name = "cbThousandSep"
+                    AccessLevel = "alPublic"
+                    Left = "168"
+                    Top = "16"
+                    Width = "47"
+                    Height = "24"
+                    Text = "spc"
+                    class Font
+                    {
+                        Family = "Tahoma"
+                        Size = "10"
+                    }
+                    ParentFont = "False"
+                    TabOrder = "1"
+                    Type = "ctDropdownList"
+                    class Items
+                    {
+                        vector<wstring> Text = { 
+                            "spc", 
+                            ",", 
+                            ".", 
+                            ";"
+                        }
+                    }
+                    ItemIndex = "0"
+                    event OnChanged = "cbThousandSepChanged"
+                }
+
+                type Checkbox
+                {
+                    Name = "chkSci"
+                    AccessLevel = "alPublic"
+                    Left = "8"
+                    Top = "32"
+                    Width = "133"
+                    Height = "17"
+                    Text = "Scientific format"
+                    class Font
+                    {
+                        Family = "Tahoma"
+                        Size = "10"
+                    }
+                    ParentFont = "False"
+                    TabOrder = "2"
+                    event OnClick = "chkSciClick"
+                }
+
+                type Checkbox
+                {
+                    Name = "chkEng"
+                    AccessLevel = "alPublic"
+                    Left = "8"
+                    Top = "48"
+                    Width = "141"
+                    Height = "17"
+                    Text = "Engeneering format"
+                    class Font
+                    {
+                        Family = "Tahoma"
+                        Size = "10"
+                    }
+                    ParentFont = "False"
+                    TabOrder = "3"
+                    event OnClick = "chkSciClick"
+                }
+
+                type Checkbox
+                {
+                    Name = "chkDecDigits"
+                    AccessLevel = "alPublic"
+                    Left = "8"
+                    Top = "64"
+                    Width = "141"
+                    Height = "17"
+                    Text = "Decimal digits:"
+                    class Font
+                    {
+                        Family = "Tahoma"
+                        Size = "10"
+                    }
+                    ParentFont = "False"
+                    TabOrder = "4"
+                    event OnClick = "chkDecDigitsClick"
+                }
+
+                type Edit
+                {
+                    Name = "spnDecDigits"
+                    AccessLevel = "alPublic"
+                    Left = "141"
+                    Top = "63"
+                    Width = "37"
+                    Height = "21"
+                    Text = "0"
+                    class Font
+                    {
+                        Family = "Tahoma"
+                        Size = "10"
+                    }
+                    ParentFont = "False"
+                    TabOrder = "5"
+                    event OnTextChanged = "spnDecDigitsTextChanged"
+                }
+
+                type UpDown
+                {
+                    Name = "UpDown1"
+                    AccessLevel = "alPublic"
+                    Left = "176"
+                    Top = "63"
+                    Width = "18"
+                    Height = "21"
+                    AttachedEditor = "spnDecDigits"
+                    MaxValue = "20"
+                }
+            }
+
+            type Groupbox
+            {
+                Name = "rgAngleUnit"
+                AccessLevel = "alPublic"
+                Left = "236"
+                Top = "7"
+                Width = "104"
+                Height = "78"
+                Text = "Angles in"
+                class Font
+                {
+                    Family = "Tahoma"
+                    Size = "10"
+                }
+                ParentFont = "False"
+                TabOrder = "1"
+
+                type Radiobox
+                {
+                    Name = "rdDeg"
+                    AccessLevel = "alPublic"
+                    Left = "11"
+                    Top = "16"
+                    Width = "80"
+                    Height = "16"
+                    Text = "De&g"
+                    class Font
+                    {
+                        Family = "Tahoma"
+                        Size = "10"
+                    }
+                    ParentFont = "False"
+                    TabOrder = "0"
+                    event OnClick = "rdDegClick"
+                }
+
+                type Radiobox
+                {
+                    Name = "rdGrad"
+                    Tag = "1"
+                    AccessLevel = "alPublic"
+                    Left = "11"
+                    Top = "34"
+                    Width = "80"
+                    Height = "16"
+                    Text = "&Grad"
+                    class Font
+                    {
+                        Family = "Tahoma"
+                        Size = "10"
+                    }
+                    ParentFont = "False"
+                    TabOrder = "1"
+                    event OnClick = "rdDegClick"
+                }
+
+                type Radiobox
+                {
+                    Name = "rdRad"
+                    Tag = "2"
+                    AccessLevel = "alPublic"
+                    Left = "11"
+                    Top = "52"
+                    Width = "80"
+                    Height = "16"
+                    Text = "&Rad"
+                    class Font
+                    {
+                        Family = "Tahoma"
+                        Size = "10"
+                    }
+                    ParentFont = "False"
+                    TabOrder = "2"
+                    event OnClick = "rdDegClick"
+                }
+            }
+        }
+
+        type Panel
+        {
+            Name = "pnlHexOpt"
+            AccessLevel = "alPublic"
+            Left = "8"
+            Top = "293"
+            Width = "507"
+            Height = "82"
+            TabOrder = "4"
+            InnerBorderStyle = "pbsNone"
+
+            type Groupbox
+            {
+                Name = "Groupbox2"
+                AccessLevel = "alPublic"
+                Left = "8"
+                Top = "1"
+                Width = "329"
+                Height = "74"
+                Text = "Hex Display"
+                class Font
+                {
+                    Family = "Tahoma"
+                    Size = "10"
+                }
+                ParentFont = "False"
+                TabOrder = "0"
+
+                type Checkbox
+                {
+                    Name = "chkMinus"
+                    AccessLevel = "alPublic"
+                    Left = "16"
+                    Top = "18"
+                    Width = "86"
+                    Height = "17"
+                    Text = "Minus sign"
+                    class Font
+                    {
+                        Family = "Tahoma"
+                        Size = "10"
+                    }
+                    ParentFont = "False"
+                    TabOrder = "0"
+                    event OnClick = "chkMinusClick"
+                }
+
+                type Checkbox
+                {
+                    Name = "chkLittleEndian"
+                    Tag = "6"
+                    AccessLevel = "alPublic"
+                    Left = "16"
+                    Top = "52"
+                    Width = "86"
+                    Height = "17"
+                    Text = "Little endian"
+                    class Font
+                    {
+                        Family = "Tahoma"
+                        Size = "10"
+                    }
+                    ParentFont = "False"
+                    TabOrder = "1"
+                    event OnClick = "chkLittleEndianClick"
+                }
+
+                type Checkbox
+                {
+                    Name = "chkBytes"
+                    Tag = "1"
+                    AccessLevel = "alPublic"
+                    Left = "116"
+                    Top = "18"
+                    Width = "86"
+                    Height = "17"
+                    Text = "As Bytes"
+                    class Font
+                    {
+                        Family = "Tahoma"
+                        Size = "10"
+                    }
+                    ParentFont = "False"
+                    TabOrder = "2"
+                    event OnClick = "chkAsBytesClick"
+                }
+
+                type Checkbox
+                {
+                    Name = "chkWords"
+                    Tag = "2"
+                    AccessLevel = "alPublic"
+                    Left = "116"
+                    Top = "35"
+                    Width = "86"
+                    Height = "17"
+                    Text = "As Words"
+                    class Font
+                    {
+                        Family = "Tahoma"
+                        Size = "10"
+                    }
+                    ParentFont = "False"
+                    TabOrder = "3"
+                    event OnClick = "chkAsWordsClick"
+                }
+
+                type Checkbox
+                {
+                    Name = "chkDWords"
+                    Tag = "3"
+                    AccessLevel = "alPublic"
+                    Left = "116"
+                    Top = "52"
+                    Width = "86"
+                    Height = "17"
+                    Text = "As DWords"
+                    class Font
+                    {
+                        Family = "Tahoma"
+                        Size = "10"
+                    }
+                    ParentFont = "False"
+                    TabOrder = "4"
+                    event OnClick = "chkAsDWordsClick"
+                }
+
+                type Checkbox
+                {
+                    Name = "chkSingle"
+                    Tag = "4"
+                    AccessLevel = "alPublic"
+                    Left = "203"
+                    Top = "18"
+                    Width = "118"
+                    Height = "17"
+                    Text = "As IEE 754 single"
+                    class Font
+                    {
+                        Family = "Tahoma"
+                        Size = "10"
+                    }
+                    ParentFont = "False"
+                    TabOrder = "5"
+                    event OnClick = "chkSingleClick"
+                }
+
+                type Checkbox
+                {
+                    Name = "chkDouble"
+                    Tag = "5"
+                    AccessLevel = "alPublic"
+                    Left = "203"
+                    Top = "35"
+                    Width = "118"
+                    Height = "17"
+                    Text = "As IEE 754 double"
+                    class Font
+                    {
+                        Family = "Tahoma"
+                        Size = "10"
+                    }
+                    ParentFont = "False"
+                    TabOrder = "6"
+                    event OnClick = "chkDoubleClick"
+                }
+            }
+        }
+
+        type Label
+        {
+            Name = "Label1"
+            AccessLevel = "alPublic"
+            Left = "256"
+            Top = "177"
+            Width = "57"
+            Height = "16"
+            Text = "As String:"
+            class Font
+            {
+                Family = "Tahoma"
+                Size = "10"
+            }
+            ParentFont = "False"
+        }
+
+        type Edit
+        {
+            Name = "edtChars"
+            AccessLevel = "alPublic"
+            Left = "317"
+            Top = "176"
+            Width = "121"
+            Height = "21"
+            class Font
+            {
+                Family = "Tahoma"
+                Size = "10"
+            }
+            ParentFont = "False"
+            TabOrder = "5"
+            ReadOnly = "True"
+        }
+
+        type FlatButton
+        {
+            Name = "btnFont"
+            AccessLevel = "alPublic"
+            Left = "440"
+            Top = "175"
+            Width = "68"
+            Height = "23"
+            Text = "&Font..."
+            class Font
+            {
+                Family = "Tahoma"
+                Size = "10"
+            }
+            ParentFont = "False"
+            TabOrder = "6"
+            AcceptInput = "True"
+            class Image
+            {
+                Bitmap = "080046004F004E0054002E0042004D00500076010000020080800000789C758F310AC3300C451552C8D0A5D00B74EC68C8E0B1D03D772918A251BE990FE5A1A3FA250B4AA1F9F6F7CF931D257E6EFB44AE1DBEC337F8024F741A1BD8BF9E877F557D52AD236CE04144A8B5868AFA24D51136AC84653D94F6872A92E644389679652EE06425A4F4CCDDB80C667D3B677CC1CE31E48DF0BE455616E72558825F69092ECEC9DB5983FE973395E0F8D3B8442EC173F0F1DDBEFA003F5C5670"
+                StateCount = "2"
+            }
+            Flat = "False"
+            event OnClick = "btnFontClick"
+        }
+
+        type FlatButton
+        {
+            Name = "btnCloseDecOptions"
+            AccessLevel = "alPublic"
+            Left = "13"
+            Top = "175"
+            Width = "228"
+            Height = "12"
+            Text = "----------------------------------------------------"
+            class Font
+            {
+                Family = "Tahoma"
+                Size = "10"
+            }
+            ParentFont = "False"
+            TabOrder = "7"
+            class Image
+            {
+                Bitmap = "080064006F0077006E002E0062006D007000F80000000100FFFFFF00789C758EB10D80300C041F898E22882998839E75A82D26F34829E98CED8F14A5C8DB9793BFCA757F601EE774F6C68235FBD739363246722142C544E58FAA7A63B930A362A28A7B9E5A686070050A4F16CD355CBAF9B1EE49801FB67670E1"
+            }
+            event OnClick = "btnCloseDecOptionsClick"
+        }
+
+        type FlatButton
+        {
+            Name = "btnCloseHexOptions"
+            AccessLevel = "alPublic"
+            Left = "13"
+            Top = "279"
+            Width = "228"
+            Height = "12"
+            Text = "----------------------------------------------------"
+            class Font
+            {
+                Family = "Tahoma"
+                Size = "10"
+            }
+            ParentFont = "False"
+            TabOrder = "8"
+            class Image
+            {
+                Bitmap = "080064006F0077006E002E0062006D007000F80000000100FFFFFF00789C758EB10D80300C041F898E22882998839E75A82D26F34829E98CED8F14A5C8DB9793BFCA757F601EE774F6C68235FBD739363246722142C544E58FAA7A63B930A362A28A7B9E5A686070050A4F16CD355CBAF9B1EE49801FB67670E1"
+            }
+            event OnClick = "btnCloseHexOptionsClick"
+        }
+
+        type FlatButton
+        {
+            Name = "btnOpenDecOptions"
+            AccessLevel = "alPublic"
+            Left = "13"
+            Top = "175"
+            Width = "228"
+            Height = "12"
+            Text = "---------------Decimal options------------------"
+            Visible = "False"
+            class Font
+            {
+                Family = "Tahoma"
+                Size = "10"
+            }
+            ParentFont = "False"
+            TabOrder = "9"
+            class Image
+            {
+                Bitmap = "0900720069006700680074002E0062006D007000F80000000100FFFFFF00789C73F2FDC100016540AC01C40250CCC8C002166F0262216E0846050D60C4D0D000A140102404240E1C380014F90F460CFFFF432810040981F8E8E0033F9466E087D210C607B07E08CD00A3F9D1685475FC28E6F0635805020C0C00A4C572A3"
+            }
+            event OnClick = "btnOpenDecOptionsClick"
+        }
+
+        type FlatButton
+        {
+            Name = "btnOpenHexOptions"
+            AccessLevel = "alPublic"
+            Left = "13"
+            Top = "279"
+            Width = "228"
+            Height = "12"
+            Text = "---------------Hex. options---------------------"
+            Visible = "False"
+            class Font
+            {
+                Family = "Tahoma"
+                Size = "10"
+            }
+            ParentFont = "False"
+            TabOrder = "10"
+            class Image
+            {
+                Bitmap = "0900720069006700680074002E0062006D007000F80000000100FFFFFF00789C73F2FDC100016540AC01C40250CCC8C002166F0262216E0846050D60C4D0D000A140102404240E1C380014F90F460CFFFF432810040981F8E8E0033F9466E087D210C607B07E08CD00A3F9D1685475FC28E6F0635805020C0C00A4C572A3"
+            }
+            event OnClick = "btnOpenHexOptionsClick"
+        }
+    }
+    type Form
+    {
+        Name = "frmAbout"
+        Left = "524"
+        Top = "67"
+        Text = "About LittlaCalc++"
+        class Font
+        {
+            Family = "Tahoma"
+        }
+        WantedKeyTypes = "wkArrows, wkTab, wkEnter, wkEscape, wkOthers"
+        ShowPosition = "fspActiveMonitorCenter"
+        BorderStyle = "fbsDialog"
+        KeyPreview = "True"
+        UnitName = "about"
+        DesignVisible = "False"
+        LastExportedName = "frmAbout"
+        LastExportedEvents = "360033007C00789C4B632862C86570644862C867286528617066C861C8644866C866A86148C323678045DE9B2195A192C105C82B67C82342DE8401004A00191F"
+        ClientWidth = "274"
+        ClientHeight = "222"
+        event OnKeyDown = "frmAboutKeyDown"
+        event OnClick = "frmAboutClick"
+
+        type Label
+        {
+            Name = "Label1"
+            AccessLevel = "alPublic"
+            Left = "86"
+            Top = "15"
+            Width = "103"
+            Height = "19"
+            Text = "FalconCalc"
+            class Font
+            {
+                Family = "Tahoma"
+                Size = "12"
+                Bold = "True"
+            }
+            ParentFont = "False"
+        }
+
+        type Label
+        {
+            Name = "Label2"
+            AccessLevel = "alPublic"
+            Left = "44"
+            Top = "47"
+            Width = "201"
+            Height = "14"
+            Text = "A handy little calculator for everyone"
+        }
+
+        type Label
+        {
+            Name = "Label3"
+            AccessLevel = "alPublic"
+            Left = "39"
+            Top = "71"
+            Width = "213"
+            Height = "14"
+            Text = "(but especially useful for programmers)"
+        }
+
+        type Label
+        {
+            Name = "Label4"
+            AccessLevel = "alPublic"
+            Left = "50"
+            Top = "95"
+            Width = "192"
+            Height = "14"
+            Text = "Based on the 'FalconCalc Engine',"
+        }
+
+        type Label
+        {
+            Name = "Label5"
+            AccessLevel = "alPublic"
+            Left = "54"
+            Top = "119"
+            Width = "179"
+            Height = "14"
+            Text = "a cross platform arithmetic library"
+        }
+
+        type Label
+        {
+            Name = "Label6"
+            AccessLevel = "alPublic"
+            Left = "108"
+            Top = "143"
+            Width = "61"
+            Height = "14"
+            Text = "Copyright"
+            class Font
+            {
+                Family = "Tahoma"
+                Bold = "True"
+            }
+            ParentFont = "False"
+        }
+
+        type Label
+        {
+            Name = "Label7"
+            AccessLevel = "alPublic"
+            Left = "85"
+            Top = "167"
+            Width = "115"
+            Height = "14"
+            Text = "A. Sólyom - 2012. "
+            class Font
+            {
+                Family = "Tahoma"
+                Bold = "True"
+            }
+            ParentFont = "False"
+        }
+
+        type Label
+        {
+            Name = "Label8"
+            AccessLevel = "alPublic"
+            Left = "46"
+            Top = "191"
+            Width = "196"
+            Height = "14"
+            Text = "This program is in the public domain"
+        }
+    }
+    type Form
+    {
+        Name = "frmHistOptions"
+        Left = "526"
+        Top = "344"
+        Text = "FalconCalc - History options"
+        class Font
+        {
+            Family = "Tahoma"
+        }
+        WantedKeyTypes = "wkArrows, wkTab, wkEnter, wkEscape, wkOthers"
+        ShowPosition = "fspActiveMonitorCenter"
+        BorderStyle = "fbsSingle"
+        UnitName = "histopt"
+        DesignVisible = "False"
+        LastExportedName = "frmHistOptions"
+        LastExportedEvents = "3100380039007C00789C8D8DC10A82401445CF27CDA21F08DD448B167E414E82A1648819411FDF7163C4A8B498E1F2CE79F7950CDC38D190D172259ADE948BD330938CB37FA492A67B6B74DAAFB8E81CE483B967D46D399A5FE4743C25FF5A3B5FA4B63B97DC75EB9F7B5B2CCC7CCF43DA517863D44D1BB68C6F4FA1D1EBA5FB4B24F0017F0D4AC1"
+        ClientWidth = "284"
+        ClientHeight = "159"
+
+        type Checkbox
+        {
+            Name = "chkDepth"
+            AccessLevel = "alPublic"
+            Left = "16"
+            Top = "32"
+            Width = "145"
+            Height = "16"
+            Text = "Maximum History &Depth:"
+            TabOrder = "0"
+            event OnClick = "chkDepthClick"
+        }
+
+        type Checkbox
+        {
+            Name = "chkAutoSave"
+            AccessLevel = "alPublic"
+            Left = "16"
+            Top = "56"
+            Width = "158"
+            Height = "16"
+            Text = "&Automatic memory timeout: "
+            TabOrder = "1"
+            event OnClick = "chkAutoSaveClick"
+        }
+
+        type Checkbox
+        {
+            Name = "chkSort"
+            AccessLevel = "alPublic"
+            Left = "16"
+            Top = "80"
+            Width = "80"
+            Height = "16"
+            Text = "&Sorted"
+            TabOrder = "2"
+            event OnClick = "chkSortClick"
+        }
+
+        type Edit
+        {
+            Name = "spinDepth"
+            AccessLevel = "alPublic"
+            Left = "176"
+            Top = "32"
+            Width = "80"
+            Height = "21"
+            Text = "100"
+            TabOrder = "3"
+        }
+
+        type UpDown
+        {
+            Name = "spinDepthBtn"
+            AccessLevel = "alPublic"
+            Left = "254"
+            Top = "32"
+            Width = "18"
+            Height = "21"
+            AttachedEditor = "spinDepth"
+            MinValue = "1"
+            MaxValue = "9999"
+            Position = "100"
+        }
+
+        type Edit
+        {
+            Name = "edtInterval"
+            AccessLevel = "alPublic"
+            Left = "176"
+            Top = "56"
+            Width = "80"
+            Height = "21"
+            Text = "00:00:10"
+            TabOrder = "4"
+            event OnKeyDown = "edtIntervalKeyDown"
+        }
+
+        type Button
+        {
+            Name = "btnOk"
+            AccessLevel = "alPublic"
+            Left = "184"
+            Top = "96"
+            Width = "75"
+            Height = "23"
+            Text = "Ok"
+            TabOrder = "5"
+            event OnClick = "btnOkClick"
+        }
+
+        type Button
+        {
+            Name = "btnCancel"
+            AccessLevel = "alPublic"
+            Left = "184"
+            Top = "120"
+            Width = "75"
+            Height = "23"
+            Text = "Cancel"
+            TabOrder = "6"
+            Cancel = "True"
+            event OnClick = "btnCancelClick"
+        }
+    }
+    type Form
+    {
+        Name = "frmHistory"
+        Left = "868"
+        Top = "360"
+        Text = "FalconCalc History"
+        class Font
+        {
+            Family = "Tahoma"
+        }
+        WantedKeyTypes = "wkArrows, wkTab, wkEnter, wkEscape, wkOthers"
+        UnitName = "history"
+        DesignVisible = "False"
+        LastExportedName = "frmHistory"
+        LastExportedEvents = "3200310032007C00789C8D8F4B0A80300C44E7482288075044702378825A028A3F5037050FEF98852856719136E4CD64488F052B72B4FA4F98E190A2468F84D5C2A2C3C6EE8F2A66D5E42399702EECE5A6F8A6C1A948941BE63CDD7E76F51ABE56337C6E3F3DFC995E36A0207528D90BEF5D3E49C4B268B8A352CD7ADBFA4EAE79C77CE2367999854CD90128C453EA"
+        ClientWidth = "544"
+        ClientHeight = "183"
+        event OnKeyPress = "FormKeyPress"
+        event OnClose = "FormClose"
+
+        type Listbox
+        {
+            Name = "lstHistory"
+            AccessLevel = "alPublic"
+            Left = "8"
+            Top = "8"
+            Width = "448"
+            Height = "158"
+            Text = "lstHistory"
+            Anchors = "caLeft, caTop, caRight, caBottom"
+            TabOrder = "0"
+            ItemHeight = "14"
+            event OnDblClick = "lstHistoryDblClick"
+        }
+
+        type FlatButton
+        {
+            Name = "btnDelete"
+            AccessLevel = "alPublic"
+            Left = "461"
+            Top = "8"
+            Width = "23"
+            Height = "22"
+            Anchors = "caTop, caRight"
+            TabOrder = "1"
+            class Image
+            {
+                Bitmap = "0A00440045004C004500540045002E0042004D00500076010000020080800000789C554F310AC3300C54A05B97423FD0B163214328040CDDFB1A433CCA7FE8E4D778F0DADF74E8E89E2CB9C1679F95D3C991FC786E13356CE015BC802770A2831AF0CF47E588D836C5A841163E989972CEC8D4B6A9560DB22485631E5135DC2CBF84BF46B1E87B4A2F75022338D304ED11AD7EEEFFEDBAC3EDBE33BF9866D56BD18A2FA3A3FBAC6FA024E9878E61D41ED77BFDC2367FB1F9FD38FFF09E1D3F10346429"
+                StateCount = "2"
+            }
+            ImagePosition = "bipCenter"
+            Flat = "False"
+            event OnClick = "btnDeleteClick"
+        }
+
+        type FlatButton
+        {
+            Name = "btnClear"
+            AccessLevel = "alPublic"
+            Left = "461"
+            Top = "36"
+            Width = "23"
+            Height = "22"
+            Anchors = "caTop, caRight"
+            TabOrder = "2"
+            class Image
+            {
+                Bitmap = "0900740072006100730068002E0062006D007000780100000100FFFFFF00789C9D4F4B128020087DB6919916349DA273B4EF3A4D3BBD99473304B5CF4C9B8027F29E22AEDBE1A0B60B16C154E140CA0FA2CFA3A169665103315A2A2E9B1002524AC2640DE46CA978A16461E6DE85CDC05EEDAAE57DC2B3F6F8A9E3A62B83AEE3E3BEAF5E4B3C070613D16DE0B7AE1DAEDFF4236D7B028CD21EAD"
+            }
+            ImagePosition = "bipCenter"
+            Flat = "False"
+            event OnClick = "btnClearClick"
+        }
+
+        type Checkbox
+        {
+            Name = "chkSorted"
+            AccessLevel = "alPublic"
+            Left = "464"
+            Top = "104"
+            Width = "74"
+            Height = "16"
+            Text = "&Sorted"
+            Anchors = "caTop, caRight"
+            TabOrder = "3"
+            event OnClick = "chkSortClick"
+        }
+
+        type Button
+        {
+            Name = "btnCancel"
+            AccessLevel = "alPublic"
+            Left = "462"
+            Top = "145"
+            Width = "75"
+            Height = "23"
+            Text = "&Dismiss"
+            Anchors = "caRight, caBottom"
+            TabOrder = "4"
+            event OnClick = "btnCancelClick"
+        }
+    }
+    type Form
+    {
+        Name = "frmHelp"
+        Left = "531"
+        Top = "566"
+        Text = "FalconCalc Help"
+        class Font
+        {
+            Family = "Tahoma"
+        }
+        WantedKeyTypes = "wkArrows, wkTab, wkEnter, wkEscape, wkOthers"
+        ShowPosition = "fspActiveMonitorCenter"
+        BorderStyle = "fbsDialog"
+        KeyPreview = "True"
+        UnitName = "help"
+        DesignVisible = "False"
+        LastExportedName = "frmHelp"
+        LastExportedEvents = "380035007C00789C4B632862C865F0604865C8612860700692990CC90CD90C350C6938650C80D887219121092C678C22874BDC00C3446F205DC9E0C290CF50CE904750D68401000AAD20ED"
+        ClientWidth = "652"
+        ClientHeight = "472"
+        event OnKeyDown = "frmHelpKeyDown"
+        event OnClick = "frmHelpClick"
+
+        type Label
+        {
+            Name = "Label1"
+            AccessLevel = "alPublic"
+            Left = "273"
+            Top = "15"
+            Width = "103"
+            Height = "19"
+            Text = "FalconCalc"
+            Anchors = "caTop"
+            class Font
+            {
+                Family = "Tahoma"
+                Size = "12"
+                Bold = "True"
+            }
+            ParentFont = "False"
+        }
+
+        type Label
+        {
+            Name = "Label2"
+            AccessLevel = "alPublic"
+            Left = "224"
+            Top = "39"
+            Width = "201"
+            Height = "14"
+            Text = "A handy little calculator for everyone"
+            Anchors = "caTop"
+            class Font
+            {
+                Family = "Tahoma"
+            }
+            ParentFont = "False"
+        }
+
+        type Label
+        {
+            Name = "Label3"
+            AccessLevel = "alPublic"
+            Left = "8"
+            Top = "72"
+            Width = "636"
+            Height = "390"
+            Text = "Label3"
+            Anchors = "caLeft, caTop, caRight"
+            class Font
+            {
+                Family = "Tahoma"
+                Size = "8"
+            }
+            ParentFont = "False"
+            AutoSize = "False"
+            WordWrap = "True"
+            event OnClick = "Label3Click"
+        }
+    }
+    type Form
+    {
+        Name = "frmVariables"
+        Left = "93"
+        Top = "327"
+        Text = "FalconCalc Functions/Variables"
+        class Font
+        {
+            Family = "Tahoma"
+        }
+        WantedKeyTypes = "wkArrows, wkTab, wkEnter, wkEscape, wkOthers"
+        UnitName = "variables"
+        DesignVisible = "False"
+        LastExportedName = "frmVariables"
+        LastExportedEvents = "3400340035007C00789C8D92CD0E82301084E79110FFEE8A5E8C8989E25D9428B18AA180D1F8F00E8B0AC64A3950969D6F862D25408A33C6D870DD228462AD10B13EE281A051753EC492444EFDD76B522A9F27996B3289C1FB4F756A93293266B7592BBC29EB325563C57B40E2207BDCD361D75D49192163AA221D519923E6B3A6EEB1BAB2D3861836503E2E56B5C95F54B9CC6B2706BC3477E74BBFF86231F90C2739C1087771EE5B535D745EECF7BB9B73DBB255FA7B9219D71B16AC4276B455EDF39A323F617AF177C4429A7BAED0F5BC09769C2515B6CCAE4EB42DD7C3138DDFB163"
+        ClientWidth = "441"
+        ClientHeight = "569"
+        event OnClose = "FormClose"
+
+        type TabControl
+        {
+            Name = "tcVars"
+            AccessLevel = "alPublic"
+            Left = "0"
+            Top = "0"
+            Width = "352"
+            Height = "569"
+            Text = "tcVars"
+            Anchors = "caLeft, caTop, caRight, caBottom"
+            TabOrder = "0"
+            vector<Tab> Tabs = { 
+                {
+                    Text = "&Functions"
+                }
+                , 
+                {
+                    Text = "&Variables"
+                }
+            }
+            SelectedTab = "1"
+            event OnTabChange = "tcVarsTabChange"
+
+            type StringGrid
+            {
+                Name = "sgUser"
+                AccessLevel = "alPublic"
+                Left = "4"
+                Top = "23"
+                Width = "344"
+                Height = "296"
+                Alignment = "alTop"
+                TabOrder = "0"
+                ColCount = "3"
+                RowCount = "5"
+                FixedColCount = "0"
+                SelectionKind = "gskNoSelect"
+                ColumnsResizable = "True"
+                array ColWidth = {
+                    [0] = "87"
+                    [1] = "118"
+                    [2] = "129"
+                }
+                array RowHeight = {
+                    [3] = "21"
+                    [4] = "23"
+                }
+                array DefColWidth = {
+                    [0] = "87"
+                    [1] = "118"
+                    [2] = "129"
+                }
+                SmoothHorzScroll = "True"
+                AutoEdit = "True"
+                TabEdited = "True"
+                event OnColumnSizing = "sgUserColumnSizing"
+                event OnEditorKeyDown = "sgUserEditorKeyDown"
+                event OnEditorKeyPress = "sgUserKeyPress"
+            }
+
+            type Panel
+            {
+                Name = "pBuiltin"
+                AccessLevel = "alPublic"
+                Left = "4"
+                Top = "319"
+                Width = "344"
+                Height = "24"
+                Text = "Builtins"
+                Alignment = "alTop"
+                ParentBackground = "True"
+                TabOrder = "1"
+                InnerBorderStyle = "pbsNone"
+                event OnMouseMove = "BuiltinMouseMove"
+                event OnMouseDown = "BuiltinMouseDown"
+                event OnMouseUp = "BuiltinMouseUp"
+            }
+
+            type StringGrid
+            {
+                Name = "sgBuiltin"
+                AccessLevel = "alPublic"
+                Left = "4"
+                Top = "343"
+                Width = "344"
+                Height = "222"
+                Alignment = "alClient"
+                TabOrder = "2"
+                ColCount = "3"
+                RowCount = "5"
+                FixedColCount = "0"
+                FixedRowCount = "0"
+                SelectionKind = "gskNoSelect"
+                ColumnsResizable = "True"
+                array ColWidth = {
+                    [0] = "88"
+                    [1] = "118"
+                    [2] = "129"
+                }
+                array RowHeight = {
+                    [2] = "25"
+                    [4] = "20"
+                }
+                array DefColWidth = {
+                    [0] = "88"
+                    [1] = "118"
+                    [2] = "129"
+                }
+                SmoothHorzScroll = "True"
+                event OnColumnSizing = "sgBuiltinColumnSizing"
+            }
+        }
+
+        type FlatButton
+        {
+            Name = "btnDelVar"
+            AccessLevel = "alPublic"
+            Left = "357"
+            Top = "48"
+            Width = "23"
+            Height = "22"
+            Anchors = "caTop, caRight"
+            TabOrder = "1"
+            class Image
+            {
+                Bitmap = "0A00440045004C004500540045002E0042004D00500076010000020080800000789C554F310AC3300C54A05B97423FD0B163214328040CDDFB1A433CCA7FE8E4D778F0DADF74E8E89E2CB9C1679F95D3C991FC786E13356CE015BC802770A2831AF0CF47E588D836C5A841163E989972CEC8D4B6A9560DB22485631E5135DC2CBF84BF46B1E87B4A2F75022338D304ED11AD7EEEFFEDBAC3EDBE33BF9866D56BD18A2FA3A3FBAC6FA024E9878E61D41ED77BFDC2367FB1F9FD38FFF09E1D3F10346429"
+                StateCount = "2"
+            }
+            ImagePosition = "bipCenter"
+            Flat = "False"
+            event OnClick = "btnDelVarClick"
+        }
+
+        type FlatButton
+        {
+            Name = "btnClear"
+            AccessLevel = "alPublic"
+            Left = "357"
+            Top = "76"
+            Width = "23"
+            Height = "22"
+            Anchors = "caTop, caRight"
+            TabOrder = "2"
+            class Image
+            {
+                Bitmap = "0900740072006100730068002E0062006D007000780100000100FFFFFF00789C9D4F4B128020087DB6919916349DA273B4EF3A4D3BBD99473304B5CF4C9B8027F29E22AEDBE1A0B60B16C154E140CA0FA2CFA3A169665103315A2A2E9B1002524AC2640DE46CA978A16461E6DE85CDC05EEDAAE57DC2B3F6F8A9E3A62B83AEE3E3BEAF5E4B3C070613D16DE0B7AE1DAEDFF4236D7B028CD21EAD"
+            }
+            ImagePosition = "bipCenter"
+            Flat = "False"
+            event OnClick = "btnClearClick"
+        }
+
+        type Button
+        {
+            Name = "btnCancel"
+            AccessLevel = "alPublic"
+            Left = "358"
+            Top = "497"
+            Width = "75"
+            Height = "23"
+            Text = "&Cancel"
+            Anchors = "caRight, caBottom"
+            TabOrder = "3"
+            event OnClick = "btnCancelClick"
+        }
+
+        type Button
+        {
+            Name = "btnSave"
+            AccessLevel = "alPublic"
+            Left = "358"
+            Top = "524"
+            Width = "75"
+            Height = "23"
+            Text = "&Save"
+            Anchors = "caRight, caBottom"
+            TabOrder = "4"
+            event OnClick = "btnSaveClick"
+        }
+    }
+}

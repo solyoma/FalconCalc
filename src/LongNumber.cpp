@@ -1,0 +1,2969 @@
+﻿#include <cmath>
+#include <cassert>
+#include <cfloat>
+#include <climits>
+#include <regex>
+#include "LongNumber.h"
+
+#ifdef _DEBUG		// DEBUG
+
+#include <cstdarg>
+
+int debugPrint(const char* format, ...)
+{
+	va_list args;
+	va_start(args, format);
+	int res = vprintf(format, args);
+	va_end(args);
+	return res;
+}
+
+#else
+#define debugPrint
+#endif// /DEBUG
+
+//////////////////////////////////////////////////////////////
+namespace LongNumber {
+//////////////////////////////////////////////////////////////
+	const SCharT chZero = (SCharT)'0';
+	const SCharT chOne = (SCharT)'1';
+	const SmartString NAN_STR("NaN");
+	const SmartString INF_STR("Inf");
+
+
+	const SCharT chSpace = SCharT(' ');
+
+SCharT ByteToSCharT(uint8_t digit)	// 0 <= digit <= 32
+{
+	if (digit < 10)
+		return SCharT('0' + digit);
+	if (digit > 10)
+		return SCharT('A' + (digit - 10) );
+	return SCharT(0);
+}
+
+uint8_t SCharTToByte(SCharT ch)
+{
+	if (ch < SCharT('0'))
+		return 0;
+	if (ch <= SCharT('9'))
+		return ch.Unicode() - '0';
+	return 10 + (ch.Unicode() - 'A');
+}
+
+SmartString Utf8FromWideString(const std::wstring& ws)
+{
+	SmartString r;
+	r.FromWideString(ws);
+	return r;
+}
+
+SmartString ToHexByte(size_t byte)
+{
+	SmartString res(2, chZero);
+	res[0] = ByteToSCharT((byte & 0xF0) >> 4);
+	res[1] = ByteToSCharT((byte & 0x0F));
+	return res;
+};
+
+RealNumber ConverToUnit(RealNumber r, AngularUnit angu)  // r in radian
+{
+	switch (angu)
+	{
+		case AngularUnit::auDeg:
+			r *= RealNumber("360") / twoPi;
+			break;
+		case AngularUnit::auGrad:
+			r *= RealNumber("400") / twoPi;
+			break;
+		case AngularUnit::auTurn:
+			r /= twoPi;
+			break;
+		default:	// auRad
+			break;
+	}
+	return r;
+};
+
+//--------------------------------------
+SCharT RealNumber::_decPoint;
+size_t RealNumber::_maxExponent = 1024;	// absolute value of largest possible exponent of 10 in number
+size_t RealNumber::_maxLength = 32;		// maximum length of string
+											// constants and Functions that can be used with REAL_NUMBERs
+static const RealNumber rnNull("0"),
+				  rnHalf("0.5"),
+				  rnOne("1"),
+				  rnTwo("2"),
+				  rnTen("10"),
+			//					   1		 2 		   3		 4		   5		 6		   7		 8		   9		10
+			//			0 123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012				  
+				  rnPi("3.141592653589793238462643383279502884197169399375105820974944592307816406286208998628034825342117067980"), // π
+				 rn2Pi("6.283185307179586476925286766559005768394338798750211641949889184615632812572417997256069650684234135960"),	// 2π
+				rnPiP2("1.570796326794896619231321691639751442098584699687552910487472296153908203143104499314017412671058533990"),	// π/2
+				  rnE ("2.718281828459045235360287471352662497757247093699959574966967627724076630353547594571382178525166427427"),	// e
+			   rnSqrt2("1.414213562373095048801688724209698078569671875376948073176679737990732478462107038850387534327641572735"),	// √2
+			  rnPSqrt2("0.707106781186547524400844362104849039284835937688474036588339868995366239231053519425193767163820786367"),	// 1/√2
+			   rnSqrt3("1.732050807568877293527446341505872366942805253810380628055806979451933016908800037081146186757248575675"),	// √3
+			 rnSqrt3P2("0.866025403784438646763723170752936183471402626905190314027903489725966508454400018540573093378624287837"),	// 1/ (3√π)
+				rnLn10("2.302585092994045684017991454684364207601101488628772976033327900967572609677352480235997205089598298341"), // log(1)
+				 pln10("0.434294481903251827651128918916605082294397005803666566114453783165864649208870774729224949338431748318"),	// 1/log(10)
+				 rnLn2("0.693147180559945309417232121458176568075500134360255254120680009493393621969694715605863326996418687542"),	// log(2)
+				  pln2("1.442695040888963407359924681001892137426645954152985934135449406931109219181185079885526622893506344497"),	// 1/log(2)
+					rnNaN(NAN_STR), rnInf(INF_STR),
+// physical constants
+			rn_au		("149597870700"),		// astronomival unit - definition (m)
+			rn_c		("299792458"),			// speed of light in vacuum	 m⋅s-1
+			rn_eps0		("8.8541878128E-12"),	// vacuum electric permittivity	(F/m)
+			rn_fsc		("7.297352569311E-3"),	// fine-structure constant (e^2/ (2 eps0 h c )
+			rn_G		("6.6743015-11"),		// Newtonian constant of gravitation (m^3/(kg s^2))
+			rn_gf		("9.81"),				// average g on Earth (9.81 m/s^2)
+			rn_h		("6.62607015E-34"),		// Planck constant  (J⋅s)
+			rn_hbar		("1.054571817E-34"),	// reduced Planck constant
+			rn_kb		("1.380649E-23"),		// Boltzmann constant (J/K)
+			rn_kc		("8.987551792314E9"),	// Coulomb constant (1/ (4 pi eps0)
+			rn_la		("6.02214076E23"),		// Avogadro constant	(1/mol)
+			rn_me		("9.109383701528E-31"),	// electron mass
+			rn_mf		("5.072E24"),			// mass of the Earth (kg)
+			rn_mp		("1.6726219236951E-27"),// proton mass
+			rn_ms		("1.98849E30"),			// mass of the Sun	(kg)
+			rn_mu0		("1.25663706212E-6"),	// vacuum magnetic permeability (N/A^2)
+			rn_qe		("1.602176634E-19"),	// elementary charge (C)
+			rn_pfsc		("137.03599908421"),	// reciprocal of afs (approx 137) 
+			rn_rf		("6.3781E6"),			// radius of the Earth (m)
+			rn_rg		("8.31446261815324"),	// molar gas constant R (J/mol/K)
+			rn_rs		("6.957E8"),			// radius of the Sun (m)
+			rn_sb		("5.670374419E-8"),		// Stefan–Boltzmann constant (W/(m^2 K^4))
+			rn_u		("1.6605390666050E-27");// atomic mass unit (m(C12)/12  kg)
+//-----------------------------------------------------------------------------------------------
+// seen from outside
+RealNumber	zero  		(rnNull), 
+			half 		(rnHalf), 
+			one 		(rnOne), 
+			two 		(rnTwo), 
+			ten 		(rnTen), 
+			e 			(rnE), 
+			pi 			(rnPi), 
+			twoPi 		(rn2Pi), 
+			piP2 		(rnPiP2), 
+			sqrt2 		(rnSqrt2), 
+			rsqrt2 		(rnPSqrt2), 
+			sqrt3 		(rnSqrt3), 
+			sqrt3P2 	(rnSqrt3P2), 
+			ln10 		(rnLn10), 
+			ln2 		(rnLn2),
+			rln10  		( pln10), 
+			rln2 		(pln2),
+			NaN 		(rnNaN),
+			Inf 		(rnInf);
+Constant
+			fsc		{ L"fsc",	L"fine-structure constant"							, rn_fsc},
+			au		{ L"au",	L"[m] astronomical unit - exact value"				, rn_au	},
+			c		{ L"c",		L"[m/s] speed of light in vacuum	-definition"	, rn_c	},
+			eps0	{ L"eps0",	L"[F/m=As/Vm] vacuum electric permittivity - exact value", rn_eps0},
+			G		{ L"g",		L"L[m^2/kg s^2] Newtonian constant of gravitation"	, rn_G	},
+			gf		{ L"gf",	L"[m/s^2] average g on Earth"						, rn_gf	},
+			h		{ L"h",		L"L[Js] Planck constant"							, rn_h	},
+			hbar	{ L"hbar",	L"[Js] reduced Planck constant (h/2π)"				, rn_hbar},
+			kb		{ L"kb",	L"[J/K] Boltzmann constant"							, rn_kb	},
+			kc		{ L"kc",	L"[1/4πεo] Coulomb constant"						, rn_kc	},
+			la		{ L"la",	L"[1/mol] Avogadro constant"						, rn_la	},
+			me		{ L"me",	L"[kg] electron mass"								, rn_me	},
+			mf		{ L"mf",	L"[kg] mass of the Earth"							, rn_mf	},
+			mp		{ L"mp",	L"[kg] proton mass"									, rn_mp	},
+			ms		{ L"ms",	L"[kg] mass of the Sun"								, rn_ms	},
+			mu0		{ L"mu",	L"[N/A^2=Vs/m^2] vacuum magnetic permeability"		, rn_mu0},
+			qe		{ L"qe",	L"[C] elementary charge"							, rn_qe},
+			rfsc	{ L"rafs",	L"[-] reciprocal of the fine structure constant (approx 137} ", rn_pfsc},
+			rf		{ L"rf",	L"[m] radius of the Earth"							, rn_rf},
+			rg		{ L"rg",	L"[J/mol K] molar gas constant R"					, rn_rg},
+			rs		{ L"rs",	L"[m] radius of the Sun"							, rn_rs},
+			sb		{ L"sb",	L"[W/m^2 K^4] Stefan–Boltzmann constant"			, rn_sb},
+			u		{ L"u",	L"L[kg] atomic mass unit (m(C12}/12}"					, rn_u};
+
+void RealNumber::_RoundConstants(int maxLength)
+{
+	// zero to 10 has just one valid digit, no need to modify them, ever
+	e		= rnE.Rounded(maxLength);
+	pi		= rnPi.Rounded(maxLength);
+	twoPi	= rn2Pi.Rounded(maxLength);
+	piP2	= rnPiP2.Rounded(maxLength);
+	sqrt2	= rnSqrt2.Rounded(maxLength);
+	rsqrt2	= rnPSqrt2.Rounded(maxLength);
+	sqrt3	= rnSqrt3.Rounded(maxLength);
+	sqrt3P2	= rnSqrt3P2.Rounded(maxLength);
+	ln10	= ln10.Rounded(maxLength);
+	ln2		= ln2.Rounded(maxLength);
+	rln10	= pln10.Rounded(maxLength);
+	rln2	= pln2.Rounded(maxLength);
+	// constants		
+	au.value =  rn_au.Rounded(maxLength);			// astronomical unit
+	c.value =  rn_c.Rounded(maxLength);			// speed of light in vacuum
+	eps0.value =  rn_eps0.Rounded(maxLength);		// vacuum electric permittivity
+	fsc.value =  rn_fsc.Rounded(maxLength);		// fine-structure constant (e^2/ (2 eps0 h c )
+	G.value =  rn_G.Rounded(maxLength);			// Newtonian constant of gravitation
+	gf.value =  rn_gf.Rounded(maxLength);			// average g on Earth (9.81 m/s^2)
+	h.value =  rn_h.Rounded(maxLength);			// Planck constant
+	hbar.value =  rn_hbar.Rounded(maxLength);		// reduced Planck constant
+	kb.value =  rn_kb.Rounded(maxLength);			// Boltzmann constant
+	kc.value =  rn_kc.Rounded(maxLength);			// Coulomb constant (1/ (4 pi eps0)
+	la.value =  rn_la.Rounded(maxLength);			// Avogadro constant
+	me.value =  rn_me.Rounded(maxLength);			// electron mass
+	mf.value =  rn_mf.Rounded(maxLength);			// mass of the Earth
+	mp.value =  rn_mp.Rounded(maxLength);			// proton mass
+	ms.value =  rn_ms.Rounded(maxLength);			// mass of the Sun
+	mu0.value =  rn_mu0.Rounded(maxLength);		// vacuum magnetic permeability 
+	qe.value =  rn_qe.Rounded(maxLength);			// elementary charge
+	rfsc.value =  rn_pfsc.Rounded(maxLength);		// reciprocal of afs (approx 137) 
+	rf.value =  rn_rf.Rounded(maxLength);			// radius of the Earth
+	rg.value =  rn_rg.Rounded(maxLength);			// molar gas constant R (approx 8.31 J/mol/K)
+	rs.value =  rn_rs.Rounded(maxLength);			// radius of the Sun
+	sb.value =  rn_sb.Rounded(maxLength);			// Stefan–Boltzmann constant
+	u.value   =  rn_u.Rounded(maxLength);			// atomic mass unit
+}
+
+//--------------------------------------
+
+RealNumber RealNumber::operator=(const RealNumber& rn) 
+{ 
+	if (&rn != this)	// else same variables: nothing to do
+	{
+		_numberString = rn._numberString;
+		_sign = rn._sign;
+		_exponent = rn._exponent;
+		_maxExponent = rn._maxExponent;
+	}
+	return *this; 
+}
+
+RealNumber RealNumber::operator=(RealNumber&& rn) noexcept
+{
+	if (&rn != this)	// else same variables: nothing to do
+	{
+		_numberString = rn._numberString;
+		_sign = rn._sign;
+		_exponent = rn._exponent;
+		_maxExponent = rn._maxExponent;
+		rn._SetNull();
+	}
+	return *this;
+}
+
+RealNumber RealNumber::operator=(const SmartString& rn)
+{
+	_numberString = rn;			// using the actual locale
+	_FromNumberString();
+	return *this;
+}
+
+RealNumber RealNumber::operator=(double value) // usually will loose accuracy as double is just 64bits long
+{
+	// special case for 0
+	if (!value)
+	{
+		_exponent = 0;
+		_sign = 1;
+		_numberString = chZero;
+		return *this;
+	}
+
+	_sign = value > 0 ? 1 : -1;
+	value = std::abs(value);
+	_numberString = std::to_string(value);	// will have a decimal point or equivalent
+	//value = qAbs(value);
+	//QString s;
+	//s.setNum(value, 'E', 15);
+
+	size_t xExp = _numberString.find_first_of(SCharT('E')); // < > 0, 
+	_exponent = std::stol(_numberString.mid(xExp + 1).ToWideString()) + 1;	// format is 9.999999999999999E00 and we use 0.9999999999999999
+
+	size_t precision = xExp - _decPoint.Unicode();	
+	assert(precision > 1);
+	// format X.YYYYYY
+	for (size_t i =  2; i < xExp; ++i)
+		_numberString[i - 1] = _numberString.at(i);
+	_numberString.erase(precision);	// drop exponent and duplicated last digit 
+	return *this;
+}
+
+RealNumber& RealNumber::operator++()
+{
+	if (IsNaN() || IsInf())
+		return *this;
+	RealNumber r("1");
+	operator+=(r);
+	return *this;
+}
+
+RealNumber RealNumber::operator++(int)
+{
+	RealNumber r(*this);
+	(void)operator++();
+	return r;
+}
+
+RealNumber& RealNumber::operator--()
+{
+	if (IsNaN() || IsInf())
+		return *this;
+	RealNumber r("1");
+	operator-=(r);
+	return *this;
+}
+
+RealNumber RealNumber::operator--(int)
+{
+	RealNumber r(*this);
+	(void)operator--();
+	return r;
+}
+
+bool RealNumber::operator==(const RealNumber& rn) const
+{ 														   // works when both 'Inf' too
+	return !IsNaN() && !rn.IsNaN() &&  _sign == rn._sign &&_numberString == rn._numberString && _exponent == rn._exponent  ; 
+}
+
+bool RealNumber::operator!=(const RealNumber& rn) const { return !operator==(rn); }
+bool RealNumber::operator<(const RealNumber& rn) const
+{
+	if ( (IsNaN() || rn.IsNaN()) || (_sign > rn._sign) || (_sign == rn._sign && IsInf() && !rn.IsInf())	)
+		return false;
+
+	// sign <= rn._sign
+	if( (_sign < rn._sign) || (!IsInf() && rn.IsInf()) || (_sign > 0 && (IsNull() || _exponent < rn._exponent)) || (_sign < 0 && _exponent > rn._exponent))
+		return true;
+	// sign == rn_sign
+	if( (IsNull() && rn._sign > 0) || (_sign > 0 && _exponent > rn._exponent) || (_sign < 0 && _exponent < rn._exponent))
+		return false;
+
+	size_t i;	// exponents and sign are the same so digits matter only
+	size_t len1 = _numberString.length(),
+		   len2 = rn._numberString.length();
+	for (i = 0; i < std::max(_leadingZeros + len1, rn._leadingZeros + len2); ++i)
+	{
+		SCharT ch = _CharAt((int)i), chrn = rn._CharAt((int)i);
+		if (ch != chrn)
+		{
+			if ((_sign > 0 && ch < chrn) || (_sign < 0 && ch > chrn))
+				return true;
+			return false;
+		}
+	}
+	return false;
+}
+bool RealNumber::operator<=(const RealNumber& rn) const
+{
+	return operator==(rn) || !operator>(rn);
+}
+bool RealNumber::operator>(const RealNumber& rn) const 
+{
+	return !operator==(rn) && !operator<(rn);
+}
+bool RealNumber::operator>=(const RealNumber& rn) const
+{
+	return operator==(rn) || !operator<(rn);
+}
+
+/*=============================================================
+ * TASK   : change the number of decimal digits in the number
+ * PARAMS :	countOfDecimalDigits : this many digits after the
+ *				decimal point when the number is used
+ * EXPECTS:
+ * GLOBALS:
+ * RETURNS:
+ * REMARKS: if countOfDecimalDigits >= the number of decimal 
+ *									  digits, nothing happens
+ *			else the number is rounded to have exactly
+ *						countOfDecimalDigits decimal digits
+ *------------------------------------------------------------*/
+
+RealNumber RealNumber::Round(int countOfDecimalDigits)
+{
+	/*
+	*   number 
+	*	Before rounding:
+	*		number	c.D.Digits cc.S.Digits => string  precision _exponent
+	*		99.98								9998,    4,         2
+	*   After rounding:
+	*		number	c.D.Digits cc.S.Digits => string  precision _exponent
+	*		99.9800		 4			6		   9998     4,			2
+	*		99.98		 2			4		   9998		4,			2
+	*		100.0		 1			4	       1        1			3
+	*/
+	_RoundNumberString(_numberString, countOfDecimalDigits, _exponent);
+	return *this;
+}
+RealNumber RealNumber::Rounded(int countOfDecimalDigits) const
+{
+	RealNumber r(*this);
+	return r.Round(countOfDecimalDigits);
+}
+
+SmartString RealNumber::_ToBase(int base, size_t maxNumDigits) const	// base must be >1 && <= 16
+{	
+	// expects remainder to be <one (binary, octal, hexadecimal) < 16
+	RealNumber tmp(*this),
+				divisor(base),
+				remainder;
+	SmartString convertedValue;
+
+	while (!tmp.IsNull() )
+	{
+		tmp = tmp._Div(divisor, remainder);
+		int n = (int)remainder.ToInt64();
+		convertedValue = ByteToSCharT(n) + convertedValue;
+	}
+	if (convertedValue.length() > maxNumDigits)
+		convertedValue = SmartString((_sign < 0 ? "-": "")) + SmartString(INF_STR);
+
+	return convertedValue;
+}
+
+/*=============================================================
+ * TASK   :	convert integer part of string to a b inary number
+ * PARAMS :	format:	whose 'base' member is set to rnbBin
+ * EXPECTS:
+ * GLOBALS:
+ * RETURNS: string representation of binary number
+ * REMARKS:	-the number may be negative or positive and unless
+ *			the 'bSignedBinOrHex' is set to true the string
+ *			for a positive and negative number of the same
+ *			abs. value will be diferent
+ *			-the fractional part of the number is discarded
+ *			-methode of conversion is divisions by two and 
+ *			reflecting the remainder
+ *------------------------------------------------------------*/
+ /*=============================================================
+  * TASK   : show integer number in binary form
+  * PARAMS : 'format' - describes the display format
+  * EXPECTS: the number is an integer
+  * GLOBALS:
+  * RETURNS: formatted binary string w. or. w.o. '#' prefix
+  *			 which may also be 'Inf' and 'NaN' in which case 
+  *			'_eFlags' will contain 'rnfUnderflow' for negative and
+  *			'rnfOverFlow' error for positive numbers (TODO)
+  * REMARKS:  - if 'format.thousandSeparator' is set
+  * 		 		use a space as separator between every 4 binary digits
+  *					In this case there may even be leading zeros.
+  * 		  - if 'format.bSignedBinOrHex' is true show the 2's complement
+  * 		 		for negative numbers with as many digits as  
+  * 		 		'format.nFormatSwitchLength'+1
+  * 		 		In this case never use a sign before the number.
+  * 		 		If not set and the number is negative, use a negative sign
+  *			  - signs are always put before the number prefix
+  * 		  - if 'format.mustUseSign' is true and 'format.bSigngnedBinOrHex' is not
+  * 		 		set put a '+' sign before the prefix for positive numbers
+  *------------------------------------------------------------*/
+SmartString RealNumber::ToBinaryString(const DisplayFormat& format) const
+{
+	SmartString bin = _ToBase(2, _maxLength+LengthOverFlow);
+	size_t lenb = bin.length();
+
+	auto addone = [&bin](int i, int &carry)
+	{	// 1's complement and add carry
+
+		bin[i] = bin.at(i) == chZero ? chOne : chZero; // on's complement
+		if (carry)
+		{
+			bin[i] = bin.at(i) == chZero ? chOne : chZero;
+			if (bin.at(i) == chOne)
+				carry = 0;
+		}
+	};
+	if(_eFlags.count(EFlag::rnfInvalid))	
+		bin = INF_STR;
+
+	if (bin == INF_STR)
+	{
+		// const ! _eFlags.insert(_sign < 0 ? EFlag::rnfOverflow : EFlag::rnfOverflow);
+		bin = SmartString(_sign < 0 ? "-": (format.mustUseSign ? "+": "")) + bin;
+		return bin;
+	}
+	if (bin == NAN_STR)
+		return bin;
+
+	if (_sign < 0 && !format.bSignedBinOrHex)	// then use 2's complement
+	{
+			// 2's complement
+		int carry = 1;
+		for (int i = (int)lenb - 1; i >= 0; --i)
+			addone(i, carry);
+	}
+
+	size_t n = lenb;
+
+	if (!format.strThousandSeparator.empty())
+		n += (lenb > 4 ? lenb / 4 : 0) + 4 - (lenb % 4);
+	if ( format.bSignedBinOrHex && (format.mustUseSign || _sign < 0) )
+		++n;
+	if (format.useNumberPrefix)		// '#'
+		++n;
+
+	SmartString res = SmartString(n, chSpace) ;
+	int pos = 0;
+	if (format.bSignedBinOrHex)
+	{
+		if (format.mustUseSign)
+			res[pos++] = (_sign < 0 ? '-' : '+');
+		else if (_sign < 0)
+			res[pos++] = '-';
+	}
+	if (format.useNumberPrefix)
+		res[pos++] = '#';
+	if (format.strThousandSeparator.empty())
+		res.replace(pos, lenb, bin);
+	else		// separate every 4 digits by a space
+	{
+		size_t i = 0;	// position in result number
+		for (	; i < (4 - lenb % 4); ++i)
+			res[pos++] = chZero;
+		for (size_t j = 0; j < lenb; ++j)
+		{
+			res[pos++] = bin.at((int)j);
+			++i;
+			if (i == 4)
+			{
+				++pos;	// space already there
+				i = 0;
+			}
+		}
+	}
+	return res;
+}
+
+/*=============================================================
+  * TASK   : show integer number in octal base
+  * PARAMS : 'format' - describes the display format
+  * EXPECTS: the number is an integer
+  * GLOBALS:
+  * RETURNS: formatted octal string that always starts with a 0
+  *			 which may also be 'Inf' and 'NaN' in which case
+  *			'_eFlags' will contain 'rnfUnderflow' for negative and
+  *			'rnfOverFlow' error for positive numbers (TODO)
+  * REMARKS:  - if 'format.thousandSeparator' is set
+  * 		 		use a space as separator between every 3 octal digits
+  * 		  - if 'format.bSignedBinOrHex' is true show the 8's complement
+  * 		 		for negative numbers with as many digits as
+  * 		 		'format.nFormatSwitchLength'+1
+  * 		 		In this case never use a sign before the number.
+  * 		 		If not set and the number is negative, use a negative sign
+  * 		  - if 'format.mustUseSign' is true and 'format.bSigngnedBinOrHex' is not
+  * 		 		set put a '+' sign before the number for positive numbers
+ *------------------------------------------------------------*/
+SmartString RealNumber::ToOctalString(const DisplayFormat& format) const
+{
+	SmartString oct = _ToBase(8, _maxLength+LengthOverFlow); 
+	oct = SmartString("0")+ oct;
+	size_t leno = oct.length();
+#if 0 
+	auto addone = [&oct](int i, int& carry)
+	{	// 1's complement and add carry
+
+		oct[i] = ('7' - oct.at(i).Unicode()) + '0'; // 7's complement
+		if (carry)
+		{
+			oct[i] = oct.at(i).Unicode() + 1;
+			if (oct.at(i).Unicode() == '8')
+				oct[i] = '0';
+			else
+				carry = 0;
+		}
+	};
+#endif
+	if (_eFlags.count(EFlag::rnfInvalid))
+		oct = INF_STR;
+
+	if (oct == INF_STR)
+	{
+		// const ! _eFlags.insert(_sign < 0 ? EFlag::rnfOverflow : EFlag::rnfOverflow);
+		oct = SmartString(_sign < 0 ? "-": (format.mustUseSign ? "+": "")) + oct;
+		return oct;
+	}
+	if (oct == NAN_STR)
+		return oct;
+
+	size_t n = leno;	// we need this many places in 'oct'
+
+	if (!format.strThousandSeparator.empty())
+		n += (leno > 3 ? leno / 3 : 0) - 1 + (leno % 3 ? 2 - (leno % 3) :0 );
+	if (format.bSignedBinOrHex && (format.mustUseSign || _sign < 0))
+		++n;
+
+	SmartString res = SmartString(n, chSpace);
+	int pos = 0;
+	if (format.bSignedBinOrHex)
+	{
+		if (format.mustUseSign)
+			res[pos++] = (_sign < 0 ? '-' : '+');
+		else if (_sign < 0)
+			res[pos++] = '-';
+	}
+	// 	not used for octal:
+	//if (format.useNumberPrefix)
+	//	res[pos++] = '#';
+	if (format.strThousandSeparator.empty())
+		res.replace(pos, leno,oct);
+	else		// separate 3 digits groups by a space
+	{
+		res[pos++] = chZero;	// octal: first digit is 0
+		size_t i = 3 - (leno-1)%3;	// position in source number % 3
+		for (size_t j = 1; j < leno; ++j)	// leading 0 already printed
+		{
+			if (i == 3)
+			{
+				++pos;	// space already there
+				i = 0;
+			}
+			res[pos++] = oct.at((int)j);
+			++i;
+		}
+	}
+	return res;
+}
+
+/*=============================================================
+  * TASK   : show integer number in hexadecimal base
+  * PARAMS : 'format' - describes the display format
+  * EXPECTS: the number is an integer
+  * GLOBALS:
+  * RETURNS: formatted hex. string that may or may not start with 0x
+  *			 which may also be 'Inf' and 'NaN' in which case
+  *			'_eFlags' will contain 'rnfUnderflow' for negative and
+  *			'rnfOverFlow' error for positive numbers (TODO)
+  * REMARKS:  - if format is not IEEEFormat::rntHexNotIEEE
+  *					and the number is larger/smaller than the
+  *					largest/smallest IEEE number (float or double)
+  *					then "BADSmartString("is printed
+  *			  - NumberFormat::LittleEndian is only used when
+  *					the format is not HexFormat::rnHexNormal
+  *					In all other cases it reveses the byte order
+  *			  - if 'format.thousandSeparator' is set
+  * 		 		use a space as separator between every 2 hexa digits
+  * 		  - if 'format.bSignedBinOrHex' is true show the 16's complement
+  * 		 		for negative numbers with as many digits as
+  * 		 		'format.nFormatSwitchLength'+1
+  * 		 		In this case never use a sign before the number.
+  * 		 		If not set and the number is negative, use a negative sign
+  *			  - signs are always put before the number prefix
+  * 		  - if 'format.mustUseSign' is true and 'format.bSigngnedBinOrHex' is not
+  * 		 		set put a '+' sign before the number for positive numbers
+ *------------------------------------------------------------*/
+SmartString RealNumber::ToHexString(const DisplayFormat &format) const
+{
+	SmartString hex = _ToBase(16, _maxLength+LengthOverFlow);
+
+	if (format.trippleE != IEEEFormat::rntHexNotIEEE)
+	{
+		LDouble ld = ToLongDouble();
+		float f = (float)ld;
+		double d = (double)ld;
+		char* p = (char*)&d;
+		size_t size = 8;	// in bytes for IEEE754Double
+		if (format.trippleE == IEEEFormat::rntHexIEEE754Single)
+		{
+			f = (float)ld;
+			p = (char*)&f;
+			size = 4;
+		}
+
+		for (size_t i = 0; i < size; ++i)
+			hex += ToHexByte(*(p++));
+	}
+
+	auto addone = [&hex](int i, int& carry)
+	{	
+		// 15's complement and add carry, used when 'format.mustUseSign'
+		uint8_t n = SCharTToByte(hex.at(i));
+		n = 15 - i;
+		if (carry)
+		{
+			n += + 1;
+			if (n == 16)
+				n = 0;
+			else
+				carry = 0;
+		}
+		hex[i] = ByteToSCharT(n);
+	};
+	if (_eFlags.count(EFlag::rnfInvalid))
+		hex = INF_STR;
+
+	size_t lenh = hex.length();
+	if (_sign < 0 && !format.bSignedBinOrHex)	// then use 16's complement
+	{
+		// 16's complement
+		int carry = 1;
+		for (int i = (int)lenh - 1; i >= 0; --i)
+			addone(i, carry);
+	}
+
+	if (hex == INF_STR)
+	{
+		// const ! _eFlags.insert(_sign < 0 ? EFlag::rnfOverflow : EFlag::rnfOverflow);
+		hex = SmartString(_sign < 0 ? "-": (format.mustUseSign ? "+": "")) + hex;
+		return hex;
+	}
+	if (hex == NAN_STR)
+		return hex;
+
+	// hex is not inf or nan
+	size_t n = lenh,			// we need at least this many places in 'hex'
+		   lenhMod4 = lenh % 4,	
+		   lenhMod8 = lenh % 8;
+
+	size_t chunkLength = _maxLength + LengthOverFlow;
+		// - lambda for little endian reversal -
+	auto makeLittleEndian = [&]()
+		{
+			for (size_t i = 0; i < lenh / 2; i += 2)
+			{
+				std::swap(hex[i], hex[lenh - i - 2]);
+				std::swap(hex[i + 1], hex[lenh - i - 2 + 1]);
+			}
+		};
+
+	if (format.hexFormat == HexFormat::rnHexNormal)	// not using the strThousandSeparator, but there 
+	{
+		if (format.littleEndian)
+		{
+			if(lenh & 1)			// no delimiters but to reverse byte order we must have even digits
+			{
+				hex = SmartString("0")+ hex;
+				++lenh;
+				++n;
+			}
+			makeLittleEndian();
+		}
+	}
+	else
+	{														// are many possibilities
+		switch (format.hexFormat)
+		{
+			case HexFormat::rnHexByte:  chunkLength = 2; 		  // 2BDC546291F4B => 02 BD C5 46 29 1F 4B
+				if (lenh & 1)	// odd number of hex digits
+				{
+					hex = SmartString("0")+ hex;
+					++lenh;
+					++n;
+				}
+				break;
+			case HexFormat::rnHexWord:  chunkLength = 4; 
+				if (lenhMod4)
+				{
+					hex = SmartString(4 - lenhMod4, SCharT('0')) + hex;
+					n = lenh += 4-lenhMod4;
+				}
+				//if (format.littleEndian )
+				//{
+				//	hex = SmartString(lenh% 4, '0') + hex;
+				//}
+				break;
+			case HexFormat::rnHexDWord: chunkLength = 8; 
+				if (lenhMod8)
+				{
+					hex = SmartString(8 - lenhMod8, SCharT('0')) + hex;
+					n = lenh += 8-lenhMod8;
+				}
+				break;
+			default: break;
+		}
+		if(chunkLength > 0)	// lenh is multiple of chunkLength and there are delimiters
+			n += (lenh > chunkLength ? (lenh / chunkLength - 1) : 0);		// this many
+
+		if (format.littleEndian)	// then reverse byte order
+			makeLittleEndian();
+	}
+	if (format.bSignedBinOrHex && (format.mustUseSign || _sign < 0))
+		++n;
+	if (format.useNumberPrefix)		// '0x'
+		++n,++n;
+
+	SmartString res = SmartString(n, chSpace);
+	int pos = 0;
+	if (format.bSignedBinOrHex)
+	{
+		if (format.mustUseSign)
+			res[pos++] = (_sign < 0 ? '-' : '+');
+		else if (_sign < 0)
+			res[pos++] = '-';
+	}
+	if (format.useNumberPrefix)
+	{
+		res[pos++] = '0';
+		res[pos++] = 'x';
+	}
+	if (format.hexFormat == HexFormat::rnHexNormal || chunkLength > lenh)
+		res.replace(pos, lenh, hex);
+	else	// separate every 'chunkLength'-th digits by a space
+	{
+		//size_t i = 0;	// position in result number
+		//for (; i < (chunkLength - (lenh % chunkLength)); ++i)
+		//	res[pos++] = chZero;
+		for (size_t i=0, j = 0; j < lenh; ++j)
+		{
+			res[pos++] = hex.at((int)j);
+			++i;
+			if (i == chunkLength)
+			{
+				++pos;	// space already there
+				i = 0;
+			}
+		}
+	}
+	return res;
+}
+
+/*=============================================================================
+ * TASK   : create a string representation of the RealNumber
+ * PARAMS :	format (I)			 : how to display
+ *									point?
+ * EXPECTS:	format is rnfNormal, rnfSci or rnfEng. No text format allowed
+ * GLOBALS:
+ * RETURNS: number as a SmartString  that may contain exponent after an 'E'
+ * REMARKS:	- for non bin, oct. or hex. output when	the format is rnfNormal
+ *				* and all digits are requested (format.decDigits < 0)
+ *				  then if leading zeros are present(e.g. 0.000123)
+ *				  they are discarded and the format changes to rnfSci
+ *				* if format.decDigits > 0 leading zeros are kept
+ *			- used fields of format
+ *				format.strThousandSeparator	: if not empty put this string between groups of 3 digits
+ *				format.decDigits 			: # of digits after the decimal point -1: all
+ *				format.nFformatSwitchLength	: switch to scientific notation if the length
+ *									of the converted string w.o. the
+ *									exponent is greater than this
+ *				format.useFractionSeparator : use separator character right of the decimal 
+ *				format.mainFormat			: normal or sci/eng
+ *				format.expFormat			: 
+ *			- the exponent points to the position of the decimal sign
+ *----------------------------------------------------------------------------*/
+SmartString RealNumber::ToDecimalString(const DisplayFormat &format) const
+{
+	SmartString result,				// rounded decimal representation with sign, delimiters, decimal point and exponent
+				roundedString;		// rounded decimal string w.o. delimiters, decimal point or exponent leading or trailing zeros
+	int exp = _exponent;			// position of the decimal point, < 0 => left of number
+
+	DisplayFormat fmt = format;		// may change
+	RealNumber r(*this);			// so to keep ourselves const
+
+	// too many integer digits or leading zeros or too large/small number?
+	if (fmt.mainFormat == NumberFormat::rnfNormal)
+	{
+		if (std::abs(exp) > (int)fmt.nFormatSwitchLength || ( (exp <0 && fmt.decDigits >=0) || - exp > fmt.decDigits || exp <= -(int)_maxLength))
+			fmt.mainFormat = NumberFormat::rnfSci;
+	}
+
+	int nIntegerDigitsI, // initial value before rounding
+		nIntegerDigits ; //	before an after rounding
+	switch (fmt.mainFormat)
+	{
+		case NumberFormat::rnfNormal:
+			nIntegerDigitsI = nIntegerDigits  = exp;	// may be negative!
+			roundedString = _RoundNumberString(r._numberString, fmt.decDigits, nIntegerDigits, false);
+			exp += (nIntegerDigits - nIntegerDigitsI);	// might have been increased by 1
+			break;
+		case NumberFormat::rnfSci:
+			//  "9999SmartString(" exp = 0 => 0.9999      =>9.999E-1
+			//                1    9.999       =>9.999E0
+			//                2    99.99       =>9.999E1
+			//                -1   0.09999     =>9.999E-2
+			//				  -5   0.000009999 =>9.999E-6
+			nIntegerDigitsI = nIntegerDigits  = 1;
+			--exp;
+			roundedString = _RoundNumberString(r._numberString, fmt.decDigits, nIntegerDigits, false);
+			exp += (nIntegerDigits - nIntegerDigitsI);	// might have been increased by 1
+			nIntegerDigits = 1;
+			break;						
+		case NumberFormat::rnfEng:
+			//   #			e				n	E	e/3		e%3		n=3+e%3		E=(e/3-1)*3
+			//  0.0000001	-6	  100E-9	3	-9	 -2		-0		  3				  -6
+			//  0.000001	-5	    1E-6	1	-6	 -1		-2		  1				  -6
+			//  0.00001		-4	   10E-6	2	-6	 -1		-1		  2				  -6
+			//  0.0001		-3	  100E-6	3	-6	 -1		 0		  3				  -6
+			//  0.001		-2	    1E-3	1	-3	  0		-2		  1				  -3
+			//  0.01		-1	   10E-3	2	-3	  0		-1		  2				  -3
+			//  0.1 		 0	  100E-3    3	-3	  0		 0		  3				  -3
+			// ------------------------------------------------	n=e%3 ? e%3 : 3	 E = [(e-1)/3]*3
+			//  1.			 1	    1E 0	1	 0	  0		 1		  1				  0
+			// 10.			 2	   10E 0	2	 0	  0		 2		  2				  0
+			// 100.			 3	  100E 0	3	 0	  1		 0		  3				  0
+			// 1000.		 4	    1E 3	1	 3	  1		 1		  1				  1
+			// 10000.		 5	   10E 3	2	 3	  1		 2		  2				  1
+			{
+				nIntegerDigitsI = nIntegerDigits = (exp <= 0 ? (3 + exp % 3) : (exp % 3 ? exp % 3 : 3));
+				int nRoundPos = fmt.decDigits;
+				roundedString = _RoundNumberString(r._numberString, nRoundPos, nIntegerDigits, false);
+				exp = (exp <= 0 ? (exp / 3 - 1) : (exp - 1) / 3) * 3;
+				if (nIntegerDigits != nIntegerDigitsI)
+				{
+					exp += (nIntegerDigits / 3) * 3;
+					nIntegerDigits = nIntegerDigits % 3;
+				}
+			}
+			break;
+
+		case NumberFormat::rnfText:
+		default:
+			break;
+	}
+
+	// at this point roundedDtring contains the whole displayable number w.o. sign or exponent
+	// or leading or trailing zeros, so it may be empty (all zeros), may contain the integer part
+	// and at most so many non zero decimal digits as fit into format.decDigits
+
+	if (roundedString.empty())
+	{
+		if (_sign < 0 || (_sign > 0 && fmt.mustUseSign))
+			result = SmartString((_sign < 0 ? "-0" : " + 0"));
+		else
+			result = SmartString("0");
+		if (fmt.decDigits > 0)
+			result += SmartString(".")+ SmartString(fmt.decDigits, chZero);
+		return result;
+	}
+	else if (result.at(0) == SCharT('N'))	// NaN
+		return result;
+	else if (result.at(0) == SCharT('I'))	// Inf
+	{
+		if (_sign < 0 || (_sign > 0 && fmt.mustUseSign))
+			result = SmartString(_sign < 0 ? "-" : "+") + result;
+		return result;
+	}
+
+	size_t leadingZerosInFractionalPart = (nIntegerDigits < 0 ? -nIntegerDigits : 0);
+	if (fmt.decDigits >= 0 && (int)leadingZerosInFractionalPart > fmt.decDigits)	// number is < 1
+	{
+		result = SmartString("0.")+ SmartString(fmt.decDigits, chZero);
+		return result;
+	}
+
+	// from here on either all digits are required or not
+	// In both cases the number of the decimal digits must include digits from 'roundedString'
+
+	// Integer part:
+	size_t lns = _sign < 0 ? 1 : 0,		  // size for negative sign character
+		lnsU = fmt.mustUseSign ? 1 : lns; // either negative sign or both 
+				// integer part with thousand delimiters  even w.o. the thousand delimiter this
+				// may be larger than the length of 'tmp' when there are trailing zeros
+	size_t	lenI = nIntegerDigits <= 0 ? 0 : nIntegerDigits,		// may be 0: then no characters from the number string is integer
+				// length of thousand delimiters
+			lenThDelim = lenI > 3 ? (fmt.strThousandSeparator.empty() ? 0 : ((static_cast<uint64_t>(nIntegerDigits)) / 3 * fmt.strThousandSeparator.length())) : 0;
+
+	size_t lenFrac = roundedString.length();	// all digits
+						// get number of digits for fractional part from the roundedString
+	if (lenFrac >= lenI)						// if there are integer digits
+		lenFrac -= lenI;						// then there are no leading zeros in fractional part which are not inside 'roundedString'
+	else
+		lenFrac = 0;							// all digits are integer digits
+
+	size_t lenFracDelim = 0;					// length of fractional delimiter spaces (no other delimiters possible)
+	if (lenFrac)								// but only used if there are fractional digits
+	{
+		if (fmt.decDigits >= 0)					// and just some of them must be displayed
+		{
+			// ????  if (lenFrac && lenFrac <= lenFrac)	// not just integer digits (lenI ==0 => no integer digits)
+			//	lenFrac -= lenI;				// fractional digits
+			//else
+			//	lenFrac = 0;
+
+			if ((int)(leadingZerosInFractionalPart + lenFrac) >= fmt.decDigits)	
+				lenFrac = fmt.decDigits - leadingZerosInFractionalPart;
+			lenFracDelim = (static_cast<size_t>(fmt.decDigits) - 1) / 3;
+		}
+		else									// all fractional digits are displayed
+			lenFracDelim = fmt.useFractionSeparator ?  (leadingZerosInFractionalPart + lenFrac - 1) / 3 : 0;
+	}
+
+	SmartString strExponent = _FormatExponent(fmt, exp);
+	// length of exponent string
+	size_t lenE = (fmt.mainFormat == NumberFormat::rnfNormal || fmt.mainFormat == NumberFormat::rnfText) ? 0 : strExponent.length();
+	
+	int ldot = 0;			// suppose no decimal character
+	if (lenFrac)
+		ldot = 1;			// length of required decimal character
+			   // resize result to have all part of number including trailing zeros and exponent
+	size_t lenIVisible = (lenI ? lenI : 1);
+	result.resize(lnsU + lenIVisible + lenThDelim + ldot  + lenFrac + lenFracDelim + lenE, chSpace);
+
+	if (lns)
+		result[0] = SCharT('-');
+	else if (lnsU)
+		result[0] = SCharT('+');
+	size_t posInResult = _FormatIntegerPart(fmt, roundedString, lnsU, lenI, result);	// !lengthI => single '0'
+		
+	if (lenFrac)
+	{
+		result[posInResult] = _decPoint;
+		posInResult += ldot;
+		posInResult = _FormatFractionalPart(fmt, roundedString, leadingZerosInFractionalPart, lenI,	posInResult, lenFrac, result);
+	}
+	if(lenE)
+		result.replace(posInResult, lenE, strExponent);
+
+	return result;
+}
+
+size_t RealNumber::_FormatIntegerPart(const DisplayFormat fmt, const SmartString& snum, size_t destPos, size_t size, SmartString& result) const
+{			
+	if (!size)	// no integer digits given
+	{
+		result[destPos] = chZero;
+		return ++destPos;
+	} 
+			// first digit in source
+	// expects: result has enough space
+	// "1234"	=> 12 340	
+	// pos = 0, size = 5
+	//  src		size-src	%3		dest	s[src]  result[dest]
+	//  0		5			2		 0		 '1,		'1,
+	//	1		4			1		 1		 '2,		'2,
+	//	2		3			0		 2		 '3'		'S'
+	//	2		3			0		 3		 '3'		'E'
+	//	2		3			0		 4		 '3'		'P'
+	//  2       3           0        5		 '3'		'3'
+	//	3		2			2		 6		 '4'		'4'
+	//	4		1			1		 7		 '0'		'5'
+	size_t lsep = fmt.strThousandSeparator.length();
+	result[destPos++] = snum.at(0, chZero);	// no leading zeros are possible, but trailing zeros are OK
+	for (size_t srcPos = 1 ; srcPos < size; ++srcPos, ++destPos)
+	{
+		if (lsep && size > 3 && (size - srcPos) > 2 && ((size - srcPos) % 3 == 0) )
+		{
+			result.replace(destPos, lsep, fmt.strThousandSeparator);
+			destPos += lsep;
+		}
+		result[destPos] = snum.at(srcPos, chZero);	// no leading zeros are possible, but trailing zeros are OK
+	}
+	return destPos;
+}
+	// call only when there is a fractional part destPos is AFTER the decimal character
+/*=============================================================
+ * TASK   : format rounded fractional part
+ * PARAMS :	fmt - formatting
+ *			snum - source string of digits w. no decimal points
+ *					and no leading zeros. May be empty.
+ *			leadingZeros - length of string of zeros after the decimal point
+ *					>0 only when no integer part
+ *			srcPos	- position in src = length of integer part
+ *			destpos - start position in 'result'
+ *			size	- # of digits in fraction in src
+ *					does not include the exponent
+ *			result	- existing string that is long enough to put the result in
+ *					filled with space characters
+ * EXPECTS: result already contains the integer part, the decimal character
+ *			and the leading zeros of a fraction
+ * GLOBALS:
+ * RETURNS: nothing, result is filled in 
+ * REMARKS: result may contain trailing zeros
+ *------------------------------------------------------------*/
+size_t RealNumber::_FormatFractionalPart(const DisplayFormat fmt, const SmartString& snum, size_t leadingZeros, size_t srcPos, size_t destPos, size_t size, SmartString& result) const
+{			
+	size_t si = 0;	  // source index only used if decimal delimiters are set delimiters are calculated for 'd'
+	if (leadingZeros) // then all of them must go into the string (when accuracy was lower we already finished)
+	{
+		if (fmt.useFractionSeparator)
+		{
+			size_t i = 0,	// position of the zero string
+				//n = 0,		// number of spaces
+				l;			// number of zeros
+			--destPos;	// yes: ldot now 1, but maybe more than one character for decimal point is possible
+			while (i < leadingZeros && i < size)
+			{
+				++destPos;	// for space after 3 digit of 0s
+				l = leadingZeros - i > 3 ? 3 : (int)leadingZeros - i;
+				result.replace(destPos, l, SmartString(l, chZero));
+				i += 3;
+				destPos += l;
+				si += l;
+			}
+		}
+		else
+		{
+			result.replace(destPos, leadingZeros, SmartString(leadingZeros, chZero));
+			destPos += leadingZeros;
+		}
+		size -= leadingZeros;
+	}
+	for (  ; si < size && destPos < result.length(); ++srcPos, ++destPos, ++si)
+	{
+		if (fmt.useFractionSeparator && si && si % 3 == 0)
+			++destPos;			// there is already a space character in result but the space is set in the string: no overflow possible
+		result[destPos] = snum.at((int)srcPos, chZero);
+	}
+	return destPos;
+}
+
+SmartString RealNumber::_FormatExponent(const DisplayFormat fmt, int exp) const
+{
+	SmartString s = SmartString(std::to_string(exp));
+	switch (fmt.expFormat)
+	{
+		case ExpFormat::rnsfE:
+			s = SmartString("E")+ s;
+			break;
+		case ExpFormat::rnsfSciHTML:
+			s = SmartString("x10<sup>")+ s + SmartString("</sup>");
+			break;
+		case ExpFormat::rnsfSciTeX:
+			s = SmartString("\\times10^(") + s + SmartString(")");	// or "\\cdot10^("+s+")"
+			break;
+	}
+
+	return s;
+}
+
+
+SmartString RealNumber::ToTextString(const DisplayFormat& format, TextFormat dtf) const
+{
+	DisplayFormat fmt(format);
+	fmt.useNumberPrefix = false;
+	fmt.hexFormat = HexFormat::rnHexNormal;
+	fmt.bSignedBinOrHex = false;
+
+	RealNumber r(*this);
+	r._exponent = (int)_numberString.length();	// make integer number
+
+	// use all digits even with non-integers and forget exponent
+	SmartString strh(r.Round((int)_maxLength)._ToBase(16, _maxLength)),
+				str;
+	size_t len = strh.length(), start=0;
+	SCharT ch;
+	if (len & 1)	// odd number of digits
+	{
+		start = 1;
+		ch = (char)0xFF;
+		str.push_back(ch);
+	}
+	for (size_t i = start; i < len; i += 2)
+	{
+		ch = (SCharTToByte(strh[i]) << 4) + SCharTToByte(strh[i + 1]);
+		str.push_back(ch);
+	}
+	switch (dtf)
+	{ 
+		case TextFormat::rntfUtf8:
+			//!! TODO
+			break;
+		case TextFormat::rntfUtf16:
+			//!! TODO
+			break;
+		default:
+			break;
+	}
+	return str;
+}
+
+LDouble RealNumber::ToLongDouble()	const
+{
+	if (IsNaN())
+		return nanl("");
+	if (IsInf())
+		return _sign * INFINITY;
+	// overflow?
+	static RealNumber mx(LDBL_MAX), mn(LDBL_MIN);
+	if (mx < *this)
+		return nanl("");
+	if( mn > *this)
+		return 0.0;
+
+	DisplayFormat format;
+	format.mainFormat = NumberFormat::rnfSci;
+	format.decDigits = 18;
+	format.nFormatSwitchLength = 16;
+
+	return strtod(ToDecimalString(format).ToUtf8String().c_str(),nullptr );
+}
+
+int64_t RealNumber::ToInt64() const
+{
+	// get the integer part
+	RealNumber r = Int(), 
+			   lx((int64_t)LLONG_MAX) ;
+	if (r.Abs() >= lx)
+		throw("Number can't fit in a 64 bit integer");
+
+	return std::strtoll(r.ToString().ToUtf8String().c_str(), nullptr, 10);
+}
+
+RealNumber RealNumber::Int()	const
+{
+	if(_exponent <= 0)
+		return RealNumber(zero);
+	if (_exponent > (int)(_maxLength + LengthOverFlow) )
+		return RealNumber(INF_STR);
+	RealNumber r(*this);
+	if(_exponent <= (int)_numberString.length())
+		r._numberString = _numberString.left(_exponent);
+
+	return r;
+}
+
+bool RealNumber::ConvertToInteger()
+{
+	bool result = true;
+	if (IsNaN() || IsInf())
+		return false;
+	if (_exponent <= 0)
+	{
+		_numberString.clear();
+		_exponent = 1;
+	}
+	else if (_exponent <= (int)_numberString.length())
+	{
+		_numberString.erase(_exponent);
+	}
+	else if (_exponent >= (int)(_maxLength + LengthOverFlow) )
+	{
+		_numberString = INF_STR;
+		result = false;
+	}
+	return result;
+}
+
+RealNumber RealNumber::Frac()	const
+{
+	if (_exponent <= 0)
+		return RealNumber(*this);
+	if (_exponent > (int)(_maxLength+LengthOverFlow) )
+		return RealNumber(INF_STR);
+	RealNumber r(*this);
+	if (r._exponent >= (int)Precision())
+			r._SetNull();
+	else
+	{
+		r._numberString.erase(0, r._exponent);
+		r._exponent = 0;
+	}
+	return r;
+}
+
+RealNumber RealNumber::_PowInt(const RealNumber& power) const // integer powers only but not 0 or 1
+{
+	RealNumber x(*this);
+	if (power.IsEven())
+		x._sign = 1;
+
+	RealNumber n(power);
+
+	if (power== one )			// when "+1"
+		return x;
+	else if(n._sign < 0)		// when negative
+	{
+		x = one / x;
+		n._sign = -n._sign;
+	}
+	// special case:  (10^x)^power = 10^(x*power)
+	if (_numberString == SmartString("1"))	
+	{
+		return TenToThePowerOf((_exponent - 1) * std::stoi(power._numberString.ToUtf8String()));
+	}
+	/* "exponentiate by squaringSmartString("algorithm
+	* wikipedia
+	*   if n < 0 then
+	*		x := 1 / x;
+	*		n := -n;
+	*	if n = 0 then return 1
+	*	y := 1;
+	*	while n > 1 do
+	*		if n is odd then
+	*			y := x * y;
+	*		x := x * x;
+	*		n := floor(n / 2);
+	*	return x * y
+	  */
+	RealNumber y(rnOne);
+	if (n.Sign() < 0)
+	{
+	}
+	while (n > rnOne)
+	{
+		if (n.IsOdd())
+			y = x * y;
+		x = x * x;
+		n = (n / rnTwo).Int();	// == floor
+	}
+	return x * y;
+}
+RealNumber RealNumber::Pow(const RealNumber &power) const
+{
+	if (!IsValid())
+		return *this;
+	if (!power.IsValid())
+		return power;
+	if (power.IsNull())
+		return IsNull() ? NaN : rnOne;	// 0^0 is undefined
+	if (IsNull())							// 0^x = 0
+		return *this;
+
+	if (power == rnOne)				// x^1 = x
+		return *this;
+	if (power == -rnOne)			// x^(-1) = 1/x
+		return one / *this;
+
+	if (_sign < 0 && (!IsInt()))	// maybe if we could detect r = 1/n, where n is odd
+		return NaN;					// then we could return the corresponding root //!!TODO
+
+	RealNumber	rnIntPart  = power.Int(),
+				rnFracPart = power.Frac();
+
+
+	if (!rnIntPart.IsNull())
+		rnIntPart = _PowInt(rnIntPart);
+	else
+		rnIntPart = rnOne;
+	// fractional part of exponent
+	if (rnFracPart.IsNull())
+		rnFracPart = rnOne;
+	else if (*this != rnE)
+		rnFracPart = exp(rnFracPart * ln(*this));
+	else		// e^x, where  -1<x<1
+		rnFracPart = exp(rnFracPart);
+	return rnIntPart * rnFracPart;
+}
+
+/*=============================================================
+ * TASK   : Add 2 numbers and return the result
+ * EXPECTS:
+ * PARAMS :	*this,	- left summand
+ *			rnOther - right summand  these may have different precisions
+ *			negateOther - used for subtraction
+ * GLOBALS:
+ * RETURNS: resulting number may contain fewer or more significant digits
+ * REMARKS:	- if (after possible sign correction) the sign of the two numbers
+ *			differ this will subtract the smaller absolute value 
+ *			number from the larger absolute value number then
+ *			corrects the sign of the result
+ *------------------------------------------------------------*/
+RealNumber RealNumber::_Add(const RealNumber& rnOther, bool negateOther) const
+{
+	if (IsNaN())
+		return *this;
+	if (rnOther.IsNaN())
+		return rnOther;
+
+	RealNumber left(*this);	
+	RealNumber right(rnOther);	
+
+	if (IsInf() || rnOther.IsInf())
+	{
+		if (IsInf() && rnOther.IsInf())
+			return _sign > 0 ? left : (right._sign > 0 ? right : left);
+		else if (!IsInf())
+			return right;
+		else
+			return left;
+	}
+
+	if(negateOther)
+		right._sign = - right._sign;
+
+	int diff = _exponent - rnOther._exponent;
+	if (diff > (int)(_maxLength + LengthOverFlow))
+	{			
+		left._eFlags.insert( EFlag::rnfUnderflow);
+		return left;
+	}
+	else if(diff < -(int)(_maxLength + LengthOverFlow))
+	{
+		right._eFlags.insert( EFlag::rnfUnderflow);
+		return right;
+	}
+
+	if (diff > 0)	// exponent of left is larger
+		right._ShiftSmartString(diff);
+	else if (diff < 0)
+		left._ShiftSmartString(-diff);
+
+	if (left._sign == right._sign)	// both the same sign
+	{
+		_AddStrings(left, right); 
+		return left;
+	}
+	else	// subtraction: always subtract the smaller absolute valued number from the larger absolute valued one
+	{
+		int lsign = left._sign,	// left and right signs will be opposite
+			rsign = right._sign;
+
+		left._sign = right._sign = 1;
+
+		if (right == left)
+		{
+			left._SetNull();
+			return left;
+		}
+		else if (right < left)  
+		{
+			_SubtractStrings(left, right);
+			left._sign = lsign;
+			return left;
+		}
+		else					// negative + positive
+		{
+			_SubtractStrings(right, left);
+			right._sign = rsign;
+			return right;
+		}
+	}
+}
+
+RealNumber RealNumber::_Subtract(const RealNumber& rnOther) const // from this number
+{
+	return _Add(rnOther, true);	// minuend - subtrahend = minuend + (-subtrahend)
+}
+
+RealNumber RealNumber::_Multiply(const RealNumber& rnOther) const
+{
+	RealNumber left(*this);	// adjust number to larger precision
+	left._sign *= rnOther._sign;
+	if (rnOther.IsPure10Power())
+	{
+		left._exponent += rnOther._exponent - 1;
+		return left;
+	}
+
+	RealNumber right(rnOther);	// i.e. when parameter +- diff is positive
+
+	if (IsNaN() || ( IsNull() && !rnOther.IsInf()) )
+		return left;
+	if (rnOther.IsNaN() || (!IsInf() && rnOther.IsNull()))
+		return right;
+
+	if ((IsNull() && rnOther.IsInf()) || (IsInf() && rnOther.IsNull()) )
+	{
+		left._SetNaN();
+		return left;
+	}
+
+	if (IsInf() || rnOther.IsInf())
+	{
+		if (IsInf() && rnOther.IsInf())
+		{
+			left._sign = _sign == rnOther._sign ? 1 : -1;
+			return left;
+		}
+		else if (!IsInf())	
+			return right;
+		else
+			return left;
+	}
+	// here neither of the numbers is Nan or Inf or 0
+	// and both have the same precision
+
+	left._AddExponents(right._exponent);
+	_MultiplyStrings(left, right);
+	return left;
+}
+
+bool RealNumber::__DivideHelper(RealNumber& dividend, const RealNumber& divisor) const
+{
+	if (divisor.IsNull())		// division by 0
+	{
+		dividend._eFlags.insert( EFlag::rnfDivBy0);
+		if (IsNaN() || IsNull() || IsInf())
+		{
+			dividend._SetNaN();
+			return true;
+		}
+		dividend._SetInf();
+		return true;
+	}
+
+	if (divisor.IsInf())	// divide by infinity
+	{
+		dividend._SetNull();
+		return true;
+	}
+	if (divisor.IsNaN())
+	{	dividend._SetNaN();
+		dividend._eFlags.insert( EFlag::rnfInvalid);
+		return true;
+	}
+	return false;
+}
+
+RealNumber RealNumber::_Divide(const RealNumber& rnOther) const
+{
+	RealNumber left(*this);	// adjust number to larger precision
+	left._sign *= rnOther._sign;
+	if (rnOther.IsPure10Power())
+	{
+		left._exponent -= rnOther._exponent-1;
+		return left;
+	}
+
+	RealNumber right(rnOther);	// i.e. when parameter +- diff is positive
+
+	if (__DivideHelper(left, rnOther))	// handle null, inf, nan
+		return left;
+
+	_DivideInternal(left, right);
+	return left;
+}
+
+RealNumber RealNumber::_Div(const RealNumber& divisor, RealNumber& remainder) const
+{
+	RealNumber rem;
+	rem._SetNull();
+	// RealNumber d(this->Int()), dv(divisor.Int());	// result, divident, divisor
+	RealNumber d(*this), dv(divisor);	// result, divident, divisor
+
+	if (__DivideHelper(d, dv))
+		return d;
+	int sl = d._sign, sr = dv._sign;
+
+	d._sign = dv._sign = 1;
+
+	if (d < dv)	// integer division when dividend is smaller than divisor
+	{
+		d._sign = sl;
+		rem = d;
+		d._SetNull();
+	}
+	else if (d == dv)
+	{
+		d = RealNumber("1");
+		d._sign = sl * sr;
+	}
+	else
+	{	// signs are not set back
+		_DivideInternal(d, dv, &rem);	// 
+		rem._sign = sl;
+		d._sign = sl * sr;
+	}
+
+	remainder = rem;
+
+	return d;
+}
+
+RealNumber RealNumber::_LogOpWith(const RealNumber& ra, LogicalOperator lop) const
+{
+	RealNumber left(*this);
+	int sign = left._sign * ra._sign;
+	if (IsNaN() || ra.IsNaN() )
+	{
+		left = NaN;
+		return left;
+	}
+	if (IsInf() || ra.IsInf())
+	{
+		left = Inf;
+		left._sign = sign;
+		return left;
+	}
+	RealNumber right(ra);
+
+	int diff = _exponent - ra._exponent;
+	if (diff > (int)(_maxLength + LengthOverFlow))
+	{
+		left._eFlags.insert(EFlag::rnfUnderflow);
+		return left;
+	}
+	else if (diff < -(int)(_maxLength + LengthOverFlow))
+	{
+		right._eFlags.insert(EFlag::rnfUnderflow);
+		return right;
+	}
+
+	// add leading zeros to number with smaller exponent
+	// and increase its exponent
+	if (diff > 0)	// exponent of left is larger
+		right._ShiftSmartString(diff);
+	else if (diff < 0)
+		left._ShiftSmartString(-diff);
+
+	SmartString res(left._exponent, chZero);
+	switch (lop)		// all characters in _numberString are ASCII decimal digits
+	{
+		case LogicalOperator::lopOr:
+			for (int i = 0; i < left._exponent; ++i)
+				res[i] = left._numberString[i].Unicode() | right._numberString[i].Unicode();
+			break;
+		case LogicalOperator::lopXOr:
+			for (int i = 0; i < left._exponent; ++i)
+				res[i] = (left._numberString[i].Unicode() ^ right._numberString[i].Unicode()) + '0';	// xor removes high 4 bits
+			break;
+		case LogicalOperator::lopAnd:
+			for (int i = 0; i < left._exponent; ++i)
+				res[i] = (left._numberString[i].Unicode() & right._numberString[i].Unicode());
+			break;
+	}
+	left._numberString = res;
+	left._leadingZeros = 0;
+	left._isNormalized = false;
+	left._Normalize();
+	return left;
+}
+
+/*=============================================================
+ * TASK   : From a shifted number string and exponent
+ *			create a proper normalized number
+ * PARAMS :	none
+ * EXPECTS: _isNormalized
+ * GLOBALS:
+ * RETURNS: nothing
+ * REMARKS: non-normalized strings are created when real numbers
+ *			are shifted to the right introducing leading zeros
+ *			which may or may not be present in the string
+ *------------------------------------------------------------*/
+void RealNumber::_Normalize()
+{
+	if (_isNormalized)
+		return;
+	std::locale loc = std::cout.getloc();
+	size_t n=0;
+	for (size_t i = 0; i < _numberString.length() && _numberString[i] == chZero; ++i)
+		++n;
+	if (n)
+	{
+		_numberString.erase(0, n);
+		_exponent -= (int)n;
+	}
+	if (_leadingZeros)
+	{
+		_exponent -= _leadingZeros;
+		_leadingZeros = 0;
+	}
+	_isNormalized = true;
+}
+
+long RealNumber::_AddExponents(long oneExp, long otherExp, EFlagSet& efs) const
+{
+	int64_t ex = (int64_t)oneExp + (int64_t)otherExp;
+	int64_t	dx = std::abs(ex);
+	if (dx >= (int)_maxExponent)	// as _maxExponent is just an integer this always work
+	{
+		efs.insert(ex > 0 ? EFlag::rnfOverflow : EFlag::rnfUnderflow);
+		return oneExp;
+	}
+	else
+		return (long)ex;
+}
+void RealNumber::_AddExponents(int otherExp)
+{
+	long ex = _AddExponents(_exponent, otherExp, _eFlags);
+	if (_eFlags.count(EFlag::rnfOverflow) || _eFlags.count(EFlag::rnfUnderflow))
+		_SetInf();
+	else
+		_exponent = ex;
+}
+
+/*=============================================================
+ * TASK:	take number string and convert to inner format
+ * EXPECTS: inps: all uppercase number string
+ *			- precision, _maxExponent set
+ * PARAMS:	
+ * GLOBALS:	_numberString, _sign, _exponent
+ * RETURNS: nothing, 
+ *				- number set in class members
+ *				- _eFlags are also set
+ * REMARKS:	- string may contain binary numbers starting w. '#' or
+ *			  octal numbers starting by 0 with no decimal point or exponent or
+ *			  floating point decimal number
+ *			- only use this when the number is set from string or 
+ *			  double as no check is made if it was already normalized
+ *			- _numberString may not yet precision long
+ *			- quetly discards non numeric or invalid parts of the string
+ *			- maxExponent may be enlarged if the exponent given in string is larger,
+ *			  however max possible exponent is 0x7fffffffl
+ *------------------------------------------------------------*/
+void RealNumber::_FromNumberString()
+{
+	_numberString.Trim();
+	_numberString.toUpper();
+
+	int sgnPos = 1;
+	_sign = 1;
+	if (_numberString.empty())		// number is 0, exponent and others don't count
+		return;
+
+	if (_numberString[0] == SCharT('-'))
+		_sign = -1;
+	else if (_numberString[0] != SCharT('+'))
+		sgnPos = 0;
+
+	if (sgnPos)
+		_numberString.erase(0, 1);
+
+	if (_numberString.empty())		// only sign character was present
+	{
+		_SetNaN();
+		_eFlags.insert(EFlag::rnfMalformed);
+		return;
+	}
+
+	if (_numberString == NAN_STR || _numberString == INF_STR)
+		return;
+
+
+	std::smatch matches;
+	std::regex re;
+	SmartString pattern;	// regular expression as a string for the decimal (not exponent or sign) part
+	int positionOfError=0;
+
+	Base base = Base::dec;	// number is decimal, hexadecimal, octal or binary
+
+	// get number base here (no sign in string)
+	if (_numberString.at(0) == chZero)
+	{
+		if (_numberString.at(1) == SCharT('X'))
+		{
+			_numberString.erase(0, 2);
+			pattern = SmartString("[^0-9A-F]");			// even a decimal point means malformed hexadecimal string
+			base = Base::hex;
+		}
+		else if (_numberString.indexOf(_decPoint) >= 0 || _exponent < (int)_numberString.length())	
+			pattern = SmartString("[^0-9") + _decPoint + SmartString("]"); // strings starting with a 0 may contain decimal points
+		else												  // in which case theye are not octal
+		{
+			pattern = SmartString("[^0-7]");				  // otherwise they are octal
+			_numberString.erase(0, 1);
+			base = Base::oct;									  // and the starting zero is just a prefix
+		}
+	}
+	else if (_numberString.at(0) == SCharT('#'))					  // binary string
+	{
+		pattern = SmartString("[^01]");
+		_numberString.erase(0, 1);
+		base = Base::bin;
+	}
+	else													  // a decimal string which did not start with a zero
+		pattern = SmartString("[^0-9") + _decPoint + SmartString("]");
+
+	// exponent 
+	int posE = base == Base::dec ? _numberString.indexOf(SCharT('E')) : -1;
+	int posDp = -1;	// position of decimal point
+	_exponent = 0;
+	if(base == Base::dec)
+	{
+		if (posE >= 0)
+		{
+			SmartString sExp = _numberString.mid((size_t)posE + 1);	// separate exponent and number
+			_numberString.erase(posE, std::string::npos);
+			// only sign and decimal digits are allowed in exponent
+			positionOfError = sExp.indexOfRegex(SmartString("[^-+0-9]"));
+			if (positionOfError >= 0)
+			{
+				sExp = sExp.left(positionOfError);
+				_eFlags.insert(EFlag::rnfMalformed);
+			}
+			_exponent = std::stoi(sExp.ToUtf8String());
+		}
+		// no exponent in _numberString now
+		posDp = _numberString.indexOf( _decPoint);
+		if (posE < 0 && posDp < 0)					// integer numbers
+			_exponent = (int)_numberString.length() -1;	// -1: will be increase below
+	}
+
+	positionOfError = _numberString.indexOfRegex(pattern);
+	if (positionOfError >= 0)
+	{
+		_numberString = _numberString.left(positionOfError);
+		_eFlags.insert(EFlag::rnfMalformed);
+	}
+
+	// ----------------
+
+		// -----------------------------------------------------
+		// from here _numberString may only contain for
+		// decimal string - with digits and possibly a decimal point
+		// hexadecimal strings - digits 0-9,A-F
+		// octal string - with digits 0-7, 
+		// or binary string  -of 0 and 1
+		// characters
+		// -----------------------------------------------------
+	
+	
+	//------------------------ lambda for common part for integer conversion from non-decimal bases
+	auto _convert = [&](int nFactor)
+	{
+		RealNumber number = zero;
+		RealNumber multiplier(nFactor);
+		int ch;
+		for (int i = 0; i < (int)_numberString.length(); ++i)
+		{
+			ch = SCharTToByte(_numberString.at(i));
+			number = number * multiplier + RealNumber(ch);
+		}
+		_numberString = number._numberString;
+		_exponent = number._exponent;
+	};
+
+	size_t indexInStr = 0;
+	if (base == Base::dec)
+	{
+		if (posDp < 0)	// no decimal point in string 
+		{
+			++_exponent;
+		}
+		else if(_exponent <= 0 || _exponent < (int)_numberString.length())		 // decimal point or hidden decimal point (w. _exponent <= 0)  => normal number
+		{
+			// remove leading zeros	as string is not binary, octal or hexadecimal
+			size_t limit = posDp >= 0 ? posDp : (_exponent > 0 ? _exponent : _numberString.length());
+			for (indexInStr = 0; indexInStr < limit && _numberString.at((int)indexInStr) == chZero; ++indexInStr)
+				;
+			// modify exponent with remaining non zero integer digits
+			limit -= indexInStr;
+			_exponent += (int)limit;
+			if (std::abs(_exponent) > (int)_maxExponent)
+			{
+				_exponent = (int)_maxExponent;
+				_eFlags.insert(EFlag::rnfOverflow);
+			}
+
+			if (posDp > 0)
+				posDp -= (int)indexInStr;
+
+			// and remove leading zeros
+			if (indexInStr)	// remove leading zeros. leave the decimal point intact
+			{				// because it may be anywhere nut just after the leading zeros
+				_numberString.erase(0, indexInStr);
+				indexInStr = 0;
+			}
+
+			positionOfError = _numberString.indexOf(_decPoint, (size_t)posDp + 1);	 // more than one decimal point?
+			if (positionOfError >= 0)									 // if there is then cut that part of string
+			{
+				_eFlags.insert(EFlag::rnfMalformed);
+				_numberString.erase(positionOfError, std::string::npos);
+			}
+			// remove decimal point, as we do not need it
+			if (posDp >= 0 && posDp < (int)_numberString.length() - 1)	// not at end of number
+			{
+				size_t len = _numberString.length();
+				indexInStr = posDp;
+				for (size_t j = posDp + 1; j < len; ++indexInStr, j++)
+					_numberString[indexInStr] = _numberString.at((int)j);
+				if (posDp >= 0)
+					_numberString.pop_back();
+			}
+		}
+	}
+	else if (base == Base::hex)
+	{
+			_convert(16);
+	}
+	else if(base == Base::bin)
+	{
+		_convert(2);
+	}
+	else
+		_convert(8);	// octal
+
+	// copy number
+	size_t len = _numberString.size();// -(posDp >= 0 ? 1 : 0);
+	if (len < 1)
+		len = 1;
+
+	int trailingchZeros = 0;
+	for (size_t i =  len - 1; i >= 1; --i)
+		if (_numberString.at((int)i,chZero) == chZero)
+			++trailingchZeros;
+		else
+			break;	
+	if(trailingchZeros)
+		_numberString = _numberString.erase(len - trailingchZeros, String::npos);
+	_isNormalized = true;
+}
+
+/*=============================================================
+ * TASK   : Logically not physically shifts number string  
+ *			to the right by setting _leadingZeros and modifying
+ *			_exponent
+ * PARAMS :	byThisAmount => logically shifts number string right
+ * EXPECTS:	number string length is same as precision
+ * GLOBALS:	_leadingZeros, _exponent, _numberString
+ * RETURNS: nothing
+ * REMARKS: - right shift is just logical, all digits in
+ *			  _numberString is kept
+ *			- result string will be at least 1 character long
+ * Example:   98765 (E3), byThisAmount = 5 => .....98765 (E8)
+ *            00098765 (E3) byThisAmount = -3 => 98765 (E0)
+ *------------------------------------------------------------*/
+void RealNumber::_ShiftSmartString(size_t byThisAmount)
+{
+	_leadingZeros = (int)byThisAmount;
+	_exponent += (int)byThisAmount;
+}
+
+void RealNumber::_ShiftSmartString(RealNumber& rn, int byThisAmount)
+{
+	return rn._ShiftSmartString(byThisAmount);
+}
+
+/*=============================================================
+ * TASK   : round string of decimal digits to given number of digits.
+ *			Decimal digits are digits after 'cntIntegerDigits' when
+ *			it is positive and oll digits including the  -'cntIntegerDigits'
+ *			leading zeros
+ * PARAMS :	numString (I)	- number string to be rounded with no
+ *							  decimal point inside and no exponent
+ *							  Usually this is '_numberString'
+ *			cntDecDigits (IO) - When < 0 keep all digits including leading
+ *								zeros, otherwise
+ *							  - round to this many decimal digits, i.e.
+ *								 the rounding position POS in 'numString' is:
+ *									POS :='cntIntegerDigits'+'cntDecDigits'
+ *								 for both positive and negative values of 	
+ *								 'cntIntegerDigits'
+ *							  - if POS is larger than _maxLength, then 
+ *								round according to the '_maxLength+1'-th digit
+ *								and set cntDecDigits so that the total length is 
+ *								not larger than '_maxLength'
+ *			cntIntegerDigits (IO)	
+ *							- position of the decimal point in the string
+ *							  * when >0 the number of integer digits in 'numberString'.
+ *							  * when <0: the number of leading zeros in the
+ *								fractional part
+ *							- May be increased by 1 when there's a carry to the integer
+ *							  part. 
+ * 							  Examples: 
+ *								"9999", intCnt = 2  (number 99.99) 
+ *									digits = 1 returns "1", and intCnt = 3 (100.0)
+ *									digits = 0         "1",              3 (100)
+ *								"9999", intCnt = -2 (0.009999) 
+ *									digits = 1 returns "",  intCnt = -2 (0.0)
+ *									digits = 2         "1", intCnt = -2 (0.01)
+ *									digits = 4         "1SmartString(" 		 -2	(0.0100)
+ *									digits = 6         "9999SmartString(" 		 -2	(0.009999)
+ *			raw (I)			- the value of each digit is stored in a byte not 
+ *								as a character. So instead of '9'(0x39) 9(0x09) is stored
+ * EXPECTS:
+ * GLOBALS:
+ * RETURNS: the rounded string, and may modify 'cntDecDigits' and/or
+ *			'cntIntegerDigits'
+ * REMARKS: - '_exponent' points to the position of the decimal point
+ *			  in '_numberString' you may call this with any string of
+ *			  decimal digits, not just with 'numberString' and
+ *			  'cntIntegerDigits' may differ from the number of integer digits
+ *			  ('_exponent') even when '_numberString' is used
+ *			- if the string is shorter than 'digits' then nothing to do
+ *			- if the first digit after the required # is less than 5 ('5')
+ *				no rounding
+ *			- if there's a rounding it may increase intCnt. But in that case
+ *			  the last digit becomes zero and will be discarded
+ *			- if intCnt is increased it is the task of the caller to change
+ *				the exponent
+ *			- trailing zero characters are discarded as a result the
+ *				returned string may be empty
+ *------------------------------------------------------------*/
+SmartString RealNumber::_RoundNumberString(SmartString &numString, int &cntDecDigits, int& cntIntegerDigits, bool raw) const
+{
+	if (cntDecDigits < 0)		// use all digits
+		return numString;
+
+	size_t leadingZeros = cntIntegerDigits < 0 ? -cntIntegerDigits : 0;		// if either leadingZeros or intLen is not 0
+	size_t intLen = cntIntegerDigits < 0 ? 0 : cntIntegerDigits;			// the other one must be
+
+	//	size_t nlen = numString.length();
+		// index of the digit to round up the string with
+	int	pos = (int)(intLen + cntDecDigits) - (int)leadingZeros;			// may be larger than length of 'numString'
+	// intLen = 3, decDigits = 3 (IIIIxxxxx)  pos = 6	=> IIIxxxX
+	// leadingZeros=3, decDigits=6 (...xxxxx) pos = 3	=> ...xxxX
+	// leadingZeros=3, decDigits=3 (...xxxxx) pos = 0	=> ...X
+	// leadingZeros=4, decDigits=3 (...xxxxx) pos = -1	=> ...
+	if (pos < 0)
+		return String();
+
+	SCharT one,five,nine,zero;
+	if (raw)
+	{
+		one  = SCharT(1);
+		zero = SCharT(0);
+		five = SCharT(5);
+		nine = SCharT(9);
+	}
+	else
+	{
+		one  = SCharT('1');
+		zero = SCharT('0');
+		five = SCharT('5');
+		nine = SCharT('9');
+	}
+
+	if ((size_t)pos > _maxLength + LengthOverFlow)
+		pos = (int)_maxLength + LengthOverFlow;
+
+	int carry = numString.at(pos, zero) >= five ? 1 : 0;
+	// here pos is length of numString that is used
+	SmartString s = pos ? numString.left(pos,zero) : String(); // may contain trailing zeros
+	if (!carry)
+	{		//  no trailing zeros
+		s.erase((const SmartString::Iterator)(std::find_if(s.rbegin(), s.rend(), [&](SCharT ch) {return ch != zero; }).base()), s.end());
+		return s;
+	}
+	int trailingzeros = 0;
+	SCharT ch=zero;
+	while (carry && pos >= 0)
+	{
+		ch = s.at(pos,zero).Unicode() + carry;
+		if (ch > nine)
+		{
+			carry = 1;
+			ch = zero;
+			++trailingzeros;
+		}
+		else
+			carry = 0;
+		s[pos--] = ch;
+	}
+	if (trailingzeros)
+			s.erase(s.length() - trailingzeros);
+	if (carry)
+	{
+		s = SmartString(one) + s;
+		++cntIntegerDigits;
+	}
+	return s;
+}
+
+void RealNumber::_SetNull()
+{
+	_exponent = 0;
+	_numberString = "";
+}
+
+void RealNumber::_SetNaN()
+{
+	_numberString = NAN_STR;
+}
+void RealNumber::_SetInf()
+{
+	_numberString = INF_STR;
+}
+
+SCharT RealNumber::_AddDigits(SCharT digit1, SCharT digit2, int& carry)	 const
+{
+	SCharT d0 = chZero;
+	SCharT d1 = digit1 - d0,
+		   d2 = digit2 - d0;
+	d1 += SCharT(carry);
+
+	if ((d1 += d2).Unicode() > 9)
+	{
+		carry = d1.Unicode() / 10;
+		d1 = d1.Unicode() % 10;
+	}
+	else
+		carry = 0;
+	return SCharT(d1+d0);
+}
+
+SCharT RealNumber::_SubtractDigits(SCharT digit1, SCharT digit2, int& borrow) const
+{
+	SCharT d0 = chZero;
+	SCharT d1 = digit1 - d0,
+		   d2 = digit2 - d0;
+	d2 = d2.Unicode() + borrow;
+					
+	if (d1 < d2)
+	{
+		d1 = d1.Unicode() + 10;
+		borrow = 1;
+	}
+	else
+		borrow = 0;
+	return SCharT(d1 - d2 + d0);
+}
+
+/*=============================================================
+ * TASK   : Add the two strings of two RealNumber
+ * EXPECTS:	- neither number is infinite or NaN
+ *			- both has the same sign
+ *			- the string of the smaller number might
+ *			  be logically 'shifted' to the right to have the
+ *			  same exponent as that of the larger 
+ *			- the number strings may have different physical lengths
+ *			- the difference in exponents was smaller than 
+ *			  the constant _maxLength
+ * PARAMS :	left - the larger absolute velue number
+ *			right -the smaller absolute valued number
+ * GLOBALS: 
+ * RETURNS:	nothing
+ * REMARKS:	- returns the result in the 'left' argument
+ *			- the result string and exponent are adjusted and
+ *				normalized
+ *			- the result string and exponent are adjusted and
+ *				normalized
+ *------------------------------------------------------------*/
+void RealNumber::_AddStrings(RealNumber &left, RealNumber &right) const
+{
+	size_t	ll = left.Precision() + left._leadingZeros,
+			lr = right.Precision() + right._leadingZeros,
+			l = std::max(ll, lr);
+
+	if (l > _maxLength + LengthOverFlow)
+		l = _maxLength + LengthOverFlow;
+	String result(l,chZero);
+
+	int trailingchZeros = 0;
+	bool bTrailing = true;
+	int carry = 0;
+	for (int i =  (int)l - 1; i >= 0; --i)
+	{
+		result[i] = _AddDigits(left._CharAt(i), right._CharAt(i), carry);
+		if (bTrailing && result.at(i) == chZero)
+			++trailingchZeros;
+		bTrailing = false;
+	}
+	_CorrectResult(left, result, trailingchZeros, carry);
+}
+/*=============================================================
+ * TASK   : subtract right from left
+ * EXPECTS: - left and right are not equal
+ *			- left has the larger absolute value
+ *			- both has the same sign
+ *			- the smaller one is 'shifted' to have
+ *			  the same exponent
+ * PARAMS : minuend, subtrahend: REAL_NUMBERS
+ * GLOBALS:
+ * RETURNS: nothing
+ * REMARKS: - returns the result in 'minuend'
+ *			- the result string and exponent are adjusted and
+ *				normalized
+ *------------------------------------------------------------*/
+void RealNumber::_SubtractStrings(RealNumber& minuend, RealNumber& subtrahend) const
+{		// always the smaller from the larger
+	size_t	ll = minuend.Precision() + minuend._leadingZeros,
+			lr = subtrahend.Precision() + subtrahend._leadingZeros,
+			l = std::max(ll, lr);
+
+	String result(l,chZero);
+
+	int trailingchZeros = 0;
+	int borrow = 0;
+	bool bTrailing = true;
+	//int l = _numberString.length();
+	for (int i =  (int)l - 1; i >= 0; --i)
+	{
+		if ((result[i] = _SubtractDigits(minuend._CharAt(i), subtrahend._CharAt(i), borrow)) == chZero && bTrailing)
+			++trailingchZeros;
+		bTrailing = false;
+	}
+	_CorrectResult(minuend, result, trailingchZeros, 0);	// no borrow as minuend was larger than subtrahend
+}
+
+/*=============================================================
+ * TASK   : multiply two strings
+ * EXPECTS:	- neither number is infinite or NaN
+ *			- strings may have different sizes
+ * PARAMS :	left, right: REAL_NUMBERS to be multiplied
+ * GLOBALS:
+ * RETURNS: none
+ * REMARKS:	- the result is returned in 'left'
+ *------------------------------------------------------------*/
+void RealNumber::_MultiplyStrings(RealNumber& left, RealNumber& right) const
+{
+	size_t	ll = left. Precision() + left._leadingZeros,
+			lr = right.Precision() + right._leadingZeros,
+		l = ll + lr - 1 + LengthOverFlow;	// for overflow
+	unsigned chZ = chZero.Unicode();
+
+	SmartString result(l, SCharT(0) ); // not chZero till the end (?NOT SmartString?)
+	unsigned digLeft, digRight, digResult, digTmp, fdaTmp;	// not numeric character, but the numbers themselves
+	for (size_t i = 0; i < lr; ++i)		// multiply left starting at the most significant digit of right
+	{
+		digRight = right._CharAt((int)i).Unicode() - chZ;
+		int fda=0;	// overflow of accu and on result
+		for (int j = (int)ll - 1; j >= 0; --j)						  // multiply by one digit from the right
+		{														  // and add it to partial result, which gives
+			digLeft = left._CharAt(j).Unicode() - chZ;					  // intermediate result
+			digResult = digLeft * digRight + fda;
+			fda = digResult >= 10 ? digResult / 10 : 0;
+			digTmp = result.at((int)(LengthOverFlow + i) + j).Unicode() + digResult - fda * 10;
+			fdaTmp = digTmp >= 10 ? digTmp / 10 : 0;
+			fda += fdaTmp;
+			result[LengthOverFlow + i + j] = size_t(digTmp - fdaTmp * 10);
+		}
+			// deal with overflow
+		for (int j = (int)(LengthOverFlow + i - 1); j >= 0 && fda; --j)
+		{
+			digResult = result.at(j).Unicode() + fda;
+			fda = digResult >= 10 ? digResult / 10 : 0;
+
+			result[j] = size_t(digResult - fda * 10);
+		}
+	}
+	// calculate count of leading zeros
+	size_t cntZeros = 0;
+	while (result.at(cntZeros).Unicode() == 0)
+		++cntZeros;
+	left._exponent += (int)(LengthOverFlow - cntZeros)-1;	// overflow in decimal digits changes exponent
+	if (cntZeros)
+	{
+		// delete zeros from front
+		for (size_t i = 0; i < cntZeros && i + cntZeros < l; ++i)
+			result[i] = result.at(cntZeros + i) + chZero;
+		// convert remaining values to decimal characters
+		for (size_t i = cntZeros; i < l-cntZeros; ++i)
+			result[i] = result.at(cntZeros + i) + chZero;
+		l -= cntZeros;
+		result.erase(l, String::npos);
+	}
+
+	result.erase(std::find_if(result.rbegin(), result.rend(), [](SCharT ch) {return ch != chZero; }).base(), result.end());
+	size_t maxLength = _maxLength + LengthOverFlow;
+	if (result.length() > maxLength)
+	{
+		int len = (int)maxLength;
+		_RoundNumberString(result, len, left._exponent);
+		result.erase(len, std::string::npos);
+	}
+	left._numberString = result;
+}
+
+/*=============================================================
+ * TASK   :	 divide the string representation of two
+ *			 0 normalized  numbers w.o. independent of
+ *			 the signs of the arguments, which must be adjusted
+ *			 later
+ * PARAMS :	left  - dividend
+ *			right - divisor
+ *			pRemainder -  pointer to remainder or nullptr
+ *					set pRemainder if you want integer divison
+ *					with remainder AND both left and right
+ *					are integers
+ * EXPECTS:	exponent of left is set to the difference of
+ *					exponents after this function
+ *			If pRemainder is not null both left and right 
+ *				have to be integer (with an exponent > 0) 
+ *				but no check is made to ensure it
+ * GLOBALS:
+ * RETURNS: none: result in left
+ * REMARKS: - left's exponent is increased if the
+ *				ratio is larger than one, otherwise it is
+ *				not modified
+ *			- pRemainder may point to either left or right
+ *			- signs for the result (and remainder) are set
+ *				outside of this fucnction
+ *			- algorithm 
+ *					notation: 
+ *						physical digit- a digit character from a number string
+ *										never a leading zero, but can be a trailing one
+ *						logical digit - either a physical digit ('left' or 'dividend')
+ *										or a zero digit after the string all used up
+ * 
+ *				0. when pRemainder != nullptr and 'left' is smaller than or equal to 'right'
+ *					we are already done just set '*pRemainder' to either 'left' or 0
+ *					and quotient to 0 or 1 respectively.
+ *				So from now on either 'pRemainder' is NULL or 'left' was larger than 'right'
+ *				1. Create dividend from 'left' with at least as many logical digits as in the divisor.
+ *				2. Increase the number of logical digits of the 'dividend' from 'left' until
+ *						a) (when prRmainder == nullptr) - dividend is larger than the divisor
+ *						b) (with pRemainder) - either a) is true or all (logical) integer digits	
+ *							are used up, in which case we return with the 'dividend' as a remainder;
+ *						loop #1
+ *				3. Get the digit of the 'quotient' by either 
+ *						a) subtracting the 'divisor' from the 'dividend' as many times (max 9) as possible
+ *							before the result becomes negative. This changes
+ *							'dividend' possibly leaving a series of leading zeros in it.
+ *						b) getting the first guess of the next digit of quotient by dividing the integer 
+ *							from the first or first 2 digit from 'dividend'
+ *							with the integer value of the first digit from the divisor.
+ *							If the divisor multiplied by this number is larger than the
+ *							'dividend' decrease the quotient and multiply it again with the divisor.
+ *							Subtract the result of this multiplication from the quotient
+ *				4. Discard leading zeros from 'dividend'.
+ *						loop #2
+ *				5. If 'pRemainder' and all integer digit from left is used up set '*pRemainder'
+ *					 from 'dividend', put the quotient into 'left', and return,
+ *				6. Get the next (logical) digit from 'left' and append it to 'dividend'
+ *				7. If 'dividend' is still smaller than 'divisor' then append a zero digit to it
+ *					snd repeat from 5,else repeat from 3
+ *------------------------------------------------------------*/
+void RealNumber::_DivideInternal(RealNumber& left, RealNumber& right, RealNumber* pRemainder) const
+{	
+				   // simplest case for integer division and remainder
+	if (pRemainder)
+	{
+		pRemainder->_SetNull();
+		if (left == right)
+		{
+			left = RealNumber("1");
+			return;
+		}
+		if (left < right)
+		{
+			*pRemainder = left;
+			left._SetNull();
+			return;
+		}
+	}
+																		// int div example "123000/3210"
+	size_t  lp = left. Precision(),										// str: "123", exp:10, lp:3
+			rp = right.Precision()//,										// str: "321", exp: 4, rp:3
+		    /*l  = lp+rp*/;													// l: 6
+	size_t maxLength = _maxLength + LengthOverFlow;
+	SmartString quotient(maxLength, chZero);				// q: 0000...0 - not as string
+	EFlagSet efs;
+	long exponentOfResult = _AddExponents(1 + left._exponent, - right._exponent, efs);	   // 1+ : compensation for number representation
+	if (!efs.empty())
+	{
+		left._SetInf();
+		return;
+	}
+	// at start divident will have as many digits as the divisor. It does not start with
+	// a '0' character, but may contain trailing zeros
+	SmartString dividend = left._numberString.left(rp, chZero),			// d: "1230 changes during execution
+				divisor  = right._numberString;							// dv:"321"
+	if (dividend.compare(divisor) < 0)									// then first quotient digit would be a 0
+	{																	// which decreases the exponent
+		exponentOfResult = _AddExponents(exponentOfResult, -1, efs);
+		if (!efs.empty())
+		{
+			left._SetInf();
+			return;
+		}
+	}
+
+	size_t iq = 0;		// index in quotient, finish division if dividend is zero (or empty) and iq > lp
+
+	size_t il = rp;		// logical index in 'left._numberString'				//  il:3
+						// of the mext digit to expand dividend with
+						// when divisor is larger than the part
+						// in dividend
+
+	//************* Lambdas
+	// extends divident after deleting the leading zeros in it with any number of digits from 'left'
+	// until it has as many digits as the divisor has
+	// Returns: false if divident can't be extended, true if it was extended
+	// When called first time when 'with a 'dividend' has the same length as 'divisor'
+	enum ResultT { rtOk, rtNo, rtError };
+	auto extendDividend = [&]() -> ResultT
+	{
+		if (dividend[0] == chZero)	// erase leading zeros
+			dividend.erase(dividend.begin(), std::find_if(dividend.begin(), dividend.end(), [](SCharT ch) {return ch != chZero; }));
+
+		size_t len = dividend.length(), 
+			   maxLength = _maxLength + LengthOverFlow;
+
+		bool canHaveZeroQuotient = len < rp;
+		// if after the leading zeros removed dividend is shorter than divisor and 'il' then add one digit from 'left' if it is possible
+		// this does not add a 0 digit to the quotient, because this is a natural extension
+		if (iq < maxLength  && len < rp && (!pRemainder || (pRemainder && il < (size_t)left._exponent)) )
+		{
+			dividend += left._numberString.at((int)il++,chZero); // no need to check parameter here
+			++len;
+		}
+		// now either dividend is >= divisor or must extend dividend with one digit from 'left'
+		// bot now each new digit introduces a 0 into the result
+		while (iq < maxLength && len < rp && (!pRemainder || (pRemainder && il < (size_t)left._exponent)) )
+		{
+			dividend += left._numberString.at((int)il++,chZero); // no need to check parameter here
+			++len;
+			quotient[iq++] = chZero;
+		}
+			// if no more space or dividend is zero and 'il' > 'lp'
+		if (iq >= maxLength || (il > lp && (dividend.empty() || dividend.find_first_not_of(chZero) == String::npos)))
+			return rtNo;
+		if (pRemainder && il >= (size_t)left._exponent && len < rp)
+			return rtNo;
+		if (len != rp)
+			return len > rp ? rtOk : rtNo;
+
+		SCharT tmp;
+		int borrow = 0;
+		for (int i = (int)len-1; i >= 0; --i)
+			tmp = _SubtractDigits(dividend.at(i,chZero), divisor.at(i,chZero), borrow);
+		if (borrow)	// then we need to extend the divident if it is possible
+		{
+			if(canHaveZeroQuotient)
+				quotient[iq++] = chZero;
+			if (iq < maxLength && (!pRemainder || (pRemainder && il < (size_t)left._exponent)) )
+			{
+				dividend += left._numberString.at((int)il++,chZero); // no need to check parameter here
+				return rtOk;
+			}
+			return rtNo;
+		}
+		return rtOk;
+	};
+	auto divisorSmallerThanOrEqualToDividend = [&]()->bool	// divisor's first digit is never '0'
+	{	// dividend may start with 0	
+		size_t dlen = dividend.length();
+		size_t is = 0;
+		for (; is < dlen; ++is)
+			if (dividend.at((int)is,chZero) != chZero)
+				break;
+		if (dlen -is != rp)
+			return (dlen-is > rp);
+
+		SCharT tmp;
+		int borrow = 0;
+		for (int i =  (int)dlen - 1, j = (int)rp -1; j >= 0; --i, --j)
+			tmp = _SubtractDigits(dividend.at(i,chZero), divisor.at(j,chZero), borrow);
+		return !borrow;
+	};
+	auto subtractDivisorFromDividend = [&]()
+	{	
+		size_t len = dividend.length();
+		size_t extension = len > rp ? 1 : 0;
+		int borrow = 0;
+		for (int i =  (int)len - 1, j = (int)rp -1; j >= 0; --i, --j)
+			dividend[i] = _SubtractDigits(dividend.at(i,chZero), divisor.at(j,chZero), borrow);
+		if (extension)									  // 666|6 - 700*1 => 596|6 - 700*2 => ... 106|6 - 700 => 036|6 
+			dividend[0] = dividend[0].Unicode() - borrow;
+	};
+	//*************** Main division loop							
+	ResultT res;
+	while ((res = extendDividend()) == rtOk)	
+	{			// 'dividend' has the same number of digits or one digit longer than 'divisor'
+		SCharT q = chZero;		// quotient for one division
+		while (divisorSmallerThanOrEqualToDividend())
+		{
+			subtractDivisorFromDividend();
+			++q;
+		}
+		quotient[iq++] = q;	// remainder is left in 'dividend'
+	}
+	//************** Result 
+	/*
+		1000/2 => "1",exp=4 / "2", exp=1 => 
+	*/
+	if (pRemainder && res == rtError)	// number longer than _maxLength
+	{
+		left._numberString = NAN_STR;
+		return;
+	}
+	
+	// remove trailing zero bytes and characters (cannot combine these in one expression as we need to set left's exponent for 
+	// integer modulus division
+	quotient.erase(std::find_if(quotient.rbegin(), quotient.rend(), [](SCharT ch) {return ch.Unicode(); }).base(), quotient.end());	// zero bytes
+	left._exponent = exponentOfResult;
+	quotient.erase(std::find_if(quotient.rbegin(), quotient.rend(), [](SCharT ch) {return ch != chZero; }).base(), quotient.end()); // zero characters
+	left._numberString = quotient;
+
+	if (pRemainder)	// remainder is in 'dividend' which does not start with 0
+	{				// remove trailing zeros
+		dividend.erase(std::find_if(dividend.rbegin(), dividend.rend(), [](SCharT ch) {return ch != chZero; }).base(), dividend.end());
+		pRemainder->_exponent		= (int)dividend.length();
+		pRemainder->_numberString	= dividend;
+	}
+}
+
+void RealNumber::_CorrectResult(RealNumber &left, String &result, int trailingchZeros, int carry) const
+{
+	size_t l = result.length() - trailingchZeros;
+	size_t maxLength = _maxLength + LengthOverFlow;
+	if (l > maxLength)
+		l = maxLength;
+	result.erase(l, result.npos);	// may erase all characters from string
+
+	if (carry)
+	{
+		result = result.insert(0,1,SCharT(carry + chZero.Unicode())); // single digit
+		++l;
+		if (l > maxLength)
+		{
+			l = maxLength;
+			result.pop_back();
+		}
+		++left._exponent;	// 1 plus digits at front
+	}
+	size_t leadingZeros;
+	for (leadingZeros = 0; leadingZeros < l  && result.at(leadingZeros) == chZero; ++leadingZeros)
+		;
+
+	if (leadingZeros)
+	{
+		result.erase(0, leadingZeros);
+		left._exponent -= (int)leadingZeros;
+		l -= leadingZeros;
+	}
+	left._numberString = result;
+	if (left.Precision() > maxLength)
+		left.Round((int)maxLength);
+	left._leadingZeros = 0;
+}
+
+RealNumber fact(const RealNumber& n)
+{
+	if (n.IsNegative() || n.IsInt() == false)
+		return NaN;
+
+	if (n > RealNumber(1000))	// at 1000 the error is 3.46925154994 E-6 %
+	{
+		return sqrt(two * pi * n) * (n / e) ^ n * (one + one / RealNumber(12) / n);
+	}
+
+	RealNumber res = n,
+		nn = n;
+	while (--nn != zero)
+		res *= nn;
+	return res;
+}
+
+RealNumber sqrt(RealNumber r, int accuracy)
+{
+	if (!r.IsValid() )
+		return r;
+	if (r.Sign() < 0)
+		return NaN;
+
+	if (accuracy < 0)
+		accuracy = (int)(MaxAllowedDigits + LengthOverFlow);
+	//Newton's method
+	RealNumber	rootn("1"), // was r),	// n-th iteration step
+				rootnp1,			// n plus 1th step
+				epsilon(SmartString("1"), 1, -accuracy);
+	
+	// start with half the integer digits
+//	rootn /= RealNumber("1");
+	bool loop = true;
+	int iter = 0;
+
+	// Debug 7 lines
+	//DisplayFormat format, fmtSci;
+	//format.mainFormat = RealNumber::NumberFormat::rnfNormal;
+	//format.decDigits = 4;
+	//fmtSci = format;
+	//fmtSci.nFormatSwitchLength = 4;
+	//SmartString sr = r.ToDecimalString(format),
+	//			sp, sn,snp1, sd;
+	// /DEBUG
+
+	while(loop)
+	{
+		rootnp1 = (rootn + r / rootn) * half;
+		// DEBUG
+		//RealNumber::DisplayFormat format, fmtSci;
+		//fmtSci.mainFormat = RealNumber::NumberFormat::rnfSci;
+		//fmtSci.decDigits = 16;
+		//SmartString sp, sn, snp1, sd;
+		//sp = (r / rootn).ToDecimalString(format);
+		//sn = rootn.ToDecimalString(format);
+		//snp1 = rootnp1.ToDecimalString(format);
+		//std::cout << "\titer: SmartString("<< iter << "\t(rn+r/rn)/2:(SmartString("<< sn << "+"<< sp << ")/2=SmartString("<< snp1 << "\n";
+		//RealNumber diff(rootn - rootnp1);
+		//sd = diff.ToDecimalString(fmtSci);
+		//std::cout << "\t\tdiff:SmartString("<< sd << "\n";
+		// /DEBUG
+		loop = (rootn - rootnp1).Abs() > epsilon && iter++ < 1000;
+		rootn = rootnp1;
+	}
+
+	return rootnp1;
+}
+
+RealNumber pow(RealNumber base, RealNumber power)
+{
+	return base.Pow(power);
+}
+
+RealNumber root(RealNumber num, RealNumber r)
+{
+	if (num.Sign() < 0 && (!r.IsInt() || !r.IsOdd()))
+		return NaN;
+	if (r == two)
+		return sqrt(r);
+	return exp( ln(num)/r);
+}
+
+// transcendent functions
+RealNumber exp(RealNumber power)						// e^x = e^(int(x)) x e^(frac(x))
+{
+	RealNumber	rnIntPart = power.Int(),
+				rnFracPart = power.Frac();
+	rnIntPart = e.Pow(rnIntPart);	// this will not call exp()
+	// e^x = 1 + sum_1^inf(x^n/n$)
+	RealNumber x(rnFracPart), res(one), resp(zero), xn, fact(one),
+		epsilon(SmartString("1"), 1, -(int)RealNumber::MaxLength());
+	int n = 1;
+	while ((res - resp).Abs() > epsilon || n < (int)RealNumber::MaxLength()) 
+	{
+		resp = res;
+		res += x / fact;
+		x = x * rnFracPart;
+		fact = fact * RealNumber(++n);
+	}
+	return res * rnIntPart;
+}
+
+RealNumber ln(RealNumber num)
+{
+	if (num.Sign() < 0 || !num.IsValid())
+		return NaN;
+	if (num.IsNull())
+		return Inf;
+	if (num == e)
+		return one;
+	// if x = a * 10^y, where  0 < a < 1 =>  ln(x) = y*ln10 + ln(a) 
+	RealNumber x(num);
+	int expnt = x.Exponent();
+	RealNumber	rnIntPart = RealNumber(expnt) * rnLn10; // can be +/-
+	x /= RealNumber::TenToThePowerOf(expnt);	// now x is between 0 and 1
+	// use the Newtons' method (https://en.wikipedia.org/wiki/Natural_logarithm#High_precision)
+	// Solve exp(y/2)-exp(-y/2) = 0, where y = ln x
+	// 								  x - exp(y_n)
+	//	y := lnx y_(n+1) = y_n + 2 * -------------
+	//								  x	+ exp(y_n)
+	int iter = 0;
+	RealNumber yn(1), ynp1(0), expy,
+				epsilon(SmartString("1"), 1, -(int)RealNumber::MaxLength() + 2 );
+	while ((yn - ynp1).Abs() > epsilon && iter++ < 1000)
+	{
+		yn = ynp1;
+		expy = exp(yn);
+		ynp1 = yn + RealNumber(2) * (x - expy) / (x + expy);
+	}
+	yn = yn + rnIntPart;
+	return yn;
+}								// log_base(x)
+RealNumber log(RealNumber x, RealNumber &base)	// logarithm in base 'base'
+{
+	if (base <= zero)
+		return NaN;
+	if (base == e)
+		return ln(x);
+
+	if(base.IsInt())
+	{
+		if(base == two)
+			return log2(x);
+		if(base == ten)
+			return log10(x);
+	}
+	return ln(x) / ln(base);
+}
+
+RealNumber log10(RealNumber num)					// or lg, base = 10
+{
+	return ln(num) * pln10;
+}
+
+RealNumber log2(RealNumber num)
+{
+	return ln(num) * pln2;
+}
+
+// trigonometric functions
+static inline RealNumber deg2rad(RealNumber deg) 
+{ 
+	return deg / RealNumber("180") * pi;
+}
+static RealNumber _sin(RealNumber r)		// sine	(DEG)	0<= r <= 90
+{ 
+	r = deg2rad(r);
+	// from https://github.com/nlitsme/gnubc/blob/master/bc/libmath.b
+	// Sin(x)  uses the standard series:
+	//sin(x) = x - x^3/3! + x^5/5! - x^7/7! ...
+	int z = (int)RealNumber::MaxLength();// , m = 0;
+
+	RealNumber::SetMaxLength( (int)(1.1 * z) + 2);
+
+	RealNumber b, e, i, n, s, v;
+
+	  /* precondition r. */
+
+	v = piP2 / two;	// π/4
+	int sign = r.Sign();
+	r.ToAbs();
+	//	scale = 0 // to get integer part only
+	RealNumber remainder, four = RealNumber("4");
+	n = (r / v + two).Div(four, remainder);	// remainder just to ensure integer divison
+								// n = [(4r/π+2)/4] = [(r+π/2)/π], e.g. when r = π/4 => [(1/4+1/2)]=0
+								// n >0 when r >= π/2
+	r = r - four * n * v;		// move r into [0,π/2)
+	if (n.IsOdd())	//		if (n % 2) x = -x		  for angles in quarters 3 or 4
+		r.SetSign(-r.Sign());
+
+			/* Do the loop. */
+	RealNumber 	epsilon(SmartString("1"), 1, -(z + 2));
+
+	RealNumber::SetMaxLength(z + 2);
+	v = e = r;					  // v == sin(r) = r, e_{1} = r (actual power of r, n = 1) / i!
+	s = -r * r;					  // for integer powers of r get -r^2
+	i = RealNumber("3");		  // i will be n!, first non linear term is x^3/3!
+	while(true)
+	{
+		e *= s / (i * (i - one));	  // e_{n+1} = e_{n} * (-r^2) / ( (i *(i-1)) * (i-2)! ) 
+		if (e.Abs() <= epsilon)// x^(2n+1)/(2n+1)! < accuracy
+		{
+			RealNumber::SetMaxLength(z);
+			if (sign<0) 
+				return -v;
+			return v;
+		}
+		v += e;					  // sum
+		i += two;	  // for (i+2)!
+	}
+			   // never comes here
+	return RealNumber();
+}
+RealNumber sin (RealNumber r, AngularUnit au)		// sine
+{
+	RealNumber rn360 = RealNumber("360");
+	RealNumber rn180 = RealNumber("180");
+	RealNumber rn90  = RealNumber("90");
+
+	int sign = r.Sign();	
+	r.ToAbs();				// posiitve
+
+	switch (au)
+	{
+		case AngularUnit::auDeg:
+			r.Div(rn360, r);			 // |r| is < 360
+			// sine: 		+  | +
+			//			 ------|------
+			//				-  | -
+			if (r >= rn180)
+			{
+				sign = -sign;			   // div kellene real-ra, hogy legyen maradek
+				r -= rn180;
+			}
+			if (r > rn90)
+				r -= rn90;
+			// now r is in 0<= r <= 90
+			if (r.IsNull())
+				return zero;
+			else if (r == RealNumber("30"))
+				return half;
+			else if (r == RealNumber("45"))
+				return rsqrt2;
+			else if (r == RealNumber("60"))
+				return sqrt3P2;
+			else if (r == rn90)
+				return one;
+			else
+				return _sin(r).SetSign(sign);
+			break;
+
+		case AngularUnit::auRad:
+			r /= twoPi;	
+			r = r.Frac();		// 0 <= r < 1
+			// [[fallthrough]];			// from C++17
+		case AngularUnit::auTurn:			// full circle 1 turn
+			return sin(r * rn360);
+			break;
+
+		case AngularUnit::auGrad:			// full circle 400 Grad
+			return sin(rn360 / RealNumber("400") * r);
+			break;
+	}
+	return RealNumber();
+}
+
+RealNumber csc(RealNumber r, AngularUnit au)		// cosecant = 1/sine
+{
+	return one / sin(r,au);
+}
+
+RealNumber cos(RealNumber r, AngularUnit au)		// cosine
+{
+	RealNumber rn360 = RealNumber("360");
+	RealNumber rn270 = RealNumber("270");
+	RealNumber rn180 = RealNumber("180");
+	RealNumber rn90 = RealNumber("90");
+	int sign = r.Sign();	
+	r.ToAbs();				// posiitve
+
+	switch (au)
+	{
+		case AngularUnit::auDeg:
+
+			(void)r.Div(rn360, r);	 // |r| is < 360
+			// sine: 		-  | +
+			//			 ------|------
+			//				-  | +
+			if (r <= rn90)
+				return sin(rn90 - r).SetSign(sign);
+			if (r <= rn180)
+				return sin(rn180 - r).SetSign(-sign);
+			if (r <= rn270)
+				return sin(r - rn180).SetSign(-sign);
+			return sin(r - rn270).SetSign(sign);
+
+		case AngularUnit::auRad:
+			r /= twoPi;
+			r = r.Frac();		// 0<= r <= 1
+			// [[fallthrough]]; // From C++17
+		case AngularUnit::auTurn:			// full circle 1 turn
+			return cos(r * rn360).SetSign(sign);
+
+		case AngularUnit::auGrad:			// full circle 400 Grad
+			return cos(rn360 / RealNumber("400") * r);
+			break;
+	}
+	return RealNumber();
+}
+
+RealNumber sec(RealNumber r, AngularUnit au)		// secant = 1/cosine
+{
+	return one / cos(r,au);
+}
+
+RealNumber tan(RealNumber r, AngularUnit au)		// tangent
+{
+	RealNumber rsin = sin(r, au);
+
+	return rsin/cos(r, au);
+}
+
+RealNumber cot(RealNumber r, AngularUnit au)		// cotangent
+{
+	RealNumber rcos = cos(r,au);
+
+	return rcos/sin(r,au);
+}
+
+// inverse trigonometric functions
+RealNumber asin(RealNumber r, AngularUnit au)		// sine
+{
+	// fast answers
+	if (r.Abs() > 1)
+		return NaN;
+	if (r.IsNull())
+		return zero;
+	if (r.Abs() == one)
+		return piP2.SetSign(r.Sign());
+	// slow answer
+	return atan(r/sqrt(one - r*r), au );
+}
+
+RealNumber acos(RealNumber r, AngularUnit au)		// cosine
+{
+	return ConverToUnit(piP2 - asin(r, AngularUnit::auRad), au);
+}
+
+RealNumber atan(RealNumber r, AngularUnit au)		// arcus tangent
+{
+	// From: https://github.com/nlitsme/gnubc/blob/master/bc/libmath.b
+	// Using the formula:
+	// atan(x) = atan(c) + atan((x - c) / (1 + xc)) for a small c(.2 here)
+	//	For under .2, use the series :
+	// atan(x) = x - x ^ 3 / 3 + x ^ 5 / 5 - x ^ 7 / 7 + ...
+	// Changes by A.S.
+  /* a is the value of atan(.2) if it is needed. */
+  /* f is the value to multiply by a in the return. */
+  /* e is the value of the current term in the series. */
+  /* v is the accumulated value of the series. */
+  /* m is 1 or -1 depending on x (-x -> -1).  not used (A.S.)  */
+  /* i is the denominator value for series element. */
+  /* n is the numerator value for the series element. */
+  /* s is -x*x. */
+  /* z is the saved user's scale. */
+
+	// result must be converted to the selected units
+  /* Special cases for fast answers */
+	if (r.IsNaN())
+		return r;
+	if (r.IsInf())
+		return piP2.SetSign(r.Sign());
+	if (r == one)
+		return (piP2 * half).Rounded( (int)(RealNumber::MaxLength() + LengthOverFlow)).SetSign(r.Sign());
+	RealNumber aDot2 = RealNumber(".197395559849880758370049765194790293447585103787852101517688940241033969978243785732697828037288044112").Rounded( (int)(RealNumber::MaxLength() + LengthOverFlow));
+	RealNumber a, f, e, v=r, i, n, s, dot2 = RealNumber(".2");
+	if (r = dot2)
+		return aDot2;	// ==  atan(.2)
+
+	size_t z = RealNumber::MaxLength();
+	// Calculate atan of a known number.
+	if (r > aDot2)
+	{
+		(void)RealNumber::SetMaxLength(z + 5);
+		a = aDot2;
+	}
+
+	/* Precondition r. */
+	RealNumber::SetMaxLength(z + 3);
+	while (r > dot2) 
+	{
+		f += one;
+		r = (r - dot2) / (1 + r * dot2);
+	}
+	/* Initialize the series. */
+	v = n = r;
+	s = -r * r;
+
+	/* Calculate the series. infinite loop */
+	for (i = RealNumber("3"); true; i += two)
+	{
+		e = (n *= s) / i;
+		if (e == zero) 
+		{
+			RealNumber::SetMaxLength(z);
+			r = f * a + v;
+			ConverToUnit(r, au);
+			return r.SetSign(r.Sign());
+		}
+		v += e;
+	}
+	return RealNumber();
+}
+
+RealNumber acot(RealNumber r, AngularUnit au)		// cotangent
+{
+	r = piP2 - r;
+	return atan(r, au);
+}
+
+// hyperbolic functions
+
+RealNumber sinh(RealNumber r)			// hyperbolic sine
+{
+	RealNumber rn = exp(r);
+	return RealNumber( (rn - rn.Pow(-1))/two);
+}
+
+RealNumber csch(RealNumber r)			// hyperbolic cosecant = 1/sinh
+{
+	return RealNumber(1/sinh(r));
+}
+
+RealNumber cosh(RealNumber r)			// hyperbolic cosine
+{
+	RealNumber rn = exp(r);
+	return RealNumber( (rn + rn.Pow(-1))/two);
+}
+
+RealNumber sech(RealNumber r)			// hyperbolic secant = 1/cosh
+{
+	return RealNumber(1/cosh(r));
+}
+
+RealNumber tanh(RealNumber r)			// hyperbolic tangent
+{
+	RealNumber rp = exp(r), rr = one / rp;
+	return RealNumber((rp - rr)/(rp + rr));
+}
+
+RealNumber coth(RealNumber r)			// hyperbolic cotangent
+{
+	RealNumber rp = exp(r), rr = one / rp;
+	return RealNumber((rp + rr)/(rp - rr));
+}
+
+// inverse hyperbolic functions
+RealNumber asinh(RealNumber r)		// area hyperbolic sine
+{
+	RealNumber x2 = sqrt(r * r + one);
+	return ln(r + x2);
+}
+
+RealNumber acosh(RealNumber r)		// area hyperbolic cosine only the positive signed one
+{
+	RealNumber x2 = r * r - one;
+	if (x2.IsNegative())
+		return NaN;
+	x2 = sqrt(x2);
+
+	return ln(r + x2);
+}
+
+RealNumber atanh(RealNumber r)		// area hyperbolic tangent
+{
+	if (r.Abs() >= one)
+		return NaN;
+
+	return half * ln( (one + r) / (one - r) );
+}
+
+RealNumber acoth(RealNumber r)		// hyperbolic cotangent
+{
+	if (r.Abs() <= one)
+		return NaN;
+
+	return half * ln( (one + r) / (one - r) );
+}
+//////////////////////////////////////////////////////////////
+// end of namespace LongNumber
+//////////////////////////////////////////////////////////////
+}

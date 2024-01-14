@@ -1,0 +1,118 @@
+#ifdef _MSC_VER
+#if defined(DESIGNING) || defined(LIBBUILD)
+#pragma warning (disable : 4244)
+//#pragma warning (disable : 4250)
+#pragma warning (disable : 4996)
+#endif // DESIGNING
+#include <SDKDDKVer.h>
+#define EXIF_GUID_SUPPORTED
+#else
+#define NOEXCEPT_SUPPORT
+#define _WIN32_IE  0x0610
+#define _WIN32_WINNT 0x0610
+#define WINVER 0x0610
+#endif // _MSC_VER
+
+
+#define NLIBNS                  nlib
+#define NLIB_TOSTRING(str)      NLIB_TOSTRING___(str)
+#define NLIB_TOSTRING___(str)   L#str
+#define NLIBNS_STRING           NLIB_TOSTRING(NLIBNS) L"::"
+
+
+#include <windows.h>
+
+// in mingw
+#ifdef __MINGW32__
+#include <stdio.h>
+#include <stdexcept>
+#endif
+
+#include <CommCtrl.h>
+#include <algorithm>
+
+#if defined(DESIGNING) || defined(LIBBUILD)
+// C RunTime Header Files
+#include <tchar.h>
+#ifdef _MSC_VER
+#include <commoncontrols.h>
+#endif
+
+#include <iomanip>
+#endif // DESIGNING, LIBBUILD
+
+#include <string>
+#include <sstream>
+
+#include <fstream>
+#include <map>
+#include <vector>
+#include <list>
+#include <iostream>
+#include <forward_list>
+#include <memory>
+
+#include <GdiPlus.h>
+#include <fstream>
+
+
+#ifdef __MINGW32__
+#define FILESTD   wstd::
+using std::type_info;
+#include <limits.h>
+#include "compfstream.h"
+#include "mingwdef.h"
+#else
+#define FILESTD   std::
+#endif
+
+#ifndef NOEXCEPT_SUPPORT
+#define noexcept throw()
+#endif
+
+#include "general.h"
+
+#ifdef __MINGW32__
+#include <WinUser.h>
+#ifdef __MINGW64_VERSION_MAJOR
+#include <Uxtheme.h>
+#include <vssym32.h>
+#else
+#include <Uxtheme_fixed.h>
+#include <tmschema.h>
+#endif
+#else
+#include <Uxtheme.h>
+#include <vssym32.h>
+#endif
+
+#include "sparse_list.h"
+
+#ifndef DESIGNING
+#include "userprecomp.h"
+#include "application.h"
+#include "buttons.h"
+#include "canvas.h"
+#include "comdata.h"
+#include "controlbase.h"
+#include "dialog.h"
+#include "events.h"
+#include "filestream.h"
+#include "general.h"
+#include "generalcontrol.h"
+#include "graphiccontrol.h"
+#include "gridbase.h"
+#include "helperwindows.h"
+#include "imagelist.h"
+#include "images.h"
+#include "inifile.h"
+#include "menu.h"
+#include "objectbase.h"
+#include "screen.h"
+#include "syscontrol.h"
+#include "themes.h"
+#include "utility.h"
+#include "wexception.h"
+#include "windowfunctions.h"
+#include "registry.h"
+#endif

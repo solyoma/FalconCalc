@@ -396,3 +396,12 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+
+#zlib
+nlib/LibraryBuild
+nlib/DebugLibraryBuild
+
+#other
+.obj
+.o
+nlib/zlib/*

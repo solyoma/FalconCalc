@@ -1,0 +1,26 @@
+#include "designer/resource.h"
+
+LANGUAGE 9, 1
+
+#ifdef __MINGW32__
+CREATEPROCESS_MANIFEST_RESOURCE_ID RT_MANIFEST "ablakok-manifest.xml"
+#endif
+
+/////////////////////////////////////////////////////////////////////////////
+// Designer program icon.
+IDI_MAINICON        ICON        "resources\\main.ico"
+/////////////////////////////////////////////////////////////////////////////
+// Default icon for windows when no icon is given.
+IDI_PRGDEFAULT      RCDATA      "resources\\defaultprg.ico"
+/////////////////////////////////////////////////////////////////////////////
+IDI_CONTROLIMAGES   RCDATA      "resources\\controlimages.png"
+IDI_CONTROLIMAGES2  RCDATA      "resources\\controlimages2.png"
+IDI_PICKERIMAGES    RCDATA      "resources\\pickerimages.png"
+IDI_ALIGNIMAGES     RCDATA      "resources\\alignimages.png"
+
+IDI_UPBUTTON        RCDATA      "resources\\btnup.png"
+IDI_DOWNBUTTON      RCDATA      "resources\\btndown.png"
+IDI_DELBUTTON       RCDATA      "resources\\btndel.png"
+
+IDR_VS2010PROJECT   RCDATA      "resources\\vs2012proj.zip"
+

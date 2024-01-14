@@ -1,0 +1,328 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Designer Forms">
+      <UniqueIdentifier>{f274dc2e-227a-45c9-9270-02d25d795a20}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Designer Header Files">
+      <UniqueIdentifier>{7237a07c-3ad7-4477-bf43-ad160593a69a}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Designer Source Files">
+      <UniqueIdentifier>{505d311a-8969-4b61-9e21-2730a5686137}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="application.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="buttons.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="canvas.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="comdata.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="controlbase.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="dialog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="filestream.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="general.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="generalcontrol.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="graphiccontrol.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="gridbase.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="imagelist.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="images.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="inifile.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="menu.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="objectbase.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="screen.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="syscontrol.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="themes.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="wexception.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="windowfunctions.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="utility.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="helperwindows.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="designer\designer.cpp">
+      <Filter>Designer Forms</Filter>
+    </ClCompile>
+    <ClCompile Include="designer\designerdialogs.cpp">
+      <Filter>Designer Forms</Filter>
+    </ClCompile>
+    <ClCompile Include="designer\designeroptions.cpp">
+      <Filter>Designer Forms</Filter>
+    </ClCompile>
+    <ClCompile Include="designer\projectsettings.cpp">
+      <Filter>Designer Forms</Filter>
+    </ClCompile>
+    <ClCompile Include="designer\designercontrols.cpp">
+      <Filter>Designer Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="designer\designerform.cpp">
+      <Filter>Designer Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="designer\designermenu.cpp">
+      <Filter>Designer Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="designer\designio.cpp">
+      <Filter>Designer Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="designer\designproperties.cpp">
+      <Filter>Designer Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="designer\designregistry.cpp">
+      <Filter>Designer Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="designer\resunzip.cpp">
+      <Filter>Designer Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="designer\serializer.cpp">
+      <Filter>Designer Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="designer\stdafx.cpp">
+      <Filter>Designer Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="registry.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="toolbars.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="application.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="buttons.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="canvas.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="comdata.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="controlbase.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="dialog.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="events.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="filestream.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="general.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="generalcontrol.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="graphiccontrol.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="gridbase.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="imagelist.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="images.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="inifile.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="menu.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="objectbase.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="screen.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="syscontrol.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="themes.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="wexception.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="windowfunctions.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="zlib\zlib.h">
+      <Filter>Designer Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="utility.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sparse_list.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="helperwindows.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="designer\designer.h">
+      <Filter>Designer Forms</Filter>
+    </ClInclude>
+    <ClInclude Include="designer\designerdialogs.h">
+      <Filter>Designer Forms</Filter>
+    </ClInclude>
+    <ClInclude Include="designer\designeroptions.h">
+      <Filter>Designer Forms</Filter>
+    </ClInclude>
+    <ClInclude Include="designer\projectsettings.h">
+      <Filter>Designer Forms</Filter>
+    </ClInclude>
+    <ClInclude Include="designer\designercontrols.h">
+      <Filter>Designer Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="designer\designerform.h">
+      <Filter>Designer Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="designer\designermenu.h">
+      <Filter>Designer Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="designer\designio.h">
+      <Filter>Designer Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="designer\designproperties.h">
+      <Filter>Designer Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="designer\designregistry.h">
+      <Filter>Designer Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="designer\property_buttons.h">
+      <Filter>Designer Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="designer\property_canvas.h">
+      <Filter>Designer Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="designer\property_controlbase.h">
+      <Filter>Designer Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="designer\property_dialog.h">
+      <Filter>Designer Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="designer\property_generalcontrol.h">
+      <Filter>Designer Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="designer\property_graphiccontrol.h">
+      <Filter>Designer Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="designer\property_gridbase.h">
+      <Filter>Designer Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="designer\property_imagelist.h">
+      <Filter>Designer Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="designer\property_images.h">
+      <Filter>Designer Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="designer\property_menu.h">
+      <Filter>Designer Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="designer\property_objectbase.h">
+      <Filter>Designer Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="designer\property_screen.h">
+      <Filter>Designer Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="designer\property_syscontrol.h">
+      <Filter>Designer Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="designer\resunzip.h">
+      <Filter>Designer Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="designer\serializer.h">
+      <Filter>Designer Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="designer\resource.h">
+      <Filter>Designer Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="registry.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="kbd64.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="genericfile.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="toolbars.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="designer\property_toolbars.h">
+      <Filter>Designer Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="stdafx_zoli.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="ablakok.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+</Project>
