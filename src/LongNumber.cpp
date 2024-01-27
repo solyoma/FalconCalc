@@ -415,20 +415,6 @@ SmartString RealNumber::_ToBase(int base, size_t maxNumDigits) const	// base mus
 	return convertedValue;
 }
 
-/*=============================================================
- * TASK   :	convert integer part of string to a b inary number
- * PARAMS :	format:	whose 'base' member is set to rnbBin
- * EXPECTS:
- * GLOBALS:
- * RETURNS: string representation of binary number
- * REMARKS:	-the number may be negative or positive and unless
- *			the 'bSignedBinOrHex' is set to true the string
- *			for a positive and negative number of the same
- *			abs. value will be diferent
- *			-the fractional part of the number is discarded
- *			-methode of conversion is divisions by two and 
- *			reflecting the remainder
- *------------------------------------------------------------*/
  /*=============================================================
   * TASK   : show integer number in binary form
   * PARAMS : 'format' - describes the display format
@@ -453,6 +439,13 @@ SmartString RealNumber::_ToBase(int base, size_t maxNumDigits) const	// base mus
 SmartString RealNumber::ToBinaryString(const DisplayFormat& format) const
 {
 	SmartString bin = _ToBase(2, _maxLength+LengthOverFlow);
+
+	if (IsInf() || IsNaN())
+		return _numberString;
+
+	if ( (bin == u"Inf" && !IsInf()) || (bin == u"NaN" && !IsNaN()))
+		return u"Too long";
+
 	size_t lenb = bin.length();
 
 	auto addone = [&bin](int i, int &carry)
@@ -552,24 +545,16 @@ SmartString RealNumber::ToBinaryString(const DisplayFormat& format) const
  *------------------------------------------------------------*/
 SmartString RealNumber::ToOctalString(const DisplayFormat& format) const
 {
+	if (IsInf() || IsNaN())
+		return _numberString;
+
 	SmartString oct = _ToBase(8, _maxLength+LengthOverFlow); 
 	oct = SmartString("0")+ oct;
 	size_t leno = oct.length();
-#if 0 
-	auto addone = [&oct](int i, int& carry)
-	{	// 1's complement and add carry
 
-		oct[i] = ('7' - oct.at(i).Unicode()) + '0'; // 7's complement
-		if (carry)
-		{
-			oct[i] = oct.at(i).Unicode() + 1;
-			if (oct.at(i).Unicode() == '8')
-				oct[i] = '0';
-			else
-				carry = 0;
-		}
-	};
-#endif
+	if ( (oct == u"0Inf" && !IsInf()) || (oct == u"0NaN" && !IsNaN()))
+		return u"Too long";
+
 	if (_eFlags.count(EFlag::rnfInvalid))
 		oct = INF_STR;
 
@@ -650,6 +635,9 @@ SmartString RealNumber::ToOctalString(const DisplayFormat& format) const
  *------------------------------------------------------------*/
 SmartString RealNumber::ToHexString(const DisplayFormat &format) const
 {
+	if (IsInf() || IsNaN())
+		return _numberString;
+
 	SmartString hex;
 	if (format.trippleE != IEEEFormat::rntHexNotIEEE)
 	{
@@ -670,6 +658,9 @@ SmartString RealNumber::ToHexString(const DisplayFormat &format) const
 	}
 	else
 		hex = _ToBase(16, _maxLength+LengthOverFlow);
+
+	if ( (hex == u"Inf" && !IsInf()) || (hex == u"NaN" && !IsNaN()))
+		return u"Too long";
 
 	if (hex.length() & 1)	// hex string must always have even number of characters
 		hex = "0"_ss + hex; // the leading 0 will be dropped if the number has
@@ -848,6 +839,9 @@ SmartString RealNumber::ToHexString(const DisplayFormat &format) const
  *----------------------------------------------------------------------------*/
 SmartString RealNumber::ToDecimalString(const DisplayFormat &format) const
 {
+	if (IsInf() || IsNaN())
+		return _numberString;
+
 	SmartString result,				// rounded decimal representation with sign, delimiters, decimal point and exponent
 				roundedString;		// rounded decimal string w.o. delimiters, decimal point or exponent leading or trailing zeros
 	int exp = _exponent;			// position of the decimal point, < 0 => left of number

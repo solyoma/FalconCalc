@@ -921,6 +921,11 @@ void TfrmMain::edtInfixTextChanged(void *sender, nlib::EventParameters param)
         gbResults->SetText(s);
         ShowMessageOnAllPanels(L"???");
     }
+    catch(SmartString s)
+    {
+        gbResults->SetText(s.ToWideString());
+        ShowMessageOnAllPanels(L"???");
+    }
     catch(...)
     {
         ShowMessageOnAllPanels(L"???");

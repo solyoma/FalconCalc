@@ -49,7 +49,6 @@ const SCharT comment_delimiter = SCharT(':');
  *-----------------------------------------------------------*/
 void Trigger(SmartString text)
 {
-
 		throw text;
 }
 
