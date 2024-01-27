@@ -1,16 +1,14 @@
+#include <set>
 #include "stdafx_zoli.h"
-#include "stdafx_lc.h"
+//#include "stdafx_lc.h"
 
 using namespace nlib;
-#ifdef _OLD_CODE
-    #include "numconsts.h"
-    #include "numconv.h"
-#else
-    #include "LongNumber.h"
-    using namespace LongNumber;
-#endif
+#undef max
+#include "LongNumber.h"
+using namespace LongNumber;
 
-#include "main.h"
+
+#include "mainForm.h"
 
 void Initialize()
 {

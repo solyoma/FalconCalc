@@ -29,7 +29,8 @@ public:
 		// first add unicode data
 		HGLOBAL handle = GlobalAlloc(GMEM_MOVEABLE, len*sizeof(wchar_t));
 		wchar_t *pw = (wchar_t *)GlobalLock(handle);
-		wcscpy(pw, text.c_str());
+		if(pw)
+			wcscpy(pw, text.c_str());
 		GlobalUnlock(handle);
 		SetClipboardData(CF_UNICODETEXT, handle);
 		// then as UTF8 data
@@ -37,7 +38,8 @@ public:
 		wcstombs(buf, text.c_str(), 2*len);
 		handle = GlobalAlloc(GMEM_MOVEABLE, len*2);
 		char *pc = (char*)GlobalLock(handle);
-		memcpy(pc, buf, len*2);
+		if(pc)
+			memcpy(pc, buf, len*2);
 		GlobalUnlock(handle);
 		SetClipboardData(CF_TEXT, handle);
 		CloseClipboard();

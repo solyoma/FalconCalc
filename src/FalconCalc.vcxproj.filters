@@ -30,7 +30,7 @@
     <ClCompile Include="history.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="main.cpp">
+    <ClCompile Include="mainForm.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="variables.cpp">
@@ -71,7 +71,7 @@
     <ClInclude Include="history.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="main.h">
+    <ClInclude Include="mainForm.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="variables.h">

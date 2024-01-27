@@ -1,7 +1,4 @@
-﻿#include <cmath>
-#include <cassert>
-#include <cfloat>
-#include <climits>
+﻿#include <cassert>
 #include <regex>
 #include "LongNumber.h"
 
@@ -33,16 +30,16 @@ namespace LongNumber {
 
 	const SCharT chSpace = SCharT(' ');
 
-SCharT ByteToSCharT(uint8_t digit)	// 0 <= digit <= 32
+SCharT ByteToMyCharT(uint8_t digit)	// 0 <= digit <= 32
 {
 	if (digit < 10)
 		return SCharT('0' + digit);
-	if (digit > 10)
+	if (digit >= 10)
 		return SCharT('A' + (digit - 10) );
 	return SCharT(0);
 }
 
-uint8_t SCharTToByte(SCharT ch)
+uint8_t MyCharTToByte(SCharT ch)
 {
 	if (ch < SCharT('0'))
 		return 0;
@@ -61,8 +58,8 @@ SmartString Utf8FromWideString(const std::wstring& ws)
 SmartString ToHexByte(size_t byte)
 {
 	SmartString res(2, chZero);
-	res[0] = ByteToSCharT((byte & 0xF0) >> 4);
-	res[1] = ByteToSCharT((byte & 0x0F));
+	res[0] = ByteToMyCharT((byte & 0xF0) >> 4);
+	res[1] = ByteToMyCharT((byte & 0x0F));
 	return res;
 };
 
@@ -88,13 +85,14 @@ RealNumber ConverToUnit(RealNumber r, AngularUnit angu)  // r in radian
 //--------------------------------------
 SCharT RealNumber::_decPoint;
 size_t RealNumber::_maxExponent = 1024;	// absolute value of largest possible exponent of 10 in number
-size_t RealNumber::_maxLength = 32;		// maximum length of string
-											// constants and Functions that can be used with REAL_NUMBERs
+size_t RealNumber::_maxLength = 100;	// maximum length of string
+
+const RealNumber RealNumber::RN_0("0"), RealNumber::RN_1("1"), RealNumber::RN_2("2"), RealNumber::RN_3("3"), RealNumber::RN_4("4"), 
+				RealNumber::RN_5("5"), RealNumber::RN_6("6"), RealNumber::RN_7("7"), RealNumber::RN_8("8"), RealNumber::RN_9("9"), RealNumber::RN_10("10");
+
+// constants and Functions that can be used with REAL_NUMBERs
 static const RealNumber rnNull("0"),
 				  rnHalf("0.5"),
-				  rnOne("1"),
-				  rnTwo("2"),
-				  rnTen("10"),
 			//					   1		 2 		   3		 4		   5		 6		   7		 8		   9		10
 			//			0 123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012				  
 				  rnPi("3.141592653589793238462643383279502884197169399375105820974944592307816406286208998628034825342117067980"), // π
@@ -114,13 +112,13 @@ static const RealNumber rnNull("0"),
 			rn_au		("149597870700"),		// astronomival unit - definition (m)
 			rn_c		("299792458"),			// speed of light in vacuum	 m⋅s-1
 			rn_eps0		("8.8541878128E-12"),	// vacuum electric permittivity	(F/m)
-			rn_fsc		("7.297352569311E-3"),	// fine-structure constant (e^2/ (2 eps0 h c )
+			rn_fsc		("7.297352569311E-3"),	// fine-structure constant (e^2/ (2 εo h c )
 			rn_G		("6.6743015-11"),		// Newtonian constant of gravitation (m^3/(kg s^2))
 			rn_gf		("9.81"),				// average g on Earth (9.81 m/s^2)
 			rn_h		("6.62607015E-34"),		// Planck constant  (J⋅s)
 			rn_hbar		("1.054571817E-34"),	// reduced Planck constant
 			rn_kb		("1.380649E-23"),		// Boltzmann constant (J/K)
-			rn_kc		("8.987551792314E9"),	// Coulomb constant (1/ (4 pi eps0)
+			rn_kc		("8.987551792314E9"),	// Coulomb constant (1/ (4 π εo)
 			rn_la		("6.02214076E23"),		// Avogadro constant	(1/mol)
 			rn_me		("9.109383701528E-31"),	// electron mass
 			rn_mf		("5.072E24"),			// mass of the Earth (kg)
@@ -138,11 +136,6 @@ static const RealNumber rnNull("0"),
 // seen from outside
 RealNumber	zero  		(rnNull), 
 			half 		(rnHalf), 
-			one 		(rnOne), 
-			two 		(rnTwo), 
-			ten 		(rnTen), 
-			e 			(rnE), 
-			pi 			(rnPi), 
 			twoPi 		(rn2Pi), 
 			piP2 		(rnPiP2), 
 			sqrt2 		(rnSqrt2), 
@@ -155,30 +148,33 @@ RealNumber	zero  		(rnNull),
 			rln2 		(pln2),
 			NaN 		(rnNaN),
 			Inf 		(rnInf);
-Constant
-			fsc		{ L"fsc",	L"fine-structure constant"							, rn_fsc},
-			au		{ L"au",	L"[m] astronomical unit - exact value"				, rn_au	},
-			c		{ L"c",		L"[m/s] speed of light in vacuum	-definition"	, rn_c	},
-			eps0	{ L"eps0",	L"[F/m=As/Vm] vacuum electric permittivity - exact value", rn_eps0},
-			G		{ L"g",		L"L[m^2/kg s^2] Newtonian constant of gravitation"	, rn_G	},
-			gf		{ L"gf",	L"[m/s^2] average g on Earth"						, rn_gf	},
-			h		{ L"h",		L"L[Js] Planck constant"							, rn_h	},
-			hbar	{ L"hbar",	L"[Js] reduced Planck constant (h/2π)"				, rn_hbar},
-			kb		{ L"kb",	L"[J/K] Boltzmann constant"							, rn_kb	},
-			kc		{ L"kc",	L"[1/4πεo] Coulomb constant"						, rn_kc	},
-			la		{ L"la",	L"[1/mol] Avogadro constant"						, rn_la	},
-			me		{ L"me",	L"[kg] electron mass"								, rn_me	},
-			mf		{ L"mf",	L"[kg] mass of the Earth"							, rn_mf	},
-			mp		{ L"mp",	L"[kg] proton mass"									, rn_mp	},
-			ms		{ L"ms",	L"[kg] mass of the Sun"								, rn_ms	},
-			mu0		{ L"mu",	L"[N/A^2=Vs/m^2] vacuum magnetic permeability"		, rn_mu0},
-			qe		{ L"qe",	L"[C] elementary charge"							, rn_qe},
-			rfsc	{ L"rafs",	L"[-] reciprocal of the fine structure constant (approx 137} ", rn_pfsc},
-			rf		{ L"rf",	L"[m] radius of the Earth"							, rn_rf},
-			rg		{ L"rg",	L"[J/mol K] molar gas constant R"					, rn_rg},
-			rs		{ L"rs",	L"[m] radius of the Sun"							, rn_rs},
-			sb		{ L"sb",	L"[W/m^2 K^4] Stefan–Boltzmann constant"			, rn_sb},
-			u		{ L"u",	L"L[kg] atomic mass unit (m(C12}/12}"					, rn_u};
+Constant		// math
+			e		{ L"e"		, rnE	 , L"-"				, L"Euler's number"												},
+			pi 		{ L"π"		, rnPi	 , L"-"				, L"half the circumference of a unit circle"					},
+				// physics				 																				
+			fsc		{ L"fsc"	, rn_fsc , L"[-]"			, L"fine - structure constant"									},
+			au		{ L"au"		, rn_au	 , L"[m]"			, L"astronomical unit - exact value"							},
+			c		{ L"c"		, rn_c	 , L"[m/s]"			, L"speed of light in vacuum - exact value"						},
+			eps0	{ L"eps0"	, rn_eps0, L"[F/m=As/Vm]"	, L"vacuum electric permittivity - exact value"					},
+			G		{ L"g"		, rn_G	 , L"[m²/kg²s²]"	, L"Newtonian constant of gravitation"							},
+			gf		{ L"gf"		, rn_gf	 , L"[m/s²]"		, L"average g on Earth"											},
+			h		{ L"h"		, rn_h	 , L"[Js]"			, L"Planck constant"											},
+			hbar	{ L"hbar"	, rn_hbar, L"[Js]"			, L"reduced Planck constant (h/2π)"								},
+			kb		{ L"kb"		, rn_kb	 , L"[J/K]"			, L"Boltzmann constant"											},
+			kc		{ L"kc"		, rn_kc	 , L"[N m²/C²]"		, L"= 1/4πεo Coulomb constant"									},
+			la		{ L"la"		, rn_la	 , L"[1/mol]"		, L"Avogadro constant - exact value"							},
+			me		{ L"me"		, rn_me	 , L"[kg]"			, L"electron mass"												},
+			mf		{ L"mf"		, rn_mf	 , L"[kg]"			, L"mass of the Earth"											},
+			mp		{ L"mp"		, rn_mp	 , L"[kg]"			, L"proton mass"												},
+			ms		{ L"ms"		, rn_ms	 , L"[kg]"			, L"mass of the Sun"											},
+			mu0		{ L"mu"		, rn_mu0 , L"[N/A²=Vs/m²]"	, L"4π*10ˉ⁷ vacuum magnetic permeability"						},
+			qe		{ L"qe"		, rn_qe  , L"[C]"			, L"elementary charge"											},
+			rfsc	{ L"rafs"	, rn_pfsc, L"[-]"			, L"reciprocal of the fine structure constant (approx 137)"		},
+			rf		{ L"rf"		, rn_rf  , L"[m]"			, L"radius of the Earth"										},
+			rg		{ L"rg"		, rn_rg  , L"[J/mol K]"		, L"molar gas constant R"										},
+			rs		{ L"rs"		, rn_rs  , L"[m]"			, L"radius of the Sun"											},
+			sb		{ L"sb"		, rn_sb  , L"[W/m² K⁴]"		, L"Stefan–Boltzmann constant"									},
+			u		{ L"u"		, rn_u   , L"[kg]"			, L"atomic mass unit (m[C12]/12)"								};
 
 void RealNumber::_RoundConstants(int maxLength)
 {
@@ -406,11 +402,12 @@ SmartString RealNumber::_ToBase(int base, size_t maxNumDigits) const	// base mus
 				remainder;
 	SmartString convertedValue;
 
+	tmp._sign = 1;	// always positive
 	while (!tmp.IsNull() )
 	{
 		tmp = tmp._Div(divisor, remainder);
 		int n = (int)remainder.ToInt64();
-		convertedValue = ByteToSCharT(n) + convertedValue;
+		convertedValue = String(1,ByteToMyCharT(n)) + convertedValue;
 	}
 	if (convertedValue.length() > maxNumDigits)
 		convertedValue = SmartString((_sign < 0 ? "-": "")) + SmartString(INF_STR);
@@ -492,7 +489,7 @@ SmartString RealNumber::ToBinaryString(const DisplayFormat& format) const
 	size_t n = lenb;
 
 	if (!format.strThousandSeparator.empty())
-		n += (lenb > 4 ? lenb / 4 : 0) + 4 - (lenb % 4);
+		n += (lenb > 4 ? (lenb / 4 + ((lenb % 4) ? 4 - (lenb % 4) : 0)) : 0) ;
 	if ( format.bSignedBinOrHex && (format.mustUseSign || _sign < 0) )
 		++n;
 	if (format.useNumberPrefix)		// '#'
@@ -511,11 +508,12 @@ SmartString RealNumber::ToBinaryString(const DisplayFormat& format) const
 		res[pos++] = '#';
 	if (format.strThousandSeparator.empty())
 		res.replace(pos, lenb, bin);
-	else		// separate every 4 digits by a space
+	else if (lenb > 4)		// separate every 4 digits by a space
 	{
 		size_t i = 0;	// position in result number
-		for (	; i < (4 - lenb % 4); ++i)
-			res[pos++] = chZero;
+		if(lenb % 4)
+			for (	; i < (4 - lenb % 4); ++i)
+				res[pos++] = chZero;
 		for (size_t j = 0; j < lenb; ++j)
 		{
 			res[pos++] = bin.at((int)j);
@@ -527,6 +525,9 @@ SmartString RealNumber::ToBinaryString(const DisplayFormat& format) const
 			}
 		}
 	}
+	else
+		res = u"#" + bin;
+
 	return res;
 }
 
@@ -649,8 +650,7 @@ SmartString RealNumber::ToOctalString(const DisplayFormat& format) const
  *------------------------------------------------------------*/
 SmartString RealNumber::ToHexString(const DisplayFormat &format) const
 {
-	SmartString hex = _ToBase(16, _maxLength+LengthOverFlow);
-
+	SmartString hex;
 	if (format.trippleE != IEEEFormat::rntHexNotIEEE)
 	{
 		LDouble ld = ToLongDouble();
@@ -668,11 +668,17 @@ SmartString RealNumber::ToHexString(const DisplayFormat &format) const
 		for (size_t i = 0; i < size; ++i)
 			hex += ToHexByte(*(p++));
 	}
+	else
+		hex = _ToBase(16, _maxLength+LengthOverFlow);
+
+	if (hex.length() & 1)	// hex string must always have even number of characters
+		hex = "0"_ss + hex; // the leading 0 will be dropped if the number has
+							// a prefix and not LSB order is used
 
 	auto addone = [&hex](int i, int& carry)
 	{	
 		// 15's complement and add carry, used when 'format.mustUseSign'
-		uint8_t n = SCharTToByte(hex.at(i));
+		uint8_t n = MyCharTToByte(hex.at(i));
 		n = 15 - i;
 		if (carry)
 		{
@@ -682,7 +688,7 @@ SmartString RealNumber::ToHexString(const DisplayFormat &format) const
 			else
 				carry = 0;
 		}
-		hex[i] = ByteToSCharT(n);
+		hex[i] = ByteToMyCharT(n);
 	};
 	if (_eFlags.count(EFlag::rnfInvalid))
 		hex = INF_STR;
@@ -720,31 +726,28 @@ SmartString RealNumber::ToHexString(const DisplayFormat &format) const
 				std::swap(hex[i + 1], hex[lenh - i - 2 + 1]);
 			}
 		};
+					 // hex always have an even number of digits here and may start with a '0' character
+	if (format.littleEndian)
+		makeLittleEndian();
 
-	if (format.hexFormat == HexFormat::rnHexNormal)	// not using the strThousandSeparator, but there 
+	if (format.hexFormat == HexFormat::rnHexNormal)	// not using the strThousandSeparator
 	{
-		if (format.littleEndian)
+		if (format.useNumberPrefix)
 		{
-			if(lenh & 1)			// no delimiters but to reverse byte order we must have even digits
+			if (hex[0] == SCharT('0'))
 			{
-				hex = SmartString("0")+ hex;
-				++lenh;
-				++n;
+				hex.erase(0, 1);
+				--n;
+				--lenh;
 			}
-			makeLittleEndian();
+			n += 2;		// for the 0x
 		}
 	}
-	else
-	{														// are many possibilities
+	else // not normal: there are many possibilities, 
+	{	 //	but 'hex' always has an even number of characters										
 		switch (format.hexFormat)
 		{
 			case HexFormat::rnHexByte:  chunkLength = 2; 		  // 2BDC546291F4B => 02 BD C5 46 29 1F 4B
-				if (lenh & 1)	// odd number of hex digits
-				{
-					hex = SmartString("0")+ hex;
-					++lenh;
-					++n;
-				}
 				break;
 			case HexFormat::rnHexWord:  chunkLength = 4; 
 				if (lenhMod4)
@@ -766,16 +769,17 @@ SmartString RealNumber::ToHexString(const DisplayFormat &format) const
 				break;
 			default: break;
 		}
-		if(chunkLength > 0)	// lenh is multiple of chunkLength and there are delimiters
-			n += (lenh > chunkLength ? (lenh / chunkLength - 1) : 0);		// this many
-
-		if (format.littleEndian)	// then reverse byte order
-			makeLittleEndian();
+		if (chunkLength > 0)	// lenh is multiple of chunkLength and there are delimiters
+		{
+			size_t numChunks = (lenh > chunkLength ? lenh / chunkLength : 1);
+				// byte/word/dword format string have 0x for each unit
+			if (format.useNumberPrefix)		// '0x'
+				n += (2 + 1) * numChunks -1;// 2 bytes (0x) before each chunk and one behind each but the last
+		}
 	}
+
 	if (format.bSignedBinOrHex && (format.mustUseSign || _sign < 0))
 		++n;
-	if (format.useNumberPrefix)		// '0x'
-		++n,++n;
 
 	SmartString res = SmartString(n, chSpace);
 	int pos = 0;
@@ -786,27 +790,32 @@ SmartString RealNumber::ToHexString(const DisplayFormat &format) const
 		else if (_sign < 0)
 			res[pos++] = '-';
 	}
-	if (format.useNumberPrefix)
-	{
-		res[pos++] = '0';
-		res[pos++] = 'x';
-	}
+	//if (format.useNumberPrefix)
+	//{
+	//	res[pos++] = '0';
+	//	res[pos++] = 'x';
+	//}
 	if (format.hexFormat == HexFormat::rnHexNormal || chunkLength > lenh)
+	{
+		if (format.useNumberPrefix)	// add a 0x before exah group
+		{
+			res[pos++] = '0';
+			res[pos++] = 'x';
+		}
 		res.replace(pos, lenh, hex);
+	}
 	else	// separate every 'chunkLength'-th digits by a space
 	{
-		//size_t i = 0;	// position in result number
-		//for (; i < (chunkLength - (lenh % chunkLength)); ++i)
-		//	res[pos++] = chZero;
-		for (size_t i=0, j = 0; j < lenh; ++j)
+		for (size_t j = 0; j < lenh; )
 		{
-			res[pos++] = hex.at((int)j);
-			++i;
-			if (i == chunkLength)
+			if (format.useNumberPrefix)	// add a 0x before exah group
 			{
-				++pos;	// space already there
-				i = 0;
+				res[pos++] = '0';
+				res[pos++] = 'x';
 			}
+			for(size_t i = 0; i < chunkLength; ++i)
+				res[pos++] = hex.at(j++);
+			++pos;	// space after the chunk
 		}
 	}
 	return res;
@@ -819,8 +828,10 @@ SmartString RealNumber::ToHexString(const DisplayFormat &format) const
  * EXPECTS:	format is rnfNormal, rnfSci or rnfEng. No text format allowed
  * GLOBALS:
  * RETURNS: number as a SmartString  that may contain exponent after an 'E'
- * REMARKS:	- for non bin, oct. or hex. output when	the format is rnfNormal
- *				* and all digits are requested (format.decDigits < 0)
+ * REMARKS:	- for non bin, oct. or hex. output when	the format is 'rnfNormal'
+ *				  AND all digits are requested (format.decDigits < 0)
+ *				  AND the number string with leading 0s is longer than
+ *				  the displa
  *				  then if leading zeros are present(e.g. 0.000123)
  *				  they are discarded and the format changes to rnfSci
  *				* if format.decDigits > 0 leading zeros are kept
@@ -847,12 +858,20 @@ SmartString RealNumber::ToDecimalString(const DisplayFormat &format) const
 	// too many integer digits or leading zeros or too large/small number?
 	if (fmt.mainFormat == NumberFormat::rnfNormal)
 	{
-		if (std::abs(exp) > (int)fmt.nFormatSwitchLength || ( (exp <0 && fmt.decDigits >=0) || - exp > fmt.decDigits || exp <= -(int)_maxLength))
+		if (std::abs(exp) > (int)fmt.nFormatSwitchLength || /* ((exp <0 && fmt.decDigits >= 0) || -exp > fmt.decDigits || */ exp <= -(int)_maxLength)/*)*/
 			fmt.mainFormat = NumberFormat::rnfSci;
 	}
 
 	int nIntegerDigitsI, // initial value before rounding
 		nIntegerDigits ; //	before an after rounding
+	if (fmt.mainFormat == NumberFormat::rnfGeneral)
+	{
+		if( ((size_t)std::abs(exp) > fmt.nFormatSwitchLength) || (exp < 0 && fmt.decDigits + exp >0))
+			fmt.mainFormat = NumberFormat::rnfSci;
+		else
+			fmt.mainFormat = NumberFormat::rnfNormal;
+	}
+
 	switch (fmt.mainFormat)
 	{
 		case NumberFormat::rnfNormal:
@@ -966,7 +985,8 @@ SmartString RealNumber::ToDecimalString(const DisplayFormat &format) const
 
 			if ((int)(leadingZerosInFractionalPart + lenFrac) >= fmt.decDigits)	
 				lenFrac = fmt.decDigits - leadingZerosInFractionalPart;
-			lenFracDelim = (static_cast<size_t>(fmt.decDigits) - 1) / 3;
+			if(fmt.useFractionSeparator)
+				lenFracDelim = (static_cast<size_t>(fmt.decDigits) - 1) / 3;
 		}
 		else									// all fractional digits are displayed
 			lenFracDelim = fmt.useFractionSeparator ?  (leadingZerosInFractionalPart + lenFrac - 1) / 3 : 0;
@@ -1000,6 +1020,103 @@ SmartString RealNumber::ToDecimalString(const DisplayFormat &format) const
 
 	return result;
 }
+
+SmartString RealNumber::ToString(const DisplayFormat& format, TextFormat textFormat) const
+{
+	if (format.mainFormat == NumberFormat::rnfText)
+		return ToTextString(format, textFormat);
+
+	SmartString sres;
+	switch (format.base)
+	{
+		default:
+		case DisplayBase::rnb10:
+			sres = ToDecimalString(format); break;
+		case DisplayBase::rnbHex:
+			sres = ToHexString(format); break;
+		case DisplayBase::rnbOct:
+			sres = ToOctalString(format); break;
+		case DisplayBase::rnbBin:
+			sres = ToBinaryString(format); break;
+	}
+	if (format.displWidth && sres.length() > format.displWidth)
+	{
+		DisplayFormat fmt = format;
+		int posD, posE;	// set in TooLongToDisplay
+		/* Lambda to see if number fits in displWidth. Sets posD and posE */
+		auto TooLongToDisplay = [&]() -> bool
+			{
+				posD = sres.indexOf(DecPoint());				
+				int pos1 = posD >= 0 ? posD+1 : 0;
+				posE = sres.indexOf(u'E', pos1);
+				if (posD > (int)fmt.displWidth)
+					return true;
+				size_t pos2 = posE >= 0 ? posE : sres.length();
+				if (pos2 > (int)fmt.displWidth)	// see if fractional part could be shortened
+					return true;
+				return false;
+			};
+		// if possible shorten fractional part and modify sres
+		// if not fills 'sres' with '#' characters
+		// only called when the number format is SCI or ENG
+		// ENG is not switched back to SCI !
+		auto ShortenFractPart = [&]() -> bool
+			{
+				int pos1 = posD >= 0 ? posD : 0,				// to the decimal point
+					pos2 = posE >= 0 ? posE : sres.length(),	// after the fractional part
+					lenF = pos2 - pos1-1,						// length of fractional part
+					lenO = (pos1 + 1) + (sres.length() - pos2);	// length of all non-fractional part
+				// see if the fractional part can be rounded so that the whole number fit
+				// examples:  displWidth == 4, SCI 
+				//	#		_exp 	| #string		length	 pos1   pos2   	result	  is OKround 
+				//	8765     10		| 8.765E9		 7		  1		 5		 9E9		+	
+				//	9765     10		| 9.765E9		 7		  1		 5		 1E10		+	
+				//	9765     20		| 9.765E19		 8		  1		 5		 1E20		+	
+				//	9765     100	| 9.765E99		 8		  1      5		 1E100		-	
+				lenF = fmt.displWidth - lenO;
+				if (lenF < 0)		// less than no room for fractional part :)
+					return false;
+				
+				fmt.decDigits = lenF - (lenF>0 ? 1 : 0);  // rounding position
+				sres = ToDecimalString(fmt);
+				return sres.length() <= fmt.displWidth;
+			};
+
+		if (format.base == DisplayBase::rnb10)
+		{
+			if (TooLongToDisplay() )
+			{
+				if (ShortenFractPart())
+					return sres;
+
+				if (fmt.mainFormat != NumberFormat::rnfSci &&
+					fmt.mainFormat != NumberFormat::rnfEng)
+				{		 // try again in SCI mode
+					fmt.mainFormat = NumberFormat::rnfSci;
+					sres = ToDecimalString(fmt);		
+					if (TooLongToDisplay())		// still too long: can't display
+					{
+						if (!ShortenFractPart())
+							sres = SmartString(fmt.displWidth, u'#');
+					}
+				}
+				else if (!ShortenFractPart())	// already sci or eng and too long
+						sres = SmartString(format.displWidth, u'#');
+				return sres;
+			}
+		}
+		else
+		{
+			if (format.displWidth < String(u"Too long").length())
+				sres = SmartString(format.displWidth, u'#');
+			else
+				sres = SmartString("Too Long");
+		}
+	}
+
+	return sres;
+}
+
 
 size_t RealNumber::_FormatIntegerPart(const DisplayFormat fmt, const SmartString& snum, size_t destPos, size_t size, SmartString& result) const
 {			
@@ -1103,7 +1220,11 @@ SmartString RealNumber::_FormatExponent(const DisplayFormat fmt, int exp) const
 			s = SmartString("x10<sup>")+ s + SmartString("</sup>");
 			break;
 		case ExpFormat::rnsfSciTeX:
-			s = SmartString("\\times10^(") + s + SmartString(")");	// or "\\cdot10^("+s+")"
+			s = SmartString("\\times10^{") + s + SmartString("}");	// or "\\cdot10^("+s+")"
+			break;
+		case ExpFormat::rnsfUp:
+		default:
+			s = SmartString(1, SCharT(183)) + u"10^{" + s + u"}";
 			break;
 	}
 
@@ -1134,7 +1255,8 @@ SmartString RealNumber::ToTextString(const DisplayFormat& format, TextFormat dtf
 	}
 	for (size_t i = start; i < len; i += 2)
 	{
-		ch = (SCharTToByte(strh[i]) << 4) + SCharTToByte(strh[i + 1]);
+		ch = strh[i];
+		ch = (MyCharTToByte(SCharT(strh[i])) << 4) + MyCharTToByte(SCharT(strh[i + 1]));
 		str.push_back(ch);
 	}
 	switch (dtf)
@@ -1154,13 +1276,13 @@ SmartString RealNumber::ToTextString(const DisplayFormat& format, TextFormat dtf
 LDouble RealNumber::ToLongDouble()	const
 {
 	if (IsNaN())
-		return nanl("");
+		return std::nanl("");
 	if (IsInf())
 		return _sign * INFINITY;
 	// overflow?
 	static RealNumber mx(LDBL_MAX), mn(LDBL_MIN);
 	if (mx < *this)
-		return nanl("");
+		return std::nanl("");
 	if( mn > *this)
 		return 0.0;
 
@@ -1243,11 +1365,11 @@ RealNumber RealNumber::_PowInt(const RealNumber& power) const // integer powers 
 
 	RealNumber n(power);
 
-	if (power== one )			// when "+1"
+	if (power== RN_1 )			// when "+1"
 		return x;
 	else if(n._sign < 0)		// when negative
 	{
-		x = one / x;
+		x = RN_1 / x;
 		n._sign = -n._sign;
 	}
 	// special case:  (10^x)^power = 10^(x*power)
@@ -1269,16 +1391,16 @@ RealNumber RealNumber::_PowInt(const RealNumber& power) const // integer powers 
 	*		n := floor(n / 2);
 	*	return x * y
 	  */
-	RealNumber y(rnOne);
+	RealNumber y(RN_1);
 	if (n.Sign() < 0)
 	{
 	}
-	while (n > rnOne)
+	while (n > RN_1)
 	{
 		if (n.IsOdd())
 			y = x * y;
 		x = x * x;
-		n = (n / rnTwo).Int();	// == floor
+		n = (n / RN_2).Int();	// == floor
 	}
 	return x * y;
 }
@@ -1289,14 +1411,14 @@ RealNumber RealNumber::Pow(const RealNumber &power) const
 	if (!power.IsValid())
 		return power;
 	if (power.IsNull())
-		return IsNull() ? NaN : rnOne;	// 0^0 is undefined
+		return IsNull() ? NaN : RN_1;	// 0^0 is undefined
 	if (IsNull())							// 0^x = 0
 		return *this;
 
-	if (power == rnOne)				// x^1 = x
+	if (power == RN_1)				// x^1 = x
 		return *this;
-	if (power == -rnOne)			// x^(-1) = 1/x
-		return one / *this;
+	if (power == -RN_1)			// x^(-1) = 1/x
+		return RN_1 / *this;
 
 	if (_sign < 0 && (!IsInt()))	// maybe if we could detect r = 1/n, where n is odd
 		return NaN;					// then we could return the corresponding root //!!TODO
@@ -1308,10 +1430,10 @@ RealNumber RealNumber::Pow(const RealNumber &power) const
 	if (!rnIntPart.IsNull())
 		rnIntPart = _PowInt(rnIntPart);
 	else
-		rnIntPart = rnOne;
+		rnIntPart = RN_1;
 	// fractional part of exponent
 	if (rnFracPart.IsNull())
-		rnFracPart = rnOne;
+		rnFracPart = RN_1;
 	else if (*this != rnE)
 		rnFracPart = exp(rnFracPart * ln(*this));
 	else		// e^x, where  -1<x<1
@@ -1452,7 +1574,7 @@ RealNumber RealNumber::_Multiply(const RealNumber& rnOther) const
 	return left;
 }
 
-bool RealNumber::__DivideHelper(RealNumber& dividend, const RealNumber& divisor) const
+bool RealNumber::__IsDivideByZero(RealNumber& dividend, const RealNumber& divisor) const
 {
 	if (divisor.IsNull())		// division by 0
 	{
@@ -1491,7 +1613,7 @@ RealNumber RealNumber::_Divide(const RealNumber& rnOther) const
 
 	RealNumber right(rnOther);	// i.e. when parameter +- diff is positive
 
-	if (__DivideHelper(left, rnOther))	// handle null, inf, nan
+	if (__IsDivideByZero(left, rnOther))	// handle null, inf, nan
 		return left;
 
 	_DivideInternal(left, right);
@@ -1505,7 +1627,7 @@ RealNumber RealNumber::_Div(const RealNumber& divisor, RealNumber& remainder) co
 	// RealNumber d(this->Int()), dv(divisor.Int());	// result, divident, divisor
 	RealNumber d(*this), dv(divisor);	// result, divident, divisor
 
-	if (__DivideHelper(d, dv))
+	if (__IsDivideByZero(d, dv))
 		return d;
 	int sl = d._sign, sr = dv._sign;
 
@@ -1523,8 +1645,8 @@ RealNumber RealNumber::_Div(const RealNumber& divisor, RealNumber& remainder) co
 		d._sign = sl * sr;
 	}
 	else
-	{	// signs are not set back
-		_DivideInternal(d, dv, &rem);	// 
+	{	// signs are not yet set back
+		_DivideInternal(d, dv, &rem);	// d = result * dv + rem
 		rem._sign = sl;
 		d._sign = sl * sr;
 	}
@@ -1575,15 +1697,15 @@ RealNumber RealNumber::_LogOpWith(const RealNumber& ra, LogicalOperator lop) con
 	{
 		case LogicalOperator::lopOr:
 			for (int i = 0; i < left._exponent; ++i)
-				res[i] = left._numberString[i].Unicode() | right._numberString[i].Unicode();
+				res[i] = left._numberString[i] | right._numberString[i];
 			break;
 		case LogicalOperator::lopXOr:
 			for (int i = 0; i < left._exponent; ++i)
-				res[i] = (left._numberString[i].Unicode() ^ right._numberString[i].Unicode()) + '0';	// xor removes high 4 bits
+				res[i] = (left._numberString[i] ^ right._numberString[i]) + '0';	// xor removes high 4 bits
 			break;
 		case LogicalOperator::lopAnd:
 			for (int i = 0; i < left._exponent; ++i)
-				res[i] = (left._numberString[i].Unicode() & right._numberString[i].Unicode());
+				res[i] = (left._numberString[i] & right._numberString[i]);
 			break;
 	}
 	left._numberString = res;
@@ -1711,7 +1833,7 @@ void RealNumber::_FromNumberString()
 			base = Base::hex;
 		}
 		else if (_numberString.indexOf(_decPoint) >= 0 || _exponent < (int)_numberString.length())	
-			pattern = SmartString("[^0-9") + _decPoint + SmartString("]"); // strings starting with a 0 may contain decimal points
+			pattern = SmartString("[^0-9") + _decPoint.Unicode() + SmartString("]"); // strings starting with a 0 may contain decimal points
 		else												  // in which case theye are not octal
 		{
 			pattern = SmartString("[^0-7]");				  // otherwise they are octal
@@ -1726,7 +1848,7 @@ void RealNumber::_FromNumberString()
 		base = Base::bin;
 	}
 	else													  // a decimal string which did not start with a zero
-		pattern = SmartString("[^0-9") + _decPoint + SmartString("]");
+		pattern = SmartString("[^0-9") + _decPoint.Unicode() + SmartString("]");
 
 	// exponent 
 	int posE = base == Base::dec ? _numberString.indexOf(SCharT('E')) : -1;
@@ -1780,7 +1902,7 @@ void RealNumber::_FromNumberString()
 		int ch;
 		for (int i = 0; i < (int)_numberString.length(); ++i)
 		{
-			ch = SCharTToByte(_numberString.at(i));
+			ch = MyCharTToByte(_numberString.at(i));
 			number = number * multiplier + RealNumber(ch);
 		}
 		_numberString = number._numberString;
@@ -1794,7 +1916,7 @@ void RealNumber::_FromNumberString()
 		{
 			++_exponent;
 		}
-		else if(_exponent <= 0 || _exponent < (int)_numberString.length())		 // decimal point or hidden decimal point (w. _exponent <= 0)  => normal number
+		else // if(_exponent <= 0 || _exponent < (int)_numberString.length())		 // decimal point or hidden decimal point (w. _exponent <= 0)  => normal number
 		{
 			// remove leading zeros	as string is not binary, octal or hexadecimal
 			size_t limit = posDp >= 0 ? posDp : (_exponent > 0 ? _exponent : _numberString.length());
@@ -1814,7 +1936,7 @@ void RealNumber::_FromNumberString()
 
 			// and remove leading zeros
 			if (indexInStr)	// remove leading zeros. leave the decimal point intact
-			{				// because it may be anywhere nut just after the leading zeros
+			{				// because it may be anywhere not just after the leading zeros
 				_numberString.erase(0, indexInStr);
 				indexInStr = 0;
 			}
@@ -1826,14 +1948,19 @@ void RealNumber::_FromNumberString()
 				_numberString.erase(positionOfError, std::string::npos);
 			}
 			// remove decimal point, as we do not need it
-			if (posDp >= 0 && posDp < (int)_numberString.length() - 1)	// not at end of number
+			if (posDp >= 0)
 			{
-				size_t len = _numberString.length();
-				indexInStr = posDp;
-				for (size_t j = posDp + 1; j < len; ++indexInStr, j++)
-					_numberString[indexInStr] = _numberString.at((int)j);
-				if (posDp >= 0)
+				if (posDp == (int)_numberString.length() - 1)	// at end of number
 					_numberString.pop_back();
+				else if (posDp < (int)_numberString.length() - 1)	// not at end of number
+				{
+					size_t len = _numberString.length();
+					indexInStr = posDp;
+					for (size_t j = posDp + 1; j < len; ++indexInStr, j++)
+						_numberString[indexInStr] = _numberString.at(j);
+					if (posDp >= 0)
+						_numberString.pop_back();
+				}
 			}
 		}
 	}
@@ -1861,6 +1988,18 @@ void RealNumber::_FromNumberString()
 			break;	
 	if(trailingchZeros)
 		_numberString = _numberString.erase(len - trailingchZeros, String::npos);
+	if (_numberString.length() > MaxAllowedDigits)
+	{
+		int cntDecDigits = MaxAllowedDigits,
+			cntIntegerDigits = 0;
+		_RoundNumberString(_numberString, cntDecDigits, cntIntegerDigits);
+		if (cntIntegerDigits)	// increased because of rounding
+			if (++_exponent > MaxExponent)
+			{
+				_SetNaN();
+				_eFlags.insert(_sign > 0 ? EFlag::rnfOverflow : EFlag::rnfUnderflow);
+			}
+	}
 	_isNormalized = true;
 }
 
@@ -2171,7 +2310,7 @@ void RealNumber::_MultiplyStrings(RealNumber& left, RealNumber& right) const
 			digTmp = result.at((int)(LengthOverFlow + i) + j).Unicode() + digResult - fda * 10;
 			fdaTmp = digTmp >= 10 ? digTmp / 10 : 0;
 			fda += fdaTmp;
-			result[LengthOverFlow + i + j] = size_t(digTmp - fdaTmp * 10);
+			result[LengthOverFlow + i + j] = char16_t(digTmp - fdaTmp * 10);
 		}
 			// deal with overflow
 		for (int j = (int)(LengthOverFlow + i - 1); j >= 0 && fda; --j)
@@ -2179,7 +2318,7 @@ void RealNumber::_MultiplyStrings(RealNumber& left, RealNumber& right) const
 			digResult = result.at(j).Unicode() + fda;
 			fda = digResult >= 10 ? digResult / 10 : 0;
 
-			result[j] = size_t(digResult - fda * 10);
+			result[j] = char16_t(digResult - fda * 10);
 		}
 	}
 	// calculate count of leading zeros
@@ -2212,7 +2351,7 @@ void RealNumber::_MultiplyStrings(RealNumber& left, RealNumber& right) const
 
 /*=============================================================
  * TASK   :	 divide the string representation of two
- *			 0 normalized  numbers w.o. independent of
+ *			 0 normalized  numbers independent of
  *			 the signs of the arguments, which must be adjusted
  *			 later
  * PARAMS :	left  - dividend
@@ -2332,8 +2471,8 @@ void RealNumber::_DivideInternal(RealNumber& left, RealNumber& right, RealNumber
 		if (dividend[0] == chZero)	// erase leading zeros
 			dividend.erase(dividend.begin(), std::find_if(dividend.begin(), dividend.end(), [](SCharT ch) {return ch != chZero; }));
 
-		size_t len = dividend.length(), 
-			   maxLength = _maxLength + LengthOverFlow;
+		size_t len = dividend.length();
+			   // maxLength = _maxLength + LengthOverFlow already defined outside;
 
 		bool canHaveZeroQuotient = len < rp;
 		// if after the leading zeros removed dividend is shorter than divisor and 'il' then add one digit from 'left' if it is possible
@@ -2400,7 +2539,7 @@ void RealNumber::_DivideInternal(RealNumber& left, RealNumber& right, RealNumber
 		for (int i =  (int)len - 1, j = (int)rp -1; j >= 0; --i, --j)
 			dividend[i] = _SubtractDigits(dividend.at(i,chZero), divisor.at(j,chZero), borrow);
 		if (extension)									  // 666|6 - 700*1 => 596|6 - 700*2 => ... 106|6 - 700 => 036|6 
-			dividend[0] = dividend[0].Unicode() - borrow;
+			dividend[0] = dividend[0] - borrow;
 	};
 	//*************** Main division loop							
 	ResultT res;
@@ -2474,14 +2613,14 @@ void RealNumber::_CorrectResult(RealNumber &left, String &result, int trailingch
 	left._leadingZeros = 0;
 }
 
-RealNumber fact(const RealNumber& n)
+RealNumber fact(const RealNumber n)
 {
 	if (n.IsNegative() || n.IsInt() == false)
 		return NaN;
 
 	if (n > RealNumber(1000))	// at 1000 the error is 3.46925154994 E-6 %
 	{
-		return sqrt(two * pi * n) * (n / e) ^ n * (one + one / RealNumber(12) / n);
+		return sqrt(RealNumber::RN_2 * pi * n) * (n / e) ^ n * (RealNumber::RN_1 + RealNumber::RN_1 / RealNumber(12) / n);
 	}
 
 	RealNumber res = n,
@@ -2511,12 +2650,12 @@ RealNumber sqrt(RealNumber r, int accuracy)
 	int iter = 0;
 
 	// Debug 7 lines
-	//DisplayFormat format, fmtSci;
-	//format.mainFormat = RealNumber::NumberFormat::rnfNormal;
-	//format.decDigits = 4;
-	//fmtSci = format;
-	//fmtSci.nFormatSwitchLength = 4;
-	//SmartString sr = r.ToDecimalString(format),
+	// DisplayFormat format, fmtSci;
+	// format.mainFormat = LongNumber::NumberFormat::rnfNormal;
+	// format.decDigits = 4;
+	// fmtSci = format;
+	// fmtSci.nFormatSwitchLength = 4;
+	// SmartString sr = r.ToDecimalString(format),
 	//			sp, sn,snp1, sd;
 	// /DEBUG
 
@@ -2524,17 +2663,17 @@ RealNumber sqrt(RealNumber r, int accuracy)
 	{
 		rootnp1 = (rootn + r / rootn) * half;
 		// DEBUG
-		//RealNumber::DisplayFormat format, fmtSci;
-		//fmtSci.mainFormat = RealNumber::NumberFormat::rnfSci;
-		//fmtSci.decDigits = 16;
-		//SmartString sp, sn, snp1, sd;
-		//sp = (r / rootn).ToDecimalString(format);
-		//sn = rootn.ToDecimalString(format);
-		//snp1 = rootnp1.ToDecimalString(format);
-		//std::cout << "\titer: SmartString("<< iter << "\t(rn+r/rn)/2:(SmartString("<< sn << "+"<< sp << ")/2=SmartString("<< snp1 << "\n";
-		//RealNumber diff(rootn - rootnp1);
-		//sd = diff.ToDecimalString(fmtSci);
-		//std::cout << "\t\tdiff:SmartString("<< sd << "\n";
+		// LongNumber::DisplayFormat format, fmtSci;
+		// fmtSci.mainFormat = LongNumber::NumberFormat::rnfSci;
+		// fmtSci.decDigits = 16;
+		// SmartString sp, sn, snp1, sd;
+		// sp = (r / rootn).ToDecimalString(format);
+		// sn = rootn.ToDecimalString(format);
+		// snp1 = rootnp1.ToDecimalString(format);
+		// std::cout << "\titer: SmartString("<< iter << "\t(rn+r/rn)/2:(SmartString("<< sn << "+"<< sp << ")/2=SmartString("<< snp1 << "\n";
+		// RealNumber diff(rootn - rootnp1);
+		// sd = diff.ToDecimalString(fmtSci);
+		// std::cout << "\t\tdiff:SmartString("<< sd << ")\n";
 		// /DEBUG
 		loop = (rootn - rootnp1).Abs() > epsilon && iter++ < 1000;
 		rootn = rootnp1;
@@ -2552,7 +2691,7 @@ RealNumber root(RealNumber num, RealNumber r)
 {
 	if (num.Sign() < 0 && (!r.IsInt() || !r.IsOdd()))
 		return NaN;
-	if (r == two)
+	if (r == RealNumber::RN_2)
 		return sqrt(r);
 	return exp( ln(num)/r);
 }
@@ -2562,9 +2701,9 @@ RealNumber exp(RealNumber power)						// e^x = e^(int(x)) x e^(frac(x))
 {
 	RealNumber	rnIntPart = power.Int(),
 				rnFracPart = power.Frac();
-	rnIntPart = e.Pow(rnIntPart);	// this will not call exp()
+	rnIntPart = ((RealNumber&)e).Pow(rnIntPart);	// this will not call exp()
 	// e^x = 1 + sum_1^inf(x^n/n$)
-	RealNumber x(rnFracPart), res(one), resp(zero), xn, fact(one),
+	RealNumber x(rnFracPart), res(RealNumber::RN_1), resp(zero), xn, fact(RealNumber::RN_1),
 		epsilon(SmartString("1"), 1, -(int)RealNumber::MaxLength());
 	int n = 1;
 	while ((res - resp).Abs() > epsilon || n < (int)RealNumber::MaxLength()) 
@@ -2584,7 +2723,7 @@ RealNumber ln(RealNumber num)
 	if (num.IsNull())
 		return Inf;
 	if (num == e)
-		return one;
+		return RealNumber::RN_1;
 	// if x = a * 10^y, where  0 < a < 1 =>  ln(x) = y*ln10 + ln(a) 
 	RealNumber x(num);
 	int expnt = x.Exponent();
@@ -2616,9 +2755,9 @@ RealNumber log(RealNumber x, RealNumber &base)	// logarithm in base 'base'
 
 	if(base.IsInt())
 	{
-		if(base == two)
+		if(base == RealNumber::RN_2)
 			return log2(x);
-		if(base == ten)
+		if(base == RealNumber::RN_10)
 			return log10(x);
 	}
 	return ln(x) / ln(base);
@@ -2653,15 +2792,16 @@ static RealNumber _sin(RealNumber r)		// sine	(DEG)	0<= r <= 90
 
 	  /* precondition r. */
 
-	v = piP2 / two;	// π/4
+	v = piP2 / RealNumber::RN_2;	// π/4
 	int sign = r.Sign();
 	r.ToAbs();
 	//	scale = 0 // to get integer part only
 	RealNumber remainder, four = RealNumber("4");
-	n = (r / v + two).Div(four, remainder);	// remainder just to ensure integer divison
+	n = (r / v + RealNumber::RN_2).Div(four, remainder);	// remainder just to ensure integer divison
 								// n = [(4r/π+2)/4] = [(r+π/2)/π], e.g. when r = π/4 => [(1/4+1/2)]=0
 								// n >0 when r >= π/2
-	r = r - four * n * v;		// move r into [0,π/2)
+	if(n.IsNull())
+		r = r - four * n * v;		// move r into [0,π/2)
 	if (n.IsOdd())	//		if (n % 2) x = -x		  for angles in quarters 3 or 4
 		r.SetSign(-r.Sign());
 
@@ -2671,10 +2811,10 @@ static RealNumber _sin(RealNumber r)		// sine	(DEG)	0<= r <= 90
 	RealNumber::SetMaxLength(z + 2);
 	v = e = r;					  // v == sin(r) = r, e_{1} = r (actual power of r, n = 1) / i!
 	s = -r * r;					  // for integer powers of r get -r^2
-	i = RealNumber("3");		  // i will be n!, first non linear term is x^3/3!
+	i = RealNumber::RN_3;		  // i will be n!, first non linear term is x^3/3!
 	while(true)
 	{
-		e *= s / (i * (i - one));	  // e_{n+1} = e_{n} * (-r^2) / ( (i *(i-1)) * (i-2)! ) 
+		e *= s / (i * (i - RealNumber::RN_1));	  // e_{n+1} = e_{n} * (-r^2) / ( (i *(i-1)) * (i-2)! ) 
 		if (e.Abs() <= epsilon)// x^(2n+1)/(2n+1)! < accuracy
 		{
 			RealNumber::SetMaxLength(z);
@@ -2683,7 +2823,7 @@ static RealNumber _sin(RealNumber r)		// sine	(DEG)	0<= r <= 90
 			return v;
 		}
 		v += e;					  // sum
-		i += two;	  // for (i+2)!
+		i += RealNumber::RN_2;	  // for (i+2)!
 	}
 			   // never comes here
 	return RealNumber();
@@ -2695,7 +2835,7 @@ RealNumber sin (RealNumber r, AngularUnit au)		// sine
 	RealNumber rn90  = RealNumber("90");
 
 	int sign = r.Sign();	
-	r.ToAbs();				// posiitve
+	r.ToAbs();				// calculate sign of |r|
 
 	switch (au)
 	{
@@ -2709,8 +2849,9 @@ RealNumber sin (RealNumber r, AngularUnit au)		// sine
 				sign = -sign;			   // div kellene real-ra, hogy legyen maradek
 				r -= rn180;
 			}
-			if (r > rn90)
-				r -= rn90;
+			if (r > rn90)					// sin(90+alpha)=cos(alpha)=sin(90-alpha), if alpha < 180
+				r = rn180 - r;
+
 			// now r is in 0<= r <= 90
 			if (r.IsNull())
 				return zero;
@@ -2721,7 +2862,7 @@ RealNumber sin (RealNumber r, AngularUnit au)		// sine
 			else if (r == RealNumber("60"))
 				return sqrt3P2;
 			else if (r == rn90)
-				return one;
+				return RealNumber::RN_1;
 			else
 				return _sin(r).SetSign(sign);
 			break;
@@ -2743,7 +2884,7 @@ RealNumber sin (RealNumber r, AngularUnit au)		// sine
 
 RealNumber csc(RealNumber r, AngularUnit au)		// cosecant = 1/sine
 {
-	return one / sin(r,au);
+	return RealNumber::RN_1 / sin(r,au);
 }
 
 RealNumber cos(RealNumber r, AngularUnit au)		// cosine
@@ -2787,7 +2928,7 @@ RealNumber cos(RealNumber r, AngularUnit au)		// cosine
 
 RealNumber sec(RealNumber r, AngularUnit au)		// secant = 1/cosine
 {
-	return one / cos(r,au);
+	return RealNumber::RN_1 / cos(r,au);
 }
 
 RealNumber tan(RealNumber r, AngularUnit au)		// tangent
@@ -2808,14 +2949,14 @@ RealNumber cot(RealNumber r, AngularUnit au)		// cotangent
 RealNumber asin(RealNumber r, AngularUnit au)		// sine
 {
 	// fast answers
-	if (r.Abs() > 1)
+	if (r.Abs() > RealNumber::RN_1)
 		return NaN;
 	if (r.IsNull())
 		return zero;
-	if (r.Abs() == one)
+	if (r.Abs() == RealNumber::RN_1)
 		return piP2.SetSign(r.Sign());
 	// slow answer
-	return atan(r/sqrt(one - r*r), au );
+	return atan(r/sqrt(RealNumber::RN_1 - r*r), au );
 }
 
 RealNumber acos(RealNumber r, AngularUnit au)		// cosine
@@ -2847,11 +2988,11 @@ RealNumber atan(RealNumber r, AngularUnit au)		// arcus tangent
 		return r;
 	if (r.IsInf())
 		return piP2.SetSign(r.Sign());
-	if (r == one)
+	if (r == RealNumber::RN_1)
 		return (piP2 * half).Rounded( (int)(RealNumber::MaxLength() + LengthOverFlow)).SetSign(r.Sign());
 	RealNumber aDot2 = RealNumber(".197395559849880758370049765194790293447585103787852101517688940241033969978243785732697828037288044112").Rounded( (int)(RealNumber::MaxLength() + LengthOverFlow));
 	RealNumber a, f, e, v=r, i, n, s, dot2 = RealNumber(".2");
-	if (r = dot2)
+	if (r == dot2)
 		return aDot2;	// ==  atan(.2)
 
 	size_t z = RealNumber::MaxLength();
@@ -2866,15 +3007,15 @@ RealNumber atan(RealNumber r, AngularUnit au)		// arcus tangent
 	RealNumber::SetMaxLength(z + 3);
 	while (r > dot2) 
 	{
-		f += one;
-		r = (r - dot2) / (1 + r * dot2);
+		f += RealNumber::RN_1;
+		r = (r - dot2) / (RealNumber::RN_1 + r * dot2);
 	}
 	/* Initialize the series. */
 	v = n = r;
 	s = -r * r;
 
 	/* Calculate the series. infinite loop */
-	for (i = RealNumber("3"); true; i += two)
+	for (i = RealNumber("3"); true; i += RealNumber::RN_2)
 	{
 		e = (n *= s) / i;
 		if (e == zero) 
@@ -2900,47 +3041,47 @@ RealNumber acot(RealNumber r, AngularUnit au)		// cotangent
 RealNumber sinh(RealNumber r)			// hyperbolic sine
 {
 	RealNumber rn = exp(r);
-	return RealNumber( (rn - rn.Pow(-1))/two);
+	return RealNumber( (rn - rn.Pow(-1))/RealNumber::RN_2);
 }
 
 RealNumber csch(RealNumber r)			// hyperbolic cosecant = 1/sinh
 {
-	return RealNumber(1/sinh(r));
+	return RealNumber(RealNumber::RN_1/sinh(r));
 }
 
 RealNumber cosh(RealNumber r)			// hyperbolic cosine
 {
 	RealNumber rn = exp(r);
-	return RealNumber( (rn + rn.Pow(-1))/two);
+	return RealNumber( (rn + rn.Pow(-1))/RealNumber::RN_2);
 }
 
 RealNumber sech(RealNumber r)			// hyperbolic secant = 1/cosh
 {
-	return RealNumber(1/cosh(r));
+	return RealNumber(RealNumber::RN_1/cosh(r));
 }
 
 RealNumber tanh(RealNumber r)			// hyperbolic tangent
 {
-	RealNumber rp = exp(r), rr = one / rp;
+	RealNumber rp = exp(r), rr = RealNumber::RN_1 / rp;
 	return RealNumber((rp - rr)/(rp + rr));
 }
 
 RealNumber coth(RealNumber r)			// hyperbolic cotangent
 {
-	RealNumber rp = exp(r), rr = one / rp;
+	RealNumber rp = exp(r), rr = RealNumber::RN_1 / rp;
 	return RealNumber((rp + rr)/(rp - rr));
 }
 
 // inverse hyperbolic functions
 RealNumber asinh(RealNumber r)		// area hyperbolic sine
 {
-	RealNumber x2 = sqrt(r * r + one);
+	RealNumber x2 = sqrt(r * r + RealNumber::RN_1);
 	return ln(r + x2);
 }
 
-RealNumber acosh(RealNumber r)		// area hyperbolic cosine only the positive signed one
+RealNumber acosh(RealNumber r)		// area hyperbolic cosine only the positive signed RealNumber::RN_1
 {
-	RealNumber x2 = r * r - one;
+	RealNumber x2 = r * r - RealNumber::RN_1;
 	if (x2.IsNegative())
 		return NaN;
 	x2 = sqrt(x2);
@@ -2950,18 +3091,18 @@ RealNumber acosh(RealNumber r)		// area hyperbolic cosine only the positive sign
 
 RealNumber atanh(RealNumber r)		// area hyperbolic tangent
 {
-	if (r.Abs() >= one)
+	if (r.Abs() >= RealNumber::RN_1)
 		return NaN;
 
-	return half * ln( (one + r) / (one - r) );
+	return half * ln( (RealNumber::RN_1 + r) / (RealNumber::RN_1 - r) );
 }
 
 RealNumber acoth(RealNumber r)		// hyperbolic cotangent
 {
-	if (r.Abs() <= one)
+	if (r.Abs() <= RealNumber::RN_1)
 		return NaN;
 
-	return half * ln( (one + r) / (one - r) );
+	return half * ln( (RealNumber::RN_1 + r) / (RealNumber::RN_1 - r) );
 }
 //////////////////////////////////////////////////////////////
 // end of namespace LongNumber

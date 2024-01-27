@@ -76,7 +76,7 @@ namespace SmString {
 		UTF8String s;
 		for (size_t i = 0; i < length(); ++i)
 		{
-			s += (*this)[i].ToUtf8String();
+			s += SCharT((*this)[i]).ToUtf8String();
 		}
 		return s;
 	}
@@ -86,7 +86,7 @@ namespace SmString {
 		std::wstring ws;
 		ws.resize(length());
 		for (size_t i = 0; i < size(); ++i)
-			ws[i] = (*this)[i].Unicode();
+			ws[i] = SCharT((*this)[i]).Unicode();
 		return ws;
 	}
 
@@ -113,18 +113,41 @@ namespace SmString {
 
 	void SmartString::lTrim()
 	{
-		erase(begin(), std::find_if(begin(), end(), [](SCharT ch) {return !std::isspace(ch.Unicode(), std::cout.getloc()); }));
+		erase(begin(), std::find_if(begin(), end(), [](SCharT ch) {return !std::isspace((wchar_t)ch.Unicode(), std::cout.getloc()); }));
 	}
 
 	void SmartString::rTrim()
 	{
-		erase(std::find_if(rbegin(), rend(), [](SCharT ch) {return !std::isspace(ch.Unicode(), std::cout.getloc()); }).base(), end());
+		erase(std::find_if(rbegin(), rend(), [](SCharT ch) {return !std::isspace((wchar_t)ch.Unicode(), std::cout.getloc()); }).base(), end());
 	}
 
 	void SmartString::Trim()
 	{
 		lTrim();
 		rTrim();
+	}
+
+	std::vector<SmartString> SmartString::Split(const SCharT ch, bool keepEmpty)
+	{
+		std::vector<SmartString> sv;
+		size_t pos0 = 0;
+		int pos;
+		while ((pos = indexOf(ch,pos0)) >=0) 
+		{
+			if((size_t)pos != pos0 || keepEmpty)
+				sv.push_back(mid(pos0, (size_t)pos - pos0));
+			pos0 = (size_t)++pos;
+		}
+		if(pos0 < length())
+			sv.push_back(mid(pos0));
+
+		return sv; ;
+	}
+
+	std::vector<SmartString> SmartString::SplitRegex(const SCharT ch, bool keepEmpty)
+	{
+		// TODO
+		return std::vector<SmartString>();
 	}
 
 	SmartString::SmartString(const char* pcstr)
@@ -228,7 +251,7 @@ namespace SmString {
 		if (n < length())
 			s = substr(0, n);
 		else if (fillChar >= SCharT(0) )
-			s += String(n - length(), fillChar);
+			s = *(String*)this + String(n - length(), fillChar);
 
 		return s;
 	}
@@ -325,13 +348,13 @@ namespace SmString {
 	{
 		std::locale loc = std::cout.getloc();
 		for (auto& ch : *this)
-			ch = std::toupper(ch, loc);
+			ch = (char16_t)std::toupper((wchar_t)ch, loc);
 	}
 	void SmartString::toLower()
 	{
 		std::locale loc = std::cout.getloc();
 		for (auto& ch : *this)
-			ch = std::tolower(ch, loc);
+			ch = (char16_t)std::tolower((wchar_t)ch, loc);
 	}
 
 	void SmartString::Reverse() // order of characters
@@ -345,10 +368,6 @@ namespace SmString {
 	const SmartString operator""_ss(const char* ps, size_t len) 
 	{ 
 		return SmartString(ps); 
-	}
-	const SCharT operator""_ss(const char ch)
-	{
-		return SCharT(ch);
 	}
 }
 // output operator

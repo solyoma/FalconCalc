@@ -29,7 +29,7 @@
 	#ifndef _CHART
 		#define _CHART wchar_t
 	#endif
-	namespace littlecalc {}
+	namespace FalconCalc {}
 	namespace nlib {}
 // #include "calculate.h"
 
@@ -231,6 +231,6 @@ inline std::wstring& trim( std::wstring& s,  const std::wstring& delimiters = L"
   return trim_left_inplace( trim_right_inplace( s, delimiters ), delimiters );
 }
 
-using namespace littlecalc;
+using namespace FalconCalc;
 
 #endif

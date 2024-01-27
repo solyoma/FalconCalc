@@ -1,5 +1,13 @@
 ﻿#pragma once
 
+#include <fstream>
+#include <string>
+class TStringList;
+
+namespace FalconCalc {
+	class LittleEngine;
+}
+
 class TfrmMain : public nlib::Form
 {
 public:
@@ -9,9 +17,10 @@ public:
 	void ShowHexOptions(bool show);
 
 	virtual void Destroy();
-	// SA
-    littlecalc::LittleEngine *Engine() const;
+
 	TStringList *slHistory;
+	FalconCalc::LittleEngine *_pEngine();
+
 N_PUBLIC: /* Designer generated list of public members. Do not edit by hand. */
 	nlib::FontDialog *FontDialog1;
 	nlib::PopupMenu *pmCopy;
@@ -90,8 +99,8 @@ N_PUBLIC: /* Designer generated list of public members. Do not edit by hand. */
 	nlib::Checkbox *chkBytes;
 	nlib::Checkbox *chkWords;
 	nlib::Checkbox *chkDWords;
-	nlib::Checkbox *chkSingle;
-	nlib::Checkbox *chkDouble;
+	nlib::Checkbox *chkIEEESingle;
+	nlib::Checkbox *chkIEEEDouble;
 	nlib::Combobox *cbInfix;
 	nlib::Label *Label1;
 	nlib::Edit *edtChars;
@@ -122,8 +131,8 @@ N_PUBLIC: /* Designer generated list of public members. Do not edit by hand. */
 	void btnCloseHexOptionsClick(void *sender, nlib::EventParameters param);
 	void btnCloseDecOptionsClick(void *sender, nlib::EventParameters param);
 	void btnFontClick(void *sender, nlib::EventParameters param);
-	void chkDoubleClick(void *sender, nlib::EventParameters param);
-	void chkSingleClick(void *sender, nlib::EventParameters param);
+	void chkIEEEDoubleClick(void *sender, nlib::EventParameters param);
+	void chkIEEESingleClick(void *sender, nlib::EventParameters param);
 	void chkAsDWordsClick(void *sender, nlib::EventParameters param);
 	void chkAsWordsClick(void *sender, nlib::EventParameters param);
 	void chkAsBytesClick(void *sender, nlib::EventParameters param);
@@ -157,8 +166,6 @@ private:
     int nDecOptTop,  // when open
         nHexBtnTop;  // when dec options panel open
 	bool busy;
-	littlecalc::ResultType _resType = littlecalc::rtNumber;
-    littlecalc::CALC_INPUT ci;
     // history options
     bool added;			// already added to history by timer, reset by keypress
 	bool bAutoSave;		// autosave activated?
@@ -169,12 +176,13 @@ private:
     size_t maxHistDepth; // == 0: unlimited
 
     Checkbox *chkArr[7];
+
 	void EnableMyTimer(bool enable);
-	bool LoadState(wstring name);
-	bool SaveState(wstring name);
-	void AddToHistory(wstring text);
+	bool LoadState(std::wstring name);
+	bool SaveState(std::wstring name);
+	void AddToHistory(std::wstring text);
 	void ShowResults();
-	void ShowMessageOnAllPanels(wstring s);
+	void ShowMessageOnAllPanels(std::wstring s);
 
 N_PRIVATE: /* Designer generated list of private members. Do not edit by hand. */
 	void InitializeFormAndControls(); /* Control initializations. Do not remove. */

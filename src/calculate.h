@@ -35,12 +35,9 @@ using namespace std;
 using namespace SmString;
 using namespace LongNumber;
 
-namespace littlecalc
+namespace FalconCalc
 {
-
     extern const SCharT comment_delimiter;
-
-    enum ResultType {rtInvalid, rtNumber, rtDefinition};    // last one: function definition
 
 	enum TokenType {tknEOL,		    // end of line
 					tknUnknown,		// e.g. ','
@@ -138,7 +135,7 @@ namespace littlecalc
 	public:
 		Token(const SmartString &text, unsigned &pos);     // gets next token from 'text' starting at position 'pos'
 												           // and sets 'pos' to the first character after the token
-        Token(TokenType t, SmartString b, OP d):type(t), name(b), val(LongNumber::zero), data(d) {}
+        Token(TokenType t, SmartString b, OP d):type(t), name(b), val(RealNumber::RN_0), data(d) {}
 		Token(const Token& tk) { *this = tk; }
 		Token &operator=(const Token& tk) { type = tk.type; val = tk.val; data = tk.data; name = tk.name; return *this; }
 		Token &operator=(const SmartString s) // use only for new operator NOT for variables or functions!
@@ -178,7 +175,7 @@ namespace littlecalc
 	void Trigger(SmartString text);
 
     /*==================*/
-    // variable or function does not know its name (see VarFuncTable below)
+    // variable or function does not know its name (see FunctionTable below)
     typedef RealNumber (*FUNCT1)(RealNumber val);
     typedef RealNumber (*FUNCT2)(RealNumber x, RealNumber y);
     typedef RealNumber (*FUNCT3)(RealNumber x, int y);
@@ -199,52 +196,75 @@ namespace littlecalc
         //Function(const FUNCT3 f3) : funct3(f3) {}
         //Function(const FUNCT4 f4) : funct4(f4) {}
     };
+
+
+    /*=============================================================
+     * Common structure for built-in (BI) and user defined (UD) variables
+     *------------------------------------------------------------*/
+    struct Variable : public Constant
+    {
+         bool builtin=true, changable=false, dirty=false;
+                                // 'changed:' any variable/function in 'definition' is
+                                // redefined: must re-calculate 'value'
+
+        SmartString body;   // text from the right hand side of the equal sign
+        TokenVec definition;                // processed body in postfix, none for builtins
+               //  for variables
+        bool being_processed=false;     // under calculation (prevent recursion)
+
+        Variable() : Constant() {}
+        explicit Variable(const wchar_t* cname, const wchar_t* cunit, const wchar_t* cdesc, const RealNumber cvalue = RealNumber()) :
+            Constant(cname, cvalue, cunit, cdesc){}
+        explicit Variable(const SmartString name, const RealNumber value, const SmartString unit, const SmartString desc) : Constant(name, value, unit, desc) {}
+        explicit Variable(const Variable& c) : Constant(c.name, c.value, c.unit, c.desc) {}
+    };
+
     /*=============================================================
      * Common structure for built-in (BI) and user defined (UD) functions
-     * Doen't contain its name as that is the key in a map<>
      *------------------------------------------------------------*/
-
-    struct VarFunc
+    struct Func
     {
-        SmartString description;        // optional description
+        SmartString name;
+        SmartString unit;           // for physical constants or functions
+        SmartString desc;           // optional description
+        RealNumber value;           // defined or calculated value
             // for BI functions:
         bool builtin = true;            // builtin variable or function
         Function function;              // for builtin functions only
         bool useAngleUnit = false,      // for builtin trigonometric functions only (default: false)
              useAngleUnitAsResult=false;// for built in inverse trigonometric functions only
                                         // if true number is converted to deg or grad
-            // for BI variables
-        bool isnumber=false;            // variable is a number: never can get dirty
-        RealNumber value;               // defined or calculated value
+        //    // for BI variables
+        //bool isnumber=false;            // variable is a number: never can get dirty
 
            // for UD functions
         std::vector<SmartString> args;       // arguments: empty for functions w.o. arguments
         SmartString body;                    // text from the right hand side of the equal sign
-        TokenVec definition;            // processed body in postfix, none for builtins
+        TokenVec definition;                // processed body in postfix, none for builtins
                //  for variables
         bool dirty = false;             // any variable/function in 'definition' is
                                         // redefined: must re-calculate 'value'
-        bool being_processed=false;     // under calculation (no recursion)
+        bool being_processed=false;     // under calculation (prevent recursion)
 
-        VarFunc() {};
-        VarFunc(const VarFunc& var) { *this = var;}
+        Func() {};
+        Func(const Func& var) { *this = var;}
         // This constructor is used for builtins only. They never get dirty
-        VarFunc(const SCharT *desc, const RealNumber val, bool isNumber=false):
-                description(desc), isnumber(isNumber), value(val) {}
-        // This operator is intended to be used only by 'VarFuncTable'
+        Func(const SCharT *desc, const RealNumber val/*, bool isNumber = false*/) :
+                desc(desc)/*, isnumber(isNumber)*/, value(val) {}
+        // This operator is intended to be used only by 'FuncTable'
         // Were it used outside all other variable definitions should be checked
         // and marked dirty when needed
-        VarFunc & operator=(const VarFunc & var)
+        Func & operator=(const Func & var)
         {
             args = var.args;
             body = var.body;
-            description = var.description;
+            desc = var.desc;
             definition = var.definition;
             builtin = var.builtin;
             function    = var.function;
             useAngleUnit = var.useAngleUnit;
             useAngleUnitAsResult = var.useAngleUnitAsResult;
-            isnumber = var.isnumber;
+            //isnumber = var.isnumber;
             value = var.value;
             dirty = var.dirty;
             being_processed = var.being_processed;
@@ -267,33 +287,39 @@ namespace littlecalc
         LittleEngine *pOwner;
     };
 
-
-    struct CALC_INPUT
-    {
-        CALC_INPUT() : angu(LongNumber::AngularUnit::auRad) {}
-        SmartString infix;
-        LongNumber::AngularUnit angu;  // used when calculating sine, cosine, tangent, cotangent
-    };
-    typedef map<SmartString,VarFunc> VarFuncTable;
-
+    typedef map<SmartString,Func>       FunctionTable;
+    typedef map<SmartString,Variable>   VariableTable;
 
     /*==================*/
 	class LittleEngine
 	{
+    public:
         enum class ResultType { rtNumber, rtDefinition, rtInvalid};
+        enum class Beautification {
+            bmoGraphText, 			// 3.1e-5 => 3.1 dot 10^{-5}
+            bmoHtml, 				// 3.1e-5 => 3.1 dot 10<sup>-5</sup>
+            bmoTEX, 				// 3.1e-5 => 3.1 \cdot 10^{-5}
+            bmoNone					// 3.1e-5 =>  3.1e-5
+        };
+        enum class ResValid { rvOk, rvInvalid, rvDef };            // validity of result: OK, invalid, function, etc definition
 
         static bool builtinsOk; // built in functions are set up
         static unsigned numBuiltinVars,numBuiltinFuncs;
-        LongNumber::AngularUnit aU;   // used when calculating sine, cosine, tangent, cotangent
-		SmartString infix;
-        TokenVec tvOutput;
-        LongNumber::DisplayFormat _displayFormat;
-        RealNumber _calcResult; // store result of calculation
-        ResultType _resultType = ResultType::rtNumber;
-        VarFuncTable variables,
-                     functions;
+
+        DisplayFormat displayFormat;
+        AngularUnit angleUnit;   // used when calculating sine, cosine, tangent, cotangent
+
+        SmartString infix;
+        TokenVec tvPostfix;
+        RealNumber calcResult; // store result of calculation
+        ResultType resultType = ResultType::rtNumber;
+        VariableTable variables;
+        FunctionTable functions;
         SmartString name_variable_table;
+        ResValid resultValid = ResValid::rvOk;
+        Beautification beautification = Beautification::bmoGraphText;
         bool clean; // no changes to variables or functions?
+    private:
         /* ==========
          * internal class
          *-----------*/
@@ -347,40 +373,35 @@ namespace littlecalc
         void DoVariable(const Token &tok);
         void DoFunction(const Token &tok);
         void DoOperator(const Token &tok);
-		int Convert(const SmartString &expr); // returns 0 for assignment expression
+		int InfixToPostFix(const SmartString &expr); // postfix in 'tvPostfix' and returns 0 for assignment expression
         RealNumber CalcPostfix(TokenVec& tv); // calculate the value using 'tv'
-        SCharT _ArgSeparator() const { return RealNumber::DecPoint() == SCharT('.') ? ','_ss : ';'_ss; }
+        SCharT _ArgSeparator() const { return RealNumber::DecPoint() == SCharT( SCharT('.') ? ',' : ';' ); }
 	public:
-        DisplayFormat displayFormat;
-
 
         LittleEngine();
         LittleEngine &operator=(const LittleEngine &src);
-        RealNumber Calculate(const SmartString &expr); // using angle unit 'auRad'
-        RealNumber Calculate(const CALC_INPUT &ci);    // set angle unit
-		SmartString Postfix() const;                             // get converted data as SmartString
-        void GetVarFuncInfo(VARFUNC_INFO &vf);              // how many and what are they
-        SmartString GetVariables(bool builtin=false) const;      // in a single SmartString
-        SmartString GetFunctions(bool builtin=false) const;      // each line contains one var/func
-                                                            // <name>=<body>;<comment>ar/a
-                                                            // <name(arg1,...)>=<body>;<comment>
+        RealNumber Calculate();                                 // using infix and angleUnit
+		SmartString Postfix() const;                            // get converted data as SmartString
+        void GetVarFuncInfo(VARFUNC_INFO &vf);                  // how many and what are they
+        SmartString GetVariables(bool builtin=false) const;     // in a single SmartString
+        SmartString GetFunctions(bool builtin=false) const;     // each line contains one var/func
+                                                                // <name>=<body>;<comment>ar/a
+                                                                // <name(arg1,...)>=<body>;<comment>
         bool AddUserVariablesAndFunctions(SmartString definition, int what); //0: any, 1: vars, 2: functions
 
 
-        bool ReadTables(const SCharT *name);
-        bool SaveTables(const SCharT *name=0); // if it wasn't read and no name is given it wont be saved
-        bool ResultOk() const { return _calcResult.IsValid(); }
-        RealNumber Result() const { return _calcResult; }
+        bool ReadTables(const SmartString& name);
+        bool SaveTables(const SmartString& name=SmartString()); // if it wasn't read and no name is given it wont be saved
+        bool ResultOk() const { return calcResult.IsValid(); }
+        RealNumber Result() const { return calcResult; }
         SmartString ResultAsDecString();
         SmartString ResultAsHexString();
         SmartString ResultAsOctString();
         SmartString ResultAsBinString();
         SmartString ResultAsCharString();
 	};
- //#define VARIABLES LittleEngine::variables
- //#define FUNCTIONS LittleEngine::functions
 
-// end of namespace littlecalc
+// end of namespace FalconCalc
 }
 
 // calculateH

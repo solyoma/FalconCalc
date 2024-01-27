@@ -15,6 +15,7 @@
 namespace SmString {
 
 typedef std::string UTF8String;
+typedef std::u16string String;
 
 class SCharT
 {
@@ -29,14 +30,22 @@ public:
 	explicit SCharT(char ch)	: _unicode((unsigned char) ch)	{}
 	explicit SCharT(int ch)		: _unicode((unsigned) ch)		{}
 	explicit SCharT(long ch)	: _unicode((char16_t) ch)		{}
-	explicit SCharT(char16_t sch)	: _unicode(sch)				{}
+	SCharT(char16_t sch): _unicode(sch)				{}
 	explicit SCharT(wchar_t wch) : _unicode((char16_t)wch)		{}
 	explicit SCharT(UTF8String& s, int pos = 0)	 // unicode character from utf8 encoded std::string
 	{
 		_FromString(s, pos);
 	}
 
-	operator char16_t() const { return _unicode; }
+	//explicit operator String() const
+	//{
+	//	return String(1, _unicode);
+	//}
+
+	operator char16_t() const
+	{
+		return _unicode;
+	}
 
 	SCharT& operator=(size_t n) { _unicode=(char16_t)n; return *this; }
 	SCharT& operator=(int n) { _unicode=(char16_t)n; return *this; }
@@ -63,18 +72,20 @@ public:
 
 
 	constexpr char16_t Unicode() const { return _unicode; }
+	constexpr explicit operator int() { return (int)(unsigned int)_unicode; }
 
 	UTF8String ToUtf8String() const;
 
-	SCharT ToUpper() { _unicode = std::toupper(_unicode); return *this;}
-	SCharT ToLower() { _unicode = std::tolower(_unicode); return *this;}
+	SCharT ToUpper() { _unicode = std::toupper(_unicode, std::cout.getloc()); return *this;}
+	SCharT ToLower() { _unicode = std::tolower(_unicode, std::cout.getloc()); return *this;}
+	SCharT ToUpper(std::locale loc) { _unicode = std::toupper(_unicode, loc); return *this;}
+	SCharT ToLower(std::locale loc) { _unicode = std::tolower(_unicode, loc); return *this;}
 };
 
-using String = std::basic_string<SCharT>;
 using UTF8Pos = size_t;			// when used for unicode position (no unicode character in string: same as position
 
-// An UTF8  String class with some convenience functions not present in the STL
-// It has a constructor and an assignment operator from wide strings
+// An UTF16 String class with some convenience functions not present in the STL
+// wchar_t's size is 16 bit in Windows and 32 bit in Linux, but this class is always uses 16 bit
 // Besides the usual concatenation and length functions it contains
 // left(), right(), mid() with an optional fill character
 // normal and regular expression search and toUpper() and toLower() functions
@@ -85,41 +96,8 @@ using UTF8Pos = size_t;			// when used for unicode position (no unicode characte
 class SmartString : public String
 {
 public:
-#if 1
-	using Iterator = std::basic_string<SCharT>::iterator;
-	using Const_Iterator = std::basic_string<SCharT>::const_iterator;
-#else
-	struct Iterator
-	{
-		using iterator_category = std::random_access_iterator_tag;
-		using difference_type = std::ptrdiff_t;
-		using value_type = SCharT;
-		using pointer = SCharT*;  // or also value_type*
-		using reference = SCharT&;  // or also value_type&
-		Iterator(pointer ptr) :_ptr(ptr) {}
-		reference operator*() { return *_ptr; }
-		pointer operator->() { return _ptr; }
-		Iterator& operator++() { ++_ptr; return *this; }
-		Iterator  operator++(int) { Iterator it = *this;  ++_ptr; return it; }
-		Iterator& operator--() { --_ptr; return *this; }
-		Iterator  operator--(int) { Iterator it = *this;  --_ptr; return it; }
-		bool operator== (const Iterator& b) const { return _ptr == b._ptr; };
-		bool operator!= (const Iterator& b) const { return _ptr != b._ptr; };
-		Iterator operator+(difference_type n) const { return Iterator(_ptr + n); }
-		Iterator operator-(difference_type n) const { return Iterator(_ptr - n); }
-		Iterator& operator+=(difference_type n) { _ptr += n; return *this; }
-		Iterator& operator-=(difference_type n) { _ptr -= n; return *this; }
-		difference_type operator-(const Iterator& rhs) const { return _ptr - rhs._ptr; }
-		reference operator[](difference_type n) const { return *(_ptr + n); }
-	private:
-		pointer _ptr;
-	};
-public:
-	Iterator begin() { return Iterator(&(*this)[0]); }
-	Iterator end()   { return Iterator(&(*this)[this->length()]); }
-	std::reverse_iterator<Iterator> rbegin() { return std::reverse_iterator<Iterator>(end()); }
-	std::reverse_iterator<Iterator> rend()   { return std::reverse_iterator<Iterator>(begin()); }
-#endif
+	using Iterator = String::iterator;		// std::basic_string<SCharT>::iterator;
+	using Const_Iterator = String::const_iterator;// std::basic_string<SCharT>::const_iterator;
 public:
 	SmartString() : String() {}
 	explicit SmartString(const UTF8String s);
@@ -130,7 +108,7 @@ public:
 	SmartString(const SmartString& o, size_t pos, size_t len) { *this = mid(pos, len); }
 	SmartString(const String &s) : String(s){}
 	SmartString(SCharT ch) : SmartString(1, ch){}
-	SmartString(const SCharT* ps) : String(ps) {}
+	SmartString(const SCharT* ps) : String((char16_t*)ps) {}
 	SmartString(const SCharT* ps, size_t len) :SmartString(ps) {}
 	SmartString(size_t len, SCharT ch) : String(len, ch)  { }
 	SmartString(String::iterator from, String::iterator to) : String(from, to) { }
@@ -156,7 +134,7 @@ public:
 	SmartString right(UTF8Pos n, SCharT fillChar = SCharT(-1)) const;	// may extend the string to the left
 	// similar to substr but may extend the string with a given character too
 	SmartString mid(UTF8Pos pos, size_t n = String::npos, SCharT fillChar = SCharT(-1) ) const;
-	int indexOf(const SCharT ch, size_t pos = 0) const;		// start from 'pos'
+	int indexOf(const SCharT ch, size_t pos = 0) const;			// start from 'pos'
 	int indexOf(const SmartString ns, size_t pos = 0) const;	// only first occurance
 	int indexOfRegex(const SmartString regexpString, size_t pos = 0) const;		// only first occurance
 	void toUpper();
@@ -173,12 +151,14 @@ public:
 	void rTrim();
 	void Trim();
 
+	std::vector<SmartString> Split(const SCharT ch, bool keepEmpty);
+	std::vector<SmartString> SplitRegex(const SCharT ch, bool keepEmpty);	// TODO
+
 	void Reverse(); // order of characters
 };
 // literal operator for string constants like "1234"ss
 
 const SmartString operator"" _ss(const char* ps, size_t len);
-const SCharT operator"" _ss(const char ps);
 
  // end namesapce SmString
 }

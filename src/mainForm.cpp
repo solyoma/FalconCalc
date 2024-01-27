@@ -1,6 +1,7 @@
-﻿#include "stdafx_zoli.h"
+﻿#include <set>
+#include "stdafx_zoli.h"
 #include "stdafx_lc.h"
-
+#undef max
 using namespace nlib;
 #include "application.h"
 #include "about.h"
@@ -10,22 +11,23 @@ using namespace nlib;
 
 #include "graphictext.h"
 
+#include "mainForm.h"
 #include "calculate.h"
 
-#include "main.h"
 #include "variables.h"
 
+using namespace SmString;
 using namespace LongNumber;
+using namespace FalconCalc;
 
-littlecalc::LittleEngine *lengine;
-
+FalconCalc::LittleEngine *lengine;
 
 Clipboard *MyClipboard;
 
 TfrmMain *frmMain;
-const wstring LITTLECALC_HIST_FILE = L"FalconCalc.hist";
-const wchar_t *LITTLECALC_DAT_FILE = L"FalconCalc.dat";
-const wchar_t *LITTLECALC_CFG_FILE = L"FalconCalc.cfg";
+const wstring  FalconCalc_HIST_FILE = L"FalconCalc.hist";
+const wchar_t *FalconCalc_DAT_FILE  = L"FalconCalc.dat";
+const wchar_t *FalconCalc_CFG_FILE  = L"FalconCalc.cfg";
 
 
 #if 0
@@ -365,7 +367,7 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 
 	UpDown1 = new nlib::UpDown();
 	UpDown1->SetBounds(nlib::Rect(177, 63, 194, 84));
-	UpDown1->SetMaxValue(20);
+	UpDown1->SetMaxValue(80);
 	UpDown1->SetParent(Groupbox1);
 
 	rgAngleUnit = new nlib::Groupbox();
@@ -522,27 +524,27 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	chkDWords->SetTabOrder(4);
 	chkDWords->SetParent(Groupbox2);
 
-	chkSingle = new nlib::Checkbox();
-	chkSingle->SetTag(4);
-	chkSingle->SetBounds(nlib::Rect(203, 18, 321, 35));
-	chkSingle->SetText(L"As IEE &754 single");
-	chkSingle->GetFont().SetFamily(L"Tahoma");
-	chkSingle->GetFont().SetSize(10);
-	chkSingle->SetParentFont(false);
-	chkSingle->SetTabOrder(5);
-	chkSingle->SetTooltipText(L"Single precision floating point format");
-	chkSingle->SetParent(Groupbox2);
+	chkIEEESingle = new nlib::Checkbox();
+	chkIEEESingle->SetTag(4);
+	chkIEEESingle->SetBounds(nlib::Rect(203, 18, 321, 35));
+	chkIEEESingle->SetText(L"As IEE &754 single");
+	chkIEEESingle->GetFont().SetFamily(L"Tahoma");
+	chkIEEESingle->GetFont().SetSize(10);
+	chkIEEESingle->SetParentFont(false);
+	chkIEEESingle->SetTabOrder(5);
+	chkIEEESingle->SetTooltipText(L"Single precision floating point format");
+	chkIEEESingle->SetParent(Groupbox2);
 
-	chkDouble = new nlib::Checkbox();
-	chkDouble->SetTag(5);
-	chkDouble->SetBounds(nlib::Rect(203, 35, 321, 52));
-	chkDouble->SetText(L"As IEE 7&54 double");
-	chkDouble->GetFont().SetFamily(L"Tahoma");
-	chkDouble->GetFont().SetSize(10);
-	chkDouble->SetParentFont(false);
-	chkDouble->SetTabOrder(6);
-	chkDouble->SetTooltipText(L"Double precision floating point format");
-	chkDouble->SetParent(Groupbox2);
+	chkIEEEDouble = new nlib::Checkbox();
+	chkIEEEDouble->SetTag(5);
+	chkIEEEDouble->SetBounds(nlib::Rect(203, 35, 321, 52));
+	chkIEEEDouble->SetText(L"As IEE 7&54 double");
+	chkIEEEDouble->GetFont().SetFamily(L"Tahoma");
+	chkIEEEDouble->GetFont().SetSize(10);
+	chkIEEEDouble->SetParentFont(false);
+	chkIEEEDouble->SetTabOrder(6);
+	chkIEEEDouble->SetTooltipText(L"Double precision floating point format");
+	chkIEEEDouble->SetParent(Groupbox2);
 
 	cbInfix = new nlib::Combobox();
 	cbInfix->SetBounds(nlib::Rect(357, 21, 493, 45));
@@ -673,8 +675,8 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	chkBytes->OnClick = CreateEvent(this, &TfrmMain::chkAsBytesClick);
 	chkWords->OnClick = CreateEvent(this, &TfrmMain::chkAsWordsClick);
 	chkDWords->OnClick = CreateEvent(this, &TfrmMain::chkAsDWordsClick);
-	chkSingle->OnClick = CreateEvent(this, &TfrmMain::chkSingleClick);
-	chkDouble->OnClick = CreateEvent(this, &TfrmMain::chkDoubleClick);
+	chkIEEESingle->OnClick = CreateEvent(this, &TfrmMain::chkIEEESingleClick);
+	chkIEEEDouble->OnClick = CreateEvent(this, &TfrmMain::chkIEEEDoubleClick);
 	cbInfix->OnKeyPress = CreateEvent(this, &TfrmMain::cbInfixKeyPress);
 	cbInfix->OnChanged = CreateEvent(this, &TfrmMain::cbInfixTextChanged);
 	btnFont->OnClick = CreateEvent(this, &TfrmMain::btnFontClick);
@@ -725,8 +727,13 @@ TfrmMain::TfrmMain()
 	// /for fun
 	coMoveDX = coMoveDY = 0;
 	bAutoSave = false;
-    lengine = new littlecalc::LittleEngine;
-    lengine->ReadTables(AppendToPath((wstring &)ExecutablePath, LITTLECALC_DAT_FILE).c_str());
+	RealNumber::SetMaxLength(70);	// but only display 64
+    lengine = new FalconCalc::LittleEngine;
+	lengine->displayFormat.useNumberPrefix = true;
+	lengine->displayFormat.strThousandSeparator = " "_ss;
+	lengine->displayFormat.displWidth = 64;
+
+    lengine->ReadTables(SmartString( AppendToPath((wstring &)ExecutablePath, FalconCalc_DAT_FILE).c_str()) );
 	// add the clipboard and set this window as a "viewer"
 	MyClipboard = new Clipboard();	   // messages arrive after
 	MyClipboard->Activate( Handle() ); // Handle() is called first
@@ -735,8 +742,8 @@ TfrmMain::TfrmMain()
     chkArr[1] = chkBytes;
     chkArr[2] = chkWords;
     chkArr[3] = chkDWords;
-    chkArr[4] = chkSingle;
-    chkArr[5] = chkDouble;
+    chkArr[4] = chkIEEESingle;
+    chkArr[5] = chkIEEEDouble;
     chkArr[6] = chkLittleEndian;
 
     nDecOptTop = pnlDecOpt->Top();
@@ -748,13 +755,13 @@ TfrmMain::TfrmMain()
     slHistory->SetCaseSensitive(false);
     slHistory->SetDuplicates(true);  // no duplicates
     slHistory->SetSorted(false);
-//    if(FileExists(LITTLECALC_HIST_FILE) )
-    slHistory->LoadFromFile(AppendToPath((wstring&)ExecutablePath, LITTLECALC_HIST_FILE).c_str());
+//    if(FileExists(FalconCalc_HIST_FILE) )
+    slHistory->LoadFromFile(AppendToPath((wstring&)ExecutablePath, FalconCalc_HIST_FILE).c_str());
     watchdog = 0;
     watchLimit = 5; // seconds	 
 	maxHistDepth=0; // unlimited
 
-    if(!LoadState(AppendToPath((wstring&)ExecutablePath, LITTLECALC_CFG_FILE).c_str()))
+    if(!LoadState(AppendToPath((wstring&)ExecutablePath, FalconCalc_CFG_FILE).c_str()))
     {
         ShowDecOptions(false);
         ShowHexOptions(false);
@@ -801,8 +808,8 @@ TfrmMain::~TfrmMain()
 void TfrmMain::Destroy()
 {
 	lengine->SaveTables();
-    SaveState(AppendToPath((wstring&)ExecutablePath, LITTLECALC_CFG_FILE).c_str());
-    slHistory->SaveToFile(AppendToPath((wstring&)ExecutablePath, LITTLECALC_HIST_FILE).c_str());
+    SaveState(AppendToPath((wstring&)ExecutablePath, FalconCalc_CFG_FILE).c_str());
+    slHistory->SaveToFile(AppendToPath((wstring&)ExecutablePath, FalconCalc_HIST_FILE).c_str());
     delete slHistory;
     delete lengine;
 	Form::Destroy();
@@ -842,7 +849,7 @@ void TfrmMain::pnlDecPaint(void *sender, nlib::PaintParameters param)
 		return;
 
 	gtDec.SetCanvas(  pCanvas );
-	gtDec.SetText(pnlDec->Text(), 0, lengine->displayFormat.expFormat == ExpFormat::rnsfE);
+	gtDec.SetText(pnlDec->Text(), 0, lengine->displayFormat.expFormat != ExpFormat::rnsfUp);
 	int y = (pnlDec->Height() - gtDec.Box().Height())/2 - gtDec.Box().TopLeft().y;
 	if(y < 0)
 		y = 0;
@@ -856,23 +863,25 @@ void TfrmMain::ShowResults()	// from lengine
 		ShowMessageOnAllPanels(L"");
         return;
     }
-    if(_resType== littlecalc::rtDefinition) // function definition?
+    if(lengine->resultType== LittleEngine::ResultType::rtDefinition) // function definition?
     {
         ShowMessageOnAllPanels(L"Definition");
         return;
     }
-    else if(_resType == littlecalc::rtInvalid)
+    else if(lengine->resultType == LittleEngine::ResultType::rtInvalid)
     {
 		ShowMessageOnAllPanels(L"???");
         return;
     }
-
-	pnlDec->SetText(lengine->ResultAsDecString());
+	// DEBUG
+	// SmartString s = lengine->ResultAsDecString();
+	// /DEBUG
+	pnlDec->SetText(lengine->ResultAsDecString().ToWideString());
 	pnlDec->Invalidate();
-    pnlHex->SetText(lengine->ResultAsHexString());
-    pnlOct->SetText(lengine->ResultAsOctString());
-    pnlBin->SetText(lengine->ResultAsBinString());
-    edtChars->SetText(lengine->ResultAsCharString());
+    pnlHex->SetText(lengine->ResultAsHexString().ToWideString());
+    pnlOct->SetText(lengine->ResultAsOctString().ToWideString());
+    pnlBin->SetText(lengine->ResultAsBinString().ToWideString());
+    edtChars->SetText(lengine->ResultAsCharString().ToWideString());
 }
 
 // display same message in all panels
@@ -901,11 +910,11 @@ void TfrmMain::edtInfixTextChanged(void *sender, nlib::EventParameters param)
 	cbInfix->SetText(s);
     try
     {
-        ci.infix = s;
-        long double res = lengine->Calculate(ci);
+		lengine->infix = s;
+        RealNumber res = lengine->Calculate();
         gbResults->SetText(L"Results");
         ShowResults();
-        s = lengine->Postfix();
+        s = lengine->Postfix().ToWideString();
     }
     catch(wstring s)
     {
@@ -921,13 +930,13 @@ void TfrmMain::edtInfixTextChanged(void *sender, nlib::EventParameters param)
 
 void TfrmMain::rdDegClick(void *sender, nlib::EventParameters param)
 {
-	ci.au = (ANGLE_UNIT)((Radiobox*)sender)->Tag();
+	lengine->angleUnit = (LongNumber::AngularUnit)((Radiobox*)sender)->Tag();
 	edtInfixTextChanged(sender,param);
 }
 
 void TfrmMain::spnDecDigitsTextChanged(void *sender, nlib::EventParameters param)
 {
-    sres.num_digits = UpDown1->Position();
+	lengine->displayFormat.decDigits = UpDown1->Position();
     ShowResults();
 }
 
@@ -956,19 +965,19 @@ void TfrmMain::chkDecDigitsClick(void *sender, nlib::EventParameters param)
     if(chkDecDigits->Checked() )
     {
         spnDecDigits->SetEnabled(true);
-		sres.num_digits = UpDown1->Position();
+		lengine->displayFormat.decDigits = UpDown1->Position();
     }
     else
     {
         spnDecDigits->SetEnabled(false);
-        sres.num_digits = -1;
+        lengine->displayFormat.decDigits = -1;
     }
     ShowResults();
 }
 
 void TfrmMain::chkMinusClick(void *sender, nlib::EventParameters param)
 {
-	sres.hexSign = chkMinus->Checked();
+	lengine->displayFormat.bSignedBinOrHex = chkMinus->Checked();
 	ShowResults();
 }
 
@@ -979,8 +988,7 @@ void TfrmMain::chkSciClick(void *sender, nlib::EventParameters param)
   busy = true;
   Checkbox *ps = ((Checkbox*)sender),
             *pd = (ps == chkSci ? chkEng : chkSci);
-  DEC_FORM df = (ps == chkSci ? dfSci : dfEng);
-  sres.decFormat = ps->Checked() ? df : dfGeneral;
+  lengine->displayFormat.mainFormat = ps->Checked() ? ( (ps == chkSci) ? NumberFormat::rnfSci : NumberFormat::rnfEng) : NumberFormat::rnfGeneral;
   pd->SetChecked(false);
     ShowResults();
   busy = false;
@@ -990,14 +998,12 @@ void TfrmMain::chkSepClick(void *sender, nlib::EventParameters param)
 {
     bool b = chkSep->Checked();
     cbThousandSep->SetEnabled(b);
-    if(b && cbThousandSep->ItemIndex() >= 0)
-    {
-        sres.chThousandSep =  (cbThousandSep->ItemIndex() > 0 ? cbThousandSep->Text()[0] : ' ');
-		                     // UNicodestring index 1 based?
-		//sres.chThousandSep =  (cbThousandSep->ItemIndex() > 0 ? cbThousandSep->Text()[1] : (cbThousandSep->ItemIndex() == 0 ? ' ' : 0));
-    }
-    else
-        sres.chThousandSep = 0;
+	if (b && cbThousandSep->ItemIndex() >= 0)
+	{
+		lengine->displayFormat.strThousandSeparator = SmartString((cbThousandSep->ItemIndex() > 0 ? cbThousandSep->Text()[0] : ' '));
+	}
+	else
+		lengine->displayFormat.strThousandSeparator.clear();
     ShowResults();
 }
 
@@ -1184,9 +1190,9 @@ void TfrmMain::miCopyBinClick(void *sender, nlib::EventParameters param)
 }
 void TfrmMain::cbThousandSepChanged(void *sender, nlib::EventParameters param)
 {
-	sres.chThousandSep =  cbThousandSep->Text()[0]; 
-	if(sres.chThousandSep == L's')
-		sres.chThousandSep = ' ';
+	lengine->displayFormat.strThousandSeparator =  SmartString(cbThousandSep->Text()[0]);
+	if(lengine->displayFormat.strThousandSeparator == SmartString('s') )
+		lengine->displayFormat.strThousandSeparator = " ";
 	ShowResults();
 }
 
@@ -1274,163 +1280,306 @@ void TfrmMain::EnableMyTimer(bool enable)
 	bAutoSave = enable;
 }
 
+FalconCalc::LittleEngine* TfrmMain::_pEngine()
+{
+	return lengine;
+}
+
+/*
+* Status file is a text file. its data:
+*  	   <ID line>
+*	mainformat=<mainformat>
+*   decFormat=<# dec. digits (-1* ()-1 if not used>|<exponent format>|<1|0+index of thousand sep. char.* (-1) if not used>|<useFractionSeparator>|<angular unit>
+*   hexFormat=<hexFormat>|<is little endian>|<signed bin or hex><IEEE format>
+*	fontName=<font name>,
+*	fontData=<font size>|<font charset>|<font color>,
+*	options=<dec.options visible>|<hex options visile>
+*	histOptions=<timeot>|<max. hist depth>|<is history sorted>
+*	last=<text of last expression>
+*/
+
+static const wstring 
+		MAINFORMAT(L"mainFormat="),
+		DECFORMAT(L"decFormat="),
+		HEXFORMAT(L"hexFormat="),
+		FONTNAME(L"fontName="),
+		FONTDATA(L"fontData="),
+		OPTIONS(L"options="),
+		HISTOPTIONS(L"histOptions="),
+		LAST(L"last=");
+
 bool TfrmMain::SaveState(wstring name)
 {
-#if 1
 	FileStream fs(name,ios_base::out);
 
      if(fs.fail())
         return false;
     fs << "FalconCalc State File V1.0\n";
-	fs << "decFormat="<< (int)sres.decFormat << "|" << (int)sres.mode << "\n";
-    fs << "hexFormat="<< (int)sres.hexFormat << "|"<< (int)sres.endian << "|"<< (int)sres.hexSign<<"\n";
-	int u = UpDown1->Position() + (chkDecDigits->Checked() ? 0x100 : 0); // 0x100: checked state. must use Position as num_digits may be -1
-    fs << "showAs=" << (int)sres.showAs << "|"<< u << "|"<< (unsigned int)sres.chThousandSep << "|"<< (int)ci.au << "\n";
-	fs << "strFont="<< edtChars->GetFont().Family() << "\n";
-	fs << "fontDat=" << (int)edtChars->GetFont().Size() << "|"<< (int)edtChars->GetFont().CharacterSet() << "|"<< (COLORREF)edtChars->GetFont().GetColor() << "\n";
-    fs << "options=" << pnlDecOpt->Visible() << "|"<< pnlHexOpt->Visible()<<"\n";
-    fs << "hopt=" << watchLimit << "|"<< maxHistDepth << "|"<<slHistory->Sorted() << "\n";
+	fs << MAINFORMAT<< (int)lengine->displayFormat.mainFormat << "\n";
+
+	//int u = UpDown1->Position() + (chkDecDigits->Checked() ? 0x100 : 0); // 0x100: checked state. must use Position as num_digits may be -1
+	wstring wsep = (chkSep->Checked() ? L"1" : L"0") + (std::to_wstring(cbThousandSep->ItemIndex()));
+	fs << DECFORMAT<< lengine->displayFormat.decDigits << "|" << (int)lengine->displayFormat.expFormat 
+	   << "|" << wsep <<  "|" << (int)lengine->displayFormat.useFractionSeparator 
+	   << "|" << (int)lengine->angleUnit << "\n";
+
+    fs << HEXFORMAT<< (int)lengine->displayFormat.hexFormat << "|"<< (int)lengine->displayFormat.littleEndian << "|"<< 
+			(int)lengine->displayFormat.bSignedBinOrHex << "|" << (int)lengine->displayFormat.trippleE <<"\n";
+
+	fs << FONTNAME	<< edtChars->GetFont().Family() << "\n";
+	fs << FONTDATA	<< (int)edtChars->GetFont().Size() << "|"<< (int)edtChars->GetFont().CharacterSet() << "|"<< (COLORREF)edtChars->GetFont().GetColor() << "\n";
+    fs << OPTIONS	<< pnlDecOpt->Visible() << "|"<< pnlHexOpt->Visible()<<"\n";
+    fs << HISTOPTIONS << watchLimit << "|"<< maxHistDepth << "|"<< slHistory->Sorted() << "\n";
     if(!edtInfix->Text().empty())
-        fs << "last=" <<  edtInfix->Text() << "\n";
-#endif
+        fs << LAST <<  edtInfix->Text() << "\n";
     return true;
+}
+
+/*=============================================================
+ * TASK   : reads line from file splits it up at '|' delimiters
+ * PARAMS : fs: open file stream
+ *			data: vector of wstrings corresponding to data
+ * EXPECTS:
+ * GLOBALS:
+ * RETURNS: >0 => (# of strings in line + 1) and data filled
+ *			==0 => error, equal line not found
+ * REMARKS: keeps empty fields as empty wstrings
+ *------------------------------------------------------------*/
+static int __ReadAndExpandLine(FileStream& fs, std::vector<wstring>& data)
+{
+	if (fs.eof())	// no more output?
+		return 0;
+
+	wchar_t wbuf[1024];
+	fs.getline(wbuf, 1023);
+
+	SmartString s(wbuf);
+
+	std::vector<SmartString> sdata;
+
+	s.Trim();
+	int n = s.indexOf('=');
+	if (n < 0)
+		return -1;
+	sdata.push_back(s.left(++n));	// name + '='
+
+	if (!s.length())
+		sdata.clear();
+	else			   // cut name= and get the other fields
+		sdata = s.mid(n).Split(SCharT('|'), true);
+	data.clear();
+	for (auto& s : sdata)
+		data.push_back(s.ToWideString());
+	return sdata.size();
 }
 
 bool TfrmMain::LoadState(wstring name)
 {
-#if 1
 	FileStream fs(name,ios_base::in);
     if(fs.fail())
         return false;
-    STRING_RESULT res;
-    littlecalc::CALC_INPUT inp;
-	wstring s;
-	wchar_t wbuf[1024], nam[1024];
+	DisplayFormat dspFormat;
+//	wstring s;
+	wchar_t wbuf[1024];// , nam[1024];
 	fs.getline(wbuf,1023);
 	
     if(wcscmp(wbuf, L"FalconCalc State File V1.0"))
-        goto E1;
+        return false;
     int n;
-    int i1,i2,i3;
-    unsigned int u1;//,u2,u3;
-    long l1;
 
-    fs.getline(wbuf,1023);
-	n = swscanf(wbuf, L"decFormat=%d|%d\n", &i1, &i2);
-    if(!n)
-        goto E1;
-    res.decFormat = (DEC_FORM)i1;
-	if(n == 2)
+	std::vector<wstring> data;
+	auto mainFormat = [&]()	-> bool // returns true if not processed, false if processed
 	{
-		res.mode = (BEATUFY_MODE)i2;
-		switch(res.mode)
+		if (data[0] == MAINFORMAT)
 		{
-			case bmoGraphText : rdNormal->SetChecked(true); break;
-			case bmoHtml :		rdHtml->SetChecked(true); break;
-			case bmoTEX :		rdTex->SetChecked(true); break;
-			default:			rdNone->SetChecked(true); break;
-		};
-	}
-	res.type = res.mode == bmoNone ? stDecimal : stDecBeautified;
-
-    fs.getline( wbuf, 1023);
-    n = swscanf(wbuf, L"hexFormat=%d|%d|%d\n", &i1,&i2,&i3);
-    if(n != 3)
-        goto E1;
-    res.hexFormat = (HEX_FORM)i1;
-    res.endian    = (HEX_ENDIAN)i2;
-    res.hexSign   = i3 != 0;
-
-    fs.getline( wbuf, 1023);
-    n = swscanf(wbuf, L"showAs=%d|%d|%u|%d\n", &i1,&i2,&u1,&i3);
-    if(n != 4)
-        goto E1;
-    res.showAs    = (SHOW_HEX_AS)i1;
-    chkDecDigits->SetChecked( (i2 & 0x100)  != 0); // changes num_digits!
-    res.num_digits = i2 & 0xFF;				// keep sign in 'res'
-    res.chThousandSep=(_CHART)u1;
-	if(res.chThousandSep == L's')
-		res.chThousandSep = L' ';
-    inp.au        = (ANGLE_UNIT)i3;
-
-    fs.getline( wbuf, 1023);
-            // this is tricky because of possible spaces in font name
-    int len;
-    if(wcsncmp(wbuf, L"strFont=",8) || (len = wcslen(wbuf+8)) <= 0)
-        goto E1;
-    wcsncpy(nam, wbuf+8, len);
-    nam[len] = 0;
-    edtChars->GetFont().SetFamily(nam);
-
-    fs.getline( wbuf, 1023);
-    n = swscanf(wbuf, L"fontDat=%d|%u|%ld\n",&i1,&u1,&l1);
-    if(n == 3)
+			n = std::stoi(data[1]);
+			lengine->displayFormat.mainFormat = static_cast<NumberFormat>(n);
+			busy = true;
+			switch (lengine->displayFormat.mainFormat)
+			{
+				case NumberFormat::rnfSci:
+					chkSci->SetChecked(true);
+					break;
+				case NumberFormat::rnfEng:
+					chkEng->SetChecked(true);
+					break;
+			}	   
+			busy = false;
+			return true;
+		}
+		return false;
+	};
+	auto decFormat = [&]()
 	{
-	    edtChars->GetFont().SetSize((float)i1);
-		edtChars->GetFont().SetCharacterSet((FontCharacterSets)u1);
-		edtChars->GetFont().SetColor((COLORREF)l1);
-	}
+		if (data[0] == DECFORMAT)
+		{
+			busy = true;
+					// 1: decimal digits
+			n = std::stoi(data[1]);	// # of decimal digits n > 0 => used digits, n < 0 => used = abs(n+1)
+			lengine->displayFormat.decDigits = n;
+			if (n >= 0)
+				chkDecDigits->SetChecked(true);
+			else
+				n = std::abs(n + 1);
+			UpDown1->SetPosition(n);
+					// 2: exponent display format
+			n = std::stoi(data[2]);	// (0)E: 1E5, (1)HTML: 1<sp>12</sup>, (2)TeX: 1^{12}, (3)normal: 1²³
+			lengine->displayFormat.expFormat = static_cast<ExpFormat>(n);
+			if(lengine->displayFormat.expFormat == ExpFormat::rnsfE)
+				rdNone->SetChecked(true);
+			else if(lengine->displayFormat.expFormat == ExpFormat::rnsfSciHTML)
+				rdHtml->SetChecked(true);
+			else if (lengine->displayFormat.expFormat == ExpFormat::rnsfSciTeX)
+				rdTex->SetChecked(true);
+			else if (lengine->displayFormat.expFormat == ExpFormat::rnsfUp)
+			{
+				rdNormal->SetChecked(true);
+			}
+					// 3: thousand separator string
+			if (!data[3].empty())	// can only be '.', ',' and space
+			{
+				if (data[3][0] == L'1')
+					chkSep->SetChecked(true);
+				else if (data[3][1] == L'0')
+					cbThousandSep->SetItemIndex(0);
+				else if (data[3][1] == L'1')
+					cbThousandSep->SetItemIndex(1);
+				else if (data[3][1] == L'2')
+					cbThousandSep->SetItemIndex(2);
+				if (chkSep->Checked())
+					lengine->displayFormat.strThousandSeparator = cbThousandSep->Text();
+			}
+					// 4: fraction separator
+			if (!data[4].empty())
+				lengine->displayFormat.useFractionSeparator = true;
+					// 5: angular unit 0:
+			if (!data[5].empty())
+				lengine->displayFormat.angUnit = static_cast<AngularUnit>(std::stoi(data[5]));
 
-    sres = res;
-// MARK	if(sres.num_digits < 0) sres.num_digits = -sres.num_digits;
-    ci = inp;
+			busy = false;
 
-    // set visual, Order IMPORTANT!
-    busy = true;
-    chkSep->SetChecked( sres.chThousandSep != 0);
-    cbThousandSep->SetEnabled( sres.chThousandSep != 0);
-    chkSci->SetChecked( sres.decFormat == dfSci);
-    chkEng->SetChecked( sres.decFormat == dfEng);
-	UpDown1->SetPosition( sres.num_digits); // will be increased in next call
-	EventParameters param;
-	chkDecDigitsClick(this, param);
-    chkBytes->SetChecked( sres.showAs == shaBytes);
-    chkWords->SetChecked( sres.showAs == shaWords);
-    chkDWords->SetChecked( sres.showAs == shaDWords);
-    chkLittleEndian->SetChecked( sres.endian == heLittle);
-    chkLittleEndian->SetEnabled( sres.showAs != shaNormal);
-    chkSingle->SetChecked( sres.hexFormat == hfSingle);
-    chkDouble->SetChecked( sres.hexFormat == hfDouble);
-    chkMinus->SetChecked( sres.hexSign);
-#if 1
-	switch((int)ci.au)
+			return true;
+		}
+		return false;
+
+	};
+	auto hexFormat = [&]()
 	{
-		case 0: rdDeg->SetChecked(true); break;
-		case 1: rdGrad->SetChecked(true); break;
-		default: rdRad->SetChecked(true); break;
-	}    
-#endif
+		if (data[0] == HEXFORMAT)
+		{
+			busy = true;
+				// 1. main Hex format
+			int n = std::stoi(data[1]);
+			lengine->displayFormat.hexFormat = static_cast<HexFormat>(n);
+			switch (lengine->displayFormat.hexFormat)
+			{
+				case HexFormat::rnHexNormal:
+					break;
+				case HexFormat::rnHexByte:
+					chkBytes->SetChecked(true);
+					break;
+				case HexFormat::rnHexWord:
+					chkWords->SetChecked(true);
+					break;
+				case HexFormat::rnHexDWord:
+					chkDWords->SetChecked(true);
+					break;
+			}
+				// 2. endianness
+			n = std::stoi(data[2]);
+			if (n)
+				chkLittleEndian->SetChecked(true);
+				// 3. signed bin or hex?
+			n = std::stoi(data[3]);
+			if (n)
+				chkMinus->SetChecked(true);
+				// 4. IEEE format
+			n = std::stoi(data[4]);
+			// n = 0: no check
+			if (n==1)
+				chkIEEESingle->SetChecked(true);
+			else if(n==2)
+				chkIEEEDouble->SetChecked(true);
+			busy = false;
+
+			return true;
+		}
+		return false;
+
+	};
+	auto fontName = [&]()
+	{
+		if (data[0] == FONTNAME)
+		{
+			Font f = edtChars->GetFont();
+			f.SetFamily(data[1]);
+			edtChars->SetFont(f);
+			return true;
+		}
+		return false;
+
+	};
+	auto fontData = [&]()
+	{
+		if (data[0] == FONTDATA)
+		{
+			Font f = edtChars->GetFont();
+			f.SetSize(std::stof(data[1]));
+			f.SetCharacterSet(static_cast<FontCharacterSets>(std::stoi(data[2])));
+			f.SetColor(std::stoul(data[2]));
+			return true;
+		}
+		return false;
+
+	};
+	auto options = [&]()
+	{
+		if (data[0] == OPTIONS)
+		{
+			pnlDecOpt->SetVisible(std::stoi(data[1]));
+			pnlHexOpt->SetVisible(std::stoi(data[2]));
+			return true;
+		}
+		return false;
+
+	};
+	auto histOptions = [&]()
+	{
+		if (data[0] == HISTOPTIONS)
+		{
+			watchLimit = std::stoi(data[1]);
+			maxHistDepth = std::stoi(data[2]);
+			slHistory->SetSorted(std::stoi(data[3]));
+			return true;
+		}
+		return false;
+
+	};
+	auto last = [&](wstring &lastinfix)
+	{
+		if (data[0] == LAST)
+		{
+			lastinfix = data[1];
+		}
+	};
+
+	wstring wsLlastInfix;
+	while ((n = __ReadAndExpandLine(fs, data)))
+	{
+		if (data[0][data[0].length() - 1] == SCharT('='))	// valid line
+		{
+			if(!mainFormat() )
+				if(!decFormat())
+					if(!hexFormat())
+						if(!fontName())
+							if(!fontData())
+								if(!options())
+									if(!histOptions())
+										last(wsLlastInfix);
+		}
+	}
     busy = false;
-
-    fs.getline( wbuf, 1023);
-    n = swscanf(wbuf, L"options=%d|%d\n", &i1, &i2);
-    if(n != 2)
-        goto E1;
-
-    fs.getline( wbuf, 1023);
-    int wl,mhd,hs;
-    n = swscanf(wbuf, L"hopt=%d|%d|%d\n", &wl, &mhd, &hs);
-    if(n != 3)
-        goto E1;
-
-	// Timer1->Enabled = (watchLimit = wl) != 0;
-	EnableMyTimer((watchLimit = wl) != 0);
-
-    maxHistDepth = mhd;
-	slHistory->SetCapacity(mhd);
-    slHistory->SetSorted(hs!=0, true);	// keep first line unsorted
-        // need to be here otherwise in case of error the window would be too small
-    ShowDecOptions(i1 != 0);
-    ShowHexOptions(i2 != 0);
-
-    if( fs.getline( wbuf, 1023)  && !wcsncmp(wbuf, L"last=", 5) )
-    {
-        edtInfix->SetText(wbuf+5);
-    }
     return true;
-E1:
-#endif
-    return false;
 }
 // Adds actual expression to history
 // Always inserts line at first position (top of list)
@@ -1439,8 +1588,9 @@ E1:
 // If the expression was already in the list deletes it first from the list
 void TfrmMain::AddToHistory(wstring text)
 {
+	SmartString ss(text);
     int n;
-    if( (n = slHistory->IndexOf(text)) >= 0)
+    if( (n = slHistory->IndexOf(ss)) >= 0)
     {
         if(n == 0 && slHistory->Sorted())	// already at top
             return;							// nothing to do
@@ -1448,22 +1598,17 @@ void TfrmMain::AddToHistory(wstring text)
     }
 	else if(slHistory->Sorted() )			// then must put original top line in correct position 
 	{										// first and add the new line afterwards, because
-		wstring ws = (*slHistory)[0];		// list may be truncated after adding a new line to it
+		SmartString ws = (*slHistory)[0];		// list may be truncated after adding a new line to it
 		slHistory->Delete(0);				// delete original top line
 		slHistory->Add(ws);					// and insert into string
 	}
 	
-    slHistory->Insert(0, text);				// then insert new expression to top of list
+    slHistory->Insert(0, ss);				// then insert new expression to top of list
 
     added = true;
     watchdog = 0;
     if(frmHistory != 0)
         frmHistory->lstHistory->Items().SetLines(slHistory->Lines());
-}
-
-littlecalc::LittleEngine *TfrmMain::Engine() const
-{
-    return lengine;
 }
 
 void TfrmMain::FormClose(void *sender, nlib::FormCloseParameters param)
@@ -1474,23 +1619,12 @@ void TfrmMain::chkAsBytesClick(void *sender, nlib::EventParameters param)
 {
 	chkWords->SetChecked(false);
 	chkDWords->SetChecked(false);
-	if(chkBytes->Checked() )
-		sres.showAs =  shaBytes;
+	bool b = chkBytes->Checked();
+	if(b)
+		lengine->displayFormat.hexFormat = HexFormat::rnHexByte;
 	else
-		sres.showAs = shaNormal;
-	chkLittleEndian->SetEnabled( sres.showAs != shaNormal);
-	ShowResults();
-}
-
-void TfrmMain::chkAsDWordsClick(void *sender, nlib::EventParameters param)
-{
-	chkWords->SetChecked(false);
-	chkBytes->SetChecked(false);
-	if(chkDWords->Checked() )
-		sres.showAs =  shaDWords;
-	else
-		sres.showAs = shaNormal;
-	chkLittleEndian->SetEnabled( sres.showAs != shaNormal);
+		lengine->displayFormat.hexFormat = HexFormat::rnHexNormal;
+	chkLittleEndian->SetEnabled(b);
 	ShowResults();
 }
 
@@ -1498,31 +1632,45 @@ void TfrmMain::chkAsWordsClick(void *sender, nlib::EventParameters param)
 {
 	chkBytes->SetChecked(false);
 	chkDWords->SetChecked(false);
-	if(chkWords->Checked() )
-		sres.showAs =  shaWords;
+	bool b = chkWords->Checked();
+	if (b)
+		lengine->displayFormat.hexFormat = HexFormat::rnHexWord;
 	else
-		sres.showAs = shaNormal;
-	chkLittleEndian->SetEnabled( sres.showAs != shaNormal);
+		lengine->displayFormat.hexFormat = HexFormat::rnHexNormal;
+	chkLittleEndian->SetEnabled(b);
 	ShowResults();
 }
 
-void TfrmMain::chkDoubleClick(void *sender, nlib::EventParameters param)
+void TfrmMain::chkAsDWordsClick(void *sender, nlib::EventParameters param)
 {
-	chkSingle->SetChecked(false);
-	sres.hexFormat =  chkDouble->Checked() ? hfDouble : hfNormal;
+	chkWords->SetChecked(false);
+	chkBytes->SetChecked(false);
+	bool b = chkDWords->Checked();
+	if (b)
+		lengine->displayFormat.hexFormat = HexFormat::rnHexDWord;
+	else
+		lengine->displayFormat.hexFormat = HexFormat::rnHexNormal;
+	chkLittleEndian->SetEnabled(b);
 	ShowResults();
 }
 
-void TfrmMain::chkSingleClick(void *sender, nlib::EventParameters param)
+void TfrmMain::chkIEEEDoubleClick(void *sender, nlib::EventParameters param)
 {
-	chkDouble->SetChecked(false);
-	sres.hexFormat =  chkSingle->Checked() ? hfSingle : hfNormal;
+	chkIEEESingle->SetChecked(false);
+	lengine->displayFormat.trippleE =  chkIEEEDouble->Checked() ? IEEEFormat::rntHexIEEE754Double : IEEEFormat::rntHexNotIEEE;
+	ShowResults();
+}
+
+void TfrmMain::chkIEEESingleClick(void *sender, nlib::EventParameters param)
+{
+	chkIEEEDouble->SetChecked(false);
+	lengine->displayFormat.trippleE =  chkIEEESingle->Checked() ? IEEEFormat::rntHexIEEE754Single : IEEEFormat::rntHexNotIEEE;
 	ShowResults();
 }
 
 void TfrmMain::chkLittleEndianClick(void *sender, nlib::EventParameters param)
 {
-	sres.endian =  chkLittleEndian->Checked() ? heLittle : heBig;
+	lengine->displayFormat.littleEndian =  chkLittleEndian->Checked() ? true: false;
 	ShowResults();
 }
 
@@ -1558,11 +1706,12 @@ void TfrmMain::FormMove(void *sender, nlib::EventParameters param)
 		frmHistory->SetLeft( Left() + coMoveDX);
 	}
 }
-
-void TfrmMain::rdNormalClick(void *sender, nlib::EventParameters param)
+	// this single funcion deals with Normal, HTML, TeX and E display
+void TfrmMain::rdNormalClick(void *sender, nlib::EventParameters param) 
 {
-	sres.mode = (BEATUFY_MODE)((Radiobox*)sender)->Tag();
-	sres.type = sres.mode == bmoNone ? stDecimal : stDecBeautified;
+	
+	lengine->beautification = (LittleEngine::Beautification)((Radiobox*)sender)->Tag();
+	//sres.type = sres.mode == bmoNone ? stDecimal : stDecBeautified;
 	ShowResults();
 }
 
@@ -1574,31 +1723,32 @@ void TfrmMain::cbInfixTextChanged(void *sender, nlib::EventParameters param)
 	busy = true;
 	if (cbInfix->Text().empty())
 	{
-		sres.valid = rvInvalid;
-		ShowResults(L"");
+		lengine->resultValid = LittleEngine::ResValid::rvInvalid;
+		ShowResults();
 		return;
 	}
 	wstring s = cbInfix->Text();
 	edtInfix->SetText(s);
 	try
 	{
-		ci.infix = s;
-		long double res = lengine->Calculate(ci);
+		lengine->infix = s;
+		RealNumber res = lengine->Calculate();
 		gbResults->SetText(L"Results");
-		sres.valid = rvOk;
-		ShowResults(res);
-		s = lengine->Postfix();
+		lengine->resultValid = LittleEngine::ResValid::rvOk;
+		ShowResults();
+		s = lengine->Postfix().ToWideString();
 	}
 	catch (wstring s)
 	{
-		sres.valid = rvInvalid;
+		lengine->resultValid = LittleEngine::ResValid::rvInvalid;
 		gbResults->SetText(s);
-		ShowResults(L"???");
+
+		ShowResults();
 	}
 	catch (...)
 	{
-		sres.valid = rvInvalid;
-		ShowResults(L"???");
+		lengine->resultValid = LittleEngine::ResValid::rvInvalid;
+		ShowResults();
 	}
 	busy = false;
 }

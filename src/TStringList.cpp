@@ -53,7 +53,7 @@ int TStringList::Add(const SmartString & s, bool multiple)
     SmartString s0 = s, s1;
     do
     {
-		en = s0.indexOf("\n");
+		en = s0.indexOf("\n"_ss);
         if( !en )
             en = s.length();
         s1 = s0.substr(1, en-1);
@@ -93,23 +93,23 @@ int TStringList::Add(const SmartString& s1)
 	return (ind >= (int)_cntMax) ? -1 : ind;
 }
 
-bool TStringList::LoadFromFile(SmartString name)
+bool TStringList::LoadFromFile(wstring name)
 {
 	_strings.clear();
-	std:ifstream fs(name,ios_base::in);
+	std::wifstream fs(name,ios_base::in);
 	if(fs.fail() )
 		return false;
 	//fs.skipbom();
 	//if(fs.fail() )
 	//	return false;
-	SmartString s;
+	wstring s;
 	while(!getline(fs,s).fail() )
-		Add(s);
+		Add(SmartString(s) );
 	SetCapacity(_cntMax);		// drop excess items
 	return !fs.bad();
 }
 
-bool TStringList::SaveToFile(SmartString name)
+bool TStringList::SaveToFile(wstring name)
 {
 	//nlib::FileStream fs(name,ios_base::out);
 	std::ofstream fs(name,ios_base::out);

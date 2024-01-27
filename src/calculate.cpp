@@ -27,17 +27,19 @@ int _matherr (struct _exception *a)
     return 1;
 }
 
+using namespace SmString;
+using namespace LongNumber;
 
 /*==============================================================
- * NAMESPACE littlecalc
+ * NAMESPACE FalconCalc
  *-------------------------------------------------------------*/
-namespace littlecalc {
+namespace FalconCalc {
 // originally this was a 'const SmartString', but it became(?) empty in
 // SaveTables() under RAD Studio XE
-#define VERSION_STRING "FalconCalc V2.0"
+constexpr auto VERSION_STRING = "FalconCalc V1.0";
 
 
-   const SCharT comment_delimiter = ':'_ss;
+const SCharT comment_delimiter = SCharT(':');
 
 
 /*========================================================
@@ -60,7 +62,7 @@ bool MathOperator::bOpsOk = false;
  * TASK: set up static table of in-built operators
  * EXPECTS: nothing
  * RETURNS: nothing, 'ops' table is set up
- * REMARKS: if modified must check/modify 'LittleEngine::Convert()'
+ * REMARKS: if modified must check/modify 'LittleEngine::InfixToPostFix()'
  *---------------------------------------------------------*/
 void MathOperator::Setup()
 {
@@ -227,7 +229,7 @@ void Token::GetOperator(const SmartString &text, unsigned &pos)
 				break;
 	case '~' :  if (!cn) // no more character in line
 					Trigger("Illegal operator at line end"_ss);
-				if (isdigit(cn) || cn == '#')		// if decimal, octal, hexadecimal or binary number
+				if (isdigit(cn) || cn == SCharT('#') )		// if decimal, octal, hexadecimal or binary number
 				{
 					data.oper = opCompl;			// 2's complement
 					type = tknOperator;
@@ -260,11 +262,11 @@ void Token::GetDecDigits(const SmartString &text, unsigned &pos)
  *       any text in the format ([] means optional arguments)
  * [decimal digit(s)][decimal point][decimal digit(s)][e[+-][decimal number]]
  *       where [decimal point] is determined by the current locale
- *       and either one of the [decimal digit(s)] must be present
+ *       and either RealNumber::RN_1 of the [decimal digit(s)] must be present
  * EXPECTS: 'text' is lowercase, starts with number or
  *        [decimal point] (no unary + or -)
  *        and if 'text' starts with decimal point it contains at
- *        least one additional digit
+ *        least RealNumber::RN_1 additional digit
  * RETURNS: nothing, type and number SmartString is set in 'data' member
  *         'pos' is positioned after the number SmartString
  *-----------------------------------------------------------*/
@@ -385,11 +387,11 @@ void Token::GetNumberFromQuotedString(const SmartString &text, unsigned &pos)
 {
 	locale loc = cout.getloc();
 	unsigned startpos = pos;
-    RealNumber lval = zero;
+    RealNumber lval = RealNumber::RN_0, r256 = RealNumber(256.0);
 	while(pos < text.length() && (text[pos] != '\'' || (pos > 0 && text[pos-1] == '\\')) )
     {
-		SCharT ch = text[pos];     // sizeof(SCharT) == 1
-        lval = (lval * 256.0) + ch;
+		SCharT ch = text[pos];
+        lval = lval * r256 + RealNumber( String(1, ch) ) ;
 		++pos;
     }
 	if(pos == startpos)
@@ -423,7 +425,7 @@ void Token::GetVarOrFuncOrOperator(const SmartString &text, unsigned &pos)
 		++pos;
 	SmartString s = text.substr(startpos, pos - startpos);
 	name = s;  //  set name
-    while(pos < text.length() && isspace(text[pos],loc))
+    while(pos < text.length() && isspace((wchar_t)text[pos],loc))
         ++pos; // skip whitespace because of function definitions
     data = MathOperator::Op(s );
 	if( data.oper != opINVALID )
@@ -443,7 +445,7 @@ void Token::GetVarOrFuncOrOperator(const SmartString &text, unsigned &pos)
  *          'pos': position in 'text' where the tex of the token starts
  *           text to only contain valid characters and only lowercase letters!
  *--------------------------------------------------*/
-Token::Token( const SmartString &text, unsigned &pos) : type(tknUnknown), val(0.0l)
+Token::Token( const SmartString &text, unsigned &pos) : type(tknUnknown), val(0)
 {
 	locale loc = cout.getloc();
 
@@ -458,20 +460,20 @@ Token::Token( const SmartString &text, unsigned &pos) : type(tknUnknown), val(0.
     SCharT decpoint = RealNumber::DecPoint();
 	SmartString sErr = "Illegal operator"_ss;
 
-	while(pos < len && isspace(text[pos], loc))
+	while(pos < len && isspace((wchar_t)text[pos], loc))
 		++pos;
 	SCharT  c = text[pos++],
 			cn = (pos >= len ? SCharT(0) : text[pos]); // look ahead
-    --pos;  // go back to start of number
+    --pos;  // go back to start of token
 
-    if(c == '\'')   // character SmartString
+    if(c == SCharT('\'') )   // character SmartString
         GetNumberFromQuotedString(text,pos);
-	else if(isdigit(c,loc) || c == decpoint || c == '#')		// token is a decimal, hexadecimal, octal or binary number
+	else if(isdigit(c,loc) || c == decpoint || c == SCharT('#'))		// token is a decimal, hexadecimal, octal or binary number
 	{
-		bool bDecpF = (c == decpoint),							// decimal point found ?
-				bHexF = (c == '0' && (cn == 'x')),				// hex number?
-				bOctF = (c == '0' && cn && isdigit(cn,loc)),
-				bBinF = (c == '#');
+		bool bDecpF = (c == decpoint),							        // decimal point found ?
+				bHexF = (c == SCharT('0') && (cn == SCharT('x') )),		// hex number?
+				bOctF = (c == SCharT('0') && cn && isdigit(cn,loc)),
+				bBinF = (c == SCharT('#'));
 
 		if(bHexF)                       // starts with 0x and ends when any non hex. digit character found
 			GetHexNumber(text, pos);    // 0x....
@@ -487,13 +489,13 @@ Token::Token( const SmartString &text, unsigned &pos) : type(tknUnknown), val(0.
 		{
 			if((!cn && bDecpF) || (bDecpF && !isdigit(cn,loc)))	// then EOL and number is a single decimal point
 				Trigger("Illegal number #2"_ss);
-			GetDecimalNumber(text, --pos); // start at the first number/decimal point
+			GetDecimalNumber(text, pos); // start at the first number/decimal point
 		}
 	}
 	else if(isalpha(c,loc)) // variable, function or textd operator (e.g. 'or')
 		GetVarOrFuncOrOperator(text,--pos);
 	else // a possible operator character
-		GetOperator(text, --pos);
+		GetOperator(text, pos);
 }
 
 
@@ -501,49 +503,47 @@ Token::Token( const SmartString &text, unsigned &pos) : type(tknUnknown), val(0.
 Class LittleEngine
  *-----------------------------------------*/
 
-static VarFuncTable builtinVars,
-                    builtinFuncs;
-unsigned LittleEngine::numBuiltinVars =0,
-       LittleEngine::numBuiltinFuncs = 0;
+static VariableTable builtinVars;   // and constants
+static FunctionTable builtinFuncs;
+unsigned LittleEngine::numBuiltinVars  = 0,
+         LittleEngine::numBuiltinFuncs = 0;
 
 bool LittleEngine::builtinsOk=false;
 
-inline RealNumber Sign(RealNumber r) { return r.Sign() > 0 ? one:-one; }
+inline RealNumber Sign(RealNumber r) { return r.Sign() > 0 ? RealNumber::RN_1:-RealNumber::RN_1; }
 
 /*========================================================
  * TASK: Creates a single instance of the calculator
- *       if the built ins are not yet set up sets them up too
+ *       if the built-ins are not yet set up sets them up too
  * EXPECTS:all builtins 's name is lowercase!
  * RETURNS: nothing/object created
  *-----------------------------------------------------------*/
 LittleEngine::LittleEngine() : clean(true)
 {
-#define SET_BUILTIN_VAR(a,b,c) v.description = u8#b; v.value = (c); builtinVars[#a##_ss] = v;
-    #define SET_BUILTIN_CONST(a) v.description = (a).desc; v.value=(a).value; builtinVars[(a).name] = v;
+#define SET_BUILTIN_VAR(a,b,c)  v.desc = L###b##;    v.value = (c);        builtinVars[#a##_ss]  = v;
+    #define SET_BUILTIN_CONST(a)    v.desc = (a).desc;   v.value = (a).value;  builtinVars[(a).name] = v;
 
     if(!builtinsOk)
     {
-       VarFunc v;
-       v.builtin = true;
-       v.isnumber = true;
-       v.dirty = false;
+       Variable v;
 
-       SET_BUILTIN_VAR(ans, result of previous calculation, zero);
+       SET_BUILTIN_VAR(ans, result of previous calculation, RealNumber::RN_0);
 
 
-	   SET_BUILTIN_VAR(e, base of the natural logarithm, e)
-       SET_BUILTIN_VAR(log2e, base 2 logarithm of e, log2(e));
+       SET_BUILTIN_VAR(log2e,  base 2 logarithm of e,  log2(e));
        SET_BUILTIN_VAR(log10e, base 10 logarithm of e, log10(e));
-       SET_BUILTIN_VAR(lge, base 10 logarithm of e, log10(e));
-       SET_BUILTIN_VAR(ln2,natural logarithm of 2, ln2);
-       SET_BUILTIN_VAR(pi, pi, pi);
-       SET_BUILTIN_VAR(piP2, pi/2, piP2);
-       SET_BUILTIN_VAR(piP4, pi/4, half*piP2);
-       SET_BUILTIN_VAR(rpi2, 2/pi, two/pi);
-       SET_BUILTIN_VAR(rpi, 1/ π, one/pi);
-       SET_BUILTIN_VAR(sqpi, square root of π, sqrt(pi));
-       SET_BUILTIN_VAR(sqrt2, square root of 2, sqrt2);
+       SET_BUILTIN_VAR(lge,    base 10 logarithm of e, log10(e));
+       SET_BUILTIN_VAR(ln2,    natural logarithm of 2, ln2);
+       SET_BUILTIN_VAR(piP2,   π/2                   , piP2);
+       SET_BUILTIN_VAR(piP4,   π/4                   , half*piP2);
+       SET_BUILTIN_VAR(rpi2,   2/π                   , RealNumber::RN_2/pi);
+       SET_BUILTIN_VAR(rpi,    1/π                   , RealNumber::RN_1/pi);
+       SET_BUILTIN_VAR(sqpi,   square root of π      , sqrt(pi));
+       SET_BUILTIN_VAR(sqrt2,  square root of 2      , sqrt2);
        SET_BUILTIN_VAR(rsqrt2, reciprocal of the square root of 2, rsqrt2);
+
+	   SET_BUILTIN_CONST(e)
+       SET_BUILTIN_CONST(pi);
 
        SET_BUILTIN_CONST(fsc);
        SET_BUILTIN_CONST(au);
@@ -573,29 +573,33 @@ LittleEngine::LittleEngine() : clean(true)
        numBuiltinVars = builtinVars.size();
             // all built in function requires a single RealNumber argument
             // they are not 'dirty' and they are 'isnumber's
-            v.value = 0.0l;
+       Func f;
+       f.builtin = true;
+//       f.isnumber = true;
+       f.dirty = false;
+       f.value = 0.0l;
 
-	#define SET_BUILTIN_FUNC1(a,b,c) v.description = u8#b; v.function.funct1 = c; builtinFuncs[#a##_ss] = v;
-	#define SET_BUILTIN_FUNC2(a,b,c) v.description = u8#b; v.function.funct2 = c; builtinFuncs[#a##_ss] = v;
-	#define SET_BUILTIN_FUNC3(a,b,c) v.description = u8#b; v.function.funct3 = c; builtinFuncs[#a##_ss] = v;
-	#define SET_BUILTIN_FUNC4(a,b,c) v.description = u8#b; v.function.funct4 = c; builtinFuncs[#a##_ss] = v;
+	#define SET_BUILTIN_FUNC1(a,b,c) f.desc = u8#b; f.function.funct1 = c; builtinFuncs[#a##_ss] = f;
+	#define SET_BUILTIN_FUNC2(a,b,c) f.desc = u8#b; f.function.funct2 = c; builtinFuncs[#a##_ss] = f;
+	#define SET_BUILTIN_FUNC3(a,b,c) f.desc = u8#b; f.function.funct3 = c; builtinFuncs[#a##_ss] = f;
+	#define SET_BUILTIN_FUNC4(a,b,c) f.desc = u8#b; f.function.funct4 = c; builtinFuncs[#a##_ss] = f;
        SET_BUILTIN_FUNC1(abs, absolute value, abs);
 
-	   v.useAngleUnitAsResult=true;
+	   f.useAngleUnitAsResult=true;
        SET_BUILTIN_FUNC4(arcsin, inverse of sine, asin);
        SET_BUILTIN_FUNC4(asin, inverse of sine, asin);
        SET_BUILTIN_FUNC4(arccos, inverse of cosine, acos);
        SET_BUILTIN_FUNC4(acos, inverse of cosine, acos);
        SET_BUILTIN_FUNC4(arctan, inverse of tangent, atan);
        SET_BUILTIN_FUNC4(atan, inverse of tangent, atan);
-       v.useAngleUnitAsResult=false;
+       f.useAngleUnitAsResult=false;
 
-       v.useAngleUnit        =true;
+       f.useAngleUnit        =true;
        SET_BUILTIN_FUNC4(sin, sine, sin);
        SET_BUILTIN_FUNC4(cos, cosine, cos);
        SET_BUILTIN_FUNC4(tan, tangent, tan);
        SET_BUILTIN_FUNC4(tg, tangent, tan);
-       v.useAngleUnit        =false;
+       f.useAngleUnit        =false;
 
        SET_BUILTIN_FUNC1(asinh, inverse of hyperbolic sine,     asinh);
        SET_BUILTIN_FUNC1(acosh, inverse of hyperbolic cosine,   acosh);
@@ -649,7 +653,7 @@ void LittleEngine::HandleUnknown(Token *tok)
 			TokenType tk = stack.peek().Type();
 			if( tk == tknFunction )
 				break;
-			stack.popto(tvOutput);
+			stack.popto(tvPostfix);
 		}
 		if(stack.empty () )
 			Trigger("Either the separator was misplaced or parenthesis were mismatched"_ss);
@@ -668,7 +672,7 @@ void LittleEngine::HandleOperator(Token* tok)
                             // either 'tok' is left-associative and its precedence is less than or equal to that of 'op2'
                             // or 'tok' has precedence less than that of o2
         if(tok->Precedence() < op2.Precedence() || (op2.Precedence() == tok->Precedence() && !tok->RightAssoc()))
-            stack.popto(tvOutput);			// pop 'op2' off the stack, onto the output queue;
+            stack.popto(tvPostfix);			// pop 'op2' off the stack, onto the output queue;
         else
             break;			// precedence of operator 'tok' is larger than that of 'op2' or equal but 'tok' is right assoc.
     }
@@ -687,13 +691,13 @@ void LittleEngine::HandleBrace(Token* tok)
         TokenType tk = stack.peek().Type();
         while(!stack.empty() && ( (tk != tknBrace && tk != tknFunction) || (tk == tknBrace && stack.peek().Oper() != opOpenBrace)))
         {   // Until the token at the top of the stack is a left parenthesis, pop operators off the stack onto the output queue.
-            stack.popto(tvOutput);
+            stack.popto(tvPostfix);
             tk = stack.peek().Type();
         }
         if(!stack.empty())
         {
             if(tk == tknFunction)
-                stack.popto(tvOutput);              // If the token at the top of the stack is a function token, pop it onto the output queue.
+                stack.popto(tvPostfix);              // If the token at the top of the stack is a function token, pop it onto the output queue.
             else
                 stack.pop();					   // Pop the left parenthesis from the stack, but not onto the output queue.
         }
@@ -703,28 +707,38 @@ void LittleEngine::HandleBrace(Token* tok)
 }
 
 /*==================================================
- * TASK: convert single infix expression in 'expr'
- *       to postfix expression in 'tvOutput'
- * EXPECTS: 'expr' SmartString may end with '\n' and may contain
- *       variable/function definitions with comments at the
- *       end. Comments are separated from the definition by
- *       'comment_delimiter' which must be different from
- *       any characters allowed in an expression.
+ * TASK: 
+ * EXPECTS: 
  *-------------------------------------------------*/
-int LittleEngine::Convert(const SmartString &expr)
+ /*=============================================================
+  * TASK   : convert single infix expression in 'expr'
+ *       to postfix expression in 'tvPostfix'
+  * PARAMS :
+  * EXPECTS:
+  * GLOBALS: 'infix'   
+  * RETURNS: 0      : assignment expression
+  *          1      : other
+  *          and  'tvPostfix' is the token vector of expression
+  * REMARKS: - 'infix' may end with '\n' and may contain
+  *             variable/function definitions with comments at the
+  *             end. Comments are separated from the definition by
+  *             'comment_delimiter' which must be different from
+  *             any characters allowed in an expression.
+  *------------------------------------------------------------*/
+int LittleEngine::InfixToPostFix(const SmartString& expr)
 {
     //check for (invalid characters up to the comment field
 	locale loc = cout.getloc();
 	infix = expr;
-    if(infix[ infix.length() -1] == '\n')
+    if( infix[  infix.length() -1] == '\n')
         infix = infix.substr(0, infix.length()-1);
-	SmartString pattern = "=*^/<>!&|~%().,+-_#'"_ss;
+	SmartString pattern = "=*^/<>!&|~%().,+-input._#'"_ss;
     bool quoted = false;
 
-    for(SmartString::iterator it = infix.begin(); it != infix.end() && *it != littlecalc::comment_delimiter; ++it)
+    for(SmartString::iterator it = infix.begin(); it != infix.end() && *it != FalconCalc::comment_delimiter; ++it)
     {
-        if(!quoted && !isalnum(*it, loc) && !isspace(*it,loc) && pattern.find_first_of(*it) == std::string::npos )
-    	    Trigger (SmartString("Illegal character '"_ss) +  (SCharT)(*it) + "'"_ss);
+        if(!quoted && !isalnum((wchar_t)*it, loc) && !isspace((wchar_t)*it,loc) && pattern.find_first_of(*it) == std::string::npos )
+    	    Trigger (SmartString("Illegal character '"_ss) +  (char16_t)(*it) + "'"_ss);
 
         if(*it == '\'')
             quoted ^= true;
@@ -733,7 +747,7 @@ int LittleEngine::Convert(const SmartString &expr)
     }
 
     int result = 1;     // not an assignment
-    tvOutput.clear();   // get rid of previous result
+    tvPostfix.clear();   // get rid of previous result
 
     bool needOp = false;        // operator needed ? Used for unary +,- or missing multiplication
      // example:
@@ -772,13 +786,13 @@ int LittleEngine::Convert(const SmartString &expr)
 		{
             case tknCharacter:                          // number from character SmartString (as BIG endian!)
 			case tknNumber:								// If the token is a number then add it to the output queue.
-								tvOutput.push_back(*tok);
+								tvPostfix.push_back(*tok);
                                 needOp = true;
                                 break;
             case tknVariable:	  						// If the token is a variable check for assignments
                                 if(VariableAssignment(infix, pos, tok) == 0 )   // handle assignment
                                 {
-    								tvOutput.push_back(*tok); // otherwise add it to the output queue.
+    								tvPostfix.push_back(*tok); // otherwise add it to the output queue.
                                     needOp = true;
                                 }
                                 else
@@ -846,7 +860,7 @@ int LittleEngine::Convert(const SmartString &expr)
 	{
 		if(stack.peek().Type() == tknBrace )
 			Trigger("Mismatched parenthesis"_ss);
-		stack.popto(tvOutput);
+		stack.popto(tvPostfix);
 	}
     return result; // 0: assignment, 1: other expression
 }
@@ -863,11 +877,9 @@ int LittleEngine::Convert(const SmartString &expr)
  *---------------------------------------------*/
 void LittleEngine::MarkDirty(const SmartString name)
 {
-    VarFuncTable::iterator it;
-    for(it = variables.begin(); it != variables.end(); ++it)
+    FunctionTable::iterator it;
+    for(it = functions.begin(); it != functions.end(); ++it)
     {
-        if(it->second.isnumber) // numbers do not change (and builtins are 'numbers')
-            continue;
         TokenVec::iterator tvit;
         for(tvit = it->second.definition.begin(); tvit != it->second.definition.end(); ++tvit)
             if(tvit->Type() == tknVariable && tvit->Text() == name)
@@ -880,22 +892,25 @@ void LittleEngine::MarkDirty(const SmartString name)
 
 /* =========================================================
  * TASK: test expression for variable assignment.
- * EXPECTS: 'expr' text of line
+ * EXPECTS: 'expr' text of definition of variable
  *          'pos' start positiom after name  - a line may only contain a
  *                single variable definition,
- *          'tok' actual variable
- * REURNS: true if this is an assignment and variable definition or
- *         redefinition is stored in VARIABLES
- *         false if next sign is not an equal sign
+ *          'tok' pointer to variable, must not be nullptr
+ * RETURNS: true if this is an assignment and variable definition or
+ *                  redefinition is stored in VARIABLES
+ *         false if first non-whitespace character is not an equal sign
+ * REMARKS: expr format (variable name already processed):
+ *       [white spaces]=[white spaces]<definition>[white spaces]
  *---------------------------------------------------------*/
 bool LittleEngine::VariableAssignment(const SmartString &expr, unsigned &pos, Token *tok)
 {
 	locale loc = cout.getloc();
-    while(pos < expr.length() && isspace(expr[pos], loc))
+    while(pos < expr.length() && isspace((wchar_t)expr[pos], loc))
       ++pos;
     if( pos == expr.length()  || expr[pos] != '=')
         return false;       // not an assignment
-    VarFunc v;
+
+    Variable v;
     if(variables.count(tok->Text() )) // already defined
     {
         if(variables[ tok->Text()].builtin)
@@ -912,58 +927,55 @@ bool LittleEngine::VariableAssignment(const SmartString &expr, unsigned &pos, To
     if(posComment != SmartString::npos)
     {
         pos = posComment+1;     // ++pos would be enough: we have a single expression in line
-        v.description = expr.substr(pos);
-        pos += v.description.length();
+        v.desc = expr.substr(pos);
+        pos += v.desc.length();
     }
 
     LittleEngine if2pf(*this);
-    if2pf.Convert(v.body);
-    v.definition = if2pf.tvOutput;
+    if2pf.InfixToPostFix(v.body);
+    v.definition = if2pf.tvPostfix;
     if(v.definition.size() == 1)    // maybe a constant
     {
         if(v.definition[0].Type() == tknNumber )
-        {
-            v.value = v.definition[0].Value();
-            v.isnumber = true;// numbers do not change when other variables^functions change
-            v.dirty = false;
-        }
+            v.value = v.definition[0].Value();  // and v.dirty remains false
         else
-            v.value = if2pf.CalcPostfix(if2pf.tvOutput);
+            v.value = if2pf.CalcPostfix(if2pf.tvPostfix);
     }
-    else // leave it dirty :)
-            v.value = if2pf.CalcPostfix(if2pf.tvOutput);
+    else // leave it dirty :) ??? it wasn't
+        v.value = if2pf.CalcPostfix(if2pf.tvPostfix);
 
     variables[ tok->Text()] = v;
     // mark variables whose definition contains this variable dirty
     MarkDirty(tok->Text());
     clean = false;  // table modified
 
-    _calcResult = v.value;
+    calcResult = v.value;
     return true;    // assignment
 }
 
 /* =========================================================
  * TASK: test expression for function assignment.
- * EXPECTS: 'expr' text of line may contain whitespaces which are
- *                 skipped
- *          'pos' positiom after the brace  - a line may only contain a
- *                single function definition,
- *          'tok' actual function
- *          function assignments must have the form :
- *           name([arg1,...), where arg1, etc are valid variable names
- *          (whitespaces may be present between the
- *            arguments and commas and the closing brace)
- * REURNS: true if this is an assignment and function definition or
- *         redefinition is stored in FUNCTIONS
- *         false if this is not a function assignment,
- *         throws exception if syntax error
+ * PARAMS: 'expr' text of function definition,
+                   may contain whitespaces which are skipped
+ *          'pos' position after the opening brace - 
+ *          'tok' pointer to actual function
+ * EXPECTS: - function assignments must have the form :
+ *              name([arg1,...]), where arg1, etc are valid variable names
+ *              (whitespaces may be present between the
+ *              arguments and commas and the closing brace)
+ *          - a single function definition per string
+ * RETURNS: true if this is an assignment and function definition or
+ *                  redefinition is stored in FUNCTIONS
+ *          false if this is not a function assignment,
+ * REMARKS: - throws exception if syntax error
  *---------------------------------------------------------*/
-bool LittleEngine::FunctionAssignment(const SmartString &expr, unsigned &pos, Token *tok)
+ bool LittleEngine::FunctionAssignment(const SmartString& expr, unsigned& pos, Token* tok)
 {
-   _calcResult = zero;
-   unsigned poseq = expr.find_first_of('='_ss,pos);
+   calcResult = RealNumber::RN_0;
+   unsigned poseq = expr.find_first_of(u'=', pos);
    if(poseq == SmartString::npos) // no equal sign
         return false;
+
    if(functions.count(tok->Text()) ) // already defined
         if(functions[ tok->Text()].builtin)
             Trigger("Builtin functions cannot be redefined"_ss);
@@ -976,9 +988,9 @@ bool LittleEngine::FunctionAssignment(const SmartString &expr, unsigned &pos, To
         Trigger("Function definition missing right brace"_ss);
 
    locale loc = cout.getloc();
-   VarFunc v;
+   Func f;
 
-   while( pos < bpos && isspace(expr[pos], loc))
+   while( pos < bpos && isspace((wchar_t)expr[pos], loc))
         ++pos;
    while(pos < bpos ) // get arguments
    {        // order of arguments: left to right
@@ -987,40 +999,40 @@ bool LittleEngine::FunctionAssignment(const SmartString &expr, unsigned &pos, To
 //        while(n < bpos && (expr[n].isLetterOrNumber() ) || expr[n] == '_')) // get word
 //            ++n;
 //#else
-        while(n < bpos && (isalnum(expr[n]) || expr[n] == '_')) // get word
+        while(n < bpos && (isalnum((wchar_t)expr[n]) || expr[n] == '_')) // get word
             ++n;
 //#endif
-        v.args.push_back(expr.substr(pos, n - pos) );   // store argument name
-        while( n < bpos && isspace(expr[n], loc))
+        f.args.push_back(expr.substr(pos, n - pos) );   // store argument name
+        while( n < bpos && isspace((wchar_t)expr[n], loc))
             ++n;
         if(n < bpos && expr[n] != _ArgSeparator())
             Trigger("Invalid character in function definition"_ss);
         ++n;    // skip ',' or to bpos
-        while( n < bpos && isspace(expr[n], loc))
+        while( n < bpos && isspace((wchar_t)expr[n], loc))
             ++n;
           pos = n;
    }
    pos = poseq+1; // after the equal sign
         // get comment
    unsigned posComment = expr.find_first_of(comment_delimiter,pos);
-   while(pos < expr.length() && pos < posComment && isspace(expr[pos],loc))
+   while(pos < expr.length() && pos < posComment && isspace((wchar_t)expr[pos],loc))
     ++pos;
-   v.body = expr.substr(pos, posComment-pos);
+   f.body = expr.substr(pos, posComment-pos);
                               // function body. may contain arguments,
                               // those must be marked
-   pos += v.body.length();
+   pos += f.body.length();
    if(posComment != SmartString::npos)
    {
-        v.description = expr.substr(posComment+1);
-        pos += v.description.length()+1; // including the delimiter ':'
+        f.desc = expr.substr(posComment+1);
+        pos += f.desc.length()+1; // including the delimiter ':'
    }
 
    LittleEngine if2pf(*this);
    try
    {
-       if2pf.Convert(v.body);
-       v.definition = if2pf.tvOutput;
-       functions[ tok->Text()] = v;
+       if2pf.InfixToPostFix(f.body);
+       f.definition = if2pf.tvPostfix;
+       functions[ tok->Text()] = f;
        // mark variables whose definition contains this function dirty
        MarkDirty(tok->Text());
        clean = false;  // table modified
@@ -1053,7 +1065,7 @@ void LittleEngine::DoVariable(const Token &tok)
 {
     if(variables.count(tok.Text()) )   // existing variable
     {
-        VarFunc &var = variables[tok.Text()];
+        Variable &var = variables[tok.Text()];
         if(var.dirty && !var.being_processed)
         {
             try
@@ -1072,7 +1084,7 @@ void LittleEngine::DoVariable(const Token &tok)
         stack.push(var.value);
     }
     else
-        stack.push(zero);
+        stack.push(RealNumber::RN_0);
 }
 
 /*=======================================
@@ -1091,7 +1103,7 @@ void LittleEngine::DoFunction(const Token &tok)
     if(!functions.count(tok.Text()) ) // non existing function
         Trigger("Unknown function in expression"_ss);
 
-    VarFunc &f = functions[tok.Text()];
+    Func &f = functions[tok.Text()];
     if(f.being_processed) // then recursive call
         Trigger("Recursive functions are not allowed"_ss);
     RealNumber v;
@@ -1099,25 +1111,26 @@ void LittleEngine::DoFunction(const Token &tok)
     {
         v = stack.peek(1).Value();
         stack.pop(1);
-        if(f.useAngleUnit)
-        {
-            switch(aU)
-            {
-                case AngularUnit::auDeg: v = v /180.0  * pi; break;
-                case AngularUnit::auGrad: v = v /200.0 * pi; break;
-                case AngularUnit::auRad: break;
-            }
-        }
+        // !!!
+        //if(f.useAngleUnit)
+        //{
+        //    switch(aU)
+        //    {
+        //        case AngularUnit::auDeg: v = v /180.0  * pi; break;
+        //        case AngularUnit::auGrad: v = v /200.0 * pi; break;
+        //        case AngularUnit::auRad: break;
+        //    }
+        //}
         v = f.function(v);
-        if(f.useAngleUnitAsResult)
-        {
-            switch(aU)
-            {
-                case AngularUnit::auDeg: v = v * 180.0 /  pi; break;
-                case AngularUnit::auGrad: v = v * 200.0 / pi; break;
-                case AngularUnit::auRad: break;
-            }
-        }
+        //if(f.useAngleUnitAsResult)
+        //{
+        //    switch(aU)
+        //    {
+        //        case AngularUnit::auDeg: v = v * 180.0 /  pi; break;
+        //        case AngularUnit::auGrad: v = v * 200.0 / pi; break;
+        //        case AngularUnit::auRad: break;
+        //    }
+        //}
         stack.push(v);
         return;
     }
@@ -1184,7 +1197,7 @@ static RealNumber Complement(const RealNumber& r)
  *-------------------------------------*/
 void LittleEngine::DoOperator(const Token &tok)
 {
-    RealNumber res = zero;
+    RealNumber res = RealNumber::RN_0;
 
     try
     {
@@ -1200,35 +1213,35 @@ void LittleEngine::DoOperator(const Token &tok)
                         stack.pop(2);
                         break;
                         // '=='
-            case opEQ:  res = (stack.peek(2).Value() == stack.peek(1).Value() ? one : zero);
+            case opEQ:  res = (stack.peek(2).Value() == stack.peek(1).Value() ? RealNumber::RN_1 : RealNumber::RN_0);
                         stack.pop(2);
                         break;
             case opNEQ:  // '!='
-                        res = (stack.peek(2).Value() != stack.peek(1).Value() ? one:zero);
+                        res = (stack.peek(2).Value() != stack.peek(1).Value() ? RealNumber::RN_1:RealNumber::RN_0);
                         stack.pop(2);
                         break;
             case opLT:   // '<'
-                        res = (stack.peek(2).Value() < stack.peek(1).Value() ? one : zero);
+                        res = (stack.peek(2).Value() < stack.peek(1).Value() ? RealNumber::RN_1 : RealNumber::RN_0);
                         stack.pop(2);
                         break;
             case opLE:   // '<='
-                        res = (stack.peek(2).Value() <= stack.peek(1).Value() ? one : zero);
+                        res = (stack.peek(2).Value() <= stack.peek(1).Value() ? RealNumber::RN_1 : RealNumber::RN_0);
                         stack.pop(2);
                         break;
             case opGT:   // '>'
-                        res = (stack.peek(2).Value() > stack.peek(1).Value() ? one : zero);;
+                        res = (stack.peek(2).Value() > stack.peek(1).Value() ? RealNumber::RN_1 : RealNumber::RN_0);;
                         stack.pop(2);
                         break;
             case opGE:   // '>='
-                        res = (stack.peek(2).Value() >= stack.peek(1).Value() ? one : zero);
+                        res = (stack.peek(2).Value() >= stack.peek(1).Value() ? RealNumber::RN_1 : RealNumber::RN_0);
                         stack.pop(2);
                         break;
             case opSHL:  // '<<'    shift as binary
-                        res =  stack.peek(2).Value() * two.Pow(stack.peek(1).Value().Int());
+                        res =  stack.peek(2).Value() * RealNumber::RN_2.Pow(stack.peek(1).Value().Int());
                         stack.pop(2);
                         break;
             case opSHR:  // '>>'    shift as binary
-                        res =  stack.peek(2).Value() / two.Pow(stack.peek(1).Value());
+                        res =  stack.peek(2).Value() / RealNumber::RN_2.Pow(stack.peek(1).Value());
                         stack.pop(2);
                         break;
             case opPLUS:
@@ -1243,7 +1256,7 @@ void LittleEngine::DoOperator(const Token &tok)
                         res = stack.peek(2).Value() * stack.peek(1).Value();
                         stack.pop(2);
                         break;
-            case opDIV: if(stack.peek(1).Value() == 0.0)
+            case opDIV: if(stack.peek(1).Value() == RealNumber::RN_0)
                             Trigger("Divison by 0"_ss);
                         res = stack.peek(2).Value() / stack.peek(1).Value();
                         stack.pop(2);
@@ -1257,7 +1270,7 @@ void LittleEngine::DoOperator(const Token &tok)
                         stack.pop(1);
                         break;
             case opNOT:
-                        res = !stack.peek(1).Value();
+                        res = stack.peek(1).Value() != RealNumber::RN_0;
                         stack.pop(1);
                         break;
 			case opCompl:
@@ -1279,15 +1292,15 @@ void LittleEngine::DoOperator(const Token &tok)
 }
 
 /*==================================================
- * TASK: calculate postfix expression in 'tvOutput'
+ * TASK: calculate postfix expression in 'tvPostfix'
  *       Because it can be called recursively it must
  *       remember the stcak position on entry
  *-------------------------------------------------*/
-RealNumber LittleEngine::CalcPostfix(TokenVec& tvOutput)
+RealNumber LittleEngine::CalcPostfix(TokenVec& tvPostfix)
 {
     unsigned stack_cnt = stack.size();
     TokenVec::iterator it;
-    for(it = tvOutput.begin(); it != tvOutput.end(); ++it)
+    for(it = tvPostfix.begin(); it != tvPostfix.end(); ++it)
     {
         switch(it->Type() )
         {
@@ -1304,7 +1317,8 @@ RealNumber LittleEngine::CalcPostfix(TokenVec& tvOutput)
     Token tok( stack.peek() );
     stack.pop(1);
 
-    return _calcResult = tok.Value();
+    resultType = ResultType::rtNumber;
+    return calcResult = tok.Value();
 }
 /*==================================================
  * TASK: calculate expression
@@ -1313,35 +1327,26 @@ RealNumber LittleEngine::CalcPostfix(TokenVec& tvOutput)
  *           defult is auRad (radian)
  * RETURNS: calculated value or exception thrown
  *-------------------------------------------------*/
-RealNumber LittleEngine::Calculate(const SmartString &expr)
+RealNumber LittleEngine::Calculate()
 {
     try
     {
-        if(!Convert(expr) ) // then variable or function definition
+        if(!InfixToPostFix(infix) ) // then variable or function definition
         {
-            _resultType = ResultType::rtDefinition;
-            return _calcResult;
+            resultType = ResultType::rtDefinition;
+            return calcResult;
         }
-        return CalcPostfix(tvOutput);
+
+        return CalcPostfix(tvPostfix);
     }
     catch(...)
     {
       ;  // TO DO : error handling
-      _resultType = ResultType::rtInvalid;
+      resultType = ResultType::rtInvalid;
 	  stack.clear();
-	  throw;	//re-throw if not handled
+	  throw;	// re-throw if not handled
     }
-    return zero;
-}
-/*========================================================
- * TASK:calculate expression using given angular units
- * EXPECTS: ci contains expression SmartString and angla unit
- * RETURNS: calculated value or exception thrown
- *-----------------------------------------------------------*/
-RealNumber LittleEngine::Calculate(const CALC_INPUT &ci)
-{
-    aU = ci.angu;
-    return Calculate(ci.infix);
+    return RealNumber::RN_0;
 }
 
 /*========================================================
@@ -1352,8 +1357,8 @@ RealNumber LittleEngine::Calculate(const CALC_INPUT &ci)
 SmartString LittleEngine::Postfix() const
 {
     SmartString postfix;
-    for(unsigned i = 0; i < tvOutput.size(); ++i)
-        postfix += tvOutput[i].Text() + " "_ss;
+    for(unsigned i = 0; i < tvPostfix.size(); ++i)
+        postfix += tvPostfix[i].Text() + " "_ss;
     return postfix;
 }
 #if defined(__BORLANDC__)
@@ -1362,29 +1367,29 @@ SmartString LittleEngine::Postfix() const
 #endif
 /*========================================================
  * TASK: Write modified user functions and variables table to file
- * EXPECTS: 'name' is either the name of the file or NULL
+ * EXPECTS: 'name' is either the name of the file or empty
  *          When it is NULL the same name is used as in 'ReadTables'
  *          if that was called before, otherwise no write occurs
  *          'clean' when true the tables are modified
  * RETURNS: true: if there was no need to save the data or the save was
  *          successful, false otherwise
  *-----------------------------------------------------------*/
-bool LittleEngine::SaveTables(const SCharT *name) // if it wasn't read and no name is given it won't be saved
+bool LittleEngine::SaveTables(const SmartString &name) // if it wasn't read and no name is given it won't be saved
 {
-    if(clean && !name)  // only save if it wasn't saved
+    if(clean && name.empty())  // only save if it wasn't saved
         return true;    // already to this file
 
-    if(!name && name_variable_table.empty()) // no save requested
+    if(!name.empty() && name_variable_table.empty()) // no save requested
         return true;
-    if(clean && name && name_variable_table != SmartString(name) ) // same name
+    if(clean && name.empty() && name_variable_table != name) // same name
         return true;
 
-    if(name == 0)
-        name = name_variable_table.c_str();
+    SmartString filename = name;
+    if (filename.empty())
+        filename = name_variable_table;
 
-    VarFuncTable::iterator mit;
 #if defined(__BORLANDC__)
-    FILE *f = _wfopen(name, "wt"_ss);
+    FILE *f = _wfopen(name.ToWideString(), "wt"_ss);
     if(!f)
         return false;
     string s = VERSION_STRING;
@@ -1446,41 +1451,43 @@ bool LittleEngine::SaveTables(const SCharT *name) // if it wasn't read and no na
     fclose(f);
 #else
     std::wofstream ofs;
-	ofs.open(SmartString(name).ToWideString(), ios_base::out);
+	ofs.open(SmartString(filename).ToWideString(), ios_base::out);
 	if( ofs.fail() )
 			return false;
-	ofs << VERSION_STRING << ("\nVariables\n"_ss).ToWideString();
+	ofs << VERSION_STRING << L"\nVariables\n";
 	if(variables.size() )
 	{
-		for(mit = variables.begin(); mit != variables.end(); ++mit)
-			if(!mit->second.builtin)
+        VariableTable::iterator vit;
+		for(vit = variables.begin(); vit != variables.end(); ++vit)
+			if(!vit->second.builtin)
 			{
-				ofs << mit->first.ToWideString() << L"=" << mit->second.body.ToWideString();
-				if(!mit->second.description.empty() )
-					ofs << comment_delimiter << mit->second.description.ToWideString();
+				ofs << vit->first.ToWideString() << L"=" << vit->second.body.ToWideString();
+				if(!vit->second.desc.empty() )
+					ofs << comment_delimiter << vit->second.desc.ToWideString();
 				ofs << endl;
 			}
 	}
 	ofs << ("Functions\n"_ss).ToWideString();
 	if(functions.size() )
 	{
-		for(mit = functions.begin(); mit != functions.end(); ++mit)
+        FunctionTable::iterator fit;
+		for(fit = functions.begin(); fit != functions.end(); ++fit)
 		{
-			if(mit->second.builtin)
+			if(fit->second.builtin)
 				continue;
-			ofs << mit->first.ToWideString() << ("("_ss).ToWideString();
-			if(!mit->second.args.empty())
+			ofs << fit->first.ToWideString() << ("("_ss).ToWideString();
+			if(!fit->second.args.empty())
 			{
 				vector<SmartString>::const_iterator vit;
-				vit = mit->second.args.begin();
+				vit = fit->second.args.begin();
 				ofs << (*vit).ToWideString();
 				++vit;
-				for( ; vit != mit->second.args.end(); ++vit)
+				for( ; vit != fit->second.args.end(); ++vit)
 					ofs << ", " << (*vit).ToWideString();
 			}
-			ofs << " = " << mit->second.body.ToWideString();
-			if(!mit->second.description.empty() )
-				ofs << comment_delimiter << mit->second.description.ToWideString();
+			ofs << " = " << fit->second.body.ToWideString();
+			if(!fit->second.desc.empty() )
+				ofs << comment_delimiter << fit->second.desc.ToWideString();
 			ofs << endl;
 		}
 	}
@@ -1493,7 +1500,7 @@ bool LittleEngine::SaveTables(const SCharT *name) // if it wasn't read and no na
  * EXPECTS: file name
  * RETURNS: true for success or false for error
  *-----------------------------------------------------------*/
-bool LittleEngine::ReadTables(const SCharT *name)
+bool LittleEngine::ReadTables(const  SmartString &name)
 {
     name_variable_table = name;
 #if defined(__BORLANDC__)
@@ -1515,7 +1522,7 @@ bool LittleEngine::ReadTables(const SCharT *name)
         if(strcmp(buf, "Variables\n"_ss) && strcmp(buf, "Functions\n"_ss) )
         {
             mbstowcs(wbuf, buf, 1923);
-            Convert(SmartString(wbuf).erase(strlen(buf)-1) );
+            InfixToPostFix(SmartString(wbuf).erase(strlen(buf)-1) );
         }
     }
     fclose(f);
@@ -1532,7 +1539,7 @@ bool LittleEngine::ReadTables(const SCharT *name)
 		while(std::getline(in, line) )
 		{
 			if( (line != L"Variables") && line != L"Functions")
-				Convert(SmartString(line) );
+				InfixToPostFix(SmartString(line) );
 		}
 #endif
     return clean = true;
@@ -1544,9 +1551,16 @@ bool LittleEngine::ReadTables(const SCharT *name)
  *-----------------------------------------------------------*/
 SmartString LittleEngine::ResultAsDecString()
 {
-    DisplayFormat fmt = _displayFormat;
+    displayFormat.expFormat = beautification == Beautification::bmoNone ?
+        ExpFormat::rnsfE :
+        (beautification == Beautification::bmoGraphText ?
+        ExpFormat::rnsfUp :
+        (beautification == Beautification::bmoHtml ?
+        ExpFormat::rnsfSciHTML :
+        ExpFormat::rnsfSciTeX));
+    DisplayFormat fmt = displayFormat;
     fmt.base = DisplayBase::rnb10;
-    return _calcResult.ToString(fmt);
+    return calcResult.ToString(fmt);
 }
 /*========================================================
  * TASK:
@@ -1555,9 +1569,9 @@ SmartString LittleEngine::ResultAsDecString()
  *-----------------------------------------------------------*/
 SmartString LittleEngine::ResultAsHexString()
 {
-    DisplayFormat fmt = _displayFormat;
+    DisplayFormat fmt = displayFormat;
     fmt.base = DisplayBase::rnbHex;
-    return _calcResult.ToString(fmt);
+    return calcResult.ToString(fmt);
 }
 /*========================================================
  * TASK:
@@ -1566,9 +1580,9 @@ SmartString LittleEngine::ResultAsHexString()
  *-----------------------------------------------------------*/
 SmartString LittleEngine::ResultAsOctString()
 {
-    DisplayFormat fmt = _displayFormat;
+    DisplayFormat fmt = displayFormat;
     fmt.base = DisplayBase::rnbOct;
-    return _calcResult.ToString(fmt);
+    return calcResult.ToString(fmt);
 }
 /*========================================================
  * TASK:
@@ -1577,9 +1591,9 @@ SmartString LittleEngine::ResultAsOctString()
  *-----------------------------------------------------------*/
 SmartString LittleEngine::ResultAsBinString()
 {
-    DisplayFormat fmt = _displayFormat;
+    DisplayFormat fmt = displayFormat;
     fmt.base = DisplayBase::rnbBin;
-    return _calcResult.ToString(fmt);
+    return calcResult.ToString(fmt);
 }
 
 /*=============================================================
@@ -1596,15 +1610,20 @@ SmartString LittleEngine::ResultAsCharString()
 {
     DisplayFormat fmt;
     fmt.base = DisplayBase::rnbHex;
-	SmartString s = _calcResult.Int().ToHexString(fmt); 
+    fmt.useNumberPrefix = false;
+	SmartString s = calcResult.Int().ToHexString(fmt); 
     size_t i = 0, j = 0;
     while (j < s.length()) // s.length() is always even
     {
+        // DEBUG
+        char16_t ch16a = (s[j] & 0x0F) << 8,
+                 ch16b = s[j+1] & 0x0F;
+        // /DEBUG
         s[i] = ((s[j] & 0x0F) << 8) + (s[j + 1] & 0x0F);
         j += 2;
-        ++i;
+        s[++i] = 0;
     }
-    s.erase(j);
+    s.erase(i);
     return s;
 }
 
@@ -1631,14 +1650,14 @@ void LittleEngine::GetVarFuncInfo(VARFUNC_INFO &vf)
 /*========================================================
  * TASK:    get a display string for variable in the format
  *          name = value : description
- * EXPECTS: // if the variable is a builtin one
+ * EXPECTS: // if the variable is a builtin RealNumber::RN_1
  * RETURNS:
  *-----------------------------------------------------------*/
 SmartString LittleEngine::GetVariables(bool builtin) const
 {
     SmartString sres;
 
-    VarFuncTable::const_iterator it;
+    FunctionTable::const_iterator it;
     SmartString body;
     for(auto &it :variables)
         if(it.second.builtin == builtin)
@@ -1654,7 +1673,7 @@ SmartString LittleEngine::GetVariables(bool builtin) const
             }
             else
                 body = it.second.body;
-            sres += it.first + "="_ss + body + comment_delimiter + it.second.description + "\n"_ss;
+            sres += it.first + "="_ss + body + SmartString(comment_delimiter) + it.second.desc + "\n"_ss;
         }
 
     return sres;
@@ -1669,7 +1688,7 @@ SmartString LittleEngine::GetFunctions(bool builtin) const
 {
     SmartString sres;
 
-    VarFuncTable::const_iterator it;
+    FunctionTable::const_iterator it;
     for(it = functions.begin(); it != functions.end(); ++it)
         if(it->second.builtin == builtin)
         {
@@ -1684,7 +1703,7 @@ SmartString LittleEngine::GetFunctions(bool builtin) const
             }
             if(!builtin)
                 sres += "_ss)"_ss;
-            sres += "="_ss + it->second.body + comment_delimiter + it->second.description + "\n"_ss;
+            sres += "="_ss + it->second.body + SmartString(comment_delimiter) + it->second.desc + "\n"_ss;
         }
     return sres;
 }
@@ -1696,10 +1715,10 @@ SmartString LittleEngine::GetFunctions(bool builtin) const
  *-----------------------------------------------------------*/
 LittleEngine &LittleEngine::operator=(const LittleEngine &src)
 {
-    aU          = src.aU;   // used when calculating sine, cosine, tangent, cotangent
+    angleUnit   = src.angleUnit;   // used when calculating sine, cosine, tangent, cotangent
     infix       = src.infix;
-    tvOutput    = src.tvOutput;
-    _calcResult = src._calcResult;
+    tvPostfix    = src.tvPostfix;
+    calcResult  = src.calcResult;
     variables   = src.variables;
     functions   = src.functions;
     name_variable_table = src.name_variable_table;
@@ -1718,25 +1737,26 @@ bool LittleEngine::AddUserVariablesAndFunctions(SmartString def, int what) //wha
         return false;
     LittleEngine ip(*this);
         // erase user functions/variables or both depending on 'what'
-    VarFuncTable::iterator it;
+    VariableTable::iterator vit;
+    FunctionTable::iterator fit;
     vector<SmartString> names;
     switch(what)
     {
         case 0:
 				// erase existing user variables
 				// BUG: if a variable name was edited it is not erased and remains
-        case 1: for(it = variables.begin(); it != variables.end(); ++it)
-                    if(!it->second.builtin)
-                        names.push_back(it->first);
+        case 1: for(vit = variables.begin(); vit != variables.end(); ++vit)
+                    if(!vit->second.builtin)
+                        names.push_back(vit->first);
                 for(unsigned i = 0; i < names.size(); ++i)
                     variables.erase(names[i]);
                 if(what == 1) // for 0: fall through
                     break;
 				// erase existing user functions
 				// BUG: if a function name was edited it is not erased and remains
-        case 2: for(it = functions.begin(); it != functions.end(); ++it)
-                    if(!it->second.builtin)
-                        names.push_back(it->first);
+        case 2: for(fit = functions.begin(); fit != functions.end(); ++fit)
+                    if(!fit->second.builtin)
+                        names.push_back(fit->first);
                 for(unsigned i = 0; i < names.size(); ++i)
                     functions.erase(names[i]);
         default:
@@ -1746,10 +1766,10 @@ bool LittleEngine::AddUserVariablesAndFunctions(SmartString def, int what) //wha
     unsigned st = 0, en;  // start and end positions
     while(st < def.length() )
     {
-        en = def.find_first_of('\n'_ss, st);
+        en = def.find_first_of(char16_t('\n'), st);
         try
         {
-           ip.Convert(def.substr(st,en-st) );
+           ip.InfixToPostFix(def.substr(st,en-st) );
         }
         catch(...)
         {
@@ -1771,5 +1791,5 @@ bool LittleEngine::AddUserVariablesAndFunctions(SmartString def, int what) //wha
 }
 
 
-	// end of namespace littlecalc
+	// end of namespace FalconCalc
 }

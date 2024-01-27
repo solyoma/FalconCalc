@@ -1,8 +1,12 @@
-﻿#include "stdafx_zoli.h"
+﻿#include <set>
+#include "stdafx_zoli.h"
 #include "stdafx_lc.h"
 
 using namespace nlib;
-#include "main.h"
+#undef max
+
+#include "calculate.h"
+#include "mainForm.h"
 #include "variables.h"
 
 TfrmVariables *frmVariables;
@@ -141,8 +145,8 @@ TfrmVariables::TfrmVariables()
 {
 	InitializeFormAndControls();
 
-	changed = false;
-	underResize = false;
+	_changed = false;
+	_underResize = false;
 }
 
 TfrmVariables::~TfrmVariables()
@@ -150,56 +154,56 @@ TfrmVariables::~TfrmVariables()
 	/* Don't 'delete' the form. Call Destroy() instead which has access to the protected destructor. */
 }
 
-void TfrmVariables::Setup(const littlecalc::VARFUNC_INFO &vfInfo)
+void TfrmVariables::Setup(const FalconCalc::VARFUNC_INFO &vfInfo)
 {
-    vf = vfInfo;
+    _vf = vfInfo;
 //	tcVarsTabChange(tcVars, TabChangeParameters(tcVars->SelectedTab()));
 }
 
 
 void TfrmVariables::BuiltinMouseDown(void *sender, nlib::MouseButtonParameters param)
 {
-	underResize = true;
-	uh = param.y;
+	_underResize = true;
+	_gridH = param.y;
 
 }
 
 void TfrmVariables::BuiltinMouseMove(void *sender, nlib::MouseMoveParameters param)
 {
-	if(!underResize)
+	if(!_underResize)
 		return;
 	int    rh = sgUser->DefaultRowHeight(),
 		   h1 = sgUser->Height(),
 		   h2 = sgBuiltin->Height(),
-		   dh = param.y - uh;
+		   dh = param.y - _gridH;
 	if(h1+dh > 2*rh && h2-dh > 2 *rh)
 	{
 		sgUser->SetHeight(h1+dh);
-		uh += dh;
+		_gridH += dh;
 	}
 
 }
 
 void TfrmVariables::BuiltinMouseUp(void *sender, nlib::MouseButtonParameters param)
 {
-	underResize = false;
+	_underResize = false;
 }
 
 
 /*============================================================================
  * TASK: get data from previous (!) TAB of tcVars
  *---------------------------------------------------------------------------*/
-void TfrmVariables::_SaveData(wstring &us, size_t &cnt)
+void TfrmVariables::_CollectInto(SmartString &us, size_t &cnt)
 {
-    if(!changed)    // 'changed' must be modified in caller when necessary
+    if(!_changed)    // 'changed' must be modified in caller when necessary
         return;
     int n = 0; // count of user variables/functions
 	us.clear();
     for(int i = 1; i < sgUser->RowCount(); ++i)
     {
-        if(sgUser->String(0,i)/*Cells[0][i]*/ != L"" && sgUser->String(1,i)/*Cells[1][i]*/ != L"")
+        if(sgUser->String(0,i) != L"" && sgUser->String(1,i) != L"")
         {
-            us = us + sgUser->String(0,i)/*Cells[0][i]*/ + L"=" + sgUser->String(1,i)/*Cells[1][i]*/ + comment_delimiter +sgUser->String(2,i)/*Cells[2][i]*/ + L"\n";
+            us = us + SmartString(sgUser->String(0,i) + L"=" + sgUser->String(1,i)+ wstring(1, comment_delimiter.Unicode()) + sgUser->String(2, i)+ L"\n");
             ++n;
         }
     }
@@ -209,13 +213,13 @@ void TfrmVariables::_SaveData(wstring &us, size_t &cnt)
 void TfrmVariables::tcVarsTabChange(void *sender, nlib::TabChangeParameters param)
 {
     size_t cntUser, cntBuiltin;
-    wstring *psUser, *psBuiltin;
+    SmartString *psUser, *psBuiltin;
     switch( tcVars->SelectedTab() )
     {
-       case 0: _SaveData(vf.sUserVars, vf.uUserVarCnt); break;
-       case 1: _SaveData(vf.sUserFuncs,vf.uUserFuncCnt); break;
+       case 0: _CollectInto(_vf.sUserVars, _vf.uUserVarCnt); break;
+       case 1: _CollectInto(_vf.sUserFuncs,_vf.uUserFuncCnt); break;
     }
-    changed = false;
+    _changed = false;
 
     switch( tcVars->SelectedTab() )
     {
@@ -224,20 +228,20 @@ void TfrmVariables::tcVarsTabChange(void *sender, nlib::TabChangeParameters para
 			sgUser->SetString(1,0,L"Definition");
 			sgUser->SetString(2,0,L"Comment");
 
-             cntUser    = vf.uUserFuncCnt;
-             cntBuiltin = vf.uBuiltinFuncCnt;
-             psUser    = &vf.sUserFuncs;
-             psBuiltin = &vf.sBuiltinFuncs;
+             cntUser    = _vf.uUserFuncCnt;
+             cntBuiltin = _vf.uBuiltinFuncCnt;
+             psUser    = &_vf.sUserFuncs;
+             psBuiltin = &_vf.sBuiltinFuncs;
              break;
     case 1:  
 			sgUser->SetString(0,0,L"Variable");
 			sgUser->SetString(1,0,L"Definition");
 			sgUser->SetString(2,0,L"Comment");
 			 
-             cntUser    = vf.uUserVarCnt;
-             cntBuiltin = vf.uBuiltinVarCnt;
-             psUser    = &vf.sUserVars;
-             psBuiltin = &vf.sBuiltinVars;
+             cntUser    = _vf.uUserVarCnt;
+             cntBuiltin = _vf.uBuiltinVarCnt;
+             psUser    = &_vf.sUserVars;
+             psBuiltin = &_vf.sBuiltinVars;
              break;
     }
     if((size_t)sgUser->RowCount() != cntUser + (cntUser ? 1 : 2))
@@ -256,7 +260,7 @@ void TfrmVariables::tcVarsTabChange(void *sender, nlib::TabChangeParameters para
     for(size_t i = 1; i <= cntUser; ++i)
     {
         seol = psUser->find_first_of('\n',st);
-        s = (seol == string::npos ? psUser->substr(st) : psUser->substr(st, seol - st));
+        s = ( (seol == string::npos ? psUser->mid(st) : psUser->mid(st, seol - st)) ).ToWideString();
         st = seol+1;
         pos = s.find_first_of('=');
         posc = s.find_first_of(comment_delimiter); // comment delimiter
@@ -269,7 +273,7 @@ void TfrmVariables::tcVarsTabChange(void *sender, nlib::TabChangeParameters para
     for(size_t i = 0; i < cntBuiltin; ++i)
     {
         seol = psBuiltin->find_first_of('\n',st);
-        s = (seol == string::npos ? psBuiltin->substr(st) : psBuiltin->substr(st, seol - st));
+        s = ((seol == string::npos ? psBuiltin->mid(st) : psBuiltin->mid(st, seol - st))).ToWideString();
         st = seol+1;
         pos = s.find_first_of('=');
         posc = s.find_first_of(comment_delimiter,pos); // comment delimiter
@@ -290,7 +294,7 @@ void TfrmVariables::btnClearClick(void *sender, nlib::EventParameters param)
 	sgUser->SetString(0,1,L"");
 	sgUser->SetString(1,1,L"");
 	sgUser->SetString(2,1,L"");
-    changed = true;
+    _changed = true;
 }
 
 void TfrmVariables::btnDelVarClick(void *sender, nlib::EventParameters param)
@@ -311,27 +315,27 @@ void TfrmVariables::btnDelVarClick(void *sender, nlib::EventParameters param)
         else
 			sgUser->DeleteRow(n);
 //            sgUser->SetRowCount(sgUser->RowCount()-1); // = sgUser->RowCount - 1;
-        changed = true;
+        _changed = true;
     }
 }
 
 void TfrmVariables::btnSaveClick(void *sender, nlib::EventParameters param)
 {
-    if(!changed)
+    if(!_changed)
 	{
         Close();
 		return;
 	}
     switch( tcVars->SelectedTab() )
     {
-       case 0: _SaveData(vf.sUserFuncs,vf.uUserFuncCnt); break;
-       case 1: _SaveData(vf.sUserVars, vf.uUserVarCnt); break;
+       case 0: _CollectInto(_vf.sUserFuncs,_vf.uUserFuncCnt); break;
+       case 1: _CollectInto(_vf.sUserVars, _vf.uUserVarCnt); break;
     }
 
-    frmMain->Engine()->AddUserVariablesAndFunctions(vf.sUserFuncs, 2);
-    frmMain->Engine()->AddUserVariablesAndFunctions(vf.sUserVars,  1);
+    frmMain->_pEngine()->AddUserVariablesAndFunctions(_vf.sUserFuncs, 2);
+    frmMain->_pEngine()->AddUserVariablesAndFunctions(_vf.sUserVars,  1);
     frmMain->edtInfixTextChanged(sender,param); // to reflect changed values
-    changed = false;
+    _changed = false;
     Close();
 }
 
@@ -358,13 +362,13 @@ void TfrmVariables::FormClose(void *sender, nlib::FormCloseParameters param)
 void TfrmVariables::sgUserKeyPress(void *sender, nlib::KeyPressParameters param)
 {
 	if(param.key != VK_TAB && param.key != VK_RIGHT && param.key != VK_LEFT && param.key != VK_UP && param.key != VK_DOWN)
-		changed = true;
+		_changed = true;
 }
 
 void TfrmVariables::sgUserEditorKeyDown(void *sender, nlib::KeyParameters param)
 {
 	if(param.keycode != VK_TAB && param.keycode != VK_RIGHT && param.keycode != VK_LEFT && param.keycode != VK_UP && param.keycode != VK_DOWN)
-		changed = true;
+		_changed = true;
 
 	if(param.keycode == VK_TAB)
 	{

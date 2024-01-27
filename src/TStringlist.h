@@ -14,7 +14,13 @@ public:
 													_cntMax(sl._cntMax), _strings(sl._strings) {}
 	virtual ~TStringList() {}
 
-	SmartString operator[](size_t index) const { if(index >= (int)_strings.size() ) SmartString(); else return _strings[index].ws; }
+	SmartString operator[](size_t index) const 
+	{ 
+		if(index >= (int)_strings.size() ) 
+			return SmartString(); 
+		else 
+			return _strings[index].ws; 
+	}
 	void *objects(size_t index) const { if (index >= _strings.size()) return nullptr; else return _strings[index].po; }
 	TStringList &operator=(TStringList& sl) {
 		_caseSens = sl._caseSens; _allowDuplicates = sl._allowDuplicates;
@@ -28,7 +34,7 @@ public:
 	bool Sorted()        const { return _sorted; }
 	bool Special()		 const { return _special; }
 	size_t Capacity()		 const { if(_cntMax) return _cntMax; else return (size_t)-1; }
-	const vector<SmartString> &Lines() {return _strings.AsStringVector(); }
+	const vector<std::wstring> &Lines() {return _strings.AsStringVector(); }
 
 	size_t Count() const { return _strings.size(); }
 	int IndexOf(SmartString s);
@@ -45,8 +51,8 @@ public:
 	void SetCapacity(const size_t max=0);
 	void SetSorted(bool par, bool special=false);
 	void Sort();
-	bool LoadFromFile(SmartString name);
-	bool SaveToFile(SmartString name);
+	bool LoadFromFile(wstring name);
+	bool SaveToFile  (wstring name);
 
 	bool Delete(size_t index);
 private:
@@ -66,10 +72,10 @@ private:
 
 		_Strings() {}
 		_Strings(const _Strings&s) : _data(s._data) {}
-		_Strings(const _Strings&&s) : _data(s._data) {};
+		_Strings(const _Strings&&s) noexcept : _data(s._data) {};
 		_Strings(const SmartString str) { _data.push_back(__S(str)); }
 
-		vector<SmartString> wtmp;
+		vector<wstring> wtmp;	// not SmartString
 
 		friend struct __S;
 		typedef vector<__S> Svec;
@@ -133,11 +139,11 @@ private:
 		__S &operator[](size_t index) { return _data[index]; }
 		const __S &operator[](size_t index) const { return _data[index]; }
 
-		vector<SmartString> &AsStringVector() 
+		vector<wstring> &AsStringVector()	// special: not SmartString because of nlib
 		{ 
 			wtmp.clear();
 			for(auto it = _data.begin(); it != _data.end(); ++it)
-				wtmp.push_back(it->ws);
+				wtmp.push_back(it->ws.ToWideString());
 			return wtmp;
 		}
 

@@ -62,11 +62,10 @@
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <AdditionalIncludeDirectories>..\nlib\;$(ProjectDir);</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
-      <ShowIncludes>false</ShowIncludes>
       <LanguageStandard>Default</LanguageStandard>
       <LanguageStandard_C>stdc11</LanguageStandard_C>
       <PrecompiledHeaderFile>stdafx_zoli.h</PrecompiledHeaderFile>
-      <PreprocessToFile>false</PreprocessToFile>
+      <GenerateSourceDependencies>true</GenerateSourceDependencies>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -115,7 +114,7 @@
     <ClCompile Include="histopt.cpp" />
     <ClCompile Include="history.cpp" />
     <ClCompile Include="FalconCalc.cpp" />
-    <ClCompile Include="main.cpp" />
+    <ClCompile Include="mainForm.cpp" />
     <ClCompile Include="SmartString.cpp" />
     <ClCompile Include="stdafx_lc.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
@@ -133,7 +132,7 @@
     <ClInclude Include="help.h" />
     <ClInclude Include="histopt.h" />
     <ClInclude Include="history.h" />
-    <ClInclude Include="main.h" />
+    <ClInclude Include="mainForm.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="SmartString.h" />
     <ClInclude Include="stdafx_lc.h" />

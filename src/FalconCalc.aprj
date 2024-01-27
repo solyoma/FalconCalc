@@ -1122,7 +1122,7 @@
 
                 type Checkbox
                 {
-                    Name = "chkSingle"
+                    Name = "chkIEEESingle"
                     Tag = "4"
                     AccessLevel = "alPublic"
                     Left = "203"
@@ -1138,12 +1138,12 @@
                     ParentFont = "False"
                     TabOrder = "5"
                     TooltipText = "Single precision floating point format"
-                    event OnClick = "chkSingleClick"
+                    event OnClick = "chkIEEESingleClick"
                 }
 
                 type Checkbox
                 {
-                    Name = "chkDouble"
+                    Name = "chkIEEEDouble"
                     Tag = "5"
                     AccessLevel = "alPublic"
                     Left = "203"
@@ -1159,7 +1159,7 @@
                     ParentFont = "False"
                     TabOrder = "6"
                     TooltipText = "Double precision floating point format"
-                    event OnClick = "chkDoubleClick"
+                    event OnClick = "chkIEEEDoubleClick"
                 }
             }
 

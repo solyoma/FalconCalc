@@ -398,10 +398,13 @@ FodyWeavers.xsd
 *.sln.iml
 
 #zlib
-nlib/LibraryBuild
-nlib/DebugLibraryBuild
+nlib/zlib/*
 
 #other
+LibraryBuild
+DebugLibraryBuild
+nlib/LibraryBuild
+nlib/DebugLibraryBuild
 .obj
 .o
-nlib/zlib/*
+enc_temp_folder/*
