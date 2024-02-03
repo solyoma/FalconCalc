@@ -6,6 +6,7 @@
 #include <limits>
 #include <algorithm>
 #include <set>
+#include <map>
 
 #include "SmartString.h"
 
@@ -34,13 +35,13 @@ namespace LongNumber {
 
 	enum class NumberFormat {
 		rnfGeneral,			// either rnfNormal or rnfSci depending on 
-							// decDigits and the number
+		// decDigits and the number
 		rnfNormal,			// for decimal numbers: fix dot format with no exponent and either 
-							//   no zero leading digit in integer part if any non-zero
-							//   digit occures there (0.8 OK, but 08.3 is not)  
-							// switches to sci format if it won't fit into displayed digits, 
-							// for binary, hex and octal strings: all digits 
-							//   possibly w. format specifier
+		//   no zero leading digit in integer part if any non-zero
+		//   digit occures there (0.8 OK, but 08.3 is not)  
+		// switches to sci format if it won't fit into displayed digits, 
+		// for binary, hex and octal strings: all digits 
+		//   possibly w. format specifier
 		rnfSci, 			// format: -1.234E567	or any subformat below
 		rnfEng,  			// like Sci but exponent is always a multiple of +/- 3
 		rnfText				// ascii or UTF-8, etc
@@ -74,14 +75,14 @@ namespace LongNumber {
 	// ---------
 	enum class AngularUnit { auRad, auDeg, auGrad, auTurn };	// 1 turn = 2π
 
-	/* 
+	/*
 	*	mainFormat, displWidth and decDigits together dictates what is visible and how:
 	*   - When displayWidth == 0 only decDigits matters
 	*   - When displaywidth > 0 but smaller than the minimum width for the number
 	*		(e.g. displayWidth = 4, number: 12345 or 123E2) than displayWidth number of
 	*		'#' characters are shown instead of the number.
 	*		are shown
-	*	- When displayWidth > 0 and the length of the output string (including sign, exponents, 
+	*	- When displayWidth > 0 and the length of the output string (including sign, exponents,
 	*		number prefixes, separator characters) is greater than displWidth then
 	*		* with decimal numbers the output is rounded
 	*		* all other cases the message 'too long' is shown, unless displayWidth < the length
@@ -94,34 +95,34 @@ namespace LongNumber {
 		NumberFormat mainFormat = NumberFormat::rnfGeneral;
 		ExpFormat  expFormat = ExpFormat::rnsfE;
 
-		size_t displWidth = 0;					// > 0 the displayed number (including the sign, the decimal dot and exponent) 
-												//		must fit into this width
-												// = 0 : don't care use all decDigits (fractional decimal digits)
-												//	if smaller than the real part + decDigits requires
-												//	format switches 'mainFormat' to 'rnfSci'
-												//		displayed (including the sign), except for decDigits == -1 
-												//		when the displayed length is "unlimited"
-												//		(determined by	MaxAllowedDigits)
-												//  e.g. decDigits == -4 then number 1234 is shown as 1234
-												// default:all non trailing zero decimal digits
+		int displWidth = -1;					// > 0 the displayed number (including the sign, the decimal dot and exponent) 
+		//		must fit into this width
+		// = 0 : don't care use all decDigits (fractional decimal digits)
+		//	if smaller than the real part + decDigits requires
+		//	format switches 'mainFormat' to 'rnfSci'
+		//		displayed (including the sign), except for decDigits == -1 
+		//		when the displayed length is "unlimited"
+		//		(determined by	MaxAllowedDigits)
+		//  e.g. decDigits == -4 then number 1234 is shown as 1234
+		// default:all non trailing zero decimal digits
 		int decDigits = -1;						// how many digits after the decimal point may be displayed
-												// (if displWidth allows it)
-												// -1: all digits stored is displayed (if displWidth allows it)
-												// 0: no decimal digits
-												// > _numberstring.length(): add trailing zeros
-												
+		// (if displWidth allows it)
+		// -1: all digits stored is displayed (if displWidth allows it)
+		// 0: no decimal digits
+		// > _numberstring.length(): add trailing zeros
+
 		bool mustUseSign = false;				// print a positive sign too before the number? (not in exponent though!)
 		SmartString strThousandSeparator;		// for decimal format. Empty: no separator
 		bool useFractionSeparator = false;		// when true use a space character
 		size_t nFormatSwitchLength = 16;		// for decimal display: if abs. value of the exponent is
-												// larger than this display will change to Sci automatically
-												// for non base 10 display the maximum length
-												// of the string in that base
+		// larger than this display will change to Sci automatically
+		// for non base 10 display the maximum length
+		// of the string in that base
 // only hex or binary display
 		bool bSignedBinOrHex = false;			// true: negative numbers are preceeded by a negative
-												// sign and the corresponding hex digit, where the
-												// highest bit is 0. false: for negative numbers
-												// the highest bit is 1
+		// sign and the corresponding hex digit, where the
+		// highest bit is 0. false: for negative numbers
+		// the highest bit is 1
 		bool useNumberPrefix = false;			// '#' for binary, '0x' for hexadecimal, not used for octal numbers which always start with a '0'
 		// only for hexadecimal display
 		HexFormat hexFormat = HexFormat::rnHexNormal;
@@ -142,17 +143,13 @@ namespace LongNumber {
 	};
 
 	// ---------
-	enum class LogicalOperator {lopOr, lopXOr, lopAnd };
+	enum class LogicalOperator { lopOr, lopXOr, lopAnd };
 
 	//==============================================================================
 	// constants
 	//	values has the accuracy set when RealNumber accuracy changes in SetMaxLength
 	class RealNumber;
 	extern RealNumber half, 	// 1/2
-		twoPi, piP2,								// π, 2π, π/2
-		sqrt2, sqrt3, sqrt3P2, ln10, ln2,			// √2, √3, 3√(π/2), log(10),log(2)
-
-		rsqrt2, rln10, rln2,				// reciprocals: 1/√2, 1/log(10), 1/log(2)
 		NaN, Inf							// specials
 		;
 
@@ -161,7 +158,22 @@ namespace LongNumber {
 
 	extern Constant
 		e,
-		pi,
+		pi,											// π 
+		twoPi, piP2,								// 2π, π/2
+		sqrt2, sqrt3, sqrt3P2, ln10, ln2,			// √2, √3, 3√(π/2), log(10),log(2)
+		rsqrt2, rln10, rln2,						// reciprocals: 1/√2, 1/log(10), 1/log(2)
+		log2e,
+		log10e,
+		lge,
+		ln2,
+		piP2,
+		piP4,
+		rpi2,
+		rpi,
+		sqpi,
+		sqrt2,
+		rsqrt2,
+
 
 		au,			// astronomical unit
 		c,			// speed of light in vacuum
@@ -260,14 +272,14 @@ namespace LongNumber {
 			_isNormalized = true;
 		}
 		explicit RealNumber(const UTF8String& s) : RealNumber(SmartString(s)) {}
-		explicit RealNumber(const std ::wstring &ws) : RealNumber(SmartString(ws)) {}
+		explicit RealNumber(const std::wstring& ws) : RealNumber(SmartString(ws)) {}
 		explicit RealNumber(const SmartString& s) : _numberString(s), _exponent(0)
 		{
 			_GetDecPoint();
 			_FromNumberString();
 		}
 		// next constructor: digits has no decimal point or sign or exponent$
-		explicit RealNumber(const SmartString &digits, int sign, int exponent) :
+		explicit RealNumber(const SmartString& digits, int sign, int exponent) :
 			_sign(sign), _numberString(digits), _exponent(exponent)
 		{
 			_GetDecPoint();
@@ -297,7 +309,7 @@ namespace LongNumber {
 
 			size_t res = _maxLength;
 			_maxLength = mxl;
-			_RoundConstants((int)mxl);
+			_RescaleConstants((int)mxl);
 			return res;
 		}
 		static RealNumber NumberLimit(bool smallest = false) { RealNumber r; r._exponent = (int)r._maxExponent * (smallest ? 1 : -1); r._numberString = "1"; return r; }
@@ -359,7 +371,7 @@ namespace LongNumber {
 		{
 			return Pow(power);
 		}
-		RealNumber operator|(const RealNumber& other) const {	return _LogOpWith(other, LogicalOperator::lopOr); 	}
+		RealNumber operator|(const RealNumber& other) const { return _LogOpWith(other, LogicalOperator::lopOr); }
 	public:
 		const bool Errors(EFlagSet* oflags = nullptr)  const
 		{
@@ -369,9 +381,9 @@ namespace LongNumber {
 			return _eFlags.size();
 		}
 
-		RealNumber Or(const RealNumber& ra) const  {	return _LogOpWith(ra, LogicalOperator::lopOr); 	}
-		RealNumber XOr(const RealNumber& ra) const {	return _LogOpWith(ra, LogicalOperator::lopXOr); 	}
-		RealNumber And(const RealNumber& ra) const {	return _LogOpWith(ra, LogicalOperator::lopAnd); 	}
+		RealNumber Or(const RealNumber& ra) const { return _LogOpWith(ra, LogicalOperator::lopOr); }
+		RealNumber XOr(const RealNumber& ra) const { return _LogOpWith(ra, LogicalOperator::lopXOr); }
+		RealNumber And(const RealNumber& ra) const { return _LogOpWith(ra, LogicalOperator::lopAnd); }
 		RealNumber Square() { return *this * *this; }
 		RealNumber Squared()
 		{
@@ -498,15 +510,17 @@ namespace LongNumber {
 			return (position < ix && position >= _leadingZeros) ? (SCharT)_numberString[position - _leadingZeros] : chZero;
 		}
 
-		static void _RoundConstants(int maxLength);
+		static void _RescaleConstants(int maxLength);
 
 		void _Normalize();	// from a non-normalized numberstring, _sign, _exponent create a normalized one (unless normalized already)
 		void _ShiftSmartString(size_t byThisAmount);	// logical shift to the right when arg. is positive, real shift to the left when it is negative
 		void _ShiftSmartString(RealNumber& rn, int byThisAmount);	// to the right when arg. is positive, to the left when it is negative
-		SmartString _RoundNumberString(SmartString& s, int& countOfDecimalDigits, int& posOfDecimalPoint, bool numbersInsteadOfCharacters = false) const;
 		void _SetNull();
 		void _SetNaN();
 		void _SetInf();
+																									 // changes nIntDigits: stores the position in the result string
+		SmartString _FormatIntegerPart(const SmartString &sNumber, int sign, const DisplayFormat &format, size_t &nIntDigits, size_t chunkSize, bool prefixToAllChunks) const;
+		SmartString _RoundNumberString(SmartString& s, int& cntIntegerDigits, int roundingPosition, int cntleadingZeros) const;
 
 		SCharT _AddDigits(SCharT digit1, SCharT digit2, int& carry) const;
 		SCharT _SubtractDigits(SCharT digit1, SCharT digit2, int& borrow) const;
@@ -522,12 +536,6 @@ namespace LongNumber {
 		void _DivideInternal(RealNumber& left, RealNumber& right, RealNumber* pRemainder = nullptr) const;
 		void _CorrectResult(RealNumber& left, String& result, int trailingchZeros, int carry) const;
 
-		// display																	start in			# of
-		//	returns position after last integer digit		       stored number	result				dig	its			result
-		size_t _FormatIntegerPart(const DisplayFormat fmt, const SmartString& snum, size_t destPos, size_t size, SmartString& result) const;
-		// display																							start in			# of
-		//	returns position after last fractional digit	       stored number						source		result		digits			result
-		size_t _FormatFractionalPart(const DisplayFormat fmt, const SmartString& sn, size_t leadingZeros, size_t srcPos, size_t destPos, size_t size, SmartString& result) const;
 		SmartString _FormatExponent(const DisplayFormat fmt, int exp) const;
 
 		// conversion
@@ -589,30 +597,97 @@ namespace LongNumber {
 	 *------------------------------------------------------------*/
 	struct Constant
 	{
-		SmartString name;
-		RealNumber value;
-		SmartString unit;	// e.g. kg
-		SmartString desc;	// description
+		friend class ConstantsMap;
+
+		SmartString name;		// used from outside
+		RealNumber value;		// re-scaled value
+		SmartString unit;		// e.g. kg
+		SmartString desc;		// description
 
 		Constant& operator=(const Constant& other) { name = other.name; value = other.value; unit = other.unit; desc = other.desc; return *this; }
 		Constant& operator=(const SmartString sms) { name = sms; return *this; }
 		Constant& operator=(const RealNumber val) { value = val; return *this; }
-		operator SmartString& () { return name; }	// NEVER use this to mdify content
-		operator RealNumber& () { return value; }
+		operator const SmartString& () const { return name; }	// CAN'T use these to mdify content
+		operator const RealNumber& ()  const { return value; }
+		operator RealNumber() const { return value; }
 
 		Constant() {}
-		explicit Constant(const wchar_t* cname, const RealNumber cvalue, const wchar_t* cunit, const wchar_t* cdesc)
+		// built-in constants
+		explicit Constant(const wchar_t* cname, const RealNumber cvalue, const wchar_t* cunit, const wchar_t* cdesc, const RealNumber* pBaseValue) :
+			value(cvalue), _pBaseValue(pBaseValue), _builtin(true), _set(true)
 		{
 			name.FromWideString(cname);
-			value = cvalue;
 			unit.FromWideString(cunit);
 			desc.FromWideString(cdesc);
 		}
 
-		explicit Constant(const SmartString name, const RealNumber value, const SmartString unit, const SmartString desc) : name(name), value(value), unit(unit), desc(desc) {}
-		explicit Constant(const Constant& c) : name(c.name), value(c.value), unit(unit), desc(c.desc) {}
+		explicit Constant(const String name, const RealNumber value, const String unit, const String desc, const RealNumber* pBaseValue) :
+			name(name), value(value), unit(unit), desc(desc), _pBaseValue(pBaseValue), _builtin(true), _set(true) {}
+
+		// for user defined constants (variables) definition value will be the base value
+		explicit Constant(const wchar_t* cname, const RealNumber cvalue, const wchar_t* cunit, const wchar_t* cdesc) :
+			value(cvalue), _set(true)
+		{
+			name.FromWideString(cname);
+			unit.FromWideString(cunit);
+			desc.FromWideString(cdesc);
+			_pBaseValue = new RealNumber(value);
+		}
+
+		virtual ~Constant()
+		{
+			if (!_builtin)
+				delete _pBaseValue;
+		}
+
+		explicit Constant(const String name, const RealNumber value, const String unit, const String desc) :
+			name(name), value(value), unit(unit), desc(desc) {}
+		// for both
+		Constant(const Constant& c) : name(c.name), value(c.value), unit(unit), desc(c.desc), _pBaseValue(c._pBaseValue), _builtin(c._builtin), _set(c._set) {}
+
+		void SetAsBuiltIn()
+		{
+			if (!_set)
+			{
+				_set = true;
+				_builtin = true;
+			}
+		}
+
+		bool IsBuiltin() const { return _builtin; }
+
+		void Rescale(int newMaxLength)
+		{
+			if (_pBaseValue)
+				value = _pBaseValue->Rounded(newMaxLength);
+		}
+	private:
+		const RealNumber* _pBaseValue = nullptr; // NULL or pointer to definition (now 102 decimal digits long) value, which can be rescaled
+		bool _builtin = false;
+		bool _set = false;
 	};
 
+	/*=============================================================
+	 * this map contains pointers to constants
+	 *	builtin constants exist already and not duplicated
+	 * user defined constants added using the Add() function
+	 * they will be freed
+	 *------------------------------------------------------------*/
+	class  ConstantsMap : public std::map<String, Constant*>
+	{
+	public:
+		ConstantsMap();
+		virtual ~ConstantsMap();
+
+		// user defined constants only
+		void Add(const wchar_t* cname, const RealNumber cvalue, const wchar_t* cunit, const wchar_t* cdesc);
+		void Add(const String cname, const RealNumber cvalue, const String cunit, const String cdesc);
+		void Rescale(int newMaxLength);
+	private:
+		void _Add(Constant& c);	// set as builtin
+	};
+
+	extern ConstantsMap constantsMap;
 	// end of namespace LongNumber
 }
 

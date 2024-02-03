@@ -29,6 +29,9 @@ int _matherr (struct _exception *a)
 
 using namespace SmString;
 using namespace LongNumber;
+                     // static so each engine has the same constants and variables
+VariableTable LittleEngine::variables;
+FunctionTable LittleEngine::functions;
 
 /*==============================================================
  * NAMESPACE FalconCalc
@@ -502,8 +505,8 @@ Token::Token( const SmartString &text, unsigned &pos) : type(tknUnknown), val(0)
 Class LittleEngine
  *-----------------------------------------*/
 
-static VariableTable builtinVars;   // and constants
-static FunctionTable builtinFuncs;
+//FunctionTable LittleEngine::functions;
+//VariableTable LittleEngine::variables;
 unsigned LittleEngine::numBuiltinVars  = 0,
          LittleEngine::numBuiltinFuncs = 0;
 
@@ -519,57 +522,9 @@ inline RealNumber Sign(RealNumber r) { return r.Sign() > 0 ? RealNumber::RN_1:-R
  *-----------------------------------------------------------*/
 LittleEngine::LittleEngine() : clean(true)
 {
-#define SET_BUILTIN_VAR(a,b,c)  v.desc = L###b##;    v.value = (c);        builtinVars[#a##_ss]  = v;
-    #define SET_BUILTIN_CONST(a)    v.desc = (a).desc;   v.value = (a).value;  builtinVars[(a).name] = v;
-
     if(!builtinsOk)
     {
-       Variable v;
-
-       SET_BUILTIN_VAR(ans, result of previous calculation, RealNumber::RN_0);
-
-
-       SET_BUILTIN_VAR(log2e,  base 2 logarithm of e,  log2(e));
-       SET_BUILTIN_VAR(log10e, base 10 logarithm of e, log10(e));
-       SET_BUILTIN_VAR(lge,    base 10 logarithm of e, log10(e));
-       SET_BUILTIN_VAR(ln2,    natural logarithm of 2, ln2);
-       SET_BUILTIN_VAR(piP2,   π/2                   , piP2);
-       SET_BUILTIN_VAR(piP4,   π/4                   , half*piP2);
-       SET_BUILTIN_VAR(rpi2,   2/π                   , RealNumber::RN_2/pi);
-       SET_BUILTIN_VAR(rpi,    1/π                   , RealNumber::RN_1/pi);
-       SET_BUILTIN_VAR(sqpi,   square root of π      , sqrt(pi));
-       SET_BUILTIN_VAR(sqrt2,  square root of 2      , sqrt2);
-       SET_BUILTIN_VAR(rsqrt2, reciprocal of the square root of 2, rsqrt2);
-
-	   SET_BUILTIN_CONST(e)
-       SET_BUILTIN_CONST(pi);
-
-       SET_BUILTIN_CONST(fsc);
-       SET_BUILTIN_CONST(au);
-       SET_BUILTIN_CONST(c);
-       SET_BUILTIN_CONST(eps0);
-       SET_BUILTIN_CONST(G);
-       SET_BUILTIN_CONST(gf);
-       SET_BUILTIN_CONST(h);
-       SET_BUILTIN_CONST(hbar);
-       SET_BUILTIN_CONST(kb);
-       SET_BUILTIN_CONST(kc);
-       SET_BUILTIN_CONST(la);
-       SET_BUILTIN_CONST(me);
-       SET_BUILTIN_CONST(mf);
-       SET_BUILTIN_CONST(mp);
-       SET_BUILTIN_CONST(ms);
-       SET_BUILTIN_CONST(mu0);
-       SET_BUILTIN_CONST(qe);
-       SET_BUILTIN_CONST(rfsc);
-       SET_BUILTIN_CONST(rf);
-       SET_BUILTIN_CONST(rg);
-       SET_BUILTIN_CONST(rs);
-       SET_BUILTIN_CONST(sb);
-       SET_BUILTIN_CONST(u);
-
-
-       numBuiltinVars = builtinVars.size();
+        numBuiltinVars = constantsMap.size();       // in LongNumber.cpp
             // all built in function requires a single RealNumber argument
             // they are not 'dirty' and they are 'isnumber's
        Func f;
@@ -578,33 +533,33 @@ LittleEngine::LittleEngine() : clean(true)
        f.dirty = false;
        f.value = 0.0l;
 
-	#define SET_BUILTIN_FUNC1(a,b,c) f.desc = u8#b; f.function.funct1 = c; builtinFuncs[#a##_ss] = f;
-	#define SET_BUILTIN_FUNC2(a,b,c) f.desc = u8#b; f.function.funct2 = c; builtinFuncs[#a##_ss] = f;
-	#define SET_BUILTIN_FUNC3(a,b,c) f.desc = u8#b; f.function.funct3 = c; builtinFuncs[#a##_ss] = f;
-	#define SET_BUILTIN_FUNC4(a,b,c) f.desc = u8#b; f.function.funct4 = c; builtinFuncs[#a##_ss] = f;
+	   #define SET_BUILTIN_FUNC1(a,b,c) f.desc = u#b; f.function.funct1  = c; functions[#a##_ss] = f;
+	   #define SET_BUILTIN_FUNC2(a,b,c) f.desc = u#b; f.function.funct2r = c; functions[#a##_ss] = f;
+	   #define SET_BUILTIN_FUNC3(a,b,c) f.desc = u#b; f.function.funct2i = c; functions[#a##_ss] = f;
+	   #define SET_BUILTIN_FUNC4(a,b,c) f.desc = u#b; f.function.funct2a = c; functions[#a##_ss] = f;
        SET_BUILTIN_FUNC1(abs, absolute value, abs);
 
 	   f.useAngleUnitAsResult=true;
-       SET_BUILTIN_FUNC4(arcsin, inverse of sine, asin);
-       SET_BUILTIN_FUNC4(asin, inverse of sine, asin);
-       SET_BUILTIN_FUNC4(arccos, inverse of cosine, acos);
-       SET_BUILTIN_FUNC4(acos, inverse of cosine, acos);
-       SET_BUILTIN_FUNC4(arctan, inverse of tangent, atan);
-       SET_BUILTIN_FUNC4(atan, inverse of tangent, atan);
+       SET_BUILTIN_FUNC4(arcsin , inverse of sine   , asin);
+       SET_BUILTIN_FUNC4(asin   , inverse of sine   , asin);
+       SET_BUILTIN_FUNC4(arccos , inverse of cosine , acos);
+       SET_BUILTIN_FUNC4(acos   , inverse of cosine , acos);
+       SET_BUILTIN_FUNC4(arctan , inverse of tangent, atan);
+       SET_BUILTIN_FUNC4(atan   , inverse of tangent, atan);
        f.useAngleUnitAsResult=false;
 
        f.useAngleUnit        =true;
-       SET_BUILTIN_FUNC4(sin, sine, sin);
-       SET_BUILTIN_FUNC4(cos, cosine, cos);
-       SET_BUILTIN_FUNC4(tan, tangent, tan);
-       SET_BUILTIN_FUNC4(tg, tangent, tan);
+       SET_BUILTIN_FUNC4(sin    , sine      , sin);
+       SET_BUILTIN_FUNC4(cos    , cosine    , cos);
+       SET_BUILTIN_FUNC4(tan    , tangent   , tan);
+       SET_BUILTIN_FUNC4(tg     , tangent   , tan);
        f.useAngleUnit        =false;
 
-       SET_BUILTIN_FUNC1(asinh, inverse of hyperbolic sine,     asinh);
-       SET_BUILTIN_FUNC1(acosh, inverse of hyperbolic cosine,   acosh);
-       SET_BUILTIN_FUNC1(atanh, inverse of hyperbolic tangent,  atanh);
-       SET_BUILTIN_FUNC1(acoth, inverse of hyperbolic cotangent,acoth);
-	   SET_BUILTIN_FUNC1(sinh,hyperbolic sine, sinh);
+       SET_BUILTIN_FUNC1(asinh  , inverse of hyperbolic sine     , asinh);
+       SET_BUILTIN_FUNC1(acosh  , inverse of hyperbolic cosine   , acosh);
+       SET_BUILTIN_FUNC1(atanh  , inverse of hyperbolic tangent  , atanh);
+       SET_BUILTIN_FUNC1(acoth  , inverse of hyperbolic cotangent, acoth);
+	   SET_BUILTIN_FUNC1(sinh   , hyperbolic sine                , sinh);
 
        SET_BUILTIN_FUNC1(cosh, hyperbolic cosine, cosh);
        SET_BUILTIN_FUNC1(ch, hyperbolic cosine, cosh);
@@ -625,12 +580,10 @@ LittleEngine::LittleEngine() : clean(true)
        SET_BUILTIN_FUNC1(tanh, tangent, tanh);
        SET_BUILTIN_FUNC1(trunc, truncate to integer, floor);
 
-       numBuiltinFuncs = builtinFuncs.size();
+       numBuiltinFuncs = functions.size();
 
        builtinsOk = true;
     }
-    variables = builtinVars;
-    functions = builtinFuncs;
 }
 
 /*========================================================
@@ -892,9 +845,12 @@ void LittleEngine::MarkDirty(const SmartString name)
 /* =========================================================
  * TASK: test expression for variable assignment.
  * EXPECTS: 'expr' text of definition of variable
- *          'pos' start positiom after name  - a line may only contain a
+ *               should look like: [spaces]=[spaces]<body>[:[<unit>:]<description>]
+ *              where ':' is the comment delimiter
+ *          'pos' start position after name  - a line may only contain a
  *                single variable definition,
- *          'tok' pointer to variable, must not be nullptr
+ *          'tok' pointer to variable, must not be nullptr, already contains
+ *                  the name of the variable
  * RETURNS: true if this is an assignment and variable definition or
  *                  redefinition is stored in VARIABLES
  *         false if first non-whitespace character is not an equal sign
@@ -910,45 +866,55 @@ bool LittleEngine::VariableAssignment(const SmartString &expr, unsigned &pos, To
         return false;       // not an assignment
 
     Variable v;
-    if(variables.count(tok->Text() )) // already defined
-    {
-        if(variables[ tok->Text()].builtin)
-            Trigger("Builtin variables cannot be redefined"_ss);
-        else
-            v.value = variables[ tok->Text()].value; // v = variables[ tok->Text()];
-    }
-    // assignment: create or modify variable
+
+    if(constantsMap.count(tok->Text() )) 
+        Trigger("Builtin variables cannot be redefined"_ss);
+    else if(variables.count(tok->Text() )) // already defined
+        v.pValue->value = variables[ tok->Text()].pValue->value; // v = variables[ tok->Text()];
+
     ++pos; // skip '='
 
+    // new variable assignment: create or modify variable
+    SmartString body, unit, descr;
+
     unsigned posComment = expr.find_first_of(comment_delimiter,pos);
-    v.body = expr.substr(pos, posComment-pos);
-    pos += v.body.length();
+    body = expr.substr(pos, posComment - (posComment!= SmartString::npos? pos : 0) );
+    pos += body.length();
+
     if(posComment != SmartString::npos)
-    {
+    {   
         pos = posComment+1;     // ++pos would be enough: we have a single expression in line
-        v.desc = expr.substr(pos);
-        pos += v.desc.length();
+        posComment = expr.find_first_of(comment_delimiter,pos); // if there's a unit definition in line too
+        if (posComment != SmartString::npos) // yes
+        {
+            unit = expr.substr(pos, posComment - pos);
+            pos = posComment + 1;
+        }
+        descr = expr.substr(pos);
+        pos += descr.length();
     }
 
-    LittleEngine if2pf(*this);
+    v.pValue = new Constant(tok->Text(), RealNumber::RN_0, unit, descr);
+
+    LittleEngine if2pf(*this);      // functions or variables are not re-initialized
     if2pf.InfixToPostFix(v.body);
     v.definition = if2pf.tvPostfix;
     if(v.definition.size() == 1)    // maybe a constant
     {
         if(v.definition[0].Type() == tknNumber )
-            v.value = v.definition[0].Value();  // and v.dirty remains false
+            v.pValue->value = v.definition[0].Value();  // and v.dirty remains false
         else
-            v.value = if2pf.CalcPostfix(if2pf.tvPostfix);
+            v.pValue->value = if2pf.CalcPostfix(if2pf.tvPostfix);
     }
     else // leave it dirty :) ??? it wasn't
-        v.value = if2pf.CalcPostfix(if2pf.tvPostfix);
+        v.pValue->value = if2pf.CalcPostfix(if2pf.tvPostfix);
 
     variables[ tok->Text()] = v;
     // mark variables whose definition contains this variable dirty
     MarkDirty(tok->Text());
     clean = false;  // table modified
 
-    calcResult = v.value;
+    calcResult = v.pValue->value;
     return true;    // assignment
 }
 
@@ -1070,7 +1036,7 @@ void LittleEngine::DoVariable(const Token &tok)
             try
             {
                 var.being_processed = true;
-                var.value = CalcPostfix(var.definition);
+                var.pValue->value = CalcPostfix(var.definition);
                 var.being_processed = false;
                 var.dirty = false;
             }
@@ -1080,7 +1046,7 @@ void LittleEngine::DoVariable(const Token &tok)
                 var.dirty = false;
             }
         }
-        stack.push(var.value);
+        stack.push(var.pValue->value);
     }
     else
         stack.push(RealNumber::RN_0);
@@ -1454,17 +1420,17 @@ bool LittleEngine::SaveTables(const SmartString &name) // if it wasn't read and 
 	if( ofs.fail() )
 			return false;
 	ofs << VERSION_STRING << L"\nVariables\n";
-	if(variables.size() )
+	if(variables.size() )                       // these are the user defined variables only
 	{
         VariableTable::iterator vit;
 		for(vit = variables.begin(); vit != variables.end(); ++vit)
-			if(!vit->second.builtin)
-			{
+			//if(!vit->second.pValue->builtin)
+			//{
 				ofs << vit->first.ToWideString() << L"=" << vit->second.body.ToWideString();
-				if(!vit->second.desc.empty() )
-					ofs << comment_delimiter << vit->second.desc.ToWideString();
+				if(!vit->second.pValue->desc.empty() )
+					ofs << comment_delimiter << vit->second.pValue->desc.ToWideString();
 				ofs << endl;
-			}
+			//}
 	}
 	ofs << ("Functions\n"_ss).ToWideString();
 	if(functions.size() )
@@ -1647,41 +1613,42 @@ void LittleEngine::GetVarFuncInfo(VARFUNC_INFO &vf)
 }
 
 /*========================================================
- * TASK:    get a display string for variable in the format
- *          name = value : description
- * EXPECTS: // if the variable is a builtin RealNumber::RN_1
- * RETURNS:
+ * TASK:    Create a display string for all constants 
+ *          (i.e. bultins) and variables in 
+ *          lines (separated by '\n') in format
+ *              name = value:[unit:]description
+ * EXPECTS: flag for what to show
+ * RETURNS: single SmartString containing variables in lines
  *-----------------------------------------------------------*/
 SmartString LittleEngine::GetVariables(bool builtin) const
 {
     SmartString sres;
 
-    FunctionTable::const_iterator it;
-    SmartString body;
-    for(auto &it :variables)
-        if(it.second.builtin == builtin)
+    if (builtin)
+    {
+        for (auto& it : constantsMap)
         {
-            if(builtin) // then no body only value
-            {
-				//wchar_t buf[128];
-				//swprintf(buf, 128, L"%-.6E", it.second.value);
-				//body = wstring(buf);
-                DisplayFormat fmt;
-                fmt.decDigits = 6;
-                body = it.second.value.ToString();
-            }
-            else
-                body = it.second.body;
-            sres += it.first + "="_ss + body + SmartString(comment_delimiter) + it.second.desc + "\n"_ss;
+            sres += it.first + "="_ss + it.second->value.ToString();
+            if(!it.second->unit.empty()) 
+                sres += SmartString(comment_delimiter) + it.second->unit + "\n"_ss;
+            sres += SmartString(comment_delimiter) + it.second->desc+ "\n"_ss;
         }
-
+    }
+    else
+    {
+        for (auto& it : variables)
+                sres += it.first + "="_ss + it.second.body + SmartString(comment_delimiter) + it.second.pValue->desc + "\n"_ss;
+    }
     return sres;
 }
 
 /*========================================================
- * TASK:
- * EXPECTS:
- * RETURNS:
+ * TASK:    Create a display string for all functions
+ * EXPECTS: builtin: true: list of builtins
+ *                   false: list of user defined functions
+ * RETURNS: single SmartString containing functions in lines
+ * REMARKS: - line format:
+ *              
  *-----------------------------------------------------------*/
 SmartString LittleEngine::GetFunctions(bool builtin) const
 {
@@ -1718,8 +1685,8 @@ LittleEngine &LittleEngine::operator=(const LittleEngine &src)
     infix       = src.infix;
     tvPostfix    = src.tvPostfix;
     calcResult  = src.calcResult;
-    variables   = src.variables;
-    functions   = src.functions;
+    //variables   = src.variables;      static variables now
+    //functions   = src.functions;
     name_variable_table = src.name_variable_table;
     clean       = src.clean;
     return *this;
@@ -1745,8 +1712,7 @@ bool LittleEngine::AddUserVariablesAndFunctions(SmartString def, int what) //wha
 				// erase existing user variables
 				// BUG: if a variable name was edited it is not erased and remains
         case 1: for(vit = variables.begin(); vit != variables.end(); ++vit)
-                    if(!vit->second.builtin)
-                        names.push_back(vit->first);
+                    names.push_back(vit->first);
                 for(unsigned i = 0; i < names.size(); ++i)
                     variables.erase(names[i]);
                 if(what == 1) // for 0: fall through

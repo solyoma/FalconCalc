@@ -36,19 +36,21 @@ void TfrmVariables::InitializeFormAndControls() /* Control initialization functi
 	sgUser->SetBounds(nlib::Rect(4, 23, 348, 319));
 	sgUser->SetAlignment(nlib::alTop);
 	sgUser->SetTabOrder(0);
-	sgUser->SetColCount(3);
+	sgUser->SetColCount(4);
 	sgUser->SetRowCount(5);
 	sgUser->SetFixedColCount(0);
 	sgUser->SetSelectionKind(nlib::gskNoSelect);
 	sgUser->SetColumnsResizable(true);
 	sgUser->SetColWidth(0, 87);
-	sgUser->SetColWidth(1, 118);
-	sgUser->SetColWidth(2, 129);
+	sgUser->SetColWidth(1, 130);
+	sgUser->SetColWidth(2, 60);
+	sgUser->SetColWidth(3, 210);
 	sgUser->SetRowHeight(3, 21);
 	sgUser->SetRowHeight(4, 23);
 	sgUser->SetDefColWidth(0, 87);
-	sgUser->SetDefColWidth(1, 118);
-	sgUser->SetDefColWidth(2, 129);
+	sgUser->SetDefColWidth(1, 130);
+	sgUser->SetDefColWidth(2, 60);
+	sgUser->SetDefColWidth(3, 210);
 	sgUser->SetSmoothHorzScroll(true);
 	sgUser->SetAutoEdit(true);
 	sgUser->SetTabEdited(true);
@@ -67,20 +69,22 @@ void TfrmVariables::InitializeFormAndControls() /* Control initialization functi
 	sgBuiltin->SetBounds(nlib::Rect(4, 343, 348, 565));
 	sgBuiltin->SetAlignment(nlib::alClient);
 	sgBuiltin->SetTabOrder(2);
-	sgBuiltin->SetColCount(3);
+	sgBuiltin->SetColCount(4);
 	sgBuiltin->SetRowCount(5);
 	sgBuiltin->SetFixedColCount(0);
 	sgBuiltin->SetFixedRowCount(0);
 	sgBuiltin->SetSelectionKind(nlib::gskNoSelect);
 	sgBuiltin->SetColumnsResizable(true);
-	sgBuiltin->SetColWidth(0, 88);
-	sgBuiltin->SetColWidth(1, 118);
-	sgBuiltin->SetColWidth(2, 129);
+	sgBuiltin->SetColWidth(0, 87);
+	sgBuiltin->SetColWidth(1, 130);
+	sgBuiltin->SetColWidth(2, 60);
+	sgBuiltin->SetColWidth(3, 210);
 	sgBuiltin->SetRowHeight(2, 25);
 	sgBuiltin->SetRowHeight(4, 20);
-	sgBuiltin->SetDefColWidth(0, 88);
-	sgBuiltin->SetDefColWidth(1, 118);
-	sgBuiltin->SetDefColWidth(2, 129);
+	sgBuiltin->SetDefColWidth(0, 87);
+	sgBuiltin->SetDefColWidth(1, 130);
+	sgBuiltin->SetDefColWidth(2, 60);
+	sgBuiltin->SetDefColWidth(3, 210);
 	sgBuiltin->SetSmoothHorzScroll(true);
 	sgBuiltin->SetParent(tcVars);
 
@@ -201,9 +205,13 @@ void TfrmVariables::_CollectInto(SmartString &us, size_t &cnt)
 	us.clear();
     for(int i = 1; i < sgUser->RowCount(); ++i)
     {
-        if(sgUser->String(0,i) != L"" && sgUser->String(1,i) != L"")
-        {
-            us = us + SmartString(sgUser->String(0,i) + L"=" + sgUser->String(1,i)+ wstring(1, comment_delimiter.Unicode()) + sgUser->String(2, i)+ L"\n");
+        if(!sgUser->String(0,i).empty() && !sgUser->String(1, i).empty())
+        {		                     // name			 =			value :
+			us += SmartString(sgUser->String(0, i)) + "="_ss + SmartString(sgUser->String(1, i));
+							// unit (even when empty)
+			us += SmartString(1, comment_delimiter) + SmartString(sgUser->String(2, i));
+							// description / body
+			us += SmartString(1, comment_delimiter) + SmartString(sgUser->String(3, i)) + u"\n";
             ++n;
         }
     }
@@ -225,8 +233,9 @@ void TfrmVariables::tcVarsTabChange(void *sender, nlib::TabChangeParameters para
     {
 	case 0:  
 			sgUser->SetString(0,0,L"Name(args)");
-			sgUser->SetString(1,0,L"Definition");
-			sgUser->SetString(2,0,L"Comment");
+			sgUser->SetString(1,0,L"Unit");
+			sgUser->SetString(2,0,L"Definition");
+			sgUser->SetString(3,0,L"Comment");
 
              cntUser    = _vf.uUserFuncCnt;
              cntBuiltin = _vf.uBuiltinFuncCnt;
@@ -235,8 +244,9 @@ void TfrmVariables::tcVarsTabChange(void *sender, nlib::TabChangeParameters para
              break;
     case 1:  
 			sgUser->SetString(0,0,L"Variable");
-			sgUser->SetString(1,0,L"Definition");
-			sgUser->SetString(2,0,L"Comment");
+			sgUser->SetString(1,0,L"unit");
+			sgUser->SetString(2,0,L"Definition");
+			sgUser->SetString(3,0,L"Comment");
 			 
              cntUser    = _vf.uUserVarCnt;
              cntBuiltin = _vf.uBuiltinVarCnt;
@@ -251,23 +261,26 @@ void TfrmVariables::tcVarsTabChange(void *sender, nlib::TabChangeParameters para
 		sgUser->SetString(0,1,L"");
 		sgUser->SetString(1,1,L"");
 		sgUser->SetString(2,1,L"");
+		sgUser->SetString(3,1,L"");
     }
     if((size_t)sgBuiltin->RowCount() != cntBuiltin)
         sgBuiltin->SetRowCount(cntBuiltin);
 
     wstring s;
-    size_t st = 0,seol, pos, posc;
+    size_t st = 0,seol, pos, poscu, poscb;
     for(size_t i = 1; i <= cntUser; ++i)
     {
         seol = psUser->find_first_of('\n',st);
-        s = ( (seol == string::npos ? psUser->mid(st) : psUser->mid(st, seol - st)) ).ToWideString();
+        s = ( (seol == string::npos ? psUser->mid(st) : psUser->mid(st, seol - st)) ).ToWideString(); // one line
         st = seol+1;
         pos = s.find_first_of('=');
-        posc = s.find_first_of(comment_delimiter); // comment delimiter
+        poscu = s.find_first_of(comment_delimiter); // comment delimiter
+        poscb = s.find_first_of(comment_delimiter, poscu+1); // comment delimiter
 
 		sgUser->SetString(0,i,s.substr(0,pos));
-		sgUser->SetString(1,i,s.substr(pos+1, posc-pos-1));
-		sgUser->SetString(2,i,s.substr(posc+1));
+		sgUser->SetString(1,i,s.substr(pos+1, poscu-pos-1));
+		sgUser->SetString(2,i,s.substr(poscu+1, poscb-pos-1));
+		sgUser->SetString(3,i,s.substr(poscb+1));
     }
     st = 0;
     for(size_t i = 0; i < cntBuiltin; ++i)
@@ -276,10 +289,13 @@ void TfrmVariables::tcVarsTabChange(void *sender, nlib::TabChangeParameters para
         s = ((seol == string::npos ? psBuiltin->mid(st) : psBuiltin->mid(st, seol - st))).ToWideString();
         st = seol+1;
         pos = s.find_first_of('=');
-        posc = s.find_first_of(comment_delimiter,pos); // comment delimiter
+        poscu = s.find_first_of(comment_delimiter,pos); // comment delimiter
+        poscb = s.find_first_of(comment_delimiter, poscu+1); // comment delimiter
+
 		sgBuiltin->SetString(0,i,s.substr(0,pos));
-		sgBuiltin->SetString(1,i,s.substr(pos+1, posc-pos-1));
-		sgBuiltin->SetString(2,i,s.substr(posc+1));
+		sgBuiltin->SetString(1,i,s.substr(pos+1, poscu-pos-1));
+		sgBuiltin->SetString(2,i,s.substr(poscu+1, poscb-pos-1));
+		sgBuiltin->SetString(3,i,s.substr(poscb+1));
     }
 }
 
@@ -294,6 +310,7 @@ void TfrmVariables::btnClearClick(void *sender, nlib::EventParameters param)
 	sgUser->SetString(0,1,L"");
 	sgUser->SetString(1,1,L"");
 	sgUser->SetString(2,1,L"");
+	sgUser->SetString(3,1,L"");
     _changed = true;
 }
 

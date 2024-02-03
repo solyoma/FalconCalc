@@ -184,39 +184,48 @@ namespace FalconCalc
     {
         enum argtyp {atyR, atyI, atya}; // RealNumber, integer or AngularUnit
         FUNCT1 funct1 = nullptr;        // arguments RealNumber
-        FUNCT2 funct2 = nullptr;        // arguments RealNumber RealNumber
-        FUNCT3 funct3 = nullptr;        // arguments RealNumber integer
-        FUNCT4 funct4 = nullptr;        // arguments RealNumber Angular Units
+        FUNCT2 funct2r = nullptr;        // arguments RealNumber RealNumber
+        FUNCT3 funct2i = nullptr;        // arguments RealNumber integer
+        FUNCT4 funct2a = nullptr;        // arguments RealNumber Angular Units
         RealNumber operator() (RealNumber r) { if (funct1) return funct1(r); return NaN; }
-        RealNumber operator() (RealNumber x, RealNumber y) { if (funct2) return funct2(x,y); return NaN; }
-        RealNumber operator() (RealNumber x, int y) { if (funct3) return funct3(x,y); return NaN; }
-        RealNumber operator() (RealNumber r, AngularUnit au) { if (funct4) return funct4(r, au); return NaN; }
+        RealNumber operator() (RealNumber x, RealNumber y) { if (funct2r) return funct2r(x,y); return NaN; }
+        RealNumber operator() (RealNumber x, int y) { if (funct2i) return funct2i(x,y); return NaN; }
+        RealNumber operator() (RealNumber r, AngularUnit au) { if (funct2a) return funct2a(r, au); return NaN; }
         //Function(const FUNCT1 f1) : funct1(f1) {}
-        //Function(const FUNCT2 f2) : funct2(f2) {}
-        //Function(const FUNCT3 f3) : funct3(f3) {}
-        //Function(const FUNCT4 f4) : funct4(f4) {}
+        //Function(const FUNCT2 f2) : funct2r(f2) {}
+        //Function(const FUNCT3 f3) : funct2i(f3) {}
+        //Function(const FUNCT4 f4) : funct2a(f4) {}
     };
 
 
-    /*=============================================================
-     * Common structure for built-in (BI) and user defined (UD) variables
-     *------------------------------------------------------------*/
-    struct Variable : public Constant
-    {
-         bool builtin=true, changable=false, dirty=false;
-                                // 'changed:' any variable/function in 'definition' is
-                                // redefined: must re-calculate 'value'
 
-        SmartString body;   // text from the right hand side of the equal sign
-        TokenVec definition;                // processed body in postfix, none for builtins
+    /*=============================================================
+     * User defined variables
+     * which are created from line: <name> = <definition>[:]
+     *------------------------------------------------------------*/
+    struct Variable
+    {        
+        Constant* pValue = nullptr; // points to the value of a user defined variable
+        bool dirty=false;
+                                // 'dirty:' must re-calculate 'value', 
+                                // because any variable/function in 'definition' is redefined: 
+
+        SmartString body;       // text from the right hand side of the equal sign, none for builtins
+        TokenVec definition;    // processed body in postfix, none for builtins
                //  for variables
         bool being_processed=false;     // under calculation (prevent recursion)
 
-        Variable() : Constant() {}
+        Variable(){}
+        Variable(Constant* pC) : pValue(pC) {}
         explicit Variable(const wchar_t* cname, const wchar_t* cunit, const wchar_t* cdesc, const RealNumber cvalue = RealNumber()) :
-            Constant(cname, cvalue, cunit, cdesc){}
-        explicit Variable(const SmartString name, const RealNumber value, const SmartString unit, const SmartString desc) : Constant(name, value, unit, desc) {}
-        explicit Variable(const Variable& c) : Constant(c.name, c.value, c.unit, c.desc) {}
+            pValue( new Constant(cname, cvalue, cunit, cdesc) ) {}
+        explicit Variable(const String name, const RealNumber value, const String unit, const String desc) : 
+            pValue(new Constant(name, value, unit, desc, nullptr) ) {}
+        virtual ~Variable()
+        {
+            if (pValue)
+                delete pValue;  // only deletes constant if builtin
+        }
     };
 
     /*=============================================================
@@ -288,7 +297,7 @@ namespace FalconCalc
     };
 
     typedef map<SmartString,Func>       FunctionTable;
-    typedef map<SmartString,Variable>   VariableTable;
+    typedef map<SmartString,Variable>   VariableTable;  // user defined only. For builtins use 'constantsTable'
 
     /*==================*/
 	class LittleEngine
@@ -313,8 +322,8 @@ namespace FalconCalc
         TokenVec tvPostfix;
         RealNumber calcResult; // store result of calculation
         ResultType resultType = ResultType::rtNumber;
-        VariableTable variables;
-        FunctionTable functions;
+        static VariableTable variables;
+        static FunctionTable functions;
         SmartString name_variable_table;
         ResValid resultValid = ResValid::rvOk;
         Beautification beautification = Beautification::bmoGraphText;

@@ -365,10 +365,10 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	spnDecDigits->SetTabOrder(5);
 	spnDecDigits->SetParent(Groupbox1);
 
-	UpDown1 = new nlib::UpDown();
-	UpDown1->SetBounds(nlib::Rect(177, 63, 194, 84));
-	UpDown1->SetMaxValue(80);
-	UpDown1->SetParent(Groupbox1);
+	UpDownDecDigits = new nlib::UpDown();
+	UpDownDecDigits->SetBounds(nlib::Rect(177, 63, 194, 84));
+	UpDownDecDigits->SetMaxValue(80);
+	UpDownDecDigits->SetParent(Groupbox1);
 
 	rgAngleUnit = new nlib::Groupbox();
 	rgAngleUnit->SetBounds(nlib::Rect(236, 7, 428, 53));
@@ -612,7 +612,7 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	pnlHex->SetPopupMenu(pmCopy);
 	pnlOct->SetPopupMenu(pmCopy);
 	pnlBin->SetPopupMenu(pmCopy);
-	UpDown1->SetAttachedEditor(spnDecDigits);
+	UpDownDecDigits->SetAttachedEditor(spnDecDigits);
 	btnFont->Image()->SetBitmap(new nlib::Bitmap(NULL, MAKEINTRESOURCE(28678)));
 	btnFont->Image()->SetStateCount(2);
 	btnCloseDecOptions->Image()->SetBitmap(new nlib::Bitmap(NULL, MAKEINTRESOURCE(28679)));
@@ -731,7 +731,7 @@ TfrmMain::TfrmMain()
     lengine = new FalconCalc::LittleEngine;
 	lengine->displayFormat.useNumberPrefix = true;
 	lengine->displayFormat.strThousandSeparator = " "_ss;
-	lengine->displayFormat.displWidth = 64;
+	lengine->displayFormat.displWidth = 59;
 
     lengine->ReadTables(SmartString( AppendToPath((wstring &)ExecutablePath, FalconCalc_DAT_FILE).c_str()) );
 	// add the clipboard and set this window as a "viewer"
@@ -882,6 +882,8 @@ void TfrmMain::ShowResults()	// from lengine
     pnlOct->SetText(lengine->ResultAsOctString().ToWideString());
     pnlBin->SetText(lengine->ResultAsBinString().ToWideString());
     edtChars->SetText(lengine->ResultAsCharString().ToWideString());
+
+	SetFocus(edtInfix->Handle());
 }
 
 // display same message in all panels
@@ -941,8 +943,11 @@ void TfrmMain::rdDegClick(void *sender, nlib::EventParameters param)
 
 void TfrmMain::spnDecDigitsTextChanged(void *sender, nlib::EventParameters param)
 {
-	lengine->displayFormat.decDigits = UpDown1->Position();
-    ShowResults();
+	lengine->displayFormat.decDigits = UpDownDecDigits->Position();
+	if(chkDecDigits->Checked())
+		ShowResults();
+	else
+		SetFocus(edtInfix->Handle());
 }
 
 void TfrmMain::tbCopyClick(void *sender, nlib::EventParameters param)
@@ -970,7 +975,7 @@ void TfrmMain::chkDecDigitsClick(void *sender, nlib::EventParameters param)
     if(chkDecDigits->Checked() )
     {
         spnDecDigits->SetEnabled(true);
-		lengine->displayFormat.decDigits = UpDown1->Position();
+		lengine->displayFormat.decDigits = UpDownDecDigits->Position();
     }
     else
     {
@@ -1426,7 +1431,7 @@ bool TfrmMain::LoadState(wstring name)
 				chkDecDigits->SetChecked(true);
 			else
 				n = std::abs(n + 1);
-			UpDown1->SetPosition(n);
+			UpDownDecDigits->SetPosition(n);
 					// 2: exponent display format
 			n = std::stoi(data[2]);	// (0)E: 1E5, (1)HTML: 1<sp>12</sup>, (2)TeX: 1^{12}, (3)normal: 1²³
 			lengine->displayFormat.expFormat = static_cast<ExpFormat>(n);
@@ -1689,6 +1694,7 @@ void TfrmMain::btnCopyFormatClick(void *sender, nlib::EventParameters param)
 		case 2: MyClipboard->SetText(pnlOct->Text() ); break;
 		case 3: MyClipboard->SetText(pnlBin->Text() ); break;
 	}
+	SetFocus(edtInfix->Handle());
 }
 
 void TfrmMain::StartMove(void *sender, nlib::EventParameters param)

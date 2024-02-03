@@ -115,6 +115,7 @@ public:
 	~SmartString() {}
 
 	SmartString& operator=(const SmartString s);
+	SmartString& operator=(const String s) { return operator=(SmartString(s)); }
 	SmartString& operator=(const UTF8String s);
 	SmartString& operator=(const std::wstring ws);
 	SmartString& operator=(const char *pcs);
