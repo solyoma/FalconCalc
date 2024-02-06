@@ -292,7 +292,7 @@ namespace LongNumber {
 
 	public:
 		// special values
-		static const RealNumber RN_0, RN_1, RN_2, RN_3, RN_4, RN_5, RN_6, RN_7, RN_8, RN_9, RN_10;
+		static const RealNumber RN_0, RN_1, RN_2, RN_3, RN_4, RN_5, RN_6, RN_7, RN_8, RN_9, RN_10, RN_16;
 
 	public:
 		// static functions
@@ -518,7 +518,7 @@ namespace LongNumber {
 		void _SetNull();
 		void _SetNaN();
 		void _SetInf();
-																									 // changes nIntDigits: stores the position in the result string
+								// allocates may change nIntDigits: stores the position in the result string
 		SmartString _FormatIntegerPart(const SmartString &sNumber, int sign, const DisplayFormat &format, size_t &nIntDigits, size_t chunkSize, bool prefixToAllChunks) const;
 		SmartString _RoundNumberString(SmartString& s, int& cntIntegerDigits, int roundingPosition, int cntleadingZeros) const;
 
