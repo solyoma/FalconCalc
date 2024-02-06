@@ -825,6 +825,7 @@ SmartString RealNumber::ToHexString(const DisplayFormat &format) const
 	}
 
 	bool bPrefixToAllChunks = chunkLength <= 8;
+	lenh = hex.length();
 	return _FormatIntegerPart(hex, sign, format, lenh, chunkLength, bPrefixToAllChunks);
 }
 
@@ -988,8 +989,8 @@ SmartString RealNumber::ToDecimalString(const DisplayFormat &format) const
 		{
 			if (fmt.decDigits <= 0 && nDisplayWidth < 0)	// no limit for decimal digits and no limit for display
 				return -1;								    // no need to round
-			if (lengthFractionPart <= 0 || (fmt.decDigits > 0 && fmt.decDigits >= (int)_numberString.length()) )
-				return -1;
+			if (lengthFractionPart <= 0 ) // || (fmt.decDigits > 0 && (fmt.decDigits < nLeadingDecimalZeros || fmt.decDigits > nLeadingDecimalZeros + (int)_numberString.length())) )
+				return fmt.decDigits;
 			// EXPEXTS: nIntLength contains the length of the integer part of the result string
 			//			nLeadingDecimalZeros is the number of leading zeros in fractional part
 			if (fmt.decDigits == 0)		// no fractional digits needed
@@ -1040,7 +1041,7 @@ SmartString RealNumber::ToDecimalString(const DisplayFormat &format) const
 		};
 	auto requriedSpaceForFraction = [&]()->int
 		{
-			nFracLength = lengthFractionPart; //a lready include leading zeros
+			nFracLength = lengthFractionPart; // already include leading zeros
 			if (nFracLength)
 			{
 				if (fmt.useFractionSeparator)
@@ -1053,8 +1054,15 @@ SmartString RealNumber::ToDecimalString(const DisplayFormat &format) const
 	requiredSpaceforIntegerDigits();		// into nIntLength, no sign, decimal point but may be thousand separators
 	requriedSpaceForFraction();
 
-	// nTotalLength: total length of string for number w.o. using decDigits and delimiters
-	auto totalLength = [&]() -> int { return nSignLength + nIntLength + nFracLength + nExpLength; };
+	// nTotalLength: total visible length of string for number w.o. delimiters
+	auto totalLength = [&]() -> int 
+		{ 
+			int lInt = nIntLength ? nIntLength : 1,	// single integer always shown
+				lFrac = fmt.decDigits >= 0 ? fmt.decDigits : nFracLength,	// this many fraction digits 
+				lDp = lFrac ? 1 : 0;				// decimal point
+				
+			return nSignLength + lInt + +lDp + lFrac + nExpLength; 
+		};
 	
 	// this is the total width of the displayable area or -1 if doesn't care
 	// fmtDecDigits < 0 : all decimal places can be used, fmt.displayWidth == 0 : no limitation for display
@@ -1104,12 +1112,13 @@ SmartString RealNumber::ToDecimalString(const DisplayFormat &format) const
 	// this may increment the number of integer digits by 1, which may mean an exponent change 
 	// in modes SCI or ENG and a change for the positions required by the rounded number in other modes
 	int nrp = nFractionDigits;	// round a string which starts with 'nIntegerDigits, integer digits plus
-								// 'nLeadingDecimalZeros' virtual '0' characters
+								// and has 'nLeadingDecimalZeros' virtual '0' characters
+								// in the fractional part
 	roundedString = _RoundNumberString(r._numberString, nIntegerDigitsAfter = nIntegerDigits, nrp, nLeadingDecimalZeros);
 	// roundedString still does not contain leading or trailing zeros it can even be empty
 	// create the result string from 'roundedString'
 	if (fmt.displWidth >= 0 && roundedString.length() > (size_t)fmt.displWidth)	// not enough space so create an error string
-		return SmartString(fmt.displWidth, u'#');
+		return fmt.displWidth > 19 ? "Too Long To Display"_ss : SmartString(fmt.displWidth, u'#');
 	// now create the output string
 
 	if (nIntegerDigits != nIntegerDigitsAfter)
@@ -1130,7 +1139,7 @@ SmartString RealNumber::ToDecimalString(const DisplayFormat &format) const
 
 	auto appendFractionalPart = [&](SmartString &res)
 		{
-			if (nFracLength && nFractionDigits)	// otherwise no space for fraction or no fraction at all
+			if (/*nFracLength && */ nFractionDigits > 0)	// otherwise no space for fraction or no fraction at all
 			{
 				int n = nIntegerDigits - nLeadingDecimalZeros;
 				res += _decPoint;

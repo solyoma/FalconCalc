@@ -1009,7 +1009,7 @@
                 Top = "1"
                 Width = "329"
                 Height = "74"
-                Text = "Hex Display"
+                Text = "Hexadecimal Options"
                 Padding = "0, 0, 0, 0"
                 class Font
                 {

@@ -465,7 +465,7 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 
 	Groupbox2 = new nlib::Groupbox();
 	Groupbox2->SetBounds(nlib::Rect(8, 1, 337, 75));
-	Groupbox2->SetText(L"Hex Display");
+	Groupbox2->SetText(L"Hexadecimal Options");
 	Groupbox2->SetPadding(nlib::Rect(0, 0, 0, 0));
 	Groupbox2->GetFont().SetFamily(L"Tahoma");
 	Groupbox2->GetFont().SetSize(10);
