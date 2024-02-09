@@ -1443,13 +1443,12 @@ bool LittleEngine::SaveTables(const SmartString &name) // if it wasn't read and 
 	{
         VariableTable::iterator vit;
 		for(vit = variables.begin(); vit != variables.end(); ++vit)
-			//if(!vit->second.pValue->builtin)
-			//{
-				ofs << vit->first.ToWideString() << L"=" << vit->second.body.ToWideString();
-				if(!vit->second.data.desc.empty() )
-					ofs << comment_delimiter << vit->second.data.desc.ToWideString();
-				ofs << endl;
-			//}
+        {
+			ofs << vit->first.ToWideString() << L"=" << vit->second.body.ToWideString();
+			if(!vit->second.data.desc.empty() )
+				ofs << comment_delimiter << vit->second.data.desc.ToWideString();
+			ofs << endl;
+		}
 	}
 	ofs << ("Functions\n"_ss).ToWideString();
 	if(functions.size() )
