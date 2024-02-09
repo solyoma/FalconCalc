@@ -50,7 +50,7 @@ namespace LongNumber {
 		rnsfE,				// exponent string is 'E'+ [+|-] + exp digits
 		rnsfSciHTML,		// format for html : -1.234x10<sup>-567</sup>
 		rnsfSciTeX,			// format for TeX: -1.234\cdot10^{-567}
-		rnsfUp				// exponent after ^, like -1.234^{567}
+		rnsfGraph				// exponent after ^, like -1.234^{567}
 	};
 	enum class HexFormat {
 		rnHexNormal, 		// -1234567890ABCDEF OR EDCBA09876543210	
@@ -302,16 +302,7 @@ namespace LongNumber {
 		{
 			_maxExponent = maxExp;
 		}
-		static inline size_t SetMaxLength(size_t mxl)	// returns original
-		{
-			if (mxl > MaxAllowedDigits)
-				mxl = MaxAllowedDigits;
-
-			size_t res = _maxLength;
-			_maxLength = mxl;
-			_RescaleConstants((int)mxl);
-			return res;
-		}
+		static size_t SetMaxLength(size_t mxl);	// returns original
 		static RealNumber NumberLimit(bool smallest = false) { RealNumber r; r._exponent = (int)r._maxExponent * (smallest ? 1 : -1); r._numberString = "1"; return r; }
 		static RealNumber TenToThePowerOf(int exp) /* exp is normal 10's exponent*/ { RealNumber x(RN_1); x._exponent = exp + 1; return x; }
 	public:	// operators
@@ -406,8 +397,10 @@ namespace LongNumber {
 		size_t Precision() const { return _numberString.length(); }
 		size_t LargestExponent() const { return _maxExponent; }
 
-		RealNumber Rounded(int toThisManySignificantDigits) const; // returns a rounded copy
-		RealNumber Round(int toThisManySignificantDigits);	  // rounds the number
+		RealNumber Rounded(int toThisManyDecimalPlaces) const; // returns a rounded copy
+		RealNumber Round(  int toThisManyDecimalPlaces);		   // rounds the number
+		RealNumber RoundedToDigits(int toThisManySignificantDigits) const;  // rounds _numberString in copy
+		RealNumber RoundToDigits(int toThisManySignificantDigits);		    // rounds _numberString in the number itself
 
 		SmartString ToBinaryString(const DisplayFormat& format) const;
 		SmartString ToOctalString(const DisplayFormat& format) const;
@@ -435,8 +428,8 @@ namespace LongNumber {
 		inline constexpr int  Sign()   const { return _sign; }
 		inline constexpr bool IsPositive()   const { return _sign == 1; }
 		inline constexpr bool IsNegative()   const { return _sign == -1; }
-		inline RealNumber SetSign(int sign) { _sign = sign; return *this; }
-		inline RealNumber ToAbs() { _sign = 1; return *this;  return *this; }
+		inline RealNumber &SetSign(int sign) { _sign = sign; return *this; }
+		inline RealNumber &ToAbs() { _sign = 1; return *this;  return *this; }
 
 
 		RealNumber Abs() const { RealNumber rn(*this); rn.ToAbs(); return rn; }
@@ -554,8 +547,10 @@ namespace LongNumber {
 	inline RealNumber round(const RealNumber r, int decDigits) { return r.Rounded(decDigits); }
 	inline RealNumber fmod(const RealNumber x, const RealNumber& y) { return x - (x / y).Int() * y; }
 	RealNumber fact(const RealNumber n);
+	RealNumber RadToAu(RealNumber r, AngularUnit au);
 
-	RealNumber sqrt(RealNumber r, int cntDigitsAccuracy = -1);	// calculate the result up till 1e-<cntDigitsAccuracy> or _maxLength
+	inline RealNumber sqrt(RealNumber r);							// calculate the result up till _maxLength
+	RealNumber sqrtA(RealNumber r, int cntDigitsAccuracy);	// calculate the result up till 1e-<cntDigitsAccuracy> or. when == -1 to  _maxLength
 	RealNumber pow(RealNumber base, RealNumber power);			// base ^power
 	RealNumber root(RealNumber base, RealNumber r);				// r√
 
@@ -659,7 +654,7 @@ namespace LongNumber {
 		void Rescale(int newMaxLength)
 		{
 			if (_pBaseValue)
-				value = _pBaseValue->Rounded(newMaxLength);
+				value = _pBaseValue->RoundedToDigits(newMaxLength);
 		}
 	private:
 		const RealNumber* _pBaseValue = nullptr; // NULL or pointer to definition (now 102 decimal digits long) value, which can be rescaled

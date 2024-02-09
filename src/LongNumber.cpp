@@ -29,8 +29,14 @@ namespace LongNumber {
 
 
 	const SCharT chSpace = SCharT(' ');
+	static RealNumber epsilon(SmartString("1"), 1, -(int)RealNumber::MaxLength());
+	// atan(0.2)  used in invert trigonometric function calculations
+	const RealNumber atanOfDot2 = RealNumber(".197395559849880758370049765194790293447585103787852101517688940241033969978243785732697828037288044112");
 
-	ConstantsMap constantsMap;
+	static void RedefineEpsilon()
+	{
+		epsilon = RealNumber(SmartString("1"), 1, -(int)RealNumber::MaxLength());
+	}
 
 SCharT ByteToMyCharT(uint8_t digit)	// 0 <= digit <= 32
 {
@@ -180,6 +186,10 @@ Constant
 			sb		{ u"sb"		, rn_sb		, u"[W/m² K⁴]"		, u"Stefan–Boltzmann constant"							, nullptr		},
 			u		{ u"u"		, rn_u		, u"[kg]"			, u"atomic mass unit (m[C12]/12)"						, nullptr		};
 
+
+ConstantsMap constantsMap;
+
+
 ConstantsMap::ConstantsMap()
 {
 	_Add(e);
@@ -254,33 +264,26 @@ void ConstantsMap::Rescale(int nmx)
 		it->second->Rescale(nmx);	// only re-scales if pBaseValue is set
 }
 
+//-------------- RealNumber ------------------------
+
+size_t RealNumber::SetMaxLength(size_t mxl)	// returns original
+{
+	if (mxl > MaxAllowedDigits)
+		mxl = MaxAllowedDigits;
+
+	size_t res = _maxLength;
+	_maxLength = mxl;
+	_RescaleConstants((int)mxl);
+	RedefineEpsilon();
+	return res;
+}
+
+
 void RealNumber::_RescaleConstants(int maxLength)
 {	// zero to 10 has just one valid digit, no need to modify them, ever
 	// constants		
 	constantsMap.Rescale(maxLength);
 }
-
-
-RealNumber ConvertToUnit(RealNumber r, AngularUnit angu)  // r in radian
-{
-	switch (angu)
-	{
-		case AngularUnit::auDeg:
-			r *= RealNumber("360") / twoPi;
-			break;
-		case AngularUnit::auGrad:
-			r *= RealNumber("400") / twoPi;
-			break;
-		case AngularUnit::auTurn:
-			r /= rn2Pi;
-			break;
-		default:	// auRad
-			break;
-	}
-	return r;
-};
-
-//--------------------------------------
 
 RealNumber RealNumber::operator=(const RealNumber& rn) 
 { 
@@ -435,7 +438,7 @@ bool RealNumber::operator>=(const RealNumber& rn) const
  *						countOfDecimalDigits decimal places
  *------------------------------------------------------------*/
 
-RealNumber RealNumber::Round(int countOfDecimalDigits)
+RealNumber RealNumber::Round(int countOfDecimalPlaces)
 {
 	/*
 	*   number 
@@ -450,13 +453,27 @@ RealNumber RealNumber::Round(int countOfDecimalDigits)
 	*/
 	int cntIntegerDigits		= _exponent >= 0 ? _exponent + 1 :0,
 		cntLeadingDecimalZeros	= _exponent < 0 ? -_exponent : 0;
-	_RoundNumberString(_numberString,  cntIntegerDigits,  countOfDecimalDigits, cntLeadingDecimalZeros);
+	_RoundNumberString(_numberString,  cntIntegerDigits,  countOfDecimalPlaces, cntLeadingDecimalZeros);
 	return *this;
 }
-RealNumber RealNumber::Rounded(int countOfDecimalDigits) const
+RealNumber RealNumber::Rounded(int countOfDecimalPlaces) const
 {
 	RealNumber r(*this);
-	return r.Round(countOfDecimalDigits);
+	return r.Round(countOfDecimalPlaces);
+}
+
+RealNumber RealNumber::RoundToDigits(int countOfSignificantDigits)
+{
+	int cnt = 0, cnt0 = countOfSignificantDigits-1; // position in string
+	_RoundNumberString(_numberString,  cnt, cnt0, 0);
+	if (cnt > cnt0)
+		++_exponent;
+	return *this;
+}
+RealNumber RealNumber::RoundedToDigits(int countOfSignificantDigits) const
+{
+	RealNumber r(*this);
+	return r.RoundToDigits(countOfSignificantDigits);
 }
 
 SmartString RealNumber::_ToBase(int base, size_t maxNumDigits) const	// base must be >1 && <= 16
@@ -628,7 +645,7 @@ SmartString RealNumber::ToBinaryString(const DisplayFormat& format) const
 			addone(i, carry);
 	}
 
-	return _FormatIntegerPart(bin, 1, format, lenb, 3, false);
+	return _FormatIntegerPart(bin, 1, format, lenb, 4, false);
 }
 /*=============================================================
   * TASK   : show integer number in octal base
@@ -1152,6 +1169,11 @@ SmartString RealNumber::ToDecimalString(const DisplayFormat &format) const
 						res += chSpace;
 					res += roundedString.at(n++, chZero);
 				}
+				if (fmt.decDigits < 0)	// remove trailing zeros from fractional part
+				{
+					res.erase(std::find_if(res.rbegin(), res.rend(), [](SCharT ch) {return ch != chZero; }).base(), res.end());
+					res.erase(res.length() - 1);	// decimal point
+				}
 			}
 		};
 
@@ -1276,7 +1298,7 @@ SmartString RealNumber::_FormatExponent(const DisplayFormat fmt, int exp) const
 		case ExpFormat::rnsfSciTeX:
 			s = SmartString("\\cdot10^{") + s + SmartString("}");	// or "\\cdot10^("+s+")"
 			break;
-		case ExpFormat::rnsfUp:
+		case ExpFormat::rnsfGraph:
 		default:
 			s = SmartString(1, SCharT(183)) + u"10^{" + s + u"}";
 			break;
@@ -2109,9 +2131,6 @@ SmartString RealNumber::_RoundNumberString(SmartString &numString, int &intLen, 
 		five = SCharT('5'),
 		nine = SCharT('9');
 
-	if ((size_t)roundPos >= _maxLength)		// lengthOverflow does not matter here
-		roundPos = (int)_maxLength;
-
 	int carry = numString.at(roundPos, zero) >= five ? 1 : 0;
 	SmartString res = numString;
 	if(leadingZeros < roundPos && roundPos < leadingZeros + (int)numString.length())
@@ -2142,7 +2161,7 @@ SmartString RealNumber::_RoundNumberString(SmartString &numString, int &intLen, 
 		res = SmartString(one);
 		++intLen;
 	}
-	return res;
+	return numString = res;
 }
 
 void RealNumber::_SetNull()
@@ -2338,7 +2357,8 @@ void RealNumber::_MultiplyStrings(RealNumber& left, RealNumber& right) const
 			roundPos = (int)maxLength;	// round from here
 
 		_RoundNumberString(result, fakeIntLength, roundPos, cntLeadingZeros);	
-		result.erase(roundPos, std::string::npos);
+		if(roundPos < (int)result.size())
+			result.erase(roundPos, std::string::npos);
 	}
 	left._numberString = result;
 }
@@ -2427,7 +2447,7 @@ void RealNumber::_DivideInternal(RealNumber& left, RealNumber& right, RealNumber
 	size_t maxLength = _maxLength + LengthOverFlow;
 	SmartString quotient(maxLength, chZero);				// q: 0000...0 - not as string
 	EFlagSet efs;
-	long exponentOfResult = _AddExponents(1 + left._exponent, - right._exponent, efs);	   // 1+ : compensation for number representation
+	long exponentOfResult = _AddExponents(1 + left._exponent, - right._exponent, efs);	   // 1+ : compensation for number representation (0=> number < 1)
 	if (!efs.empty())
 	{
 		left._SetInf();
@@ -2603,7 +2623,7 @@ void RealNumber::_CorrectResult(RealNumber &left, String &result, int trailingch
 	}
 	left._numberString = result;
 	if (left.Precision() > maxLength)
-		left.Round((int)maxLength);
+		left.RoundToDigits((int)maxLength);
 	left._leadingZeros = 0;
 }
 
@@ -2624,7 +2644,31 @@ RealNumber fact(const RealNumber n)
 	return res;
 }
 
-RealNumber sqrt(RealNumber r, int accuracy)
+RealNumber RadToAu(RealNumber r, AngularUnit au)
+{
+	if(r.IsNaN() || r. IsInf())
+		return r;
+	static RealNumber RN_360("360"), RN_400("400");
+	switch (au)
+	{
+			case AngularUnit::auRad:
+				return r;
+			case AngularUnit::auDeg:
+				return r / twoPi * RN_360;
+			case AngularUnit::auGrad:
+				return r / twoPi * RN_400;
+			case AngularUnit::auTurn:
+				return r / twoPi;
+	}
+	return NaN;
+}
+
+inline RealNumber sqrt(RealNumber r)
+{
+	return sqrtA(r, -1);
+}
+
+RealNumber sqrtA(RealNumber r, int accuracy)
 {
 	if (!r.IsValid() )
 		return r;
@@ -2697,8 +2741,8 @@ RealNumber exp(RealNumber power)						// e^x = e^(int(x)) x e^(frac(x))
 				rnFracPart = power.Frac();
 	rnIntPart = ((RealNumber&)e).Pow(rnIntPart);	// this will not call exp()
 	// e^x = 1 + sum_1^inf(x^n/n$)
-	RealNumber x(rnFracPart), res(RealNumber::RN_1), resp(zero), xn, fact(RealNumber::RN_1),
-		epsilon(SmartString("1"), 1, -(int)RealNumber::MaxLength());
+	RealNumber x(rnFracPart), res(RealNumber::RN_1), resp(zero), xn, fact(RealNumber::RN_1);
+		
 	int n = 1;
 	while ((res - resp).Abs() > epsilon || n < (int)RealNumber::MaxLength()) 
 	{
@@ -2951,7 +2995,7 @@ RealNumber asin(RealNumber r, AngularUnit au)		// sine
 	{
 		int sign = r.Sign();
 		r = piP2.value;
-		return r.SetSign(sign);
+		return RadToAu(r.SetSign(sign), au);
 	}
 	// slow answer
 	return atan(r/sqrt(RealNumber::RN_1 - r*r), au );
@@ -2959,7 +3003,7 @@ RealNumber asin(RealNumber r, AngularUnit au)		// sine
 
 RealNumber acos(RealNumber r, AngularUnit au)		// cosine
 {
-	return ConvertToUnit(piP2.value - asin(r, AngularUnit::auRad), au);
+	return RadToAu(piP2.value - asin(r, AngularUnit::auRad), au);
 }
 
 RealNumber atan(RealNumber r, AngularUnit au)		// arcus tangent
@@ -2985,21 +3029,52 @@ RealNumber atan(RealNumber r, AngularUnit au)		// arcus tangent
 	if (r.IsNaN())
 		return r;
 	int sign = r.Sign();
-	if (r.IsInf())
-		return r.SetSign(sign);
-	if (r == RealNumber::RN_1)
-		return (piP2.value * half).Rounded( (int)(RealNumber::MaxLength() + LengthOverFlow)).SetSign(r.Sign());
-	RealNumber aDot2 = RealNumber(".197395559849880758370049765194790293447585103787852101517688940241033969978243785732697828037288044112").Rounded( (int)(RealNumber::MaxLength() + LengthOverFlow));
-	RealNumber a, f, e, v=r, i, n, s, dot2 = RealNumber(".2");
-	if (r == dot2)
-		return aDot2;	// ==  atan(.2)
 
+		// trivial results
+	if (r.IsInf())		// multiple of 90 degrees
+	{
+		switch(au)
+		{
+			case AngularUnit::auRad:
+				return piP2.value.Rounded((int)(RealNumber::MaxLength() + LengthOverFlow)).SetSign(sign);
+			case AngularUnit::auDeg:
+				return RealNumber("90").SetSign(sign);
+			case AngularUnit::auGrad:
+				return RealNumber("100").SetSign(sign);
+			case AngularUnit::auTurn:
+				return (RealNumber("0.25")).SetSign(sign);
+				}
+	}
+	if (r == RealNumber::RN_1)
+	{
+		switch(au) 
+		{
+			case AngularUnit::auRad:
+				return (piP2.value * half).RoundedToDigits((int)(RealNumber::MaxLength() + LengthOverFlow)).SetSign(sign);
+			case AngularUnit::auDeg:
+				return RealNumber("45").SetSign(sign);
+			case AngularUnit::auGrad: 
+				return RealNumber("50").SetSign(sign);
+			case AngularUnit::auTurn: 
+				return (RealNumber::RN_1/RealNumber(8)).SetSign(sign);
+		}
+	}	
+
+			// aDot2 ==  atan(.2)
+	RealNumber aOfDot2 = atanOfDot2.RoundedToDigits( (int)(RealNumber::MaxLength() + LengthOverFlow));
+	RealNumber dot2 = RealNumber(".2");
+	if (r == dot2)
+		return RadToAu(r, au);
+
+	r.SetSign(1);	// make it positive always
+
+	RealNumber a, f, e, v=r, i, n, s;
 	size_t z = RealNumber::MaxLength();
-	// Calculate atan of a known number.
-	if (r > aDot2)
+	// Calculate atan of a known number (0.2)
+	if (r > aOfDot2)
 	{
 		(void)RealNumber::SetMaxLength(z + 5);
-		a = aDot2;
+		a = aOfDot2;
 	}
 
 	/* Precondition r. */
@@ -3014,16 +3089,18 @@ RealNumber atan(RealNumber r, AngularUnit au)		// arcus tangent
 	s = -r * r;
 
 	/* Calculate the series. infinite loop */
-	for (i = RealNumber("3"); true; i += RealNumber::RN_2)
+	for (i = RealNumber::RN_3; true; i += RealNumber::RN_2)
 	{
 		e = (n *= s) / i;
-		if (e == zero) 
+		int esign = e.Sign();
+		e.SetSign(1);		// faster then Abs and no space requirement
+		if (e <= epsilon) 
 		{
 			RealNumber::SetMaxLength(z);
-			r = f * a + v;
-			ConvertToUnit(r, au);
-			return r.SetSign(r.Sign());
+			r = (f * a + v);
+			return RadToAu(r, au).SetSign(sign);
 		}
+		e.SetSign(esign);
 		v += e;
 	}
 	return RealNumber();

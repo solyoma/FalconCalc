@@ -161,6 +161,8 @@ namespace FalconCalc
             // name is not set
         Token(RealNumber v): type(tknNumber), val(v) {}
 
+        void FromText(const SmartString& text, unsigned& pos);
+
 		TokenType Type() const { return type; }
         OperatorType Oper() const { return data.oper; }
 		operator const SmartString&() const { return name; }
@@ -187,14 +189,16 @@ namespace FalconCalc
         FUNCT2 funct2r = nullptr;        // arguments RealNumber RealNumber
         FUNCT3 funct2i = nullptr;        // arguments RealNumber integer
         FUNCT4 funct2a = nullptr;        // arguments RealNumber Angular Units
-        RealNumber operator() (RealNumber r) { if (funct1) return funct1(r); return NaN; }
+        void clear() { funct1 = nullptr;  funct2r = nullptr; funct2i = nullptr; funct2a = nullptr; }
+        RealNumber operator() (RealNumber r) 
+        { 
+            if (funct1) 
+                return funct1(r); 
+            return NaN; 
+        }
         RealNumber operator() (RealNumber x, RealNumber y) { if (funct2r) return funct2r(x,y); return NaN; }
         RealNumber operator() (RealNumber x, int y) { if (funct2i) return funct2i(x,y); return NaN; }
         RealNumber operator() (RealNumber r, AngularUnit au) { if (funct2a) return funct2a(r, au); return NaN; }
-        //Function(const FUNCT1 f1) : funct1(f1) {}
-        //Function(const FUNCT2 f2) : funct2r(f2) {}
-        //Function(const FUNCT3 f3) : funct2i(f3) {}
-        //Function(const FUNCT4 f4) : funct2a(f4) {}
     };
 
 
@@ -205,26 +209,24 @@ namespace FalconCalc
      *------------------------------------------------------------*/
     struct Variable
     {        
-        Constant* pValue = nullptr; // points to the value of a user defined variable
+        Constant data;          // the value of a user defined variable
         bool dirty=false;
                                 // 'dirty:' must re-calculate 'value', 
                                 // because any variable/function in 'definition' is redefined: 
 
         SmartString body;       // text from the right hand side of the equal sign, none for builtins
         TokenVec definition;    // processed body in postfix, none for builtins
-               //  for variables
+
         bool being_processed=false;     // under calculation (prevent recursion)
 
         Variable(){}
-        Variable(Constant* pC) : pValue(pC) {}
+        Variable(Constant &c) : data(c) {}
         explicit Variable(const wchar_t* cname, const wchar_t* cunit, const wchar_t* cdesc, const RealNumber cvalue = RealNumber()) :
-            pValue( new Constant(cname, cvalue, cunit, cdesc) ) {}
+            data(cname, cvalue, cunit, cdesc) {}
         explicit Variable(const String name, const RealNumber value, const String unit, const String desc) : 
-            pValue(new Constant(name, value, unit, desc, nullptr) ) {}
+            data(name, value, unit, desc, nullptr)  {}
         virtual ~Variable()
         {
-            if (pValue)
-                delete pValue;  // only deletes constant if builtin
         }
     };
 
@@ -265,6 +267,7 @@ namespace FalconCalc
         // and marked dirty when needed
         Func & operator=(const Func & var)
         {
+            name = var.name;
             args = var.args;
             body = var.body;
             desc = var.desc;
@@ -316,7 +319,7 @@ namespace FalconCalc
         static unsigned numBuiltinVars,numBuiltinFuncs;
 
         DisplayFormat displayFormat;
-        AngularUnit angleUnit;   // used when calculating sine, cosine, tangent, cotangent
+        AngularUnit angleUnit = AngularUnit::auDeg;   // used when calculating sine, cosine, tangent, cotangent
 
         SmartString infix;
         TokenVec tvPostfix;
@@ -361,14 +364,14 @@ namespace FalconCalc
 					_stack.pop_back();
 				}
 			}
-			const Token &operator[](unsigned index) { return _stack.at(index); }
-			const Token &peek(unsigned n=1) // bounds checking added
+			const Token &operator[](unsigned index) const { return _stack.at(index); }
+			const Token &peek(unsigned n=1) const // bounds checking added
             {
 				if(_stack.size() < n)
 					Trigger("Stack error"_ss);
                 return _stack[_stack.size() - n];
             }
-            const unsigned size() { return _stack.size(); }
+            unsigned size() const { return _stack.size(); }
 		} stack;
 		void HandleUnknown(Token *tok);
 
@@ -404,10 +407,10 @@ namespace FalconCalc
         bool ResultOk() const { return calcResult.IsValid(); }
         RealNumber Result() const { return calcResult; }
         SmartString ResultAsDecString();
-        SmartString ResultAsHexString();
-        SmartString ResultAsOctString();
-        SmartString ResultAsBinString();
-        SmartString ResultAsCharString();
+        SmartString ResultAsHexString() const;
+        SmartString ResultAsOctString() const;
+        SmartString ResultAsBinString() const;
+        SmartString ResultAsCharString() const;
 	};
 
 // end of namespace FalconCalc

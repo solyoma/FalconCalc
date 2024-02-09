@@ -20,7 +20,7 @@ using namespace SmString;
 using namespace LongNumber;
 using namespace FalconCalc;
 
-FalconCalc::LittleEngine *lengine;
+FalconCalc::LittleEngine *lengine = nullptr;
 
 Clipboard *MyClipboard;
 
@@ -381,6 +381,7 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	rgAngleUnit->SetParent(pnlDecOpt);
 
 	rdDeg = new nlib::Radiobox();
+	rdDeg->SetTag(1);
 	rdDeg->SetBounds(nlib::Rect(11, 19, 59, 35));
 	rdDeg->SetText(L"De&g");
 	rdDeg->GetFont().SetFamily(L"Tahoma");
@@ -391,7 +392,7 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	rdDeg->SetParent(rgAngleUnit);
 
 	rdGrad = new nlib::Radiobox();
-	rdGrad->SetTag(1);
+	rdGrad->SetTag(2);
 	rdGrad->SetBounds(nlib::Rect(59, 19, 115, 35));
 	rdGrad->SetText(L"&Grad");
 	rdGrad->GetFont().SetFamily(L"Tahoma");
@@ -401,7 +402,7 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	rdGrad->SetParent(rgAngleUnit);
 
 	rdRad = new nlib::Radiobox();
-	rdRad->SetTag(2);
+	rdRad->SetTag(0);
 	rdRad->SetBounds(nlib::Rect(123, 19, 187, 35));
 	rdRad->SetText(L"&Rad");
 	rdRad->GetFont().SetFamily(L"Tahoma");
@@ -849,7 +850,7 @@ void TfrmMain::pnlDecPaint(void *sender, nlib::PaintParameters param)
 		return;
 
 	gtDec.SetCanvas(  pCanvas );
-	gtDec.SetText(pnlDec->Text(), 0, lengine->displayFormat.expFormat != ExpFormat::rnsfUp);
+	gtDec.SetText(pnlDec->Text(), 0, lengine->displayFormat.expFormat != ExpFormat::rnsfGraph);
 	int y = (pnlDec->Height() - gtDec.Box().Height())/2 - gtDec.Box().TopLeft().y;
 	if(y < 0)
 		y = 0;
@@ -1441,7 +1442,7 @@ bool TfrmMain::LoadState(wstring name)
 				rdHtml->SetChecked(true);
 			else if (lengine->displayFormat.expFormat == ExpFormat::rnsfSciTeX)
 				rdTex->SetChecked(true);
-			else if (lengine->displayFormat.expFormat == ExpFormat::rnsfUp)
+			else if (lengine->displayFormat.expFormat == ExpFormat::rnsfGraph)
 			{
 				rdNormal->SetChecked(true);
 			}
