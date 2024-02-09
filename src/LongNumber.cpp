@@ -1172,7 +1172,8 @@ SmartString RealNumber::ToDecimalString(const DisplayFormat &format) const
 				if (fmt.decDigits < 0)	// remove trailing zeros from fractional part
 				{
 					res.erase(std::find_if(res.rbegin(), res.rend(), [](SCharT ch) {return ch != chZero; }).base(), res.end());
-					res.erase(res.length() - 1);	// decimal point
+					if(res.at(res.length()-1, chZero) == _decPoint)
+						res.pop_back();	// decimal point
 				}
 			}
 		};

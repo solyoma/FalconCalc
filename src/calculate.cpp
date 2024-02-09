@@ -702,9 +702,10 @@ int LittleEngine::InfixToPostFix(const SmartString& expr)
     //check for (invalid characters up to the comment field
 	locale loc = cout.getloc();
 	infix = expr;
-    if( infix[  infix.length() -1] == '\n')
-        infix = infix.substr(0, infix.length()-1);
-	SmartString pattern = "=*^/<>!&|~%().,+-input._#'"_ss;
+    infix.Trim();
+    //if( infix[  infix.length() -1] == '\n')
+    //    infix = infix.substr(0, infix.length()-1);
+	SmartString pattern = "=*^/<>!&|~%().,+-_#'"_ss;
     bool quoted = false;
 
     for(SmartString::iterator it = infix.begin(); it != infix.end() && *it != FalconCalc::comment_delimiter; ++it)
