@@ -44,7 +44,8 @@ namespace FalconCalc {
 constexpr auto VERSION_STRING = "FalconCalc V1.0";
 
 
-const SCharT comment_delimiter = SCharT(':');
+const SCharT schCommentDelimiter = SCharT(':');
+const SmartString ssCommentDelimiterString(1,schCommentDelimiter);
 
 
 /*========================================================
@@ -694,7 +695,7 @@ void LittleEngine::HandleBrace(Token* tok)
   * REMARKS: - 'infix' may end with '\n' and may contain
   *             variable/function definitions with comments at the
   *             end. Comments are separated from the definition by
-  *             'comment_delimiter' which must be different from
+  *             'schCommentDelimiter' which must be different from
   *             any characters allowed in an expression.
   *------------------------------------------------------------*/
 int LittleEngine::InfixToPostFix(const SmartString& expr)
@@ -708,7 +709,7 @@ int LittleEngine::InfixToPostFix(const SmartString& expr)
 	SmartString pattern = "=*^/<>!&|~%().,+-_#'"_ss;
     bool quoted = false;
 
-    for(SmartString::iterator it = infix.begin(); it != infix.end() && *it != FalconCalc::comment_delimiter; ++it)
+    for(SmartString::iterator it = infix.begin(); it != infix.end() && *it != FalconCalc::schCommentDelimiter; ++it)
     {
         if(!quoted && !isalnum((wchar_t)*it, loc) && !isspace((wchar_t)*it,loc) && pattern.find_first_of(*it) == std::string::npos )
     	    Trigger (SmartString("Illegal character '"_ss) +  (char16_t)(*it) + "'"_ss);
@@ -910,14 +911,14 @@ bool LittleEngine::VariableAssignment(const SmartString &expr   , unsigned &pos,
     // new variable assignment: create or modify variable
     SmartString unit, descr;
 
-    unsigned posComment = expr.find_first_of(comment_delimiter,pos);
+    unsigned posComment = expr.find_first_of(schCommentDelimiter,pos);
     v.body = expr.substr(pos, posComment - (posComment!= SmartString::npos? pos : 0) );
     pos += v.body.length();
 
     if(posComment != SmartString::npos)
     {   
         pos = posComment+1;     // ++pos would be enough: we have a single expression in line
-        posComment = expr.find_first_of(comment_delimiter,pos); // if there's a unit definition in line too
+        posComment = expr.find_first_of(schCommentDelimiter,pos); // if there's a unit definition in line too
         if (posComment != SmartString::npos) // yes
         {
             unit = expr.substr(pos, posComment - pos);
@@ -1012,7 +1013,7 @@ bool LittleEngine::VariableAssignment(const SmartString &expr   , unsigned &pos,
    }
    pos = poseq+1; // after the equal sign
         // get comment
-   unsigned posComment = expr.find_first_of(comment_delimiter,pos);
+   unsigned posComment = expr.find_first_of(schCommentDelimiter,pos);
    while(pos < expr.length() && pos < posComment && isspace((wchar_t)expr[pos],loc))
     ++pos;
    f.body = expr.substr(pos, posComment-pos);
@@ -1390,7 +1391,7 @@ bool LittleEngine::SaveTables(const SmartString &name) // if it wasn't read and 
             {
                 ws = mit->first+"="+mit->second.body;
                 if(!mit->second.description.empty() )
-                    ws+= comment_delimiter +mit->second.description;
+                    ws+= schCommentDelimiter +mit->second.description;
                 ws += "\n"_ss;
                 if(ws.length() > siz)
                 {
@@ -1421,7 +1422,7 @@ bool LittleEngine::SaveTables(const SmartString &name) // if it wasn't read and 
             }
             ws += "_ss)="+mit->second.body;
             if(!mit->second.description.empty() )
-                ws += comment_delimiter + mit->second.description;
+                ws += schCommentDelimiter + mit->second.description;
             ws += "\n"_ss;
             if(ws.length() > siz)
             {
@@ -1447,7 +1448,7 @@ bool LittleEngine::SaveTables(const SmartString &name) // if it wasn't read and 
         {
 			ofs << vit->first.ToWideString() << L"=" << vit->second.body.ToWideString();
 			if(!vit->second.data.desc.empty() )
-				ofs << comment_delimiter << vit->second.data.desc.ToWideString();
+				ofs << schCommentDelimiter << vit->second.data.desc.ToWideString();
 			ofs << endl;
 		}
 	}
@@ -1471,7 +1472,7 @@ bool LittleEngine::SaveTables(const SmartString &name) // if it wasn't read and 
 			}
 			ofs << " = " << fit->second.body.ToWideString();
 			if(!fit->second.desc.empty() )
-				ofs << comment_delimiter << fit->second.desc.ToWideString();
+				ofs << schCommentDelimiter << fit->second.desc.ToWideString();
 			ofs << endl;
 		}
 	}
@@ -1618,7 +1619,7 @@ SmartString LittleEngine::ResultAsCharString() const
  * EXPECTS:
  * RETURNS:
  *-----------------------------------------------------------*/
-void LittleEngine::GetVarFuncInfo(VARFUNC_INFO &vf)
+void LittleEngine::GetVarFuncInfo(VarFuncInfo &vf)
 {
     vf.uBuiltinFuncCnt = numBuiltinFuncs;
     vf.sBuiltinFuncs   = GetFunctions(true);
@@ -1627,7 +1628,7 @@ void LittleEngine::GetVarFuncInfo(VARFUNC_INFO &vf)
 
     vf.uUserFuncCnt    = functions.size() - numBuiltinFuncs;
     vf.sUserFuncs      = GetFunctions(false);
-    vf.uUserVarCnt     = variables.size() - numBuiltinVars;
+    vf.uUserVarCnt     = variables.size();// -numBuiltinVars;
     vf.sUserVars       = GetVariables(false);
 
     vf.pOwner          = this;
@@ -1640,6 +1641,9 @@ void LittleEngine::GetVarFuncInfo(VARFUNC_INFO &vf)
  *              name = value:[unit:]description
  * EXPECTS: flag for what to show
  * RETURNS: single SmartString containing variables in lines
+ *          line format:
+ *              name:value:unit:comment\n - for builins
+ *              name:body:unit:comment\n - for user variables
  *-----------------------------------------------------------*/
 SmartString LittleEngine::GetVariables(bool builtin) const
 {
@@ -1649,16 +1653,25 @@ SmartString LittleEngine::GetVariables(bool builtin) const
     {
         for (auto& it : constantsMap)
         {
-            sres += it.first + "="_ss + it.second->value.ToString();
-            if(!it.second->unit.empty()) 
-                sres += SmartString(comment_delimiter) + it.second->unit + "\n"_ss;
-            sres += SmartString(comment_delimiter) + it.second->desc+ "\n"_ss;
+            RealNumber value = it.second->value;
+            DisplayFormat fmt;
+            fmt.strThousandSeparator = u" ";
+            if (value < RealNumber::RN_0)
+                fmt.mainFormat = NumberFormat::rnfSci;
+            if (value.Precision() > 32)
+                fmt.decDigits = 32;
+            sres += it.first + ssCommentDelimiterString + value.ToString(fmt)
+                    + SmartString(schCommentDelimiter) + it.second->unit + ssCommentDelimiterString  
+                    + it.second->desc + "\n"_ss;
         }
     }
     else
     {
         for (auto& it : variables)
-                sres += it.first + "="_ss + it.second.body + SmartString(comment_delimiter) + it.second.data.desc + "\n"_ss;
+        {
+            sres += it.first + ssCommentDelimiterString + it.second.data.unit + ssCommentDelimiterString + 
+                    it.second.body + ssCommentDelimiterString + it.second.data.desc + "\n"_ss;
+        }
     }
     return sres;
 }
@@ -1667,30 +1680,32 @@ SmartString LittleEngine::GetVariables(bool builtin) const
  * TASK:    Create a display string for all functions
  * EXPECTS: builtin: true: list of builtins
  *                   false: list of user defined functions
- * RETURNS: single SmartString containing functions in lines
- * REMARKS: - line format:
- *              
+ * RETURNS: single SmartString containing functions in \n
+ *          separated lines
+ * REMARKS: - output format: lines, separated by \n characters
+ *            line format:
+ *              name(arguments):body:description\n
  *-----------------------------------------------------------*/
-SmartString LittleEngine::GetFunctions(bool builtin) const
+SmartString LittleEngine::GetFunctions(bool whatToShow) const
 {
     SmartString sres;
+    constexpr const int BUILTIN = 1;
 
     FunctionTable::const_iterator it;
     for(it = functions.begin(); it != functions.end(); ++it)
-        if(it->second.builtin == builtin)
+        if(it->second.builtin == whatToShow)
         {
-            sres += it->first;
-            if(!builtin)
-                sres += "("_ss;
-            for(unsigned j = 0; j < it->second.args.size(); ++j)
-            {
-                if(j)
-                    sres += SmartString(_ArgSeparator()) + SmartString(" "_ss);
-                sres += it->second.args[j];
-            }
-            if(!builtin)
-                sres += "_ss)"_ss;
-            sres += "="_ss + it->second.body + SmartString(comment_delimiter) + it->second.desc + "\n"_ss;
+            sres += it->first + "("_ss;
+            if (whatToShow)
+                sres += "x"_ss;
+            else
+                for(unsigned j = 0; j < it->second.args.size(); ++j)
+                {
+                    if(j)
+                        sres += SmartString(_ArgSeparator()) + SmartString(" "_ss);
+                    sres += it->second.args[j];
+                }
+            sres += ")"_ss + ssCommentDelimiterString + it->second.body + SmartString(schCommentDelimiter) + it->second.desc + "\n"_ss;
         }
     return sres;
 }

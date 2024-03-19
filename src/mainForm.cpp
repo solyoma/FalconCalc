@@ -1044,7 +1044,7 @@ void TfrmMain::miAppendClick(void *sender, nlib::EventParameters param)
 
 void TfrmMain::miEditVarsClick(void *sender, nlib::EventParameters param)
 {
-    VARFUNC_INFO vf;
+    VarFuncInfo vf;
     lengine->GetVarFuncInfo(vf);
 
     if(!frmVariables)

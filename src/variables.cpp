@@ -36,7 +36,7 @@ void TfrmVariables::InitializeFormAndControls() /* Control initialization functi
 	sgUser->SetBounds(nlib::Rect(4, 23, 348, 319));
 	sgUser->SetAlignment(nlib::alTop);
 	sgUser->SetTabOrder(0);
-	sgUser->SetColCount(4);
+	sgUser->SetColCount(4);	 // variables: 4 (name unit, definition, comment) functions: name, definition, comment
 	sgUser->SetRowCount(5);
 	sgUser->SetFixedColCount(0);
 	sgUser->SetSelectionKind(nlib::gskNoSelect);
@@ -158,7 +158,7 @@ TfrmVariables::~TfrmVariables()
 	/* Don't 'delete' the form. Call Destroy() instead which has access to the protected destructor. */
 }
 
-void TfrmVariables::Setup(const FalconCalc::VARFUNC_INFO &vfInfo)
+void TfrmVariables::Setup(const FalconCalc::VarFuncInfo &vfInfo)
 {
     _vf = vfInfo;
 //	tcVarsTabChange(tcVars, TabChangeParameters(tcVars->SelectedTab()));
@@ -207,96 +207,162 @@ void TfrmVariables::_CollectInto(SmartString &us, size_t &cnt)
     {
         if(!sgUser->String(0,i).empty() && !sgUser->String(1, i).empty())
         {		                     // name			 =			value :
-			us += SmartString(sgUser->String(0, i)) + "="_ss + SmartString(sgUser->String(1, i));
+			us += SmartString(sgUser->String(0, i)) + ssCommentDelimiterString + SmartString(sgUser->String(1, i));
 							// unit (even when empty)
-			us += SmartString(1, comment_delimiter) + SmartString(sgUser->String(2, i));
+			us += SmartString(1, schCommentDelimiter) + SmartString(sgUser->String(2, i));
 							// description / body
-			us += SmartString(1, comment_delimiter) + SmartString(sgUser->String(3, i)) + u"\n";
+			us += SmartString(1, schCommentDelimiter) + SmartString(sgUser->String(3, i)) + u"\n";
             ++n;
         }
     }
     cnt = n;
 }
 
-void TfrmVariables::tcVarsTabChange(void *sender, nlib::TabChangeParameters param)
+void TfrmVariables::SetupGridLayout(int tabIndex)
 {
-    size_t cntUser, cntBuiltin;
-    SmartString *psUser, *psBuiltin;
-    switch( tcVars->SelectedTab() )
-    {
-       case 0: _CollectInto(_vf.sUserVars, _vf.uUserVarCnt); break;
-       case 1: _CollectInto(_vf.sUserFuncs,_vf.uUserFuncCnt); break;
-    }
+	if (!tabIndex)		// functions. Fields: name, definition, comment
+	{
+		sgUser->SetColCount(3);
+		sgUser->SetColWidth(0, 80);
+		sgUser->SetColWidth(1, 100);
+		sgUser->SetColWidth(2, 300);
+		sgBuiltin->SetColCount(3);
+		sgBuiltin->SetColWidth(0, 80);
+		sgBuiltin->SetColWidth(1, 100);
+		sgBuiltin->SetColWidth(2, 300);
+	}
+	else				// variables Fields: name, unit, value,comment
+	{
+		sgUser->SetColCount(4);
+		sgUser->SetColWidth(0, 50);
+		sgUser->SetColWidth(1, 200);
+		sgUser->SetColWidth(2, 60);
+		sgUser->SetColWidth(3, 300);
+		sgBuiltin->SetColCount(4);
+		sgBuiltin->SetColWidth(0, 50);
+		sgBuiltin->SetColWidth(1, 200);
+		sgBuiltin->SetColWidth(2, 60);
+		sgBuiltin->SetColWidth(3, 300);
+	}
+}
+
+/*=============================================================
+ * TASK   :	to store user data from grid into 'tcVars' from previously
+ *			active Tab, then set data into grid from 'tcVars'
+ *			for the now active Tab
+ * PARAMS :	sender:
+ *			param:
+ * EXPECTS:
+ * GLOBALS:
+ * RETURNS:
+ * REMARKS: changes the number of columns and rows
+ *------------------------------------------------------------*/
+void TfrmVariables::tcVarsTabChange(void* sender, nlib::TabChangeParameters param)
+{
+	static int activeTab = tcVars->SelectedTab();
+
+	if (activeTab == param.tabindex && sgBuiltin->RowCount() > 5)
+		return;
+
+	activeTab = param.tabindex;
+
+    size_t cntUser=0, cntBuiltin=0;
+    SmartString *psUser=nullptr, *psBuiltin=nullptr;
+	constexpr const int FUNCTIONS = 0,
+						VARIABLES = 1;
     _changed = false;
-
-    switch( tcVars->SelectedTab() )
+	// and set data into actual Tab
+	SetupGridLayout(activeTab);
+    switch( activeTab )
     {
-	case 0:  
+		case FUNCTIONS:
+			// collect info from previously active Tab
+			_CollectInto(_vf.sUserVars, _vf.uUserVarCnt);	// collect variables
 			sgUser->SetString(0,0,L"Name(args)");
-			sgUser->SetString(1,0,L"Unit");
-			sgUser->SetString(2,0,L"Definition");
-			sgUser->SetString(3,0,L"Comment");
+			sgUser->SetString(1,0,L"Definition");
+			sgUser->SetString(2,0,L"Comment");
+            cntUser		= _vf.uUserFuncCnt;
+            cntBuiltin	= _vf.uBuiltinFuncCnt;
+            psUser		= &_vf.sUserFuncs;
+            psBuiltin	= &_vf.sBuiltinFuncs;
 
-             cntUser    = _vf.uUserFuncCnt;
-             cntBuiltin = _vf.uBuiltinFuncCnt;
-             psUser    = &_vf.sUserFuncs;
-             psBuiltin = &_vf.sBuiltinFuncs;
-             break;
-    case 1:  
+            break;
+		case VARIABLES:
+			// collect info from previously active Tab
+			_CollectInto(_vf.sUserFuncs,_vf.uUserFuncCnt);	// collect functions
 			sgUser->SetString(0,0,L"Variable");
-			sgUser->SetString(1,0,L"unit");
-			sgUser->SetString(2,0,L"Definition");
+			sgUser->SetString(1,0,L"Value");
+			sgUser->SetString(2,0,L"Unit");
 			sgUser->SetString(3,0,L"Comment");
 			 
-             cntUser    = _vf.uUserVarCnt;
-             cntBuiltin = _vf.uBuiltinVarCnt;
-             psUser    = &_vf.sUserVars;
-             psBuiltin = &_vf.sBuiltinVars;
-             break;
+            cntUser    = _vf.uUserVarCnt;
+            cntBuiltin = _vf.uBuiltinVarCnt;
+            psUser		= &_vf.sUserVars;
+            psBuiltin	= &_vf.sBuiltinVars;
+            break;
     }
     if((size_t)sgUser->RowCount() != cntUser + (cntUser ? 1 : 2))
         sgUser->SetRowCount(cntUser + (cntUser ? 1 : 2));
-    if(cntUser == 0)
-    {
-		sgUser->SetString(0,1,L"");
-		sgUser->SetString(1,1,L"");
-		sgUser->SetString(2,1,L"");
-		sgUser->SetString(3,1,L"");
-    }
     if((size_t)sgBuiltin->RowCount() != cntBuiltin)
         sgBuiltin->SetRowCount(cntBuiltin);
 
-    wstring s;
-    size_t st = 0,seol, pos, poscu, poscb;
-    for(size_t i = 1; i <= cntUser; ++i)
-    {
-        seol = psUser->find_first_of('\n',st);
-        s = ( (seol == string::npos ? psUser->mid(st) : psUser->mid(st, seol - st)) ).ToWideString(); // one line
-        st = seol+1;
-        pos = s.find_first_of('=');
-        poscu = s.find_first_of(comment_delimiter); // comment delimiter
-        poscb = s.find_first_of(comment_delimiter, poscu+1); // comment delimiter
+	if(cntUser == 0)
+	{
+		sgUser->SetString(0,1,L"");
+		sgUser->SetString(1,1,L"");
+		sgUser->SetString(2,1,L"");
+	}
 
-		sgUser->SetString(0,i,s.substr(0,pos));
-		sgUser->SetString(1,i,s.substr(pos+1, poscu-pos-1));
-		sgUser->SetString(2,i,s.substr(poscu+1, poscb-pos-1));
-		sgUser->SetString(3,i,s.substr(poscb+1));
-    }
-    st = 0;
-    for(size_t i = 0; i < cntBuiltin; ++i)
-    {
-        seol = psBuiltin->find_first_of('\n',st);
-        s = ((seol == string::npos ? psBuiltin->mid(st) : psBuiltin->mid(st, seol - st))).ToWideString();
-        st = seol+1;
-        pos = s.find_first_of('=');
-        poscu = s.find_first_of(comment_delimiter,pos); // comment delimiter
-        poscb = s.find_first_of(comment_delimiter, poscu+1); // comment delimiter
+	std::vector<SmartString> sUserData, sBuiltinData;
+	std::vector<SmartString> sUserLines, sBuiltinLines;
 
-		sgBuiltin->SetString(0,i,s.substr(0,pos));
-		sgBuiltin->SetString(1,i,s.substr(pos+1, poscu-pos-1));
-		sgBuiltin->SetString(2,i,s.substr(poscu+1, poscb-pos-1));
-		sgBuiltin->SetString(3,i,s.substr(poscb+1));
-    }
+    switch( activeTab )
+    {
+		case FUNCTIONS:
+			sUserData = psUser->Split(SCharT('\n'), false);
+			for (size_t i = 1; i <= cntUser; ++i)
+			{
+				sUserLines = sUserData[i-1].Split(schCommentDelimiter, true);
+				sgUser->SetString(0,i,sUserLines[0].ToWideString());
+				sgUser->SetString(1,i,sUserLines[1].ToWideString());
+				sgUser->SetString(2,i,sUserLines[2].ToWideString());
+			}
+			sBuiltinData = psBuiltin->Split(SCharT('\n'), false);
+			for (size_t i = 0; i < cntBuiltin; ++i)
+			{
+				sBuiltinLines = sBuiltinData[i].Split(schCommentDelimiter, true);
+
+				sgBuiltin->SetString(0,i,sBuiltinLines[0].ToWideString());
+				sgBuiltin->SetString(1,i,L"-");
+				sgBuiltin->SetString(2,i,sBuiltinLines[2].ToWideString());
+			}
+			break;
+		case VARIABLES:
+			sUserData = psUser->Split(SCharT('\n'), false);
+			for (size_t i = 1; i <= cntUser; ++i)
+			{
+				sUserLines = sUserData[i-1].Split(schCommentDelimiter, true);
+				int n = 0;
+				sgUser->SetString(0,i,sUserLines[n].ToWideString());
+				sgUser->SetString(2,i,sUserLines[++n].ToWideString());
+				if (sUserLines.size() == 3)	// no units
+					sgUser->SetString(1,i,L"-");
+				else
+					sgUser->SetString(1,i,sUserLines[++n].ToWideString());
+				sgUser->SetString(3,i,sUserLines[++n].ToWideString());
+			}
+			sBuiltinData = psBuiltin->Split(SCharT('\n'), false);
+			for (size_t i = 0; i < cntBuiltin; ++i)
+			{
+				sBuiltinLines = sBuiltinData[i].Split(schCommentDelimiter, true);
+
+				sgBuiltin->SetString(0,i,sBuiltinLines[0].ToWideString());
+				sgBuiltin->SetString(1,i,sBuiltinLines[1].ToWideString());
+				sgBuiltin->SetString(2,i,sBuiltinLines[2].ToWideString());
+				sgBuiltin->SetString(3,i,sBuiltinLines[3].ToWideString());
+			}
+			break;
+	}
 }
 
 void TfrmVariables::btnCancelClick(void *sender, nlib::EventParameters param)

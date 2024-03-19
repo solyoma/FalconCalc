@@ -5,8 +5,8 @@ class TfrmVariables : public nlib::Form
 public:
 	virtual void Destroy();
 	TfrmVariables();
-    void Setup(const FalconCalc::VARFUNC_INFO &vf);
-    void GetVarInfo(FalconCalc::VARFUNC_INFO &dest);
+    void Setup(const FalconCalc::VarFuncInfo &vf);
+    //void GetVarInfo(FalconCalc::VarFuncInfo &dest);
 N_PUBLIC: /* Designer generated list of public members. Do not edit by hand. */
 	nlib::TabControl *tcVars;
 	nlib::StringGrid *sgUser;
@@ -34,14 +34,14 @@ protected:
 	virtual ~TfrmVariables(); /* Don't make public. Call Destroy() to delete the object. */ 
 N_PROTECTED: /* Designer generated list of protected members. Do not edit by hand. */
 private:
-    FalconCalc::VARFUNC_INFO _vf;
+    FalconCalc::VarFuncInfo _vf;
     bool _changed;
 	bool _underResize;		// user/builtin function pane
 	int  _gridH;				// size of user var/function grid during resize
     void _CollectInto(SmartString &dest, size_t &cnt);    // from stringrid on actual page
+	void SetupGridLayout(int tabIndex = 0);	// 0: functions, 1: variables
 N_PRIVATE: /* Designer generated list of private members. Do not edit by hand. */
 	void InitializeFormAndControls(); /* Control initializations. Do not remove. */
 };
 
 extern TfrmVariables *frmVariables;
-

@@ -114,7 +114,7 @@ static const RealNumber rnNull("0"),
 			rn_c		("299792458"),			// speed of light in vacuum	 m⋅s-1
 			rn_eps0		("8.8541878128E-12"),	// vacuum electric permittivity	(F/m)
 			rn_fsc		("7.297352569311E-3"),	// fine-structure constant (e^2/ (2 εo h c )
-			rn_G		("6.6743015-11"),		// Newtonian constant of gravitation (m^3/(kg s^2))
+			rn_G		("6.6743015E-11"),		// Newtonian constant of gravitation (m^3/(kg s^2))
 			rn_gf		("9.81"),				// average g on Earth (9.81 m/s^2)
 			rn_h		("6.62607015E-34"),		// Planck constant  (J⋅s)
 			rn_hbar		("1.054571817E-34"),	// reduced Planck constant
@@ -122,13 +122,13 @@ static const RealNumber rnNull("0"),
 			rn_kc		("8.987551792314E9"),	// Coulomb constant (1/ (4 π εo)
 			rn_la		("6.02214076E23"),		// Avogadro constant	(1/mol)
 			rn_me		("9.109383701528E-31"),	// electron mass
-			rn_mf		("5.072E24"),			// mass of the Earth (kg)
+			rn_mf		("5.972168E24"),		// mass of the Earth (kg)
 			rn_mp		("1.6726219236951E-27"),// proton mass
 			rn_ms		("1.98849E30"),			// mass of the Sun	(kg)
 			rn_mu0		("1.25663706212E-6"),	// vacuum magnetic permeability (N/A^2)
 			rn_qe		("1.602176634E-19"),	// elementary charge (C)
 			rn_pfsc		("137.03599908421"),	// reciprocal of afs (approx 137) 
-			rn_rf		("6.3781E6"),			// radius of the Earth (m)
+			rn_rf		("6.378137E6"),			// radius of the Earth at the equator(m)
 			rn_rg		("8.31446261815324"),	// molar gas constant R (J/mol/K)
 			rn_rs		("6.957E8"),			// radius of the Sun (m)
 			rn_sb		("5.670374419E-8"),		// Stefan–Boltzmann constant (W/(m^2 K^4))
@@ -1090,11 +1090,13 @@ SmartString RealNumber::ToDecimalString(const DisplayFormat &format) const
 	switch (fmt.mainFormat)
 	{
 		case NumberFormat::rnfNormal:
-			if (fmt.displWidth && ( (nIntLength?nIntLength:1) + nSignLength + nExpLength) > (int)fmt.displWidth)	// integer part is too long and no space for fraction
+			if (fmt.displWidth >= 0 && ( (nIntLength?nIntLength:1) + nSignLength + nExpLength) > (int)fmt.displWidth)	// integer part is too long and no space for fraction
 				fmt.mainFormat = NumberFormat::rnfSci;					// try as Sci (and no break below)
 			else
 			{
-				nFractionDigits = roundingPositionInFractionalPart();	// supposing there was a decimal point in the integer part
+				int rp = roundingPositionInFractionalPart(); // of '_numberString'
+				if(rp >= 0)
+					nFractionDigits = rp;	// supposing there was a decimal point in the integer part, -1: no rounding
 				break;													// only break in this case, otherwise fall through
 			}
 		case NumberFormat::rnfSci:
@@ -1128,7 +1130,7 @@ SmartString RealNumber::ToDecimalString(const DisplayFormat &format) const
 	// now round the number string which does not contain decimal point, leading or trailing zeros, separators or exponent
 	// this may increment the number of integer digits by 1, which may mean an exponent change 
 	// in modes SCI or ENG and a change for the positions required by the rounded number in other modes
-	int nrp = nFractionDigits;	// round a string which starts with 'nIntegerDigits, integer digits plus
+	int nrp =  nLeadingDecimalZeros + nFractionDigits;	// round a string which starts with 'nIntegerDigits, integer digits plus
 								// and has 'nLeadingDecimalZeros' virtual '0' characters
 								// in the fractional part
 	roundedString = _RoundNumberString(r._numberString, nIntegerDigitsAfter = nIntegerDigits, nrp, nLeadingDecimalZeros);
@@ -1153,17 +1155,20 @@ SmartString RealNumber::ToDecimalString(const DisplayFormat &format) const
 	// or leading or trailing zeros, so it may be empty (all zeros), may contain the integer part
 	// and at most so many non zero decimal places as fit into the visible area
 	// 'nDisplayWidth'
+	// 'nFractionDigits' is either the number of digits in roundedString or -1
+	// when -1: then use all digits
 
 	auto appendFractionalPart = [&](SmartString &res)
 		{
-			if (/*nFracLength && */ nFractionDigits > 0)	// otherwise no space for fraction or no fraction at all
+			size_t len = roundedString.length();
+			if (len > 0)	// otherwise no space for fraction or no fraction at all
 			{
 				int n = nIntegerDigits - nLeadingDecimalZeros;
 				res += _decPoint;
 
 				res += roundedString.at(n++, chZero);
 				int dp = 1;
-				for (int i = 1; i < nFractionDigits; ++i)
+				for (int i = 1; i < nLeadingDecimalZeros + len; ++i)
 				{
 					if (fmt.useFractionSeparator && ((dp++ % 3) == 0))
 						res += chSpace;
@@ -2133,8 +2138,8 @@ SmartString RealNumber::_RoundNumberString(SmartString &numString, int &intLen, 
 		nine = SCharT('9');
 
 	int carry = numString.at(roundPos, zero) >= five ? 1 : 0;
-	SmartString res = numString;
-	if(leadingZeros < roundPos && roundPos < leadingZeros + (int)numString.length())
+	SmartString res = numString.left(rPos);;
+	if(leadingZeros < roundPos && roundPos < leadingZeros + (int)res.length())
 		res.erase(roundPos);
 	if (!carry)
 		return res;
@@ -2817,7 +2822,10 @@ static inline RealNumber deg2rad(RealNumber deg)
 { 
 	return deg / RealNumber("180") * pi;
 }
-static RealNumber _sin(RealNumber r)		// sine	(DEG)	0<= r <= 90
+// ------------- flag to disallow recursive call with units in radian
+static bool _sinCalcOn = false;
+
+static RealNumber _sin(RealNumber r)		// sine	(DEG)	0<= r <= 360 =>  0 <= _sin <= 1
 { 
 	r = deg2rad(r);
 	// from https://github.com/nlitsme/gnubc/blob/master/bc/libmath.b
@@ -2832,15 +2840,13 @@ static RealNumber _sin(RealNumber r)		// sine	(DEG)	0<= r <= 90
 	  /* precondition r. */
 
 	v = piP2.value / RealNumber::RN_2;	// π/4
-	int sign = r.Sign();
-	r.ToAbs();
 	//	scale = 0 // to get integer part only
-	RealNumber remainder, four = RealNumber("4");
-	n = (r / v + RealNumber::RN_2).Div(four, remainder);	// remainder just to ensure integer divison
+	RealNumber remainder;
+	n = (r / v + RealNumber::RN_2).Div(RealNumber::RN_4, remainder);	// remainder just to ensure integer divison
 								// n = [(4r/π+2)/4] = [(r+π/2)/π], e.g. when r = π/4 => [(1/4+1/2)]=0
 								// n >0 when r >= π/2
 	if(n.IsNull())
-		r = r - four * n * v;		// move r into [0,π/2)
+		r = r - RealNumber::RN_4 * n * v;		// move r into [0,π/2)
 	if (n.IsOdd())	//		if (n % 2) x = -x		  for angles in quarters 3 or 4
 		r.SetSign(-r.Sign());
 
@@ -2857,8 +2863,8 @@ static RealNumber _sin(RealNumber r)		// sine	(DEG)	0<= r <= 90
 		if (e.Abs() <= epsilon)// x^(2n+1)/(2n+1)! < accuracy
 		{
 			RealNumber::SetMaxLength(z);
-			if (sign<0) 
-				return -v;
+			if (r.Abs() < RealNumber("1e-40"))		// max accuracy for sine
+				r = rnNull;
 			return v;
 		}
 		v += e;					  // sum
@@ -2869,49 +2875,65 @@ static RealNumber _sin(RealNumber r)		// sine	(DEG)	0<= r <= 90
 }
 RealNumber sin (RealNumber r, AngularUnit au)		// sine
 {
-	RealNumber rn360 = RealNumber("360");
-	RealNumber rn180 = RealNumber("180");
-	RealNumber rn90  = RealNumber("90");
 
 	int sign = r.Sign();	
 	r.ToAbs();				// calculate sign of |r|
 
+	RealNumber rn360 = RealNumber("360"),
+				epsilon = RealNumber("1e-40");
+
 	switch (au)
 	{
 		case AngularUnit::auDeg:
+		{
+			RealNumber rn180 = RealNumber("180");
+			RealNumber rn90  = RealNumber("90");
+
 			r.Div(rn360, r);			 // |r| is < 360
 			// sine: 		+  | +
 			//			 ------|------
 			//				-  | -
 			if (r >= rn180)
 			{
-				sign = -sign;			   // div kellene real-ra, hogy legyen maradek
+				sign = -sign;
 				r -= rn180;
 			}
 			if (r > rn90)					// sin(90+alpha)=cos(alpha)=sin(90-alpha), if alpha < 180
-				r = rn180 - r;
+				r = r - rn90;
 
 			// now r is in 0<= r <= 90
-			if (r.IsNull())
-				return zero;
-			else if (r == RealNumber("30"))
-				return half;
-			else if (r == RealNumber("45"))
-				return rsqrt2;
-			else if (r == RealNumber("60"))
-				return sqrt3P2;
-			else if (r == rn90)
+			if (r < epsilon)
 				return RealNumber::RN_1;
+			else if (r == RealNumber("30"))
+			{
+				r = half;
+				return r.SetSign(sign);
+			}
+			else if (r == RealNumber("45"))
+			{
+				r = rsqrt2.value;
+				return r.SetSign(sign);
+			}
+			else if (r == RealNumber("60"))
+			{
+				r = sqrt3P2.value;
+				return r.SetSign(sign);
+			}
+			else if (r == rn90)
+			{
+				r = RealNumber::RN_1;
+				return r.SetSign(sign);
+			}
 			else
-				return _sin(r).SetSign(sign);
+				return _sin(r).SetSign(sign);		   // 0 <= r <= 90
 			break;
-
+		}
 		case AngularUnit::auRad:
 			r /= twoPi.value;
-			r = r.Frac();		// 0 <= r < 1
+			r = r.Frac();				// 0 <= r <= 1
 			// [[fallthrough]];			// from C++17
-		case AngularUnit::auTurn:			// full circle 1 turn
-			return sin(r * rn360);
+		case AngularUnit::auTurn:		// full circle 1 turn
+			return sin(r*rn360);		// must change to DEG, otherwise infinite loop!
 			break;
 
 		case AngularUnit::auGrad:			// full circle 400 Grad
@@ -2928,35 +2950,38 @@ RealNumber csc(RealNumber r, AngularUnit au)		// cosecant = 1/sine
 
 RealNumber cos(RealNumber r, AngularUnit au)		// cosine
 {
-	RealNumber rn360 = RealNumber("360");
-	RealNumber rn270 = RealNumber("270");
-	RealNumber rn180 = RealNumber("180");
-	RealNumber rn90 = RealNumber("90");
-	int sign = r.Sign();	
-	r.ToAbs();				// posiitve
+	RealNumber rn360 = RealNumber("360"),
+				epsilon = RealNumber("1e-40");
+	// cos (- alpha) = cos(alpha) : argument always positive
+	r.ToAbs();				
 
 	switch (au)
 	{
 		case AngularUnit::auDeg:
+		{
+			RealNumber rn270 = RealNumber("270");
+			RealNumber rn180 = RealNumber("180");
+			RealNumber rn90 = RealNumber("90");
 
 			(void)r.Div(rn360, r);	 // |r| is < 360
 			// sine: 		-  | +
 			//			 ------|------
 			//				-  | +
-			if (r <= rn90)
-				return sin(rn90 - r).SetSign(sign);
-			if (r <= rn180)
-				return sin(rn180 - r).SetSign(-sign);
-			if (r <= rn270)
-				return sin(r - rn180).SetSign(-sign);
-			return sin(r - rn270).SetSign(sign);
+			if (r <= rn90+epsilon)
+				return sin(rn90 - r).SetSign(1);
+			if (r <= rn180+epsilon)
+				return sin(r - rn90).SetSign(-1);
+			if (r <= rn270+epsilon)
+				return sin(r - rn180).SetSign(-1);
+			return sin(rn270 - r).SetSign(1);		// > 270
+		}
 
 		case AngularUnit::auRad:
 			r /= twoPi.value;
-			r = r.Frac();		// 0<= r <= 1
+			r = r.Frac();		// 0<= r <= 1 => number of "turns"
 			// [[fallthrough]]; // From C++17
 		case AngularUnit::auTurn:			// full circle 1 turn
-			return cos(r * rn360).SetSign(sign);
+			return cos(r * rn360);
 
 		case AngularUnit::auGrad:			// full circle 400 Grad
 			return cos(rn360 / RealNumber("400") * r);

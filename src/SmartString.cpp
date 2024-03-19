@@ -138,7 +138,7 @@ namespace SmString {
 				sv.push_back(mid(pos0, (size_t)pos - pos0));
 			pos0 = (size_t)++pos;
 		}
-		if(pos0 < length())
+		if(pos0 < length() || (pos0 == length() && keepEmpty))
 			sv.push_back(mid(pos0));
 
 		return sv; ;

@@ -37,7 +37,8 @@ using namespace LongNumber;
 
 namespace FalconCalc
 {
-    extern const SCharT comment_delimiter;
+    extern const SCharT schCommentDelimiter;
+    extern const SmartString ssCommentDelimiterString;
 
 	enum TokenType {tknEOL,		    // end of line
 					tknUnknown,		// e.g. ','
@@ -205,7 +206,15 @@ namespace FalconCalc
 
     /*=============================================================
      * User defined variables
-     * which are created from line: <name> = <definition>[:]
+     * which are created from input line whose format is: 
+     *      <name> = <definition>[:comment]
+     * where
+     *  <definition> is a formula, possibly using existing variables
+     *      optional comment may contain a unit between []
+     *  example:
+     *      a=12 *sin(3pi/2):[kg] something I made up
+     * If the colon is not given both the unit and the comment will be empty
+     * If no unit is given 'unit' will be empty
      *------------------------------------------------------------*/
     struct Variable
     {        
@@ -221,6 +230,32 @@ namespace FalconCalc
 
         Variable(){}
         Variable(Constant &c) : data(c) {}
+        Variable(SmartString line) 
+        {
+            int pos = line.indexOf(SCharT('='));
+            if (pos < 0)
+                return;
+            data.name = line.left(pos++);         // to definition
+            pos = line.indexOf(schCommentDelimiter, pos);
+            if (pos < 0)    // only variable body
+                body = line.mid(pos);
+            else
+            {
+                pos = line.indexOf("["_ss, pos + 1);
+                if (pos >= 0)
+                {
+                    int pos1 = line.indexOf("]"_ss, pos + 1);
+                    if (pos1 > 0)    // else no unit
+                    {
+                        data.unit = line.mid(pos + 1, pos1 - pos);
+                        ++pos1;
+                    }
+                    else 
+                        pos1 = pos;
+                    data.desc = line.mid(pos1);
+                }
+            }
+        }
         explicit Variable(const wchar_t* cname, const wchar_t* cunit, const wchar_t* cdesc, const RealNumber cvalue = RealNumber()) :
             data(cname, cvalue, cunit, cdesc) {}
         explicit Variable(const String name, const RealNumber value, const String unit, const String desc) : 
@@ -286,7 +321,7 @@ namespace FalconCalc
 
     class LittleEngine;
 
-    struct VARFUNC_INFO
+    struct VarFuncInfo
     {
         unsigned uBuiltinFuncCnt;
         unsigned uBuiltinVarCnt;
@@ -394,7 +429,7 @@ namespace FalconCalc
         LittleEngine &operator=(const LittleEngine &src);
         RealNumber Calculate();                                 // using infix and angleUnit
 		SmartString Postfix() const;                            // get converted data as SmartString
-        void GetVarFuncInfo(VARFUNC_INFO &vf);                  // how many and what are they
+        void GetVarFuncInfo(VarFuncInfo &vf);                  // how many and what are they
         SmartString GetVariables(bool builtin=false) const;     // in a single SmartString
         SmartString GetFunctions(bool builtin=false) const;     // each line contains one var/func
                                                                 // <name>=<body>;<comment>ar/a
