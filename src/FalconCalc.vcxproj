@@ -72,7 +72,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(LibraryPath);$(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <EntryPointSymbol>wWinMainCRTStartup</EntryPointSymbol>
-      <AdditionalDependencies>ComCtl32.lib;GdiPlus.lib;Uxtheme.lib;urlmon.lib;debugablakok.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>ComCtl32.lib;GdiPlus.lib;Uxtheme.lib;UserEnv.lib;urlmon.lib;debugablakok.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Manifest>
       <AdditionalManifestFiles>%(AdditionalManifestFiles)</AdditionalManifestFiles>
@@ -99,7 +99,7 @@
       <BaseAddress>
       </BaseAddress>
       <EntryPointSymbol>wWinMainCRTStartup</EntryPointSymbol>
-      <AdditionalDependencies>ComCtl32.lib;GdiPlus.lib;Uxtheme.lib;urlmon.lib;ablakok.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>ComCtl32.lib;GdiPlus.lib;Uxtheme.lib;UserEnv.lib;urlmon.lib;ablakok.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Manifest>
       <AdditionalManifestFiles>%(AdditionalManifestFiles)</AdditionalManifestFiles>

@@ -478,6 +478,9 @@ RealNumber RealNumber::RoundedToDigits(int countOfSignificantDigits) const
 
 SmartString RealNumber::_ToBase(int base, size_t maxNumDigits) const	// base must be >1 && <= 16
 {	
+	if (IsNaN())
+		return NAN_STR;
+
 	// expects remainder to be <one (binary, octal, hexadecimal) < 16
 	RealNumber tmp(*this),
 				divisor = (base == 16 ? RN_16 : base == 8 ? RN_8 : base == 2 ? RN_2 : RN_10),
@@ -1168,7 +1171,7 @@ SmartString RealNumber::ToDecimalString(const DisplayFormat &format) const
 
 				res += roundedString.at(n++, chZero);
 				int dp = 1;
-				for (int i = 1; i < nLeadingDecimalZeros + len; ++i)
+				for (size_t i = 1; i < nLeadingDecimalZeros + len; ++i)
 				{
 					if (fmt.useFractionSeparator && ((dp++ % 3) == 0))
 						res += chSpace;
@@ -1780,15 +1783,15 @@ RealNumber RealNumber::_LogOpWith(const RealNumber& ra, LogicalOperator lop) con
 	{
 		case LogicalOperator::lopOr:
 			for (int i = 0; i < left._exponent; ++i)
-				res[i] = left._numberString[i] | right._numberString[i];
+				res.at(i) = left._numberString.at(i) | right._numberString.at(i);
 			break;
 		case LogicalOperator::lopXOr:
 			for (int i = 0; i < left._exponent; ++i)
-				res[i] = (left._numberString[i] ^ right._numberString[i]) + '0';	// xor removes high 4 bits
+				res.at(i) = (left._numberString.at(i) ^ right._numberString.at(i)) + SCharT('0');	// xor removes high 4 bits
 			break;
 		case LogicalOperator::lopAnd:
 			for (int i = 0; i < left._exponent; ++i)
-				res[i] = (left._numberString[i] & right._numberString[i]);
+				res.at(i) = (left._numberString.at(i) & right._numberString.at(i));
 			break;
 	}
 	left._numberString = res;
@@ -2123,7 +2126,7 @@ void RealNumber::_ShiftSmartString(RealNumber& rn, int byThisAmount)
  *------------------------------------------------------------*/
 SmartString RealNumber::_RoundNumberString(SmartString &numString, int &intLen, int rPos, int leadingZeros) const
 {
-	if (rPos < 0)		// use all digits
+	if (rPos < 0 || numString.at(0).IsAlpha()) 		// use all digits or string (NaN, Inf)
 		return numString;
 
 		// index of the digit to round up the string with
@@ -2138,7 +2141,7 @@ SmartString RealNumber::_RoundNumberString(SmartString &numString, int &intLen, 
 		nine = SCharT('9');
 
 	int carry = numString.at(roundPos, zero) >= five ? 1 : 0;
-	SmartString res = numString.left(rPos);;
+	SmartString res = numString.left(roundPos);
 	if(leadingZeros < roundPos && roundPos < leadingZeros + (int)res.length())
 		res.erase(roundPos);
 	if (!carry)
@@ -2430,6 +2433,8 @@ void RealNumber::_MultiplyStrings(RealNumber& left, RealNumber& right) const
  *------------------------------------------------------------*/
 void RealNumber::_DivideInternal(RealNumber& left, RealNumber& right, RealNumber* pRemainder) const
 {	
+	if (left.IsNaN() || right.IsNaN())
+		return left._SetNaN();
 				   // simplest case for integer division and remainder
 	if (pRemainder)
 	{

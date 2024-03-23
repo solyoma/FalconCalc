@@ -123,6 +123,10 @@ void TfrmVariables::InitializeFormAndControls() /* Control initialization functi
 	btnClear->Image()->SetBitmap(new nlib::Bitmap(NULL, MAKEINTRESOURCE(28684)));
 
 	OnClose = CreateEvent(this, &TfrmVariables::FormClose);
+	sgUser->OnClick = CreateEvent(this, &TfrmVariables::sgUserClick);
+	sgUser->OnDblClick = CreateEvent(this, &TfrmVariables::sgUserDoubleClick);
+	sgBuiltin->OnClick = CreateEvent(this,    &TfrmVariables::sgBuiltinClick);
+	sgBuiltin->OnDblClick = CreateEvent(this, &TfrmVariables::sgBuiltinDoubleClick);
 	tcVars->OnTabChange = CreateEvent(this, &TfrmVariables::tcVarsTabChange);
 	sgUser->OnColumnSizing = CreateEvent(this, &TfrmVariables::sgUserColumnSizing);
 	sgUser->OnEditorKeyDown = CreateEvent(this, &TfrmVariables::sgUserEditorKeyDown);
@@ -194,10 +198,24 @@ void TfrmVariables::BuiltinMouseUp(void *sender, nlib::MouseButtonParameters par
 }
 
 
-/*============================================================================
- * TASK: get data from previous (!) TAB of tcVars
- *---------------------------------------------------------------------------*/
-void TfrmVariables::_CollectInto(SmartString &us, size_t &cnt)
+ /*=============================================================
+  * TASK   : store user data (from all rows of sgUser) for
+  *				both user variables and user function in a single 
+  *				string
+  * PARAMS : us (O) : reference to string for all user data	
+  *			 cnt (I): reference to # of columns
+  * EXPECTS:
+  * GLOBALS:
+  * RETURNS: nothing
+  * REMARKS:- result in 'us' as a single utf8 string of '\n' 
+  *			  delimited lines which consists of fields separated
+  *			  by ssCommondelimiters (":")
+  *			- order of data stored for
+  *				variables:  name,formula/value,unit,comment
+  *				functions:	name,body,unit,comment
+  *			- functions must have a body
+  *------------------------------------------------------------*/
+void TfrmVariables::_CollectInto(SmartString& us, size_t& cnt)
 {
     if(!_changed)    // 'changed' must be modified in caller when necessary
         return;
@@ -206,12 +224,12 @@ void TfrmVariables::_CollectInto(SmartString &us, size_t &cnt)
     for(int i = 1; i < sgUser->RowCount(); ++i)
     {
         if(!sgUser->String(0,i).empty() && !sgUser->String(1, i).empty())
-        {		                     // name			 =			value :
+        {
 			us += SmartString(sgUser->String(0, i)) + ssCommentDelimiterString + SmartString(sgUser->String(1, i));
 							// unit (even when empty)
-			us += SmartString(1, schCommentDelimiter) + SmartString(sgUser->String(2, i));
+			us += ssCommentDelimiterString + SmartString(sgUser->String(2, i));
 							// description / body
-			us += SmartString(1, schCommentDelimiter) + SmartString(sgUser->String(3, i)) + u"\n";
+			us += ssCommentDelimiterString + SmartString(sgUser->String(3, i)) + u"\n";
             ++n;
         }
     }
@@ -222,14 +240,16 @@ void TfrmVariables::SetupGridLayout(int tabIndex)
 {
 	if (!tabIndex)		// functions. Fields: name, definition, comment
 	{
-		sgUser->SetColCount(3);
+		sgUser->SetColCount(4);
 		sgUser->SetColWidth(0, 80);
 		sgUser->SetColWidth(1, 100);
-		sgUser->SetColWidth(2, 300);
-		sgBuiltin->SetColCount(3);
+		sgUser->SetColWidth(2, 60);
+		sgUser->SetColWidth(3, 300);
+		sgBuiltin->SetColCount(4);
 		sgBuiltin->SetColWidth(0, 80);
 		sgBuiltin->SetColWidth(1, 100);
-		sgBuiltin->SetColWidth(2, 300);
+		sgBuiltin->SetColWidth(2, 60);
+		sgBuiltin->SetColWidth(3, 300);
 	}
 	else				// variables Fields: name, unit, value,comment
 	{
@@ -272,15 +292,17 @@ void TfrmVariables::tcVarsTabChange(void* sender, nlib::TabChangeParameters para
 						VARIABLES = 1;
     _changed = false;
 	// and set data into actual Tab
+
 	SetupGridLayout(activeTab);
     switch( activeTab )
     {
 		case FUNCTIONS:
 			// collect info from previously active Tab
 			_CollectInto(_vf.sUserVars, _vf.uUserVarCnt);	// collect variables
-			sgUser->SetString(0,0,L"Name(args)");
+			sgUser->SetString(0,0,L"Function(args)");
 			sgUser->SetString(1,0,L"Definition");
-			sgUser->SetString(2,0,L"Comment");
+			sgUser->SetString(2,0,L"Unit");
+			sgUser->SetString(3,0,L"Comment");
             cntUser		= _vf.uUserFuncCnt;
             cntBuiltin	= _vf.uBuiltinFuncCnt;
             psUser		= &_vf.sUserFuncs;
@@ -311,6 +333,7 @@ void TfrmVariables::tcVarsTabChange(void* sender, nlib::TabChangeParameters para
 		sgUser->SetString(0,1,L"");
 		sgUser->SetString(1,1,L"");
 		sgUser->SetString(2,1,L"");
+		sgUser->SetString(3,1,L"");
 	}
 
 	std::vector<SmartString> sUserData, sBuiltinData;
@@ -322,10 +345,15 @@ void TfrmVariables::tcVarsTabChange(void* sender, nlib::TabChangeParameters para
 			sUserData = psUser->Split(SCharT('\n'), false);
 			for (size_t i = 1; i <= cntUser; ++i)
 			{
+				int n = 0;
 				sUserLines = sUserData[i-1].Split(schCommentDelimiter, true);
-				sgUser->SetString(0,i,sUserLines[0].ToWideString());
-				sgUser->SetString(1,i,sUserLines[1].ToWideString());
-				sgUser->SetString(2,i,sUserLines[2].ToWideString());
+				sgUser->SetString(0,i,sUserLines[n].ToWideString());
+				sgUser->SetString(1,i,sUserLines[++n].ToWideString());
+				if(sUserLines.size() == 3)
+					sgUser->SetString(2,i,L"-");
+				else
+					sgUser->SetString(2,i,sUserLines[++n].ToWideString());
+				sgUser->SetString(3,i,sUserLines[++n].ToWideString());
 			}
 			sBuiltinData = psBuiltin->Split(SCharT('\n'), false);
 			for (size_t i = 0; i < cntBuiltin; ++i)
@@ -334,7 +362,8 @@ void TfrmVariables::tcVarsTabChange(void* sender, nlib::TabChangeParameters para
 
 				sgBuiltin->SetString(0,i,sBuiltinLines[0].ToWideString());
 				sgBuiltin->SetString(1,i,L"-");
-				sgBuiltin->SetString(2,i,sBuiltinLines[2].ToWideString());
+				sgBuiltin->SetString(2,i,L"-");
+				sgBuiltin->SetString(3,i,sBuiltinLines[2].ToWideString());
 			}
 			break;
 		case VARIABLES:
@@ -415,8 +444,8 @@ void TfrmVariables::btnSaveClick(void *sender, nlib::EventParameters param)
        case 1: _CollectInto(_vf.sUserVars, _vf.uUserVarCnt); break;
     }
 
-    frmMain->_pEngine()->AddUserVariablesAndFunctions(_vf.sUserFuncs, 2);
-    frmMain->_pEngine()->AddUserVariablesAndFunctions(_vf.sUserVars,  1);
+    frmMain->pEngine()->AddUserVariablesAndFunctions(_vf.sUserFuncs, 2);
+    frmMain->pEngine()->AddUserVariablesAndFunctions(_vf.sUserVars,  1);
     frmMain->edtInfixTextChanged(sender,param); // to reflect changed values
     _changed = false;
     Close();
@@ -472,6 +501,22 @@ void TfrmVariables::sgUserEditorKeyDown(void *sender, nlib::KeyParameters param)
 
 }
 
+void TfrmVariables::sgUserClick(void* sender, nlib::EventParameters param)
+{
+
+}
+void TfrmVariables::sgUserDoubleClick(void* sender, nlib::MouseButtonParameters param)
+{
+
+}
+void TfrmVariables::sgBuiltinClick(void* sender, nlib::EventParameters param)
+{
+
+}
+void TfrmVariables::sgBuiltinDoubleClick(void* sender, nlib::MouseButtonParameters param)
+{
+
+}
 
 
 

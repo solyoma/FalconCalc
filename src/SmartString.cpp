@@ -127,9 +127,9 @@ namespace SmString {
 		rTrim();
 	}
 
-	std::vector<SmartString> SmartString::Split(const SCharT ch, bool keepEmpty)
+	StringVector SmartString::Split(const SCharT ch, bool keepEmpty) const
 	{
-		std::vector<SmartString> sv;
+		StringVector sv;
 		size_t pos0 = 0;
 		int pos;
 		while ((pos = indexOf(ch,pos0)) >=0) 
@@ -144,10 +144,25 @@ namespace SmString {
 		return sv; ;
 	}
 
-	std::vector<SmartString> SmartString::SplitRegex(const SCharT ch, bool keepEmpty)
+	StringVector SmartString::SplitRegex(const SmartString regexStr, bool keepEmpty) const
 	{
-		// TODO
-		return std::vector<SmartString>();
+		std::wstring ws = ToWideString(),
+					 rx = regexStr.ToWideString();
+		std::wsmatch matches;
+		std::wregex re(rx);
+		std::wsregex_token_iterator iti(ws.cbegin(), ws.cend(), re, -1);
+		std::wsregex_token_iterator end;
+
+		StringVector sv;
+		SmartString ss;
+		while (iti != end) 
+		{
+			ss = SmartString(iti->str());
+			if(ss.size() || keepEmpty)
+				sv.push_back(ss);
+			++iti;
+		}
+		return sv;
 	}
 
 	SmartString::SmartString(const char* pcstr)
@@ -368,6 +383,21 @@ namespace SmString {
 	const SmartString operator""_ss(const char* ps, size_t len) 
 	{ 
 		return SmartString(ps); 
+	}
+
+	StringVector::StringVector(const SmartString s, const SCharT ch, bool keepEmpty, bool trim=false)
+	{
+		*this = s.Split(ch, keepEmpty);
+		if (trim)
+			for (size_t i = 0; i < size(); ++i)
+				(*this)[i].Trim();
+	}
+	StringVector::StringVector(const SmartString s, SmartString regex, bool keepEmpty, bool trim=false)
+	{
+		*this = s.SplitRegex(regex, keepEmpty);
+		if (trim)
+			for (size_t i = 0; i < size(); ++i)
+				(*this)[i].Trim();
 	}
 }
 // output operator

@@ -184,7 +184,7 @@ Class Token
  * RETURNS: pos now points after the SmartString of operator
  *         'data' is set up
   *----------------------------------------*/
-void Token::GetOperator(const SmartString &text, unsigned &pos)
+void Token::_GetOperator(const SmartString &text, unsigned &pos)
 {
 #ifdef QTSA_PROJECT
 	uint c = text[pos++].unicode(),
@@ -251,7 +251,7 @@ void Token::GetOperator(const SmartString &text, unsigned &pos)
  * EXPECTS: 'text' and 'pos' <= text.length()
  * RETURNS: pos now points after the SmartString of digits
   *----------------------------------------*/
-void Token::GetDecDigits(const SmartString &text, unsigned &pos)
+void Token::_GetDecDigits(const SmartString &text, unsigned &pos)
 {
 //#ifdef QTSA_PROJECT
 //	#define isdigit(a,b) a.isDigit()
@@ -275,7 +275,7 @@ void Token::GetDecDigits(const SmartString &text, unsigned &pos)
  * RETURNS: nothing, type and number SmartString is set in 'data' member
  *         'pos' is positioned after the number SmartString
  *-----------------------------------------------------------*/
-void Token::GetDecimalNumber(const SmartString &text, unsigned &pos)
+void Token::_GetDecimalNumber(const SmartString &text, unsigned &pos)
 {
 
     const SCharT decpoint = RealNumber::DecPoint();
@@ -285,13 +285,13 @@ void Token::GetDecimalNumber(const SmartString &text, unsigned &pos)
         nFracP = 0, //           fractional
 		nExpP  = 0; //           exponent part starting after the 'e'
 	nIntP  = pos;         // start of integer part of number
-	GetDecDigits(text, pos);
+	_GetDecDigits(text, pos);
 	nIntP = pos - nIntP;      // length of integer part of number
 
 	if(text[pos] == decpoint)	// decimal point: get fractions
 	{
 		nFracP = ++pos;
-		GetDecDigits(text, pos);
+		_GetDecDigits(text, pos);
 		nFracP = pos - nFracP;
 	}
 	bool bExp = (text[pos] == 'e' || (text[pos] == 'E'));
@@ -300,7 +300,7 @@ void Token::GetDecimalNumber(const SmartString &text, unsigned &pos)
 		if(text[++pos] == '+' || text[pos] == '-')
 			++pos;
 		nExpP = pos;
-		GetDecDigits(text, pos);
+		_GetDecDigits(text, pos);
 		nExpP = pos - nExpP;
 	}
 	 // a number from a single decimal point or with no exponent after the 'e'
@@ -318,7 +318,7 @@ void Token::GetDecimalNumber(const SmartString &text, unsigned &pos)
  * RETURNS: nothing, type and number SmartString is set in 'data' member
  *         'pos' is positioned after the number SmartString
  *-----------------------------------------------------------*/
-void Token::GetHexNumber(const SmartString &text, unsigned &pos)
+void Token::_GetHexNumber(const SmartString &text, unsigned &pos)
 {
     unsigned startpos = pos;
     pos += 2;
@@ -338,7 +338,7 @@ void Token::GetHexNumber(const SmartString &text, unsigned &pos)
  * RETURNS: nothing, type and number SmartString is set in 'data' member
  *         'pos' is positioned after the number SmartString
  *-----------------------------------------------------------*/
-void Token::GetOctNumber(const SmartString &text, unsigned &pos)
+void Token::_GetOctNumber(const SmartString &text, unsigned &pos)
 {
 	locale loc = cout.getloc();
 	unsigned startpos = pos++;
@@ -360,7 +360,7 @@ void Token::GetOctNumber(const SmartString &text, unsigned &pos)
  * RETURNS: nothing, type and number SmartString is set in 'data' member
  *         'pos' is positioned after the number SmartString
  *-----------------------------------------------------------*/
-void Token::GetBinaryNumber(const SmartString &text, unsigned &pos)
+void Token::_GetBinaryNumber(const SmartString &text, unsigned &pos)
 {
     auto triggerError = []()
         {
@@ -389,7 +389,7 @@ void Token::GetBinaryNumber(const SmartString &text, unsigned &pos)
  * REMARKS: The character SmartString is considered a BIG ENDIAN
  *          number
  *-----------------------------------------------------------*/
-void Token::GetNumberFromQuotedString(const SmartString &text, unsigned &pos)
+void Token::_GetNumberFromQuotedString(const SmartString &text, unsigned &pos)
 {
 	locale loc = cout.getloc();
 	unsigned startpos = pos;
@@ -423,7 +423,7 @@ void Token::GetNumberFromQuotedString(const SmartString &text, unsigned &pos)
  *         'body' is the name of the variable/function/operator
  *         'pos' is positioned after the number SmartString
  *-----------------------------------------------------------*/
-void Token::GetVarOrFuncOrOperator(const SmartString &text, unsigned &pos)
+void Token::_GetVarOrFuncOrOperator(const SmartString &text, unsigned &pos)
 {
 	locale loc = cout.getloc();
 	int startpos = pos;
@@ -453,7 +453,7 @@ void Token::FromText(const SmartString &text, unsigned &pos)
 
 	// skip whitespace
 	unsigned len = text.length();
-	if(pos >= len)
+	if(pos >= len || text[pos] == schCommentDelimiter) 
     {
         type = tknEOL;
 		return;
@@ -469,7 +469,7 @@ void Token::FromText(const SmartString &text, unsigned &pos)
     --pos;  // go back to start of token
 
     if(c == SCharT('\'') )   // character SmartString
-        GetNumberFromQuotedString(text,pos);
+        _GetNumberFromQuotedString(text,pos);
 	else if(isdigit(c,loc) || c == decpoint || c == SCharT('#'))		// token is a decimal, hexadecimal, octal or binary number
 	{
 		bool bDecpF = (c == decpoint),							        // decimal point found ?
@@ -478,26 +478,26 @@ void Token::FromText(const SmartString &text, unsigned &pos)
 				bBinF = (c == SCharT('#'));
 
 		if(bHexF)                       // starts with 0x and ends when any non hex. digit character found
-			GetHexNumber(text, pos);    // 0x....
+			_GetHexNumber(text, pos);    // 0x....
 		else if(bOctF)
-			GetOctNumber(text, pos);    // 0....
+			_GetOctNumber(text, pos);    // 0....
 		else if(bBinF)                  // #...
 		{
 			if(!cn) // then EOL and number is a single binary type character
 				Trigger("Missing binary number"_ss);
-			GetBinaryNumber(text, pos);  // starting after the '#' type character
+			_GetBinaryNumber(text, pos);  // starting after the '#' type character
 		}
 		else // decimal number
 		{
 			if((!cn && bDecpF) || (bDecpF && !isdigit(cn,loc)))	// then EOL and number is a single decimal point
 				Trigger("Illegal number #2"_ss);
-			GetDecimalNumber(text, pos); // start at the first number/decimal point
+			_GetDecimalNumber(text, pos); // start at the first number/decimal point
 		}
 	}
     else if (isalpha(c, loc)) // variable, function or text operator (e.g. 'or')
-        GetVarOrFuncOrOperator(text, pos);
+        _GetVarOrFuncOrOperator(text, pos);
 	else // a possible operator character
-		GetOperator(text, pos);
+		_GetOperator(text, pos);
 }
 /*===================================================
  * TASK: construct a token from text
@@ -543,6 +543,8 @@ static RealNumber Acot(RealNumber r) { return acot(r, lengine->angleUnit); }
  *-----------------------------------------------------------*/
 LittleEngine::LittleEngine() : clean(true)
 {
+    _argSeparator = RealNumber::DecPoint() == SCharT('.') ? SCharT(',') : SCharT(';');
+
     if(!builtinsOk)
     {
         numBuiltinVars = constantsMap.size();       // in LongNumber.cpp
@@ -612,9 +614,9 @@ LittleEngine::LittleEngine() : clean(true)
  * EXPECTS:
  * RETURNS:
  *-----------------------------------------------------------*/
-void LittleEngine::HandleUnknown(Token *tok)
+void LittleEngine::_HandleUnknown(Token *tok)
 {
-	if(tok->Text()[0] == _ArgSeparator() )// If the token is a function argument separator (e.g., a comma):
+	if(tok->Text()[0] == _argSeparator )// If the token is a function argument separator (e.g., a comma):
 	{
 								// Until the token at the top of the stack is a left parenthesis,
 								// - (SA) which IS part of a function name! -
@@ -636,7 +638,7 @@ void LittleEngine::HandleUnknown(Token *tok)
 /*==================================================
  * TASK: handle a single operator
  *-------------------------------------------------*/
-void LittleEngine::HandleOperator(Token* tok)
+void LittleEngine::_HandleOperator(Token* tok)
 {
                            // If the token is an operator, 'tok', then
     while(!stack.empty())  // while there is an operator token, 'op2', at the top of the stack, and
@@ -655,7 +657,7 @@ void LittleEngine::HandleOperator(Token* tok)
 /*==================================================
  * TASK: handle a single left or right brace
  *-------------------------------------------------*/
-void LittleEngine::HandleBrace(Token* tok)
+void LittleEngine::_HandleBrace(Token* tok)
 {
     if(tok->Oper() == opOpenBrace) // If the token is a left parenthesis, then push it onto the stack
         stack.push(*tok);
@@ -685,20 +687,23 @@ void LittleEngine::HandleBrace(Token* tok)
  *-------------------------------------------------*/
  /*=============================================================
   * TASK   : convert single infix expression in 'expr'
- *       to postfix expression in 'tvPostfix'
-  * PARAMS :
-  * EXPECTS:
-  * GLOBALS: 'infix'   
-  * RETURNS: 0      : assignment expression
+  *             to postfix expression in 'tvPostfix'
+  * PARAMS : 'expr' - infix expression
+  * EXPECTS: - 'infix' may end with '\n' 
+  *          -  may contain variable/function definitions with 
+  *             units and comments at the end.
+  *          - if it does they are separated by 'schCommentDelimiter'
+  *             characters
+  * GLOBALS: 'infix', 'tvPostFix'
+  * RETURNS: 0      : found assignment expression
   *          1      : other
   *          and  'tvPostfix' is the token vector of expression
-  * REMARKS: - 'infix' may end with '\n' and may contain
-  *             variable/function definitions with comments at the
-  *             end. Comments are separated from the definition by
-  *             'schCommentDelimiter' which must be different from
+  * REMARKS: and  units and Comments are separated 
+  *             from the definition by  
+  *             characters which must be different from
   *             any characters allowed in an expression.
   *------------------------------------------------------------*/
-int LittleEngine::InfixToPostFix(const SmartString& expr)
+int LittleEngine::_InfixToPostFix(const SmartString& expr)
 {
     //check for (invalid characters up to the comment field
 	locale loc = cout.getloc();
@@ -721,7 +726,7 @@ int LittleEngine::InfixToPostFix(const SmartString& expr)
     }
 
     int result = 1;     // not an assignment
-    tvPostfix.clear();   // get rid of previous result
+    tvPostfix.clear();  // get rid of previous result
 
     bool needOp = false;        // operator needed ? Used for unary +,- or missing multiplication
      // example:
@@ -751,7 +756,7 @@ int LittleEngine::InfixToPostFix(const SmartString& expr)
             d.oper = opMUL;
             d.precedence = 7; // C.f. MathOperator::Setup()
             Token *op = new Token(tknOperator, "*"_ss, d);
-            HandleOperator(op);
+            _HandleOperator(op);
             delete op;
             needOp = false;
         }
@@ -764,7 +769,7 @@ int LittleEngine::InfixToPostFix(const SmartString& expr)
                                 needOp = true;
                                 break;
             case tknVariable:	  						// If the token is a variable check for assignments
-                                if(VariableAssignment(infix, pos, tok) == 0 )   // handles assignment
+                                if(_VariableAssignment(infix, pos, tok) == 0 )   // handles assignment
                                 {
     								tvPostfix.push_back(*tok); // otherwise add it to the output queue.
                                     needOp = true;
@@ -773,7 +778,7 @@ int LittleEngine::InfixToPostFix(const SmartString& expr)
                                     result = 0;
                                 break;
 			case tknFunction:							// If the token is a function name token,
-                                if(!FunctionAssignment(infix, pos, tok) )
+                                if(!_FunctionAssignment(infix, pos, tok) )
                                 {
                                     stack.push(*tok);   // then push it onto the stack.
                                     //unsigned pos = 0;
@@ -781,11 +786,14 @@ int LittleEngine::InfixToPostFix(const SmartString& expr)
                                     //Token brace(s, pos);   // function token ate oopening brace
                                     //stack.push(brace);
                                 }
-                                else
-                                    result = 0;     // asignment
+                                else                     // function asignment
+                                {
+                                    result = 0;     
+                                    pos = expr.length(); // function body processed already
+                                }
                                 break;
 			case tknUnknown:
-								HandleUnknown(tok);
+								_HandleUnknown(tok);
                                 needOp = false;
                                 break;
 			case tknOperator:   if(!needOp)     // '!', 'not' '~', unary '-' or '+'
@@ -814,7 +822,7 @@ int LittleEngine::InfixToPostFix(const SmartString& expr)
 										break;  // skip it
 									else if (tok->Oper() == opNOT || tok->Oper() == opCompl)
 									{
-										HandleOperator(tok);
+										_HandleOperator(tok);
 										break;
 									}
                                     else
@@ -823,10 +831,10 @@ int LittleEngine::InfixToPostFix(const SmartString& expr)
                                         Trigger("Syntax error"_ss);
                                     }
                                 }
-                                HandleOperator(tok);
+                                _HandleOperator(tok);
                                 needOp = false;
                                 break;
-            case tknBrace:      HandleBrace(tok);
+            case tknBrace:      _HandleBrace(tok);
                                 break;
             default: break;     // to make compilers happy
 		}
@@ -856,7 +864,7 @@ int LittleEngine::InfixToPostFix(const SmartString& expr)
  *              b = 2*a (==24)
  *              a = 3 => b == 6
  *---------------------------------------------*/
-void LittleEngine::MarkDirty(const SmartString name)
+void LittleEngine::_MarkDirty(const SmartString name)
 {
     FunctionTable::iterator it;
     for(it = functions.begin(); it != functions.end(); ++it)
@@ -874,7 +882,7 @@ void LittleEngine::MarkDirty(const SmartString name)
 /* =========================================================
  * TASK: test expression for variable assignment.
  * EXPECTS: 'expr' text of definition of variable
- *               should look like: [spaces]=[spaces]<body>[:[<unit>:]<description>]
+ *               should look like: name=<body>[:<description>:[<unit>]]
  *              where ':' is the comment delimiter
  *          'pos' start position after name  - a line may only contain a
  *                single variable definition,
@@ -883,10 +891,9 @@ void LittleEngine::MarkDirty(const SmartString name)
  * RETURNS: true if this is an assignment and variable definition or
  *                  redefinition is stored in VARIABLES
  *         false if first non-whitespace character is not an equal sign
- * REMARKS: expr format (variable name already processed):
- *       [white spaces]=[white spaces]<definition>[white spaces]
+ * REMARKS: variable name already processed and in 'tok'
  *---------------------------------------------------------*/
-bool LittleEngine::VariableAssignment(const SmartString &expr   , unsigned &pos, Token *tok)
+bool LittleEngine::_VariableAssignment(const SmartString &expr   , unsigned &pos, Token *tok)
 {
 	locale loc = cout.getloc();
 
@@ -902,6 +909,28 @@ bool LittleEngine::VariableAssignment(const SmartString &expr   , unsigned &pos,
     else if(variables.count(tok->Text() )) // already defined
         v.data.value = variables[ tok->Text()].data.value; // v = variables[ tok->Text()];
     ++pos;   // skip '='
+
+    StringVector sv(expr.mid(pos), schCommentDelimiter, false, true);     // pos after the '=' sign, drop empty fields
+        // sv[0] = body, sv[1] = comment, sv[2] = unit
+
+    v.data.name = tok->Text();
+    switch(sv.size())
+    {
+        case 3:
+            v.data.unit = sv[2];
+            // [[fallthrough]];			// from C++17
+        case 2:
+            v.data.desc = sv[1];
+            // [[fallthrough]];			// from C++17
+        case 1:
+            v.body = sv[0];
+            break;
+        default:
+            Trigger("Variable definition missing"_ss);
+            break;
+            break;
+    }
+#if 0
     while (pos < expr.length() && isspace((wchar_t)expr[pos], loc)) // trim spaces
         ++pos;
 
@@ -927,25 +956,25 @@ bool LittleEngine::VariableAssignment(const SmartString &expr   , unsigned &pos,
         descr = expr.substr(pos);
         pos += descr.length();
     }
-
     v.data = Constant(tok->Text(), RealNumber::RN_0, unit, descr);
+#endif
 
     LittleEngine if2pf(*this);      // functions or variables are not re-initialized
-    if2pf.InfixToPostFix(v.body);
+    if2pf._InfixToPostFix(v.body);
     v.definition = if2pf.tvPostfix;
     if(v.definition.size() == 1)    // maybe a constant
     {
         if(v.definition[0].Type() == tknNumber )
             v.data.value = v.definition[0].Value();  // and v.dirty remains false
         else  
-            v.data.value = if2pf.CalcPostfix(if2pf.tvPostfix);
+            v.data.value = if2pf._CalcPostfix(if2pf.tvPostfix);
     }
     else // leave it dirty :) ??? it wasn't
-        v.data.value = if2pf.CalcPostfix(if2pf.tvPostfix);
+        v.data.value = if2pf._CalcPostfix(if2pf.tvPostfix);
 
     variables[ tok->Text()] = v;
     // mark variables whose definition contains this variable dirty
-    MarkDirty(tok->Text());
+    _MarkDirty(tok->Text());
     clean = false;  // table modified
 
     calcResult = v.data.value;
@@ -955,6 +984,7 @@ bool LittleEngine::VariableAssignment(const SmartString &expr   , unsigned &pos,
 /* =========================================================
  * TASK: test expression for function assignment.
  * PARAMS: 'expr' text of function definition,
+ *                <name>(<argument list>) = <body>[:comment[:unit]]
                    may contain whitespaces which are skipped
  *          'pos' position after the opening brace - 
  *          'tok' pointer to actual function
@@ -968,7 +998,7 @@ bool LittleEngine::VariableAssignment(const SmartString &expr   , unsigned &pos,
  *          false if this is not a function assignment,
  * REMARKS: - throws exception if syntax error
  *---------------------------------------------------------*/
- bool LittleEngine::FunctionAssignment(const SmartString& expr, unsigned& pos, Token* tok)
+ bool LittleEngine::_FunctionAssignment(const SmartString& expr, unsigned& pos, Token* tok)
 {
    calcResult = RealNumber::RN_0;
    unsigned poseq = expr.find_first_of(u'=', pos);
@@ -978,16 +1008,41 @@ bool LittleEngine::VariableAssignment(const SmartString &expr   , unsigned &pos,
    if(functions.count(tok->Text()) ) // already defined
         if(functions[ tok->Text()].builtin)
             Trigger("Builtin functions cannot be redefined"_ss);
+   if(expr[poseq-1] != ')')
+        Trigger("Function definition missing right brace"_ss);
 
+   Func f;
+   f.name = tok->Text();
+   f.builtin = false;
+   SmartString arguments = expr.mid(pos, poseq - pos - 1);  // argument list
+
+   f.args = StringVector(arguments, ',' /*_argSeparator */ , false, true);
+
+   StringVector svFields(expr.mid(poseq+1), schCommentDelimiter, false, true);
+   switch (svFields.size())
+   {
+        case 3:
+            f.unit = svFields[2];
+            // [[fallthrough]]
+        case 2:
+            f.desc = svFields[1];
+            // [[fallthrough]]
+        case 1:
+            // [[fallthrough]]
+            f.body = svFields[0];
+            break;
+        default:
+            Trigger("Invalid function definition"_ss);
+            break;
+   }
+
+#if 0
    unsigned bpos = poseq;   // 'bpos': position of closing brace,
-
    while(bpos > pos && expr[bpos] != ')' )
         --bpos;
    if(bpos == pos && expr[pos] != ')') //no closing brace. == when empty parameter list
-        Trigger("Function definition missing right brace"_ss);
 
    locale loc = cout.getloc();
-   Func f;
 
    while( pos < bpos && isspace((wchar_t)expr[pos], loc))
         ++pos;
@@ -1004,7 +1059,7 @@ bool LittleEngine::VariableAssignment(const SmartString &expr   , unsigned &pos,
         f.args.push_back(expr.substr(pos, n - pos) );   // store argument name
         while( n < bpos && isspace((wchar_t)expr[n], loc))
             ++n;
-        if(n < bpos && expr[n] != _ArgSeparator())
+        if(n < bpos && expr[n] != _argSeparator)
             Trigger("Invalid character in function definition"_ss);
         ++n;    // skip ',' or to bpos
         while( n < bpos && isspace((wchar_t)expr[n], loc))
@@ -1025,20 +1080,16 @@ bool LittleEngine::VariableAssignment(const SmartString &expr   , unsigned &pos,
         f.desc = expr.substr(posComment+1);
         pos += f.desc.length()+1; // including the delimiter ':'
    }
-
+#endif
    LittleEngine if2pf(*this);
    try
    {
-       if2pf.InfixToPostFix(f.body);
+       if2pf._InfixToPostFix(f.body);
        f.definition = if2pf.tvPostfix;
        functions[ tok->Text()] = f;
        // mark variables whose definition contains this function dirty
-       MarkDirty(tok->Text());
+       _MarkDirty(tok->Text());
        clean = false;  // table modified
-   }
-   catch(SmartString text)
-   {
-       throw;
    }
    catch(...)
    {
@@ -1060,7 +1111,7 @@ bool LittleEngine::VariableAssignment(const SmartString &expr   , unsigned &pos,
  *          dirty variables are re-calculated
  *          and marked as clean
  *-------------------------------------*/
-void LittleEngine::DoVariable(const Token &tok)
+void LittleEngine::_DoVariable(const Token &tok)
 {
     SmartString name = tok.Text();
     if (constantsMap.count(name))
@@ -1075,7 +1126,7 @@ void LittleEngine::DoVariable(const Token &tok)
             try
             {
                 var.being_processed = true;
-                var.data.value = CalcPostfix(var.definition);
+                var.data.value = _CalcPostfix(var.definition);
                 var.being_processed = false;
                 var.dirty = false;
             }
@@ -1102,7 +1153,7 @@ void LittleEngine::DoVariable(const Token &tok)
  *          and marked as clean
  *          non existing functions trigger an error
  *-------------------------------------*/
-void LittleEngine::DoFunction(const Token &tok)
+void LittleEngine::_DoFunction(const Token &tok)
 {
     if(!functions.count(tok.Text()) ) // non existing function
         Trigger("Unknown function in expression"_ss);
@@ -1157,7 +1208,7 @@ void LittleEngine::DoFunction(const Token &tok)
     try
     {
         f.being_processed = true;
-        v = CalcPostfix(tv);
+        v = _CalcPostfix(tv);
         stack.push(v);
         f.being_processed = false;
     }
@@ -1181,7 +1232,7 @@ static RealNumber Complement(const RealNumber& r)
  *       argument is below it
  * RETURNS: nothing, changes 'stack'
  *-------------------------------------*/
-void LittleEngine::DoOperator(const Token &tok)
+void LittleEngine::_DoOperator(const Token &tok)
 {
     RealNumber res = RealNumber::RN_0;
 
@@ -1282,7 +1333,7 @@ void LittleEngine::DoOperator(const Token &tok)
  *       Because it can be called recursively it must
  *       remember the stcak position on entry
  *-------------------------------------------------*/
-RealNumber LittleEngine::CalcPostfix(TokenVec& tvPostfix)
+RealNumber LittleEngine::_CalcPostfix(TokenVec& tvPostfix)
 {
     unsigned stack_cnt = stack.size();
     TokenVec::iterator it;
@@ -1292,9 +1343,9 @@ RealNumber LittleEngine::CalcPostfix(TokenVec& tvPostfix)
         {
             case tknCharacter:
             case tknNumber:    stack.push(*it); break;
-            case tknVariable:  DoVariable(*it); break;
-            case tknFunction:  DoFunction(*it); break;
-            case tknOperator:  DoOperator(*it); break;
+            case tknVariable:  _DoVariable(*it); break;
+            case tknFunction:  _DoFunction(*it); break;
+            case tknOperator:  _DoOperator(*it); break;
             default: break;
         }
     }
@@ -1317,13 +1368,13 @@ RealNumber LittleEngine::Calculate()
 {
     try
     {
-        if(!InfixToPostFix(infix) ) // then variable or function definition
+        if(!_InfixToPostFix(infix) ) // then variable or function definition
         {
             resultType = ResultType::rtDefinition;
             return calcResult;
         }
 
-        return CalcPostfix(tvPostfix);
+        return _CalcPostfix(tvPostfix);
     }
     catch(...)
     {
@@ -1360,82 +1411,16 @@ SmartString LittleEngine::Postfix() const
  * RETURNS: true: if there was no need to save the data or the save was
  *          successful, false otherwise
  *-----------------------------------------------------------*/
-bool LittleEngine::SaveTables(const SmartString &name) // if it wasn't read and no name is given it won't be saved
+bool LittleEngine::SaveTables(SmartString filename) // if it wasn't read and no name is given it won't be saved
 {
-    if(clean && name.empty())  // only save if it wasn't saved
-        return true;    // already to this file
-
-    if(!name.empty() && name_variable_table.empty()) // no save requested
-        return true;
-    if(clean && name.empty() && name_variable_table != name) // same name
+    if(clean && (filename.empty() || ssNameOfDatFile == filename))                    // 
+        return true;       // don't save if it was saved already into this file
+    if(!filename.empty() && ssNameOfDatFile.empty()) // or when no save requested
         return true;
 
-    SmartString filename = name;
     if (filename.empty())
-        filename = name_variable_table;
+        filename = ssNameOfDatFile;
 
-#if defined(__BORLANDC__)
-    FILE *f = _wfopen(name.ToWideString(), "wt"_ss);
-    if(!f)
-        return false;
-    string s = VERSION_STRING;
-    fputs( ( s + "\nVariables\n"_ss).c_str(), f);
-    SmartString ws;
-    int siz = 1023; // initial size of buffer
-    char *buf = new char[1024]; // buffer for wcstombs conversion
-
-    if(variables.size() )
-    {
-        for(mit = variables.begin(); mit != variables.end(); ++mit)
-            if(!mit->second.builtin)
-            {
-                ws = mit->first+"="+mit->second.body;
-                if(!mit->second.description.empty() )
-                    ws+= schCommentDelimiter +mit->second.description;
-                ws += "\n"_ss;
-                if(ws.length() > siz)
-                {
-                        delete buf;
-                        buf = new char[ (siz = 2*ws.length())+1];
-                }
-                wcstombs(buf, ws.c_str(), 1023);
-                fputs(buf,f);
-            }
-    }
-    fputs("Functions\n",f);
-    if(functions.size() )
-    {
-        for(mit = functions.begin(); mit != functions.end(); ++mit)
-        {
-            if(mit->second.builtin)
-               continue;
-            ws = mit->first+"("_ss;
-
-            if(!mit->second.args.empty())
-            {
-                vector<SmartString>::const_iterator vit;
-                vit = mit->second.args.begin();
-                ws += (*vit);
-                ++vit;
-                for( ; vit != mit->second.args.end(); ++vit)
-                    ws += ","+(*vit);
-            }
-            ws += "_ss)="+mit->second.body;
-            if(!mit->second.description.empty() )
-                ws += schCommentDelimiter + mit->second.description;
-            ws += "\n"_ss;
-            if(ws.length() > siz)
-            {
-                        delete buf;
-                        buf = new char[ (siz = 2*ws.length())+1];
-            }
-            wcstombs(buf, ws.c_str(), 1023);
-            fputs(buf,f);
-        }
-    }
-    delete [] buf;
-    fclose(f);
-#else
     std::wofstream ofs;
 	ofs.open(SmartString(filename).ToWideString(), ios_base::out);
 	if( ofs.fail() )
@@ -1476,7 +1461,6 @@ bool LittleEngine::SaveTables(const SmartString &name) // if it wasn't read and 
 			ofs << endl;
 		}
 	}
-#endif
     clean = true;
     return true;
 }
@@ -1485,48 +1469,34 @@ bool LittleEngine::SaveTables(const SmartString &name) // if it wasn't read and 
  * EXPECTS: file name
  * RETURNS: true for success or false for error
  *-----------------------------------------------------------*/
-bool LittleEngine::ReadTables(const  SmartString &name)
+bool LittleEngine::ReadTables(SmartString name)
 {
-    name_variable_table = name;
-#if defined(__BORLANDC__)
-// valamiert "bad file descriptor" van ha a RAD STUDIO XE-vel forditom
-    FILE *f = _wfopen(name,"rt"_ss);
-    if(!f)
-        return false;
-    char buf[1024];
-    buf[1023]=0;
-    fgets(buf, 1023,f);
-    if(strncmp(buf, VERSION_STRING, strlen(VERSION_STRING)) )
-    {
-        fclose(f);
-        return false;
-    }
-    wchar_t wbuf[1024];
-    while( fgets(buf, 1023,f) )
-    {
-        if(strcmp(buf, "Variables\n"_ss) && strcmp(buf, "Functions\n"_ss) )
-*        {
-            mbstowcs(wbuf, buf, 1923);
-            InfixToPostFix(SmartString(wbuf).erase(strlen(buf)-1) );
-        }
-    }
-    fclose(f);
-#else
+    if(name.empty())
+        name = ssNameOfDatFile;
+
         std::wifstream in(SmartString(name).ToWideString(), ios_base::in);
 		if(in.fail() )
 			return false;
 
 		std::wstring line;
 		std::getline(in, line);
-		if(line != L"FalconCalc V1.0" )
+		if(line.substr(0, 12) != L"FalconCalc V" )
 			return false;
 
-		while(std::getline(in, line) )
-		{
-			if( (line != L"Variables") && line != L"Functions")
-				InfixToPostFix(SmartString(line) );
-		}
-#endif
+        while (std::getline(in, line))
+        {
+            if ((line != L"Variables:") && line != L"Functions:")
+            {
+                try
+                {
+                    _InfixToPostFix(SmartString(line));    // handles assignements and function definitions as well
+                }
+                catch (...) // and puts them into 'variables' or 'functions'
+                {
+                    throw;
+                }
+            }
+        }
     return clean = true;
 }
 /*========================================================
@@ -1678,8 +1648,8 @@ SmartString LittleEngine::GetVariables(bool builtin) const
 
 /*========================================================
  * TASK:    Create a display string for all functions
- * EXPECTS: builtin: true: list of builtins
- *                   false: list of user defined functions
+ * EXPECTS: whatToShow: true: list of builtins
+ *                      false: list of user defined functions
  * RETURNS: single SmartString containing functions in \n
  *          separated lines
  * REMARKS: - output format: lines, separated by \n characters
@@ -1702,7 +1672,7 @@ SmartString LittleEngine::GetFunctions(bool whatToShow) const
                 for(unsigned j = 0; j < it->second.args.size(); ++j)
                 {
                     if(j)
-                        sres += SmartString(_ArgSeparator()) + SmartString(" "_ss);
+                        sres += SmartString(_argSeparator) + SmartString(" "_ss);
                     sres += it->second.args[j];
                 }
             sres += ")"_ss + ssCommentDelimiterString + it->second.body + SmartString(schCommentDelimiter) + it->second.desc + "\n"_ss;
@@ -1723,7 +1693,7 @@ LittleEngine &LittleEngine::operator=(const LittleEngine &src)
     calcResult  = src.calcResult;
     //variables   = src.variables;      static variables now
     //functions   = src.functions;
-    name_variable_table = src.name_variable_table;
+    ssNameOfDatFile = src.ssNameOfDatFile;
     clean       = src.clean;
     return *this;
 }
@@ -1770,7 +1740,7 @@ bool LittleEngine::AddUserVariablesAndFunctions(SmartString def, int what) //wha
         en = def.find_first_of(char16_t('\n'), st);
         try
         {
-           ip.InfixToPostFix(def.substr(st,en-st) );
+           ip._InfixToPostFix(def.substr(st,en-st) );
         }
         catch(...)
         {

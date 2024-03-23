@@ -18,8 +18,8 @@ public:
 
 	virtual void Destroy();
 
-	TStringList *slHistory;
-	FalconCalc::LittleEngine *_pEngine();
+	TStringList *pslHistory;
+	FalconCalc::LittleEngine *pEngine();
 
 N_PUBLIC: /* Designer generated list of public members. Do not edit by hand. */
 	nlib::FontDialog *FontDialog1;
@@ -163,26 +163,30 @@ protected:
 	virtual LRESULT WindowProc(UINT wMessage, WPARAM w,LPARAM l) override;
 N_PROTECTED: /* Designer generated list of protected members. Do not edit by hand. */
 private:
-    int nDecOptTop,  // when open
-        nHexBtnTop;  // when dec options panel open
-	bool busy;
+    int _nDecOptTop,  // when open
+        _nHexBtnTop;  // when dec options panel open
+	bool _busy;
     // history options
-    bool added;			// already added to history by timer, reset by keypress
-	bool bAutoSave;		// autosave activated?
-	int coMoveDX,		// not 0 then  move history window together with main 
-		coMoveDY;		//  x and y coord difference between left tops of the windows
-	int watchdog;     // add to history if watchdog is > given number, reset when formula changes
-    int watchLimit;   // default: 10: 0 - switch off autosave
-    size_t maxHistDepth; // == 0: unlimited
+    bool _added;			// already added to history by timer, reset by keypress
+	bool _bAutoSave;		// autosave activated?
+	int _coMoveDX,		// not 0 then  move history window together with main 
+		_coMoveDY;		//  x and y coord difference between left tops of the windows
+	int _watchdog;		// add to history if _watchdog is > given number, reset when formula changes
+    int _watchLimit;		// default: 10: 0 - switch off autosave
+    size_t _maxHistDepth;// == 0: unlimited
+	std::wstring _wsUserDir;	// store user directory here
 
-    Checkbox *chkArr[7];
+    Checkbox *	_chkArr[7];
 
-	void EnableMyTimer(bool enable);
-	bool LoadState(std::wstring name);
-	bool SaveState(std::wstring name);
-	void AddToHistory(std::wstring text);
-	void ShowResults();
-	void ShowMessageOnAllPanels(std::wstring s);
+	void _EnableMyTimer(bool enable);
+
+	std::wstring _GetUserDir();			   
+	void _GetVirtualDisplaySize();
+	bool _LoadState(std::wstring name);
+	bool _SaveState(std::wstring name);
+	void _AddToHistory(std::wstring text);
+	void _ShowResults();
+	void _ShowMessageOnAllPanels(std::wstring s);
 
 N_PRIVATE: /* Designer generated list of private members. Do not edit by hand. */
 	void InitializeFormAndControls(); /* Control initializations. Do not remove. */

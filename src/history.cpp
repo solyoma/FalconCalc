@@ -119,7 +119,7 @@ void TfrmHistory::btnCancelClick(void *sender, nlib::EventParameters param)
 void TfrmHistory::btnClearClick(void *sender, nlib::EventParameters param)
 {
     lstHistory->Clear();
-    frmMain->slHistory->Clear();
+    frmMain->pslHistory->Clear();
 }
 
 void TfrmHistory::btnDeleteClick(void *sender, nlib::EventParameters param)
@@ -128,7 +128,7 @@ void TfrmHistory::btnDeleteClick(void *sender, nlib::EventParameters param)
     if(n >=0)
     {
 		lstHistory->Items().Delete(n);
-		frmMain->slHistory->Delete(n);
+		frmMain->pslHistory->Delete(n);
     }
 }
 
@@ -142,8 +142,8 @@ void TfrmHistory::FormKeyPress(void *sender, nlib::KeyPressParameters param)
 		s = MyClipboard->GetText();		 // MyClipboard must exist!
 		if(s.empty())
 			return;
-		frmMain->slHistory->Add(s,true);
-		lstHistory->Items().SetLines(frmMain->slHistory->Lines());
+		frmMain->pslHistory->Add(s,true);
+		lstHistory->Items().SetLines(frmMain->pslHistory->Lines());
     }
     else if(param.key == 3)       // copy: Ctrl + C
     {

@@ -28,6 +28,10 @@ N_PUBLIC: /* Designer generated list of public members. Do not edit by hand. */
 	void sgUserKeyPress(void *sender, nlib::KeyPressParameters param);
 	void sgUserEditorKeyDown(void *sender, nlib::KeyParameters param);
 	void sgUserColumnSizing(void *sender, nlib::ColumnRowSizeParameters param);
+	void sgUserClick(void* sender, nlib::EventParameters param);
+	void sgUserDoubleClick(void* sender, nlib::MouseButtonParameters param);
+	void sgBuiltinClick(void* sender, nlib::EventParameters param);
+	void sgBuiltinDoubleClick(void* sender, nlib::MouseButtonParameters param);
 	void tcVarsTabChange(void *sender, nlib::TabChangeParameters param);
 	void FormClose(void *sender, nlib::FormCloseParameters param);
 protected:

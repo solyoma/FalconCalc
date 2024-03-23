@@ -93,6 +93,8 @@ using UTF8Pos = size_t;			// when used for unicode position (no unicode characte
 //
 // The length() function returns the length in code points, the size() function returns
 // the number of bytes that makes up the string
+class StringVector;	// forward declaration
+
 class SmartString : public String
 {
 public:
@@ -152,18 +154,28 @@ public:
 	void rTrim();
 	void Trim();
 
-	std::vector<SmartString> Split(const SCharT ch, bool keepEmpty);
-	std::vector<SmartString> SplitRegex(const SCharT ch, bool keepEmpty);	// TODO
-
+	StringVector Split(const SCharT ch, bool keepEmpty) const;
+	StringVector SplitRegex(const SmartString regex, bool keepEmpty) const;	// TODO
+				
 	void Reverse(); // order of characters
 };
-// literal operator for string constants like "1234"ss
+// literal operator for string constants like "1234"_ss
 
 const SmartString operator"" _ss(const char* ps, size_t len);
 
+class StringVector : public std::vector<SmartString>
+{
+public:
+	StringVector() : std::vector<SmartString>() {}
+	StringVector(const SmartString s, const SCharT ch, bool keepEmpty, bool trim);
+	StringVector(const SmartString s, SmartString regex, bool keepEmpty, bool trim);
+	StringVector(const StringVector &sv):std::vector<SmartString>(sv) {}
+
+};
+
+
  // end namesapce SmString
 }
-
 std::ostream& operator<<(std::ostream& ofs, SmString::SmartString ss);
 
 #endif	// _SMARTSTRING_H

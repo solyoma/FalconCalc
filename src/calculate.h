@@ -125,14 +125,14 @@ namespace FalconCalc
         LongNumber::RealNumber val;
 		OP data;
 
-		void GetDecDigits(const SmartString &text, unsigned &pos);
-		void GetDecimalNumber(const SmartString &text, unsigned &pos);
-		void GetHexNumber(const SmartString &text, unsigned &pos);
-		void GetOctNumber(const SmartString &text, unsigned &pos);
-		void GetBinaryNumber(const SmartString &text, unsigned &pos);
-        void GetNumberFromQuotedString(const SmartString &text, unsigned &pos);
-		void GetVarOrFuncOrOperator(const SmartString &text, unsigned &pos);
-		void GetOperator(const SmartString &text, unsigned &pos);
+		void _GetDecDigits(const SmartString &text, unsigned &pos);
+		void _GetDecimalNumber(const SmartString &text, unsigned &pos);
+		void _GetHexNumber(const SmartString &text, unsigned &pos);
+		void _GetOctNumber(const SmartString &text, unsigned &pos);
+		void _GetBinaryNumber(const SmartString &text, unsigned &pos);
+        void _GetNumberFromQuotedString(const SmartString &text, unsigned &pos);
+		void _GetVarOrFuncOrOperator(const SmartString &text, unsigned &pos);
+		void _GetOperator(const SmartString &text, unsigned &pos);
 	public:
 		Token(const SmartString &text, unsigned &pos);     // gets next token from 'text' starting at position 'pos'
 												           // and sets 'pos' to the first character after the token
@@ -281,12 +281,12 @@ namespace FalconCalc
              useAngleUnitAsResult=false;// for built in inverse trigonometric functions only
                                         // if true number is converted to deg or grad
         //    // for BI variables
-        //bool isnumber=false;            // variable is a number: never can get dirty
+        //bool isnumber=false;          // variable is a number: never can get dirty
 
            // for UD functions
-        std::vector<SmartString> args;       // arguments: empty for functions w.o. arguments
-        SmartString body;                    // text from the right hand side of the equal sign
-        TokenVec definition;                // processed body in postfix, none for builtins
+        StringVector args;              // arguments: empty for functions w.o. arguments
+        SmartString body;               // text from the right hand side of the equal sign
+        TokenVec definition;            // processed body in postfix, none for builtins
                //  for variables
         bool dirty = false;             // any variable/function in 'definition' is
                                         // redefined: must re-calculate 'value'
@@ -362,7 +362,7 @@ namespace FalconCalc
         ResultType resultType = ResultType::rtNumber;
         static VariableTable variables;
         static FunctionTable functions;
-        SmartString name_variable_table;
+        SmartString ssNameOfDatFile;
         ResValid resultValid = ResValid::rvOk;
         Beautification beautification = Beautification::bmoGraphText;
         bool clean; // no changes to variables or functions?
@@ -408,21 +408,21 @@ namespace FalconCalc
             }
             unsigned size() const { return _stack.size(); }
 		} stack;
-		void HandleUnknown(Token *tok);
+		void _HandleUnknown(Token *tok);
 
-        bool VariableAssignment(const SmartString &expr, unsigned &pos, Token *tok);
-        bool FunctionAssignment(const SmartString &expr, unsigned &pos, Token *tok);
-        void HandleOperator(Token* tok);
-        void HandleBrace(Token* tok);
-        void MarkDirty(const SmartString name); // all variables containing this 'name'
+        bool _VariableAssignment(const SmartString &expr, unsigned &pos, Token *tok);
+        bool _FunctionAssignment(const SmartString &expr, unsigned &pos, Token *tok);
+        void _HandleOperator(Token* tok);
+        void _HandleBrace(Token* tok);
+        void _MarkDirty(const SmartString name); // all variables containing this 'name'
                                            // in their definition
 
-        void DoVariable(const Token &tok);
-        void DoFunction(const Token &tok);
-        void DoOperator(const Token &tok);
-		int InfixToPostFix(const SmartString &expr); // postfix in 'tvPostfix' and returns 0 for assignment expression
-        RealNumber CalcPostfix(TokenVec& tv); // calculate the value using 'tv'
-        SCharT _ArgSeparator() const { return RealNumber::DecPoint() == SCharT( SCharT('.') ? ',' : ';' ); }
+        void _DoVariable(const Token &tok);
+        void _DoFunction(const Token &tok);
+        void _DoOperator(const Token &tok);
+		int _InfixToPostFix(const SmartString &expr); // postfix in 'tvPostfix' and returns 0 for assignment expression
+        RealNumber _CalcPostfix(TokenVec& tv); // calculate the value using 'tv'
+        SCharT _argSeparator = ',';
 	public:
 
         LittleEngine();
@@ -437,8 +437,8 @@ namespace FalconCalc
         bool AddUserVariablesAndFunctions(SmartString definition, int what); //0: any, 1: vars, 2: functions
 
 
-        bool ReadTables(const SmartString& name);
-        bool SaveTables(const SmartString& name=SmartString()); // if it wasn't read and no name is given it wont be saved
+        bool ReadTables(SmartString name=SmartString()); // no name: uses FalconCal_DAT_FILE in user directorr
+        bool SaveTables(SmartString name=SmartString()); // if it wasn't read and no name is given it wont be saved
         bool ResultOk() const { return calcResult.IsValid(); }
         RealNumber Result() const { return calcResult; }
         SmartString ResultAsDecString();

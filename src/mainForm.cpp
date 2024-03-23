@@ -16,6 +16,11 @@ using namespace nlib;
 
 #include "variables.h"
 
+#include <windows.h>
+#include <shlobj.h>
+#include <iostream>
+#include <userenv.h>	// for getting the user directory on windows
+
 using namespace SmString;
 using namespace LongNumber;
 using namespace FalconCalc;
@@ -25,7 +30,7 @@ FalconCalc::LittleEngine *lengine = nullptr;
 Clipboard *MyClipboard;
 
 TfrmMain *frmMain;
-const wstring  FalconCalc_HIST_FILE = L"FalconCalc.hist";
+const wchar_t *FalconCalc_HIST_FILE = L"FalconCalc.hist";
 const wchar_t *FalconCalc_DAT_FILE  = L"FalconCalc.dat";
 const wchar_t *FalconCalc_CFG_FILE  = L"FalconCalc.cfg";
 
@@ -702,73 +707,53 @@ BOOL CALLBACK EnumDispProc(HMONITOR hMon, HDC dcMon, RECT* pRcMon, LPARAM lParam
 TfrmMain::TfrmMain()
 {
 	InitializeFormAndControls();
-
-	//----- SA -------------------
-	// for fun
-	EnumDisplayMonitors(0, 0, EnumDispProc, 0); 	// get all monitors
-	// get virtual window size
-	RECT r = {0};
-//	r.left = r.right=r.top=r.bottom = 0'
-	for(size_t i = 0; i < monitors.size(); ++i)
-	{
-		if(monitors[i].rcMonitor.left < r.left)
-			r.left = monitors[i].rcMonitor.left;
-		if(monitors[i].rcMonitor.top < r.top)
-			r.top = monitors[i].rcMonitor.top;
-		if(monitors[i].rcMonitor.bottom > r.bottom)
-			r.bottom = monitors[i].rcMonitor.bottom;
-		if(monitors[i].rcMonitor.right > r.right)
-			r.right = monitors[i].rcMonitor.right;
-	}	
-	if(Left() > r.right || Top() > r.bottom || Bottom() < r.top || Right() < r.left)
-	{
-		SetLeft( ((r.right-r.left)-Width())/2);
-		SetTop( ((r.bottom-r.top)-Height())/2);
-	}
+	_wsUserDir = _GetUserDir();
+	_GetVirtualDisplaySize();
 	// /for fun
-	coMoveDX = coMoveDY = 0;
-	bAutoSave = false;
+	_coMoveDX = _coMoveDY = 0;
+	_bAutoSave = false;
+
 	RealNumber::SetMaxLength(70);	// but only display 64
     lengine = new FalconCalc::LittleEngine;
 	lengine->displayFormat.useNumberPrefix = true;
 	lengine->displayFormat.strThousandSeparator = " "_ss;
 	lengine->displayFormat.displWidth = 59;
 
-    lengine->ReadTables(SmartString( AppendToPath((wstring &)ExecutablePath, FalconCalc_DAT_FILE).c_str()) );
+	lengine->ssNameOfDatFile = SmartString(AppendToPath(_wsUserDir, FalconCalc_DAT_FILE).c_str());
+    lengine->ReadTables();
 	// add the clipboard and set this window as a "viewer"
 	MyClipboard = new Clipboard();	   // messages arrive after
 	MyClipboard->Activate( Handle() ); // Handle() is called first
 
-    chkArr[0] = chkMinus;
-    chkArr[1] = chkBytes;
-    chkArr[2] = chkWords;
-    chkArr[3] = chkDWords;
-    chkArr[4] = chkIEEESingle;
-    chkArr[5] = chkIEEEDouble;
-    chkArr[6] = chkLittleEndian;
+    _chkArr[0] = chkMinus;
+    _chkArr[1] = chkBytes;
+    _chkArr[2] = chkWords;
+    _chkArr[3] = chkDWords;
+    _chkArr[4] = chkIEEESingle;
+    _chkArr[5] = chkIEEEDouble;
+    _chkArr[6] = chkLittleEndian;
 
-    nDecOptTop = pnlDecOpt->Top();
-    nHexBtnTop = btnOpenHexOptions->Top();
-    busy = false;
+    _nDecOptTop = pnlDecOpt->Top();
+    _nHexBtnTop = btnOpenHexOptions->Top();
+    _busy = false;
 
     // ?? spnDecDigits->SetValue(20);
-    slHistory = new TStringList;
-    slHistory->SetCaseSensitive(false);
-    slHistory->SetDuplicates(true);  // no duplicates
-    slHistory->SetSorted(false);
-//    if(FileExists(FalconCalc_HIST_FILE) )
-    slHistory->LoadFromFile(AppendToPath((wstring&)ExecutablePath, FalconCalc_HIST_FILE).c_str());
-    watchdog = 0;
-    watchLimit = 5; // seconds	 
-	maxHistDepth=0; // unlimited
+    pslHistory = new TStringList;
+    pslHistory->SetCaseSensitive(false);
+    pslHistory->SetDuplicates(true);  // no duplicates
+    pslHistory->SetSorted(false);
+    pslHistory->LoadFromFile(AppendToPath(_wsUserDir, FalconCalc_HIST_FILE).c_str());
+    _watchdog = 0;
+    _watchLimit = 5; // seconds	 
+	_maxHistDepth=0; // unlimited
 
-    if(!LoadState(AppendToPath((wstring&)ExecutablePath, FalconCalc_CFG_FILE).c_str()))
+    if(!_LoadState(AppendToPath(_wsUserDir, FalconCalc_CFG_FILE).c_str()))
     {
         ShowDecOptions(false);
         ShowHexOptions(false);
     }
 
-    added = false;
+    _added = false;
 
 }
 LRESULT TfrmMain::WindowProc(UINT msg, WPARAM w,LPARAM l)
@@ -776,8 +761,8 @@ LRESULT TfrmMain::WindowProc(UINT msg, WPARAM w,LPARAM l)
 	switch(msg)
 	{
 		case  WM_TIMER:
-			    if(bAutoSave && ++watchdog >= watchLimit && lengine->ResultOk() && !added && !edtInfix->Text().empty())
-					    AddToHistory(edtInfix->Text());
+			    if(_bAutoSave && ++_watchdog >= _watchLimit && lengine->ResultOk() && !_added && !edtInfix->Text().empty())
+					    _AddToHistory(edtInfix->Text());
 				break;
 		case WM_CHANGECBCHAIN: 
 				// If the next clipboard viwer window is closing, repair the chain. 
@@ -809,9 +794,9 @@ TfrmMain::~TfrmMain()
 void TfrmMain::Destroy()
 {
 	lengine->SaveTables();
-    SaveState(AppendToPath((wstring&)ExecutablePath, FalconCalc_CFG_FILE).c_str());
-    slHistory->SaveToFile(AppendToPath((wstring&)ExecutablePath, FalconCalc_HIST_FILE).c_str());
-    delete slHistory;
+    _SaveState(AppendToPath(_wsUserDir, FalconCalc_CFG_FILE).c_str());
+    pslHistory->SaveToFile(AppendToPath(_wsUserDir, FalconCalc_HIST_FILE).c_str());
+    delete pslHistory;
     delete lengine;
 	Form::Destroy();
 }
@@ -827,17 +812,17 @@ void TfrmMain::btnFontClick(void *sender, nlib::EventParameters param)
 
 void TfrmMain::edtInfixKeyDown(void *sender, nlib::KeyParameters param)
 {
-    watchdog = 0;   // reset counter
+    _watchdog = 0;   // reset counter
 	if(edtInfix->Text().empty())
         return;
 
     if(param.keycode == VK_RETURN)
-        AddToHistory(edtInfix->Text());
+        _AddToHistory(edtInfix->Text());
     else if(param.keycode != VK_RIGHT && param.keycode != VK_LEFT && param.keycode != VK_UP && param.keycode != VK_DOWN &&
             param.keycode != VK_TAB)
     {
 		if(param.keycode != 17 || !param.vkeys.contains(vksCtrl))  // 17 - Ctrl-H
-                added = false;
+                _added = false;
     }
 }
 
@@ -857,21 +842,47 @@ void TfrmMain::pnlDecPaint(void *sender, nlib::PaintParameters param)
 	gtDec.Draw(pnlDec->Width() - gtDec.Box().Width()-4, y);
 }
 
-void TfrmMain::ShowResults()	// from lengine
+void TfrmMain::_GetVirtualDisplaySize()
+{
+	//----- SA -------------------
+	// for fun
+	EnumDisplayMonitors(0, 0, EnumDispProc, 0); 	// get all monitors
+	// get virtual window size
+	RECT r = { 0 };
+	//	r.left = r.right=r.top=r.bottom = 0'
+	for (size_t i = 0; i < monitors.size(); ++i)
+	{
+		if (monitors[i].rcMonitor.left < r.left)
+			r.left = monitors[i].rcMonitor.left;
+		if (monitors[i].rcMonitor.top < r.top)
+			r.top = monitors[i].rcMonitor.top;
+		if (monitors[i].rcMonitor.bottom > r.bottom)
+			r.bottom = monitors[i].rcMonitor.bottom;
+		if (monitors[i].rcMonitor.right > r.right)
+			r.right = monitors[i].rcMonitor.right;
+	}
+	if (Left() > r.right || Top() > r.bottom || Bottom() < r.top || Right() < r.left)
+	{
+		SetLeft(((r.right - r.left) - Width()) / 2);
+		SetTop(((r.bottom - r.top) - Height()) / 2);
+	}
+}
+
+void TfrmMain::_ShowResults()	// from lengine
 {
     if(edtInfix->Text().empty())
     {
-		ShowMessageOnAllPanels(L"");
+		_ShowMessageOnAllPanels(L"");
         return;
     }
     if(lengine->resultType== LittleEngine::ResultType::rtDefinition) // function definition?
     {
-        ShowMessageOnAllPanels(L"Definition");
+        _ShowMessageOnAllPanels(L"Definition");
         return;
     }
     else if(lengine->resultType == LittleEngine::ResultType::rtInvalid)
     {
-		ShowMessageOnAllPanels(L"???");
+		_ShowMessageOnAllPanels(L"???");
         return;
     }
 	// DEBUG
@@ -888,7 +899,7 @@ void TfrmMain::ShowResults()	// from lengine
 }
 
 // display same message in all panels
-void TfrmMain::ShowMessageOnAllPanels(wstring s)
+void TfrmMain::_ShowMessageOnAllPanels(wstring s)
 {
     pnlDec->SetText(s);
 	pnlDec->Invalidate();
@@ -901,12 +912,12 @@ void TfrmMain::ShowMessageOnAllPanels(wstring s)
 
 void TfrmMain::edtInfixTextChanged(void *sender, nlib::EventParameters param)
 {
-	if (busy)
+	if (_busy)
 		return;
 
 	if(edtInfix->Text().empty() )
     {
-        ShowMessageOnAllPanels(L"");
+        _ShowMessageOnAllPanels(L"");
         return;
     }
     wstring s = edtInfix->Text();
@@ -916,24 +927,24 @@ void TfrmMain::edtInfixTextChanged(void *sender, nlib::EventParameters param)
 		lengine->infix = s;
         RealNumber res = lengine->Calculate();
         gbResults->SetText(L"Results");
-        ShowResults();
+        _ShowResults();
         s = lengine->Postfix().ToWideString();
     }
     catch(wstring s)
     {
         gbResults->SetText(s);
-        ShowMessageOnAllPanels(L"???");
+        _ShowMessageOnAllPanels(L"???");
     }
     catch(SmartString s)
     {
         gbResults->SetText(s.ToWideString());
-        ShowMessageOnAllPanels(L"???");
+        _ShowMessageOnAllPanels(L"???");
     }
     catch(...)
     {
-        ShowMessageOnAllPanels(L"???");
+        _ShowMessageOnAllPanels(L"???");
     }
-	busy = false;
+	_busy = false;
 }
 
 void TfrmMain::rdDegClick(void *sender, nlib::EventParameters param)
@@ -946,7 +957,7 @@ void TfrmMain::spnDecDigitsTextChanged(void *sender, nlib::EventParameters param
 {
 	lengine->displayFormat.decDigits = UpDownDecDigits->Position();
 	if(chkDecDigits->Checked())
-		ShowResults();
+		_ShowResults();
 	else
 		SetFocus(edtInfix->Handle());
 }
@@ -983,26 +994,26 @@ void TfrmMain::chkDecDigitsClick(void *sender, nlib::EventParameters param)
         spnDecDigits->SetEnabled(false);
         lengine->displayFormat.decDigits = -1;
     }
-    ShowResults();
+    _ShowResults();
 }
 
 void TfrmMain::chkMinusClick(void *sender, nlib::EventParameters param)
 {
 	lengine->displayFormat.bSignedBinOrHex = chkMinus->Checked();
-	ShowResults();
+	_ShowResults();
 }
 
 void TfrmMain::chkSciClick(void *sender, nlib::EventParameters param)
 {
-  if(busy)
+  if(_busy)
     return;
-  busy = true;
+  _busy = true;
   Checkbox *ps = ((Checkbox*)sender),
             *pd = (ps == chkSci ? chkEng : chkSci);
   lengine->displayFormat.mainFormat = ps->Checked() ? ( (ps == chkSci) ? NumberFormat::rnfSci : NumberFormat::rnfEng) : NumberFormat::rnfGeneral;
   pd->SetChecked(false);
-    ShowResults();
-  busy = false;
+    _ShowResults();
+  _busy = false;
 }
 
 void TfrmMain::chkSepClick(void *sender, nlib::EventParameters param)
@@ -1015,7 +1026,7 @@ void TfrmMain::chkSepClick(void *sender, nlib::EventParameters param)
 	}
 	else
 		lengine->displayFormat.strThousandSeparator.clear();
-    ShowResults();
+    _ShowResults();
 }
 
 void TfrmMain::miExitClick(void *sender, nlib::EventParameters param)
@@ -1084,15 +1095,15 @@ void TfrmMain::miShowHistClick(void *sender, nlib::EventParameters param)
 	frmHistory = new TfrmHistory;
 	frmHistory->SetTopLevelParent(this);
     frmHistory->SetLeft(Left());
-    frmHistory->chkSorted->SetChecked(slHistory->Sorted());
+    frmHistory->chkSorted->SetChecked(pslHistory->Sorted());
 	frmHistory->Snap(0);	// unconditional snap to any side
-	frmHistory->lstHistory->Items().SetLines(slHistory->Lines());
+	frmHistory->lstHistory->Items().SetLines(pslHistory->Lines());
 	frmHistory->Show();
 }
 
 void TfrmMain::miClearHistClick(void *sender, nlib::EventParameters param)
 {
-    slHistory->Clear();
+    pslHistory->Clear();
 	if(frmHistory)
 		frmHistory->lstHistory->Clear();
 }
@@ -1111,16 +1122,16 @@ void TfrmMain::miHistOptsClick(void *sender, nlib::EventParameters param)
 {
 	frmHistOptions = new TfrmHistOptions;
 	frmHistOptions->SetTopLevelParent(this);
-    frmHistOptions->Setup(maxHistDepth, watchLimit, slHistory->Sorted() );
+    frmHistOptions->Setup(_maxHistDepth, _watchLimit, pslHistory->Sorted() );
 
 	if(frmHistOptions->ShowModal() == mrOk)
     {
         if(frmHistOptions->chkDepth->Checked())
         {
-            maxHistDepth = frmHistOptions->spinDepthBtn->Position();
-			slHistory->SetCapacity(maxHistDepth);
+            _maxHistDepth = frmHistOptions->spinDepthBtn->Position();
+			pslHistory->SetCapacity(_maxHistDepth);
 			if(frmHistory)
-				frmHistory->lstHistory->Items().SetLines(slHistory->Lines());
+				frmHistory->lstHistory->Items().SetLines(pslHistory->Lines());
         }
         if(frmHistOptions->chkAutoSave->Checked())
         {
@@ -1138,17 +1149,17 @@ void TfrmMain::miHistOptsClick(void *sender, nlib::EventParameters param)
 					m = 0;;
 				}
 			}
-            watchLimit = h*3600 + m*60 + s;
+            _watchLimit = h*3600 + m*60 + s;
         }
         else
         {
-            watchLimit = 0;
+            _watchLimit = 0;
         }
-        // Timer1->Enabled = watchLimit > 0;
-		EnableMyTimer(watchLimit > 0);
-        slHistory->SetSorted(frmHistOptions->chkSort->Checked(),true);	// first (last entered) line is not sorted
+        // Timer1->Enabled = _watchLimit > 0;
+		_EnableMyTimer(_watchLimit > 0);
+        pslHistory->SetSorted(frmHistOptions->chkSort->Checked(),true);	// first (last entered) line is not sorted
         if(frmHistory)
-            frmHistory->lstHistory->Items().SetLines(slHistory->Lines());
+            frmHistory->lstHistory->Items().SetLines(pslHistory->Lines());
 
     }
 	frmHistOptions->Destroy();
@@ -1204,7 +1215,7 @@ void TfrmMain::cbThousandSepChanged(void *sender, nlib::EventParameters param)
 	lengine->displayFormat.strThousandSeparator =  SmartString(cbThousandSep->Text()[0]);
 	if(lengine->displayFormat.strThousandSeparator == SmartString('s') )
 		lengine->displayFormat.strThousandSeparator = " ";
-	ShowResults();
+	_ShowResults();
 }
 
 void TfrmMain::ShowDecOptions(bool show)
@@ -1215,13 +1226,13 @@ void TfrmMain::ShowDecOptions(bool show)
     if(show)
     {
         SetHeight( Height() + pnlDecOpt->Height());
-        btnOpenHexOptions->SetTop(nHexBtnTop);
+        btnOpenHexOptions->SetTop(_nHexBtnTop);
             // although this is common for both show and not show
             // if this is set AFTER 'pnlDecOpt' is shown the
             // btnCloseHexOptions remains on the screen over the panel in XE
         btnCloseHexOptions->SetTop(btnOpenHexOptions->Top());
 
-        pnlDecOpt->SetTop(nDecOptTop);
+        pnlDecOpt->SetTop(_nDecOptTop);
     }
     else
     {
@@ -1230,7 +1241,7 @@ void TfrmMain::ShowDecOptions(bool show)
 // h = Height();
         SetHeight(Height() - pnlDecOpt->Height());
 // h = Height(); // DEBUG
-        btnOpenHexOptions->SetTop(nDecOptTop);
+        btnOpenHexOptions->SetTop(_nDecOptTop);
         btnCloseHexOptions->SetTop(btnOpenHexOptions->Top());
     }
     pnlDecOpt->SetVisible(show);
@@ -1252,7 +1263,7 @@ void TfrmMain::ShowHexOptions(bool show)
 //int hh = Height();
     SetHeight(Height() + h);
 //hh = Height();
-    pnlDecOpt->SetTop(nDecOptTop);
+    pnlDecOpt->SetTop(_nDecOptTop);
 
     pnlHexOpt->SetVisible(show);
     btnOpenHexOptions->SetVisible(!show);
@@ -1280,18 +1291,18 @@ void TfrmMain::btnOpenHexOptionsClick(void *sender, nlib::EventParameters param)
 }
 
 // SA 
-void TfrmMain::EnableMyTimer(bool enable)
+void TfrmMain::_EnableMyTimer(bool enable)
 {
-	if(bAutoSave == enable)
+	if(_bAutoSave == enable)
 		return;
 	if(enable)
 		SetTimer(Handle(), (UINT_PTR)0x12, 1000, 0); // Timer1
 	else
 		KillTimer(Handle(),(UINT_PTR)0x12);
-	bAutoSave = enable;
+	_bAutoSave = enable;
 }
 
-FalconCalc::LittleEngine* TfrmMain::_pEngine()
+FalconCalc::LittleEngine* TfrmMain::pEngine()
 {
 	return lengine;
 }
@@ -1319,7 +1330,7 @@ static const wstring
 		HISTOPTIONS(L"histOptions="),
 		LAST(L"last=");
 
-bool TfrmMain::SaveState(wstring name)
+bool TfrmMain::_SaveState(wstring name)
 {
 	FileStream fs(name,ios_base::out);
 
@@ -1340,7 +1351,7 @@ bool TfrmMain::SaveState(wstring name)
 	fs << FONTNAME	<< edtChars->GetFont().Family() << "\n";
 	fs << FONTDATA	<< (int)edtChars->GetFont().Size() << "|"<< (int)edtChars->GetFont().CharacterSet() << "|"<< (COLORREF)edtChars->GetFont().GetColor() << "\n";
     fs << OPTIONS	<< pnlDecOpt->Visible() << "|"<< pnlHexOpt->Visible()<<"\n";
-    fs << HISTOPTIONS << watchLimit << "|"<< maxHistDepth << "|"<< slHistory->Sorted() << "\n";
+    fs << HISTOPTIONS << _watchLimit << "|"<< _maxHistDepth << "|"<< pslHistory->Sorted() << "\n";
     if(!edtInfix->Text().empty())
         fs << LAST <<  edtInfix->Text() << "\n";
     return true;
@@ -1384,7 +1395,28 @@ static int __ReadAndExpandLine(FileStream& fs, std::vector<wstring>& data)
 	return sdata.size();
 }
 
-bool TfrmMain::LoadState(wstring name)
+std::wstring TfrmMain::_GetUserDir()
+{
+	wchar_t buff[2046];
+	std::wstring w;
+	if (!SHGetFolderPath(NULL, CSIDL_PROFILE, NULL, 0, buff))
+	{
+		w = buff;
+
+		w += L"\\AppData\\Local\\FalconCalc";
+		if (!PathExists(w))
+		{
+			if (!CreateDirectory(w.c_str(), NULL))
+				w = (wstring&)ExecutablePath;
+		}
+	}
+	else
+		w = (wstring&)ExecutablePath;
+
+	return w;
+}
+
+bool TfrmMain::_LoadState(wstring name)
 {
 	FileStream fs(name,ios_base::in);
     if(fs.fail())
@@ -1405,7 +1437,7 @@ bool TfrmMain::LoadState(wstring name)
 		{
 			n = std::stoi(data[1]);
 			lengine->displayFormat.mainFormat = static_cast<NumberFormat>(n);
-			busy = true;
+			_busy = true;
 			switch (lengine->displayFormat.mainFormat)
 			{
 				case NumberFormat::rnfSci:
@@ -1415,7 +1447,7 @@ bool TfrmMain::LoadState(wstring name)
 					chkEng->SetChecked(true);
 					break;
 			}	   
-			busy = false;
+			_busy = false;
 			return true;
 		}
 		return false;
@@ -1424,7 +1456,7 @@ bool TfrmMain::LoadState(wstring name)
 	{
 		if (data[0] == DECFORMAT)
 		{
-			busy = true;
+			_busy = true;
 					// 1: decimal digits
 			n = std::stoi(data[1]);	// # of decimal digits n > 0 => used digits, n < 0 => used = abs(n+1)
 			lengine->displayFormat.decDigits = n;
@@ -1467,7 +1499,7 @@ bool TfrmMain::LoadState(wstring name)
 			if (!data[5].empty())
 				lengine->displayFormat.angUnit = static_cast<AngularUnit>(std::stoi(data[5]));
 
-			busy = false;
+			_busy = false;
 
 			return true;
 		}
@@ -1478,7 +1510,7 @@ bool TfrmMain::LoadState(wstring name)
 	{
 		if (data[0] == HEXFORMAT)
 		{
-			busy = true;
+			_busy = true;
 				// 1. main Hex format
 			int n = std::stoi(data[1]);
 			lengine->displayFormat.hexFormat = static_cast<HexFormat>(n);
@@ -1511,7 +1543,7 @@ bool TfrmMain::LoadState(wstring name)
 				chkIEEESingle->SetChecked(true);
 			else if(n==2)
 				chkIEEEDouble->SetChecked(true);
-			busy = false;
+			_busy = false;
 
 			return true;
 		}
@@ -1558,9 +1590,9 @@ bool TfrmMain::LoadState(wstring name)
 	{
 		if (data[0] == HISTOPTIONS)
 		{
-			watchLimit = std::stoi(data[1]);
-			maxHistDepth = std::stoi(data[2]);
-			slHistory->SetSorted(std::stoi(data[3]));
+			_watchLimit = std::stoi(data[1]);
+			_maxHistDepth = std::stoi(data[2]);
+			pslHistory->SetSorted(std::stoi(data[3]));
 			return true;
 		}
 		return false;
@@ -1589,7 +1621,7 @@ bool TfrmMain::LoadState(wstring name)
 										last(wsLlastInfix);
 		}
 	}
-    busy = false;
+    _busy = false;
     return true;
 }
 // Adds actual expression to history
@@ -1597,33 +1629,34 @@ bool TfrmMain::LoadState(wstring name)
 // For sorted list it first inserts the original first line
 // then insert the new at the top
 // If the expression was already in the list deletes it first from the list
-void TfrmMain::AddToHistory(wstring text)
+void TfrmMain::_AddToHistory(wstring text)
 {
 	SmartString ss(text);
     int n;
-    if( (n = slHistory->IndexOf(ss)) >= 0)
+    if( (n = pslHistory->IndexOf(ss)) >= 0)
     {
-        if(n == 0 && slHistory->Sorted())	// already at top
+        if(n == 0 && pslHistory->Sorted())	// already at top
             return;							// nothing to do
-        slHistory->Delete(n);				// not at top delete expression from inside
+        pslHistory->Delete(n);				// not at top delete expression from inside
     }
-	else if(slHistory->Sorted() )			// then must put original top line in correct position 
+	else if(pslHistory->Sorted() )			// then must put original top line in correct position 
 	{										// first and add the new line afterwards, because
-		SmartString ws = (*slHistory)[0];		// list may be truncated after adding a new line to it
-		slHistory->Delete(0);				// delete original top line
-		slHistory->Add(ws);					// and insert into string
+		SmartString ws = (*pslHistory)[0];		// list may be truncated after adding a new line to it
+		pslHistory->Delete(0);				// delete original top line
+		pslHistory->Add(ws);					// and insert into string
 	}
 	
-    slHistory->Insert(0, ss);				// then insert new expression to top of list
+    pslHistory->Insert(0, ss);				// then insert new expression to top of list
 
-    added = true;
-    watchdog = 0;
+    _added = true;
+    _watchdog = 0;
     if(frmHistory != 0)
-        frmHistory->lstHistory->Items().SetLines(slHistory->Lines());
+        frmHistory->lstHistory->Items().SetLines(pslHistory->Lines());
 }
 
 void TfrmMain::FormClose(void *sender, nlib::FormCloseParameters param)
-{;
+{
+
 }
 
 void TfrmMain::chkAsBytesClick(void *sender, nlib::EventParameters param)
@@ -1636,7 +1669,7 @@ void TfrmMain::chkAsBytesClick(void *sender, nlib::EventParameters param)
 	else
 		lengine->displayFormat.hexFormat = HexFormat::rnHexNormal;
 	chkLittleEndian->SetEnabled(b);
-	ShowResults();
+	_ShowResults();
 }
 
 void TfrmMain::chkAsWordsClick(void *sender, nlib::EventParameters param)
@@ -1649,7 +1682,7 @@ void TfrmMain::chkAsWordsClick(void *sender, nlib::EventParameters param)
 	else
 		lengine->displayFormat.hexFormat = HexFormat::rnHexNormal;
 	chkLittleEndian->SetEnabled(b);
-	ShowResults();
+	_ShowResults();
 }
 
 void TfrmMain::chkAsDWordsClick(void *sender, nlib::EventParameters param)
@@ -1662,27 +1695,27 @@ void TfrmMain::chkAsDWordsClick(void *sender, nlib::EventParameters param)
 	else
 		lengine->displayFormat.hexFormat = HexFormat::rnHexNormal;
 	chkLittleEndian->SetEnabled(b);
-	ShowResults();
+	_ShowResults();
 }
 
 void TfrmMain::chkIEEEDoubleClick(void *sender, nlib::EventParameters param)
 {
 	chkIEEESingle->SetChecked(false);
 	lengine->displayFormat.trippleE =  chkIEEEDouble->Checked() ? IEEEFormat::rntHexIEEE754Double : IEEEFormat::rntHexNotIEEE;
-	ShowResults();
+	_ShowResults();
 }
 
 void TfrmMain::chkIEEESingleClick(void *sender, nlib::EventParameters param)
 {
 	chkIEEEDouble->SetChecked(false);
 	lengine->displayFormat.trippleE =  chkIEEESingle->Checked() ? IEEEFormat::rntHexIEEE754Single : IEEEFormat::rntHexNotIEEE;
-	ShowResults();
+	_ShowResults();
 }
 
 void TfrmMain::chkLittleEndianClick(void *sender, nlib::EventParameters param)
 {
 	lengine->displayFormat.littleEndian =  chkLittleEndian->Checked() ? true: false;
-	ShowResults();
+	_ShowResults();
 }
 
 void TfrmMain::btnCopyFormatClick(void *sender, nlib::EventParameters param)
@@ -1703,19 +1736,19 @@ void TfrmMain::StartMove(void *sender, nlib::EventParameters param)
 		// only use it for move and not for resize
 	if(frmHistory && frmHistory->InsideSnapAreaFromMain(10) )	// then move it together
 	{
-		coMoveDX = (frmHistory->Left() - Left());
-		coMoveDY = (frmHistory->Top()- Top());
+		_coMoveDX = (frmHistory->Left() - Left());
+		_coMoveDY = (frmHistory->Top()- Top());
 	}
 	else
-		coMoveDX = coMoveDY = 0;
+		_coMoveDX = _coMoveDY = 0;
 }
 
 void TfrmMain::FormMove(void *sender, nlib::EventParameters param)
 {
-	if(coMoveDX || coMoveDY)
+	if(_coMoveDX || _coMoveDY)
 	{
-		frmHistory->SetTop( Top() + coMoveDY );
-		frmHistory->SetLeft( Left() + coMoveDX);
+		frmHistory->SetTop( Top() + _coMoveDY );
+		frmHistory->SetLeft( Left() + _coMoveDX);
 	}
 }
 	// this single funcion deals with Normal, HTML, TeX and E display
@@ -1724,19 +1757,19 @@ void TfrmMain::rdNormalClick(void *sender, nlib::EventParameters param)
 	
 	lengine->beautification = (LittleEngine::Beautification)((Radiobox*)sender)->Tag();
 	//sres.type = sres.mode == bmoNone ? stDecimal : stDecBeautified;
-	ShowResults();
+	_ShowResults();
 }
 
 void TfrmMain::cbInfixTextChanged(void *sender, nlib::EventParameters param)
 {
-	if (busy)
+	if (_busy)
 		return;
 
-	busy = true;
+	_busy = true;
 	if (cbInfix->Text().empty())
 	{
 		lengine->resultValid = LittleEngine::ResValid::rvInvalid;
-		ShowResults();
+		_ShowResults();
 		return;
 	}
 	wstring s = cbInfix->Text();
@@ -1747,7 +1780,7 @@ void TfrmMain::cbInfixTextChanged(void *sender, nlib::EventParameters param)
 		RealNumber res = lengine->Calculate();
 		gbResults->SetText(L"Results");
 		lengine->resultValid = LittleEngine::ResValid::rvOk;
-		ShowResults();
+		_ShowResults();
 		s = lengine->Postfix().ToWideString();
 	}
 	catch (wstring s)
@@ -1755,14 +1788,14 @@ void TfrmMain::cbInfixTextChanged(void *sender, nlib::EventParameters param)
 		lengine->resultValid = LittleEngine::ResValid::rvInvalid;
 		gbResults->SetText(s);
 
-		ShowResults();
+		_ShowResults();
 	}
 	catch (...)
 	{
 		lengine->resultValid = LittleEngine::ResValid::rvInvalid;
-		ShowResults();
+		_ShowResults();
 	}
-	busy = false;
+	_busy = false;
 }
 
 void TfrmMain::cbInfixKeyPress(void *sender, nlib::KeyPressParameters param)
