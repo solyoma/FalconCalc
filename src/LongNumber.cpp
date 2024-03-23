@@ -1024,7 +1024,7 @@ SmartString RealNumber::ToDecimalString(const DisplayFormat &format) const
 			 // 'nFracLength' spaces are left by the sign, the decimal point, the integer part and the exponent
 			 // 'nIntLength' is the result of a previous 'requiredSpaceForIntegerDigits()' call
 			 // required for the digits in the integer part including separators but excluding sign, and decimal point
-			int nIntLengthRequired = nIntLength > 0 ? nIntLength + 1 : 2; // even when no integer digits 1digit and one decimal point is used
+			int nIntLengthRequired = nIntLength > 0 ? nIntLength + 1 : 2; // even when no integer digits 1 digit and one decimal point is used
 			nFracLength = nDisplayWidth - nSignLength - nIntLengthRequired - nExpLength;
 			if (nFracLength <= 0)	// no space for decimal places
 			{
@@ -1171,7 +1171,7 @@ SmartString RealNumber::ToDecimalString(const DisplayFormat &format) const
 
 				res += roundedString.at(n++, chZero);
 				int dp = 1;
-				for (size_t i = 1; i < nLeadingDecimalZeros + len; ++i)
+				for (size_t i = n; i < nLeadingDecimalZeros + len; ++i)
 				{
 					if (fmt.useFractionSeparator && ((dp++ % 3) == 0))
 						res += chSpace;
