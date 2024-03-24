@@ -167,12 +167,12 @@ private:
         _nHexBtnTop;  // when dec options panel open
 	bool _busy;
     // history options
-    bool _added;			// already added to history by timer, reset by keypress
-	bool _bAutoSave;		// autosave activated?
-	int _coMoveDX,		// not 0 then  move history window together with main 
-		_coMoveDY;		//  x and y coord difference between left tops of the windows
-	int _watchdog;		// add to history if _watchdog is > given number, reset when formula changes
-    int _watchLimit;		// default: 10: 0 - switch off autosave
+    bool _added;		 // already added to history by timer, reset by keypress
+	bool _bAutoSave;	 // autosave activated?
+	int _coMoveDX,		 // not 0 then  move history window together with main 
+		_coMoveDY;		 //  x and y coord difference between left tops of the windows
+	int _watchdog;		 // add to history if _watchdog is > given number, reset when formula changes
+    int _watchLimit;	 // default: 10: 0 - switch off autosave
     size_t _maxHistDepth;// == 0: unlimited
 	std::wstring _wsUserDir;	// store user directory here
 

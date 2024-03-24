@@ -771,6 +771,8 @@ int LittleEngine::_InfixToPostFix(const SmartString& expr)
             case tknVariable:	  						// If the token is a variable check for assignments
                                 if(_VariableAssignment(infix, pos, tok) == 0 )   // handles assignment
                                 {
+                                    if(functions.count(tok->Text()) )    // then this isnt a variable just ,missing the braces yet
+                                        Trigger("Function missing opening brace"_ss);
     								tvPostfix.push_back(*tok); // otherwise add it to the output queue.
                                     needOp = true;
                                 }
@@ -780,6 +782,8 @@ int LittleEngine::_InfixToPostFix(const SmartString& expr)
 			case tknFunction:							// If the token is a function name token,
                                 if(!_FunctionAssignment(infix, pos, tok) )
                                 {
+                                    if (pos >= expr.length() || expr.at(pos) == SCharT(')') )    // eg 'sin(' or 'sin()' w.o. argument
+                                        Trigger("No function argument"_ss);
                                     stack.push(*tok);   // then push it onto the stack.
                                     //unsigned pos = 0;
                                     //SmartString s("(");

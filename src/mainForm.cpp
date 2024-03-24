@@ -116,12 +116,12 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	MenuItem2 = miEdit->Add(L"-");
 	miEditVars = miEdit->Add(L"Edit User &Variables...");
 	miEditVars->SetTag(1);
-	miEditVars->SetShortcut(L"Ctrl+U");
+	miEditVars->SetShortcut(L"Alt+V");
 	miEditFuncs = miEdit->Add(L"Edit User &Functions...");
-	miEditFuncs->SetShortcut(L"Ctrl+F");
+	miEditFuncs->SetShortcut(L"Alt+F");
 	MenuItem3 = miEdit->Add(L"-");
 	miShowHist = miEdit->Add(L"Edit &History");
-	miShowHist->SetShortcut(L"Ctrl+H");
+	miShowHist->SetShortcut(L"Alt+H");
 	miClearHist = miEdit->Add(L"C&lear History");
 	miOptions = mnuMain->Add(L"&Options");
 	miShowDecOpts = miOptions->Add(L"Show &Decimal Options");
@@ -951,6 +951,7 @@ void TfrmMain::rdDegClick(void *sender, nlib::EventParameters param)
 {
 	lengine->angleUnit = (LongNumber::AngularUnit)((Radiobox*)sender)->Tag();
 	edtInfixTextChanged(sender,param);
+	SetFocus(edtInfix->Handle());
 }
 
 void TfrmMain::spnDecDigitsTextChanged(void *sender, nlib::EventParameters param)
@@ -1074,6 +1075,7 @@ void TfrmMain::miEditVarsClick(void *sender, nlib::EventParameters param)
     frmVariables->Setup(vf);
     frmVariables->tcVars->SetSelectedTab( ((MenuItem*)sender)->Tag());
     frmVariables->Show();
+	SetFocus(edtInfix->Handle());
 }
 
 void TfrmMain::miEditFuncsClick(void *sender, nlib::EventParameters param)
@@ -1099,6 +1101,8 @@ void TfrmMain::miShowHistClick(void *sender, nlib::EventParameters param)
 	frmHistory->Snap(0);	// unconditional snap to any side
 	frmHistory->lstHistory->Items().SetLines(pslHistory->Lines());
 	frmHistory->Show();
+
+	SetFocus(edtInfix->Handle());
 }
 
 void TfrmMain::miClearHistClick(void *sender, nlib::EventParameters param)
@@ -1293,8 +1297,8 @@ void TfrmMain::btnOpenHexOptionsClick(void *sender, nlib::EventParameters param)
 // SA 
 void TfrmMain::_EnableMyTimer(bool enable)
 {
-	if(_bAutoSave == enable)
-		return;
+//	if(_bAutoSave == enable)
+//		return;
 	if(enable)
 		SetTimer(Handle(), (UINT_PTR)0x12, 1000, 0); // Timer1
 	else
@@ -1330,32 +1334,6 @@ static const wstring
 		HISTOPTIONS(L"histOptions="),
 		LAST(L"last=");
 
-bool TfrmMain::_SaveState(wstring name)
-{
-	FileStream fs(name,ios_base::out);
-
-     if(fs.fail())
-        return false;
-    fs << "FalconCalc State File V1.0\n";
-	fs << MAINFORMAT<< (int)lengine->displayFormat.mainFormat << "\n";
-
-	//int u = UpDown1->Position() + (chkDecDigits->Checked() ? 0x100 : 0); // 0x100: checked state. must use Position as num_digits may be -1
-	wstring wsep = (chkSep->Checked() ? L"1" : L"0") + (std::to_wstring(cbThousandSep->ItemIndex()));
-	fs << DECFORMAT<< lengine->displayFormat.decDigits << "|" << (int)lengine->displayFormat.expFormat 
-	   << "|" << wsep <<  "|" << (int)lengine->displayFormat.useFractionSeparator 
-	   << "|" << (int)lengine->angleUnit << "\n";
-
-    fs << HEXFORMAT<< (int)lengine->displayFormat.hexFormat << "|"<< (int)lengine->displayFormat.littleEndian << "|"<< 
-			(int)lengine->displayFormat.bSignedBinOrHex << "|" << (int)lengine->displayFormat.trippleE <<"\n";
-
-	fs << FONTNAME	<< edtChars->GetFont().Family() << "\n";
-	fs << FONTDATA	<< (int)edtChars->GetFont().Size() << "|"<< (int)edtChars->GetFont().CharacterSet() << "|"<< (COLORREF)edtChars->GetFont().GetColor() << "\n";
-    fs << OPTIONS	<< pnlDecOpt->Visible() << "|"<< pnlHexOpt->Visible()<<"\n";
-    fs << HISTOPTIONS << _watchLimit << "|"<< _maxHistDepth << "|"<< pslHistory->Sorted() << "\n";
-    if(!edtInfix->Text().empty())
-        fs << LAST <<  edtInfix->Text() << "\n";
-    return true;
-}
 
 /*=============================================================
  * TASK   : reads line from file splits it up at '|' delimiters
@@ -1416,6 +1394,32 @@ std::wstring TfrmMain::_GetUserDir()
 	return w;
 }
 
+bool TfrmMain::_SaveState(wstring name)
+{
+	FileStream fs(name,ios_base::out);
+
+     if(fs.fail())
+        return false;
+    fs << "FalconCalc State File V1.0\n";
+	fs << MAINFORMAT<< (int)lengine->displayFormat.mainFormat << "\n";
+
+	//int u = UpDown1->Position() + (chkDecDigits->Checked() ? 0x100 : 0); // 0x100: checked state. must use Position as num_digits may be -1
+	wstring wsep = (chkSep->Checked() ? L"1" : L"0") + (std::to_wstring(cbThousandSep->ItemIndex()));
+	fs << DECFORMAT<< lengine->displayFormat.decDigits << "|" << (int)lengine->displayFormat.expFormat 
+	   << "|" << wsep <<  "|" << (int)lengine->displayFormat.useFractionSeparator 
+	   << "|" << (int)lengine->angleUnit << "\n";
+
+    fs << HEXFORMAT<< (int)lengine->displayFormat.hexFormat << "|"<< (int)lengine->displayFormat.littleEndian << "|"<< 
+			(int)lengine->displayFormat.bSignedBinOrHex << "|" << (int)lengine->displayFormat.trippleE <<"\n";
+
+	fs << FONTNAME	<< edtChars->GetFont().Family() << "\n";
+	fs << FONTDATA	<< (int)edtChars->GetFont().Size() << "|"<< (int)edtChars->GetFont().CharacterSet() << "|"<< (COLORREF)edtChars->GetFont().GetColor() << "\n";
+    fs << OPTIONS	<< pnlDecOpt->Visible() << "|"<< pnlHexOpt->Visible()<<"\n";
+    fs << HISTOPTIONS << _watchLimit << "|"<< _maxHistDepth << "|"<< pslHistory->Sorted() << "\n";
+    if(!edtInfix->Text().empty())
+        fs << LAST <<  edtInfix->Text() << "\n";
+    return true;
+}
 bool TfrmMain::_LoadState(wstring name)
 {
 	FileStream fs(name,ios_base::in);
@@ -1621,6 +1625,8 @@ bool TfrmMain::_LoadState(wstring name)
 										last(wsLlastInfix);
 		}
 	}
+
+	_EnableMyTimer(_watchLimit > 0);
     _busy = false;
     return true;
 }
@@ -1632,6 +1638,13 @@ bool TfrmMain::_LoadState(wstring name)
 void TfrmMain::_AddToHistory(wstring text)
 {
 	SmartString ss(text);
+	ss.Trim();
+	if (LittleEngine::variables.count(ss))		// single variable or function?
+	{
+		_watchdog = 0;
+		return;
+	}
+
     int n;
     if( (n = pslHistory->IndexOf(ss)) >= 0)
     {

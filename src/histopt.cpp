@@ -29,7 +29,7 @@ void TfrmHistOptions::InitializeFormAndControls() /* Control initialization func
 	chkAutoSave->SetText(L"&Time of automatic saves:");
 	chkAutoSave->SetTabOrder(1);
 	chkAutoSave->SetParent(this);
-
+	
 	chkSort = new nlib::Checkbox();
 	chkSort->SetBounds(nlib::Rect(16, 80, 96, 96));
 	chkSort->SetText(L"&Sorted");
@@ -133,7 +133,7 @@ void TfrmHistOptions::btnOkClick(void *sender, nlib::EventParameters param)
 
 void TfrmHistOptions::chkAutoSaveClick(void *sender, nlib::EventParameters param)
 {
-    edtInterval->SetEnabled( chkAutoSave->Checked());
+    // edtInterval->SetEnabled( chkAutoSave->Checked());
 }
 
 void TfrmHistOptions::chkDepthClick(void *sender, nlib::EventParameters param)
