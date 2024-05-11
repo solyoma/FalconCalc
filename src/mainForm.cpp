@@ -935,9 +935,9 @@ void TfrmMain::edtInfixTextChanged(void *sender, nlib::EventParameters param)
         gbResults->SetText(s);
         _ShowMessageOnAllPanels(L"???");
     }
-    catch(SmartString s)
+    catch(Trigger_Type tt)
     {
-        gbResults->SetText(s.ToWideString());
+        gbResults->SetText(triggerMap[tt].ToWideString());
         _ShowMessageOnAllPanels(L"???");
     }
     catch(...)
@@ -959,8 +959,8 @@ void TfrmMain::spnDecDigitsTextChanged(void *sender, nlib::EventParameters param
 	lengine->displayFormat.decDigits = UpDownDecDigits->Position();
 	if(chkDecDigits->Checked())
 		_ShowResults();
-	else
-		SetFocus(edtInfix->Handle());
+	//else
+	//	SetFocus(edtInfix->Handle());
 }
 
 void TfrmMain::tbCopyClick(void *sender, nlib::EventParameters param)
@@ -987,12 +987,12 @@ void TfrmMain::chkDecDigitsClick(void *sender, nlib::EventParameters param)
 {
     if(chkDecDigits->Checked() )
     {
-        spnDecDigits->SetEnabled(true);
+//        spnDecDigits->SetEnabled(true);
 		lengine->displayFormat.decDigits = UpDownDecDigits->Position();
     }
     else
     {
-        spnDecDigits->SetEnabled(false);
+//        spnDecDigits->SetEnabled(false);
         lengine->displayFormat.decDigits = -1;
     }
     _ShowResults();
@@ -1796,10 +1796,10 @@ void TfrmMain::cbInfixTextChanged(void *sender, nlib::EventParameters param)
 		_ShowResults();
 		s = lengine->Postfix().ToWideString();
 	}
-	catch (wstring s)
+	catch (Trigger_Type tt)
 	{
+		gbResults->SetText(triggerMap[tt].ToWideString());
 		lengine->resultValid = LittleEngine::ResValid::rvInvalid;
-		gbResults->SetText(s);
 
 		_ShowResults();
 	}

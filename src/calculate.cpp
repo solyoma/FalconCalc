@@ -48,14 +48,39 @@ const SCharT schCommentDelimiter = SCharT(':');
 const SmartString ssCommentDelimiterString(1,schCommentDelimiter);
 
 
-/*========================================================
- * TASK:
- * EXPECTS:
- * RETURNS:
- *-----------------------------------------------------------*/
-void Trigger(SmartString text)
+std::map<Trigger_Type, SmartString> triggerMap
 {
-		throw text;
+    {Trigger_Type::BUILTIN_FUNCTIONS_CANNOT_BE_REDEFINED,"Builtin functions cannot be redefined"_ss},
+    {Trigger_Type::BUILTIN_VARIABLES_CANNOT_BE_REDEFINED,"Builtin variables cannot be redefined"_ss},
+    {Trigger_Type::CLOSING_QUOTE_NOT_FOUND,"Closing quote not found"_ss},
+    {Trigger_Type::DIVISON_BY_0,"Divison by 0"_ss},
+    {Trigger_Type::EITHER_THE_SEPARATOR_WAS_MISPLACED_OR_PARENTHESIS_WERE_MISMATCHED,"Either the separator was misplaced or parenthesis were mismatched"_ss},
+    {Trigger_Type::EXPRESSION_ERROR,"Expression error"_ss},
+    {Trigger_Type::FUNCTION_DEFINITION_MISSING_RIGHT_BRACE,"Function definition missing right brace"_ss},
+    {Trigger_Type::FUNCTION_MISSING_OPENING_BRACE,"Function missing opening brace"_ss},
+    {Trigger_Type::ILLEGAL_AT_LINE_END,"Illegal at line end"_ss},
+    {Trigger_Type::ILLEGAL_BINARY_NUMBER,"Illegal binary number"_ss},
+    {Trigger_Type::ILLEGAL_CHARACTER_NUMBER,"Illegal character number"_ss},
+    {Trigger_Type::ILLEGAL_HEXADECIMAL_NUMBER,"Illegal hexadecimal number"_ss},
+    {Trigger_Type::ILLEGAL_NUMBER_No1,"Illegal number #1"_ss},
+    {Trigger_Type::ILLEGAL_NUMBER_No2,"Illegal number #2"_ss},
+    {Trigger_Type::ILLEGAL_OCTAL_NUMBER,"Illegal octal number"_ss},
+    {Trigger_Type::ILLEGAL_OPERATOR_AT_LINE_END,"Illegal operator at line end"_ss},
+    {Trigger_Type::INVALID_CHARACTER_IN_FUNCTION_DEFINITION,"Invalid character in function definition"_ss},
+    {Trigger_Type::INVALID_FUNCTION_DEFINITION,"Invalid function definition"_ss},
+    {Trigger_Type::MISMATCHED_PARENTHESIS,"Mismatched parenthesis"_ss},
+    {Trigger_Type::MISMATCHED_PARENTHESIS,"Mismatched parenthesis"_ss},
+    {Trigger_Type::MISSING_BINARY_NUMBER,"Missing binary number"_ss},
+    {Trigger_Type::NO_FUNCTION_ARGUMENT,"No function argument"_ss},
+    {Trigger_Type::RECURSIVE_FUNCTIONS_ARE_NOT_ALLOWED,"Recursive functions are not allowed"_ss},
+    {Trigger_Type::SYNTAX_ERROR,"Syntax error"_ss},
+    {Trigger_Type::UNKNOWN_FUNCTION_IN_EXPRESSION,"Unknown function in expression"_ss},
+    {Trigger_Type::VARIABLE_DEFINITION_MISSING,"Variable definition missing"_ss}
+};
+		
+void Trigger(Trigger_Type tt)
+{
+		throw tt;
 }
 
 
@@ -199,7 +224,7 @@ void Token::_GetOperator(const SmartString &text, unsigned &pos)
 	switch(c)
 	{
 	case '<' : if(!cn) // no more character in line
-					Trigger("Illegal  at line end"_ss);
+					Trigger(Trigger_Type::ILLEGAL_AT_LINE_END);
 				switch(cn)
 				{
 					case '<' : data.oper = opSHL; type = tknOperator; ++pos; return;
@@ -208,7 +233,7 @@ void Token::_GetOperator(const SmartString &text, unsigned &pos)
 				};
 				break;
 	case '>' : if(!cn) // no more character in line
-					Trigger("Illegal operator at line end"_ss);
+					Trigger(Trigger_Type::ILLEGAL_OPERATOR_AT_LINE_END);
 				switch(cn)
 				{
 					case '>' : data.oper = opSHR; type = tknOperator; ++pos; return;
@@ -217,7 +242,7 @@ void Token::_GetOperator(const SmartString &text, unsigned &pos)
 				};
 				break;
 	case '!':  if(!cn) // no more character in line
-					Trigger("Illegal operator at line end"_ss);
+					Trigger(Trigger_Type::ILLEGAL_OPERATOR_AT_LINE_END);
 				switch(cn)
 				{
 					case '=' : data.oper = opNEQ; type = tknOperator; ++pos; break;
@@ -225,7 +250,7 @@ void Token::_GetOperator(const SmartString &text, unsigned &pos)
 				};
 				break;
 	case '=' :  if(!cn) // no more character in line
-					Trigger("Illegal operator at line end"_ss);
+					Trigger(Trigger_Type::ILLEGAL_OPERATOR_AT_LINE_END);
 				switch(cn)
 				{
 					case '=' : data.oper = opEQ; type = tknOperator; ++pos; break;
@@ -233,7 +258,7 @@ void Token::_GetOperator(const SmartString &text, unsigned &pos)
 				};
 				break;
 	case '~' :  if (!cn) // no more character in line
-					Trigger("Illegal operator at line end"_ss);
+					Trigger(Trigger_Type::ILLEGAL_OPERATOR_AT_LINE_END);
 				if (isdigit(cn) || cn == SCharT('#') )		// if decimal, octal, hexadecimal or binary number
 				{
 					data.oper = opCompl;			// 2's complement
@@ -306,7 +331,7 @@ void Token::_GetDecimalNumber(const SmartString &text, unsigned &pos)
 	 // a number from a single decimal point or with no exponent after the 'e'
 	 // is illegal
 	if( (!nIntP && ! nFracP)  || (bExp && ! nExpP))
-		Trigger("Illegal number #1"_ss);
+		Trigger(Trigger_Type::ILLEGAL_NUMBER_No1);
 	type = tknNumber;
 	name = text.substr(startpos, pos - startpos);
     val = RealNumber(name);
@@ -326,7 +351,7 @@ void Token::_GetHexNumber(const SmartString &text, unsigned &pos)
 	while(pos < text.length() && isxdigit(text[pos],loc) )
 		++pos;
 	if(pos == startpos+2)
-		Trigger("Illegal hexadecimal number"_ss);
+		Trigger(Trigger_Type::ILLEGAL_HEXADECIMAL_NUMBER);
 	type = tknNumber;
 	name = text.substr(startpos, pos - startpos);
     val = RealNumber(name);
@@ -345,7 +370,7 @@ void Token::_GetOctNumber(const SmartString &text, unsigned &pos)
 	while(pos < text.length() && isdigit(text[pos],loc))
 	{
 		if(text[pos] > '7')
-				Trigger("Illegal octal number"_ss);
+				Trigger(Trigger_Type::ILLEGAL_OCTAL_NUMBER);
 		++pos;
 	}
 	type = tknNumber;
@@ -364,7 +389,7 @@ void Token::_GetBinaryNumber(const SmartString &text, unsigned &pos)
 {
     auto triggerError = []()
         {
-            Trigger("Illegal binary number"_ss);
+            Trigger(Trigger_Type::ILLEGAL_BINARY_NUMBER);
         };
     locale loc = cout.getloc();
     unsigned startpos = pos++;    // skip '#'
@@ -386,7 +411,7 @@ void Token::_GetBinaryNumber(const SmartString &text, unsigned &pos)
  *          - 'pos' at input: points to after the opening single quote
  * RETURNS: nothing, type and number SmartString is set in 'data' member
  *         'pos' is positioned after the closing single quote
- * REMARKS: The character SmartString is considered a BIG ENDIAN
+ * REMARKS: The character SmartString is considered a BIG_ENDIAN
  *          number
  *-----------------------------------------------------------*/
 void Token::_GetNumberFromQuotedString(const SmartString &text, unsigned &pos)
@@ -401,9 +426,9 @@ void Token::_GetNumberFromQuotedString(const SmartString &text, unsigned &pos)
 		++pos;
     }
 	if(pos == startpos)
-		Trigger("Illegal character number"_ss);
+		Trigger(Trigger_Type::ILLEGAL_CHARACTER_NUMBER);
     if(pos == text.length() )
-        Trigger("Closing quote not found"_ss);
+        Trigger(Trigger_Type::CLOSING_QUOTE_NOT_FOUND);
 
 	type = tknCharacter;
 	name = "'"_ss + text.mid(startpos, pos - startpos) + "'"_ss;
@@ -484,13 +509,13 @@ void Token::FromText(const SmartString &text, unsigned &pos)
 		else if(bBinF)                  // #...
 		{
 			if(!cn) // then EOL and number is a single binary type character
-				Trigger("Missing binary number"_ss);
+				Trigger(Trigger_Type::MISSING_BINARY_NUMBER);
 			_GetBinaryNumber(text, pos);  // starting after the '#' type character
 		}
 		else // decimal number
 		{
 			if((!cn && bDecpF) || (bDecpF && !isdigit(cn,loc)))	// then EOL and number is a single decimal point
-				Trigger("Illegal number #2"_ss);
+				Trigger(Trigger_Type::ILLEGAL_NUMBER_No2);
 			_GetDecimalNumber(text, pos); // start at the first number/decimal point
 		}
 	}
@@ -609,6 +634,14 @@ LittleEngine::LittleEngine() : clean(true)
     }
 }
 
+
+const Token& LittleEngine::_Stack::peek(unsigned n) const
+{
+    if (_stack.size() < n)
+        Trigger(Trigger_Type::STACK_ERROR);
+    return _stack[_stack.size() - n];
+}
+
 /*========================================================
  * TASK:
  * EXPECTS:
@@ -631,7 +664,7 @@ void LittleEngine::_HandleUnknown(Token *tok)
 			stack.popto(tvPostfix);
 		}
 		if(stack.empty () )
-			Trigger("Either the separator was misplaced or parenthesis were mismatched"_ss);
+			Trigger(Trigger_Type::EITHER_THE_SEPARATOR_WAS_MISPLACED_OR_PARENTHESIS_WERE_MISMATCHED);
 	}
 }
 
@@ -677,7 +710,7 @@ void LittleEngine::_HandleBrace(Token* tok)
                 stack.pop();					   // Pop the left parenthesis from the stack, but not onto the output queue.
         }
         else                                       // If the stack runs out without finding a left parenthesis, then there are mismatched parenthesis.
-            Trigger("Mismatched parenthesis"_ss);
+            Trigger(Trigger_Type::MISMATCHED_PARENTHESIS);
     }
 }
 
@@ -717,7 +750,7 @@ int LittleEngine::_InfixToPostFix(const SmartString& expr)
     for(SmartString::iterator it = infix.begin(); it != infix.end() && *it != FalconCalc::schCommentDelimiter; ++it)
     {
         if(!quoted && !isalnum((wchar_t)*it, loc) && !isspace((wchar_t)*it,loc) && pattern.find_first_of(*it) == std::string::npos )
-    	    Trigger (SmartString("Illegal character '"_ss) +  (char16_t)(*it) + "'"_ss);
+    	    Trigger (Trigger_Type::ILLEGAL_CHARACTER);
 
         if(*it == '\'')
             quoted ^= true;
@@ -772,7 +805,7 @@ int LittleEngine::_InfixToPostFix(const SmartString& expr)
                                 if(_VariableAssignment(infix, pos, tok) == 0 )   // handles assignment
                                 {
                                     if(functions.count(tok->Text()) )    // then this isnt a variable just ,missing the braces yet
-                                        Trigger("Function missing opening brace"_ss);
+                                        Trigger(Trigger_Type::FUNCTION_MISSING_OPENING_BRACE);
     								tvPostfix.push_back(*tok); // otherwise add it to the output queue.
                                     needOp = true;
                                 }
@@ -783,7 +816,7 @@ int LittleEngine::_InfixToPostFix(const SmartString& expr)
                                 if(!_FunctionAssignment(infix, pos, tok) )
                                 {
                                     if (pos >= expr.length() || expr.at(pos) == SCharT(')') )    // eg 'sin(' or 'sin()' w.o. argument
-                                        Trigger("No function argument"_ss);
+                                        Trigger(Trigger_Type::NO_FUNCTION_ARGUMENT);
                                     stack.push(*tok);   // then push it onto the stack.
                                     //unsigned pos = 0;
                                     //SmartString s("(");
@@ -809,7 +842,7 @@ int LittleEngine::_InfixToPostFix(const SmartString& expr)
                                     {
                                         delete next;
                                         delete tok;
-                                        Trigger("Syntax error"_ss);
+                                        Trigger(Trigger_Type::SYNTAX_ERROR);
                                     }
                                     delete next;
 
@@ -832,7 +865,7 @@ int LittleEngine::_InfixToPostFix(const SmartString& expr)
                                     else
                                     {
                                         delete tok;
-                                        Trigger("Syntax error"_ss);
+                                        Trigger(Trigger_Type::SYNTAX_ERROR);
                                     }
                                 }
                                 _HandleOperator(tok);
@@ -852,7 +885,7 @@ int LittleEngine::_InfixToPostFix(const SmartString& expr)
 	while( !stack.empty())				// While there are still operator tokens in the stack:
 	{
 		if(stack.peek().Type() == tknBrace )
-			Trigger("Mismatched parenthesis"_ss);
+			Trigger(Trigger_Type::MISMATCHED_PARENTHESIS);
 		stack.popto(tvPostfix);
 	}
     return result; // 0: assignment, 1: other expression
@@ -909,7 +942,7 @@ bool LittleEngine::_VariableAssignment(const SmartString &expr   , unsigned &pos
     Variable v;
 
     if(constantsMap.count(tok->Text() )) 
-        Trigger("Builtin variables cannot be redefined"_ss);
+        Trigger(Trigger_Type::BUILTIN_VARIABLES_CANNOT_BE_REDEFINED);
     else if(variables.count(tok->Text() )) // already defined
         v.data.value = variables[ tok->Text()].data.value; // v = variables[ tok->Text()];
     ++pos;   // skip '='
@@ -930,7 +963,7 @@ bool LittleEngine::_VariableAssignment(const SmartString &expr   , unsigned &pos
             v.body = sv[0];
             break;
         default:
-            Trigger("Variable definition missing"_ss);
+            Trigger(Trigger_Type::VARIABLE_DEFINITION_MISSING);
             break;
             break;
     }
@@ -1011,9 +1044,9 @@ bool LittleEngine::_VariableAssignment(const SmartString &expr   , unsigned &pos
 
    if(functions.count(tok->Text()) ) // already defined
         if(functions[ tok->Text()].builtin)
-            Trigger("Builtin functions cannot be redefined"_ss);
+            Trigger(Trigger_Type::BUILTIN_FUNCTIONS_CANNOT_BE_REDEFINED);
    if(expr[poseq-1] != ')')
-        Trigger("Function definition missing right brace"_ss);
+        Trigger(Trigger_Type::FUNCTION_DEFINITION_MISSING_RIGHT_BRACE);
 
    Func f;
    f.name = tok->Text();
@@ -1036,7 +1069,7 @@ bool LittleEngine::_VariableAssignment(const SmartString &expr   , unsigned &pos
             f.body = svFields[0];
             break;
         default:
-            Trigger("Invalid function definition"_ss);
+            Trigger(Trigger_Type::INVALID_FUNCTION_DEFINITION);
             break;
    }
 
@@ -1064,7 +1097,7 @@ bool LittleEngine::_VariableAssignment(const SmartString &expr   , unsigned &pos
         while( n < bpos && isspace((wchar_t)expr[n], loc))
             ++n;
         if(n < bpos && expr[n] != _argSeparator)
-            Trigger("Invalid character in function definition"_ss);
+            Trigger(Trigger_Type::INVALID_CHARACTER_IN_FUNCTION_DEFINITION);
         ++n;    // skip ',' or to bpos
         while( n < bpos && isspace((wchar_t)expr[n], loc))
             ++n;
@@ -1160,11 +1193,11 @@ void LittleEngine::_DoVariable(const Token &tok)
 void LittleEngine::_DoFunction(const Token &tok)
 {
     if(!functions.count(tok.Text()) ) // non existing function
-        Trigger("Unknown function in expression"_ss);
+        Trigger(Trigger_Type::UNKNOWN_FUNCTION_IN_EXPRESSION);
 
     Func &f = functions[tok.Text()];
     if(f.being_processed) // then recursive call
-        Trigger("Recursive functions are not allowed"_ss);
+        Trigger(Trigger_Type::RECURSIVE_FUNCTIONS_ARE_NOT_ALLOWED);
     RealNumber v;
     if(f.builtin) // single argument on stack
     {
@@ -1298,7 +1331,7 @@ void LittleEngine::_DoOperator(const Token &tok)
                         stack.pop(2);
                         break;
             case opDIV: if(stack.peek(1).Value() == RealNumber::RN_0)
-                            Trigger("Divison by 0"_ss);
+                            Trigger(Trigger_Type::DIVISON_BY_0);
                         res = stack.peek(2).Value() / stack.peek(1).Value();
                         stack.pop(2);
                         break;
@@ -1354,7 +1387,7 @@ RealNumber LittleEngine::_CalcPostfix(TokenVec& tvPostfix)
         }
     }
     if(stack.empty() || stack.size() > stack_cnt + 1 || (stack.peek().Type() != tknNumber && stack.peek().Type() != tknCharacter))
-        Trigger("Expression error"_ss);
+        Trigger(Trigger_Type::EXPRESSION_ERROR);
     Token tok( stack.peek() );
     stack.pop(1);
 
@@ -1382,7 +1415,7 @@ RealNumber LittleEngine::Calculate()
     }
     catch(...)
     {
-      ;  // TO DO : error handling
+      ;  // TO_DO : error handling
       resultType = ResultType::rtInvalid;
 	  stack.clear();
 	  throw;	// re-throw if not handled
@@ -1403,7 +1436,7 @@ SmartString LittleEngine::Postfix() const
     return postfix;
 }
 #if defined(__BORLANDC__)
-// valamiert "bad file descriptor" van ha a RAD STUDIO XE-vel forditom
+// valamiert "bad file descriptor" van ha a RAD_STUDIO_XE-vel forditom
      #include <stdio.h>
 #endif
 /*========================================================
@@ -1765,6 +1798,5 @@ bool LittleEngine::AddUserVariablesAndFunctions(SmartString def, int what) //wha
     return true;
 }
 
-
-	// end of namespace FalconCalc
+// end of namespace FalconCalc
 }

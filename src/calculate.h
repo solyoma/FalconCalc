@@ -175,7 +175,40 @@ namespace FalconCalc
 
 	typedef std::vector<Token> TokenVec;
 
-	void Trigger(SmartString text);
+    enum class Trigger_Type
+    {
+        NO_PROBLEMS,
+        BUILTIN_FUNCTIONS_CANNOT_BE_REDEFINED,
+        BUILTIN_VARIABLES_CANNOT_BE_REDEFINED,
+        CLOSING_QUOTE_NOT_FOUND,
+        DIVISON_BY_0,
+        EITHER_THE_SEPARATOR_WAS_MISPLACED_OR_PARENTHESIS_WERE_MISMATCHED,
+        EXPRESSION_ERROR,
+        FUNCTION_DEFINITION_MISSING_RIGHT_BRACE,
+        FUNCTION_MISSING_OPENING_BRACE,
+        ILLEGAL_AT_LINE_END,
+        ILLEGAL_BINARY_NUMBER,
+        ILLEGAL_CHARACTER,
+        ILLEGAL_CHARACTER_NUMBER,
+        ILLEGAL_HEXADECIMAL_NUMBER,
+        ILLEGAL_NUMBER_No1,
+        ILLEGAL_NUMBER_No2,
+        ILLEGAL_OCTAL_NUMBER,
+        ILLEGAL_OPERATOR_AT_LINE_END,
+        INVALID_CHARACTER_IN_FUNCTION_DEFINITION,
+        INVALID_FUNCTION_DEFINITION,
+        MISMATCHED_PARENTHESIS,
+        MISSING_BINARY_NUMBER,
+        NO_FUNCTION_ARGUMENT,
+        RECURSIVE_FUNCTIONS_ARE_NOT_ALLOWED,
+        SYNTAX_ERROR,
+        STACK_ERROR,
+        UNKNOWN_FUNCTION_IN_EXPRESSION,
+        VARIABLE_DEFINITION_MISSING
+    };
+
+    extern std::map<Trigger_Type, SmartString> triggerMap;
+	void Trigger(Trigger_Type tt);
 
     /*==================*/
     // variable or function does not know its name (see FunctionTable below)
@@ -400,12 +433,7 @@ namespace FalconCalc
 				}
 			}
 			const Token &operator[](unsigned index) const { return _stack.at(index); }
-			const Token &peek(unsigned n=1) const // bounds checking added
-            {
-				if(_stack.size() < n)
-					Trigger("Stack error"_ss);
-                return _stack[_stack.size() - n];
-            }
+            const Token& peek(unsigned n = 1) const; // bounds checking added
             unsigned size() const { return _stack.size(); }
 		} stack;
 		void _HandleUnknown(Token *tok);

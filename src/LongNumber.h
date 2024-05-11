@@ -35,16 +35,16 @@ namespace LongNumber {
 
 	enum class NumberFormat {
 		rnfGeneral,			// either rnfNormal or rnfSci depending on 
-		// decDigits and the number
+							// decDigits and the number
 		rnfNormal,			// for decimal numbers: fix dot format with no exponent and either 
-		//   no zero leading digit in integer part if any non-zero
-		//   digit occures there (0.8 OK, but 08.3 is not)  
-		// switches to sci format if it won't fit into displayed digits, 
-		// for binary, hex and octal strings: all digits 
-		//   possibly w. format specifier
+							//   no zero leading digit in integer part if any non-zero
+							//   digit occures there (0.8 OK, but 08.3 is not)  
+							// switches to sci format if it won't fit into displayed digits, 
+							// for binary, hex and octal strings: all digits 
+							//   optionally w. format specifier
 		rnfSci, 			// format: -1.234E567	or any subformat below
 		rnfEng,  			// like Sci but exponent is always a multiple of +/- 3
-		rnfText				// ascii or UTF-8, etc
+		rnfText				// ASCII or UTF-8, etc
 	};
 	enum class ExpFormat {
 		rnsfE,				// exponent string is 'E'+ [+|-] + exp digits
@@ -69,6 +69,12 @@ namespace LongNumber {
 		rntfAnsi,			// each character pair in hexadecimal representation is one letter
 		rntfUtf8,
 		rntfUtf16
+	};
+	enum class SignOption 
+	{ 
+		soNormal,					// only use when positive
+		soLeaveSpaceForPositive,	// leave space for positive
+		soAlwaysShow				// show positive sign as well
 	};
 
 
@@ -95,23 +101,18 @@ namespace LongNumber {
 		NumberFormat mainFormat = NumberFormat::rnfGeneral;
 		ExpFormat  expFormat = ExpFormat::rnsfE;
 
-		int displWidth = -1;					// > 0 the displayed number (including the sign, the decimal dot and exponent) 
-		//		must fit into this width
-		// = 0 : don't care use all decDigits (fractional decimal digits)
-		//	if smaller than the real part + decDigits requires
-		//	format switches 'mainFormat' to 'rnfSci'
-		//		displayed (including the sign), except for decDigits == -1 
-		//		when the displayed length is "unlimited"
-		//		(determined by	MaxAllowedDigits)
-		//  e.g. decDigits == -4 then number 1234 is shown as 1234
-		// default:all non trailing zero decimal digits
-		int decDigits = -1;						// how many digits after the decimal point may be displayed
-		// (if displWidth allows it)
-		// -1: all digits stored is displayed (if displWidth allows it)
-		// 0: no decimal digits
-		// > _numberstring.length(): add trailing zeros
+		int decDigits = -1;						// only for base 10 format.
+												// > 0	:This many digits required after the decimal point.
+												// (if displWidth allows it). 
+												// > 0	: Trailing 0 characters after the decimal point may be present
+												//	 0	: only integer part, no decimal digits
+												// -1	: all digits stored is displayed (if displWidth allows it)
+												// > _numberstring.length(): add trailing zeros
 
-		bool mustUseSign = false;				// print a positive sign too before the number? (not in exponent though!)
+		int displWidth = -1;					// when > 0 and the number sting is shorter than this then the number is
+												// right aligned, otherwise it is left aligned. 
+												// the displayed number is always determined by 'decDigits
+		SignOption signOption = SignOption::soNormal;
 		SmartString strThousandSeparator;		// for decimal format. Empty: no separator
 		bool useFractionSeparator = false;		// when true use a space character
 		size_t nFormatSwitchLength = 16;		// for decimal display: if abs. value of the exponent is
@@ -127,7 +128,7 @@ namespace LongNumber {
 		// only for hexadecimal display
 		HexFormat hexFormat = HexFormat::rnHexNormal;
 		IEEEFormat trippleE = IEEEFormat::rntHexNotIEEE;
-		bool littleEndian = false;				// reverse order of displayed digits. Only used for rnHexWord and rnHexDWord
+		bool littleEndian = false;				// reverse order of bytes words or double words. Only used for rnHexWord and rnHexDWord
 		AngularUnit angUnit = AngularUnit::auRad;
 	};
 
@@ -250,6 +251,7 @@ namespace LongNumber {
 		//			1 string: "12345678" and 
 		//			1 integer for resulting exponent: -4 
 		int _exponent = 0;	// 10's exponent of number+1. If positive # of integer digits
+		// Example: number = 0.123 => _numberString = "123", _exponent = 0
 		// Example: number = 12345.678*10^(-6) => _numberString = 12345678, _exponent=-5
 
 		static size_t _maxExponent; // absolute value of largest possible exponent of 10 in number
@@ -462,7 +464,9 @@ namespace LongNumber {
 		{
 			return !IsNaN() && !IsInf();
 		}
+
 		// ******* private *************
+
 	private:
 		int _leadingZeros = 0;			// used in operations
 		bool _isNormalized = false;
@@ -512,8 +516,9 @@ namespace LongNumber {
 		void _SetNaN();
 		void _SetInf();
 								// allocates may change nIntDigits: stores the position in the result string
-		SmartString _FormatIntegerPart(const SmartString &sNumber, int sign, const DisplayFormat &format, size_t &nIntDigits, size_t chunkSize, bool prefixToAllChunks) const;
-		SmartString _RoundNumberString(SmartString& s, int& cntIntegerDigits, int roundingPosition, int cntleadingZeros) const;
+		SmartString _IntegerPartToString(const SmartString &sNumber, int sign, const DisplayFormat &format, size_t &nIntDigits, size_t chunkSize, bool prefixToAllChunks) const;
+		SmartString _DecimalPartToString(const SmartString& sNumber, const DisplayFormat& format, size_t& nIntDigits, int cntLeadingZeros) const;
+		SmartString _RoundNumberString(SmartString& s, int& cntIntegerDigits, int roundingPosition, int cntLeadingZeros) const;
 
 		SCharT _AddDigits(SCharT digit1, SCharT digit2, int& carry) const;
 		SCharT _SubtractDigits(SCharT digit1, SCharT digit2, int& borrow) const;
@@ -528,6 +533,12 @@ namespace LongNumber {
 		void _MultiplyStrings(RealNumber& left, RealNumber& right) const;	// result will be as long as the sum of the significant digits
 		void _DivideInternal(RealNumber& left, RealNumber& right, RealNumber* pRemainder = nullptr) const;
 		void _CorrectResult(RealNumber& left, String& result, int trailingchZeros, int carry) const;
+		inline SmartString _SignString(const DisplayFormat format) const
+		{
+			return SmartString(_sign < 0 ? "-" :
+				(format.signOption == SignOption::soAlwaysShow ? "+" :
+					(format.signOption == SignOption::soLeaveSpaceForPositive ? " " : "")));
+		}
 
 		SmartString _FormatExponent(const DisplayFormat fmt, int exp) const;
 
