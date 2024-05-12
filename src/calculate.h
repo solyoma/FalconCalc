@@ -387,7 +387,6 @@ namespace FalconCalc
         static unsigned numBuiltinVars,numBuiltinFuncs;
 
         DisplayFormat displayFormat;
-        AngularUnit angleUnit = AngularUnit::auDeg;   // used when calculating sine, cosine, tangent, cotangent
 
         SmartString infix;
         TokenVec tvPostfix;
@@ -474,6 +473,7 @@ namespace FalconCalc
         SmartString ResultAsOctString() const;
         SmartString ResultAsBinString() const;
         SmartString ResultAsCharString() const;
+        AngularUnit AngleUnit() const { return displayFormat.angUnit; }
 	};
 
 // end of namespace FalconCalc

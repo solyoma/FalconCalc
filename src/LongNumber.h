@@ -50,7 +50,7 @@ namespace LongNumber {
 		rnsfE,				// exponent string is 'E'+ [+|-] + exp digits
 		rnsfSciHTML,		// format for html : -1.234x10<sup>-567</sup>
 		rnsfSciTeX,			// format for TeX: -1.234\cdot10^{-567}
-		rnsfGraph				// exponent after ^, like -1.234^{567}
+		rnsfGraph			// exponent after ^, like -1.234^{567}
 	};
 	enum class HexFormat {
 		rnHexNormal, 		// -1234567890ABCDEF OR EDCBA09876543210	
@@ -115,10 +115,10 @@ namespace LongNumber {
 		SignOption signOption = SignOption::soNormal;
 		SmartString strThousandSeparator;		// for decimal format. Empty: no separator
 		bool useFractionSeparator = false;		// when true use a space character
-		size_t nFormatSwitchLength = 16;		// for decimal display: if abs. value of the exponent is
-		// larger than this display will change to Sci automatically
-		// for non base 10 display the maximum length
-		// of the string in that base
+		size_t nFormatSwitchLength = 40;		// for decimal display: if abs. value of the exponent is
+												// larger than this display will change to Sci automatically
+												// for non base 10 display the maximum length
+												// of the string in that base
 // only hex or binary display
 		bool bSignedBinOrHex = false;			// true: negative numbers are preceeded by a negative
 		// sign and the corresponding hex digit, where the
@@ -129,7 +129,7 @@ namespace LongNumber {
 		HexFormat hexFormat = HexFormat::rnHexNormal;
 		IEEEFormat trippleE = IEEEFormat::rntHexNotIEEE;
 		bool littleEndian = false;				// reverse order of bytes words or double words. Only used for rnHexWord and rnHexDWord
-		AngularUnit angUnit = AngularUnit::auRad;
+		AngularUnit angUnit = AngularUnit::auDeg;    // used when calculating sine, cosine, tangent, cotangent
 	};
 
 	enum class Base { dec, hex, oct, bin };
@@ -518,7 +518,7 @@ namespace LongNumber {
 								// allocates may change nIntDigits: stores the position in the result string
 		SmartString _IntegerPartToString(const SmartString &sNumber, int sign, const DisplayFormat &format, size_t &nIntDigits, size_t chunkSize, bool prefixToAllChunks) const;
 		SmartString _DecimalPartToString(const SmartString& sNumber, const DisplayFormat& format, size_t& nIntDigits, int cntLeadingZeros) const;
-		SmartString _RoundNumberString(SmartString& s, int& cntIntegerDigits, int roundingPosition, int cntLeadingZeros) const;
+		SmartString _RoundNumberString(SmartString& s, int& cntIntegerDigits /* == _exponent + 1 */, int roundingPosition, int cntLeadingZeros) const;
 
 		SCharT _AddDigits(SCharT digit1, SCharT digit2, int& carry) const;
 		SCharT _SubtractDigits(SCharT digit1, SCharT digit2, int& borrow) const;
@@ -542,6 +542,8 @@ namespace LongNumber {
 
 		SmartString _FormatExponent(const DisplayFormat fmt, int exp) const;
 
+		int _PosExpInNumberString(const DisplayFormat fmt, const SmartString& s, int fromPos) const;
+
 		// conversion
 		SmartString _ToBase(int base, size_t maxNumDigits = 32) const;	// number must be smallar than the allowed digits and base must be >1 && <= 16
 		// exponentiation
@@ -563,7 +565,7 @@ namespace LongNumber {
 	inline RealNumber sqrt(RealNumber r);							// calculate the result up till _maxLength
 	RealNumber sqrtA(RealNumber r, int cntDigitsAccuracy);	// calculate the result up till 1e-<cntDigitsAccuracy> or. when == -1 to  _maxLength
 	RealNumber pow(RealNumber base, RealNumber power);			// base ^power
-	RealNumber root(RealNumber base, RealNumber r);				// r√
+	RealNumber root(RealNumber base, int r);				// r√
 
 	// transcendent functions
 	RealNumber exp(RealNumber exponent);						// e^x

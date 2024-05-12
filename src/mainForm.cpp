@@ -949,7 +949,7 @@ void TfrmMain::edtInfixTextChanged(void *sender, nlib::EventParameters param)
 
 void TfrmMain::rdDegClick(void *sender, nlib::EventParameters param)
 {
-	lengine->angleUnit = (LongNumber::AngularUnit)((Radiobox*)sender)->Tag();
+	lengine->displayFormat.angUnit = (LongNumber::AngularUnit)((Radiobox*)sender)->Tag();
 	edtInfixTextChanged(sender,param);
 	SetFocus(edtInfix->Handle());
 }
@@ -1407,7 +1407,7 @@ bool TfrmMain::_SaveState(wstring name)
 	wstring wsep = (chkSep->Checked() ? L"1" : L"0") + (std::to_wstring(cbThousandSep->ItemIndex()));
 	fs << DECFORMAT<< lengine->displayFormat.decDigits << "|" << (int)lengine->displayFormat.expFormat 
 	   << "|" << wsep <<  "|" << (int)lengine->displayFormat.useFractionSeparator 
-	   << "|" << (int)lengine->angleUnit << "\n";
+	   << "|" << (int)lengine->AngleUnit() << "\n";
 
     fs << HEXFORMAT<< (int)lengine->displayFormat.hexFormat << "|"<< (int)lengine->displayFormat.littleEndian << "|"<< 
 			(int)lengine->displayFormat.bSignedBinOrHex << "|" << (int)lengine->displayFormat.trippleE <<"\n";

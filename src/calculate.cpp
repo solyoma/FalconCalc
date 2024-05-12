@@ -223,51 +223,52 @@ void Token::_GetOperator(const SmartString &text, unsigned &pos)
 
 	switch(c)
 	{
-	case '<' : if(!cn) // no more character in line
-					Trigger(Trigger_Type::ILLEGAL_AT_LINE_END);
-				switch(cn)
-				{
-					case '<' : data.oper = opSHL; type = tknOperator; ++pos; return;
-					case '=' : data.oper = opLE; type = tknOperator; ++pos; return;
-					default  : data.oper = opLT; type = tknOperator; return;
-				};
-				break;
-	case '>' : if(!cn) // no more character in line
-					Trigger(Trigger_Type::ILLEGAL_OPERATOR_AT_LINE_END);
-				switch(cn)
-				{
-					case '>' : data.oper = opSHR; type = tknOperator; ++pos; return;
-					case '=' : data.oper = opGE; type = tknOperator; ++pos; return;
-					default: data.oper = opGT; type = tknOperator; return;
-				};
-				break;
-	case '!':  if(!cn) // no more character in line
-					Trigger(Trigger_Type::ILLEGAL_OPERATOR_AT_LINE_END);
-				switch(cn)
-				{
-					case '=' : data.oper = opNEQ; type = tknOperator; ++pos; break;
-					default: data.oper = opNOT; type = tknOperator; return;
-				};
-				break;
-	case '=' :  if(!cn) // no more character in line
-					Trigger(Trigger_Type::ILLEGAL_OPERATOR_AT_LINE_END);
-				switch(cn)
-				{
-					case '=' : data.oper = opEQ; type = tknOperator; ++pos; break;
-					default: data.oper = opLET; type = tknOperator; return;
-				};
-				break;
-	case '~' :  if (!cn) // no more character in line
-					Trigger(Trigger_Type::ILLEGAL_OPERATOR_AT_LINE_END);
-				if (isdigit(cn) || cn == SCharT('#') )		// if decimal, octal, hexadecimal or binary number
-				{
-					data.oper = opCompl;			// 2's complement
-					type = tknOperator;
-					return;
-				}
-	default:  *this = s;
-			  break;
+	    case '<' : if(!cn) // no more character in line
+					    Trigger(Trigger_Type::ILLEGAL_AT_LINE_END);
+				    switch(cn)
+				    {
+					    case '<' : name = u"<<"; break;
+					    case '=' : name = u"<="; break;
+					    default  : name = u"<";  break;
+				    };
+				    break;
+	    case '>' : if(!cn) // no more character in line
+					    Trigger(Trigger_Type::ILLEGAL_OPERATOR_AT_LINE_END);
+				    switch(cn)
+				    {               
+					    case '>' : name = u">>"; break;
+                        case '=':  name = u">="; break;
+                        default:   name = u">";  break;
+				    };
+				    break;
+	    case '!':  if(!cn) // no more character in line
+					    Trigger(Trigger_Type::ILLEGAL_OPERATOR_AT_LINE_END);
+				    switch(cn)
+				    {
+					    case '=' : name =u"!="; break;
+                        default  : name = u"!"; break;
+				    };
+				    break;
+	    case '=' :  if(!cn) // no more character in line
+					    Trigger(Trigger_Type::ILLEGAL_OPERATOR_AT_LINE_END);
+				    switch(cn)
+				    {
+					    case '=' : name = u"=="; break;
+					    default  : name = u"=";  break;
+				    };
+				    break;
+	    case '~' :  if (!cn) // no more character in line
+					    Trigger(Trigger_Type::ILLEGAL_OPERATOR_AT_LINE_END);
+				    if (isdigit(cn) || cn == SCharT('#') )		// if decimal, octal, hexadecimal or binary number
+				    {
+                        name = u"~"; break;
+				    }
+                    break;
+	    default:  *this = s;
+			      return;
 	}
+    data = MathOperator::Op(name);
+    type = tknOperator;
 }
 
 /*==========================================
@@ -549,16 +550,16 @@ bool LittleEngine::builtinsOk=false;
 
 inline static RealNumber Sign(RealNumber r) { return r.Sign() > 0 ? RealNumber::RN_1:-RealNumber::RN_1; }
 
-static RealNumber Sin(RealNumber  r) { return sin (r, lengine->angleUnit); }
-static RealNumber Csc(RealNumber  r) { return csc (r, lengine->angleUnit); }
-static RealNumber Cos(RealNumber  r) { return cos (r, lengine->angleUnit); }
-static RealNumber Sec(RealNumber  r) { return sec (r, lengine->angleUnit); }
-static RealNumber Tan(RealNumber  r) { return tan (r, lengine->angleUnit); }
-static RealNumber Cot(RealNumber  r) { return cot (r, lengine->angleUnit); }
-static RealNumber Asin(RealNumber r) { return asin(r, lengine->angleUnit); }
-static RealNumber Acos(RealNumber r) { return acos(r, lengine->angleUnit); }
-static RealNumber Atan(RealNumber r) { return atan(r, lengine->angleUnit); }
-static RealNumber Acot(RealNumber r) { return acot(r, lengine->angleUnit); }
+static RealNumber Sin(RealNumber  r) { return sin (r, lengine->AngleUnit()); }
+static RealNumber Csc(RealNumber  r) { return csc (r, lengine->AngleUnit()); }
+static RealNumber Cos(RealNumber  r) { return cos (r, lengine->AngleUnit()); }
+static RealNumber Sec(RealNumber  r) { return sec (r, lengine->AngleUnit()); }
+static RealNumber Tan(RealNumber  r) { return tan (r, lengine->AngleUnit()); }
+static RealNumber Cot(RealNumber  r) { return cot (r, lengine->AngleUnit()); }
+static RealNumber Asin(RealNumber r) { return asin(r, lengine->AngleUnit()); }
+static RealNumber Acos(RealNumber r) { return acos(r, lengine->AngleUnit()); }
+static RealNumber Atan(RealNumber r) { return atan(r, lengine->AngleUnit()); }
+static RealNumber Acot(RealNumber r) { return acot(r, lengine->AngleUnit()); }
 
 /*========================================================
  * TASK: Creates a single instance of the calculator
@@ -622,6 +623,7 @@ LittleEngine::LittleEngine() : clean(true)
        SET_BUILTIN_FUNC1(log2, base 2 logarithm, log2);
        SET_BUILTIN_FUNC1(log10, base 10 logarithm, log10);
        SET_BUILTIN_FUNC1(ln, natural logarithm, ln);
+       SET_BUILTIN_FUNC3(root, n-th root, root);
        SET_BUILTIN_FUNC3(round, rounding, round);
        SET_BUILTIN_FUNC1(sign, sign of number, Sign);
        SET_BUILTIN_FUNC1(sqrt, square root, sqrt);
@@ -804,9 +806,9 @@ int LittleEngine::_InfixToPostFix(const SmartString& expr)
             case tknVariable:	  						// If the token is a variable check for assignments
                                 if(_VariableAssignment(infix, pos, tok) == 0 )   // handles assignment
                                 {
-                                    if(functions.count(tok->Text()) )    // then this isnt a variable just ,missing the braces yet
+                                    if(functions.count(tok->Text()) )   // then this isnt a variable just missing the braces yet
                                         Trigger(Trigger_Type::FUNCTION_MISSING_OPENING_BRACE);
-    								tvPostfix.push_back(*tok); // otherwise add it to the output queue.
+    								tvPostfix.push_back(*tok);          // add variable to the output queue.
                                     needOp = true;
                                 }
                                 else
@@ -820,7 +822,7 @@ int LittleEngine::_InfixToPostFix(const SmartString& expr)
                                     stack.push(*tok);   // then push it onto the stack.
                                     //unsigned pos = 0;
                                     //SmartString s("(");
-                                    //Token brace(s, pos);   // function token ate oopening brace
+                                    //Token brace(s, pos);   // function token ate opening brace
                                     //stack.push(brace);
                                 }
                                 else                     // function asignment
@@ -1344,7 +1346,7 @@ void LittleEngine::_DoOperator(const Token &tok)
                         stack.pop(1);
                         break;
             case opNOT:
-                        res = stack.peek(1).Value() != RealNumber::RN_0;
+                        res = stack.peek(1).Value() != RealNumber::RN_0 ? RealNumber::RN_0 : RealNumber::RN_1;
                         stack.pop(1);
                         break;
 			case opCompl:
@@ -1724,10 +1726,10 @@ SmartString LittleEngine::GetFunctions(bool whatToShow) const
  *-----------------------------------------------------------*/
 LittleEngine &LittleEngine::operator=(const LittleEngine &src)
 {
-    angleUnit   = src.angleUnit;   // used when calculating sine, cosine, tangent, cotangent
     infix       = src.infix;
     tvPostfix    = src.tvPostfix;
     calcResult  = src.calcResult;
+    displayFormat = src.displayFormat;
     //variables   = src.variables;      static variables now
     //functions   = src.functions;
     ssNameOfDatFile = src.ssNameOfDatFile;

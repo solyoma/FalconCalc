@@ -464,9 +464,9 @@ RealNumber RealNumber::Rounded(int countOfDecimalPlaces) const
 
 RealNumber RealNumber::RoundToDigits(int countOfSignificantDigits)
 {
-	int cnt = 0, cnt0 = countOfSignificantDigits-1; // position in string
-	_RoundNumberString(_numberString,  cnt, cnt0, 0);
-	if (cnt > cnt0)
+	int intLenIn = _exponent, intLenOut = intLenIn, roundPos=countOfSignificantDigits - 1; // position in string
+	_RoundNumberString(_numberString,  intLenOut, roundPos, 0);
+	if (intLenOut > intLenIn)
 		++_exponent;
 	return *this;
 }
@@ -585,7 +585,7 @@ SmartString RealNumber::_DecimalPartToString(const SmartString& roundedString, c
 {
 	size_t len = roundedString.length();  // no leading zeros in numberString!
 	SmartString res;
-	if (len <= nIntegerDigits && !cntLeadingZeros)	// no decimal part
+	if (fmt.decDigits < 0 && len <= nIntegerDigits && !cntLeadingZeros)	// no decimal part
 		return res;
 
 	res += _decPoint;
@@ -924,7 +924,7 @@ SmartString RealNumber::ToDecimalString(const DisplayFormat &format) const
 	if (format.base == DisplayBase::rnb10 && !_exponent && (_numberString.empty() || (_numberString.length() == 1 && _numberString.at(0, chZero) == chZero)))
 	{
 		if (format.decDigits > 0)
-			return SmartString("0."_ss) + SmartString(chZero, format.decDigits);
+			return SmartString("0."_ss) + SmartString(format.decDigits, chZero);
 		else
 			return SmartString(chZero);
 	}
@@ -985,7 +985,7 @@ SmartString RealNumber::ToDecimalString(const DisplayFormat &format) const
 			}
 			--exp;	// real 10's exponent
 			strExponent = _FormatExponent(fmt, exp);
-			if (fmt.mainFormat == NumberFormat::rnfSci && fmt.mainFormat == NumberFormat::rnfEng)
+			if (fmt.mainFormat == NumberFormat::rnfSci || fmt.mainFormat == NumberFormat::rnfEng)
 				expLen = strExponent.length();
 			++exp;
 		};
@@ -1024,6 +1024,7 @@ SmartString RealNumber::ToDecimalString(const DisplayFormat &format) const
 		if( (size_t)std::abs(exp) > fmt.nFormatSwitchLength)
 		{
 			fmt.mainFormat = NumberFormat::rnfSci;
+			nReqdDecDigits = fmt.decDigits < 0 ? (_numberString.empty() ? 0 : _numberString.length() - 1) : _numberString.length();
 			(void)calculateExponentAndIntegerDigits();
 			(void)requiredSpaceforIntegerDigits();
 		}
@@ -1070,350 +1071,7 @@ SmartString RealNumber::ToDecimalString(const DisplayFormat &format) const
 	if (expLen)
 		result += strExponent;
 
-	//size_t nLeadingSpaces = (fmt.displWidth < 0 || result.length() >= nDisplayWidth) ? 0 : (nDisplayWidth - nWidthFractionalPart-nWidthIntegerPart - signStr.length());
-	//if (nLeadingSpaces)
-	//	result = SmartString(nLeadingSpaces, u' ') + result;
 	return result;
-
-#if 0
-	RealNumber r(*this);			// so to keep ourselves const
-
-
-	// create rounded string
-
-	if (fmt.mainFormat == NumberFormat::rnfNormal)	// not sci or eng
-	{
-	   size_t nLeadingDecimalZeros = exp >= 0 ? 0 : -exp; // if |number| is < 1 : # of leading zeros after the decimal point before _numberString
-														  // length of integer part is nIntegerDigits
-	   size_t numLen = _numberString.length();														// # of non-zero digits in number
-
-	   size_t nIntegerSpace = nIntegerDigits
-
-	   size_t nFracDigits = fmt.decDigits > 0 ? fmt.decDigits : numLen - nIntegerDigits;			// # of decimal digits required
-	   size_t nFracSpace = nFracDigits * (fmt.useFractionSeparator ? (nFracDigits - 2) / 3 : 1);	// # of space separators in decimal part
-
-	   if (fmt.displWidth > nFracSpace + nIntegerDigits)
-	   {
-
-	   }
-
-	   size_t roundPos;
-
-		// rounding position :
-		//  decDigits  displayWidth    nLeadingDecimalZeros	 nIntegerDigits			position
-		//		 < 0		 < 0				...					...					-1 (no rounding)
-	    //		 < 0	     >= 0			    0			=>		>= 1			   displayWidth - nIntegerDigits
-		//		 < 0 		 >= 0				> 0			=>      1				   displayWidth - 1 - nLeadingDecimalZeros (if >0, else the displayed number is 0)
-	    //		 > 0		  < 0				0			=>		>= 1			nIntegerDigits + decDigits >= numberString.length ? -1 : nIntegerdigits+decDigits
-	    //       > 0		 >= 0				0			=>		>= 1			nIntegerDigits + decDigits >= displayWidth ? 
-	   if (fmt.decDigits >= 0)
-	   {
-		   if (fmt.displWidth < 0)
-			   if (nIntegerDigits + fmt.decDigits >= _numberString.length())
-				   roundPos = -1;
-			   else
-				   roundPos = nIntegerDigits + fmt.decDigits;
-		   else if (nIntegerDigits + fmt.decDigits > fmt.displWidth)
-		   {
-			   roundPos = fmt.displWidth;
-		   }
-		   else if()
-
-	}
-
-
-	nExpLength = (int)strExponent.length();
-	nIntLength = nIntegerDigits;		//no sign, AND decimal point but thousand separators where taken into account
-
-
-	/////////////////////////////////////////////////////////////////////
-		// variables for unformatted number string ('Uf')
-	int nUfIntegerDigits = exp > 0 ? exp : 0,			// # of integer digits in _numberString
-	    nLeadingDecimalZeros = exp >= 0 ? 0 : -exp; // if |number| is < 1 : # of leading zeros after the decimal point before _numberString
-		 // 'lengthFractionPart' is the of the fractional part in _numberString, i.e. no leading zeros
-		 // Because 'exp' is the position of the decimal point relative to the start of '_numberString'
-		 // 'nUfLengthFractionPart' may be 0 for exp > 0 
-		 // e.g. # = 123456789000		_numberstring = 123456789, exp = 12 => nUfIntegerDigits = 12 (>_numberstring.length())	nUfLengthFractionPart = 0
-		 // or   #  = 0.000123456789	                123456789, exp = -3 => nUfIntegerDigits = 1,							nUfLengthFractionPart = 9
-		// total length of displayable fraction part is nUfLeadingDecimalZeros + nUfLengthFractionPart
-		nUfLeadingDecimalZeros = exp >= 0 ? 0 : -exp; // if |number| is < 1 : # of leading zeros after the decimal point before _numberString
-	int	nUfLengthFractionPart = exp > 0 ? ((int)_numberString.length() > exp ? _numberString.length() - exp : 0) : nUfLeadingDecimalZeros + _numberString.length(); 
-
-	bool isFloatingDisplay = fmt.mainFormat == NumberFormat::rnfSci || fmt.mainFormat==NumberFormat::rnfEng;
-		// format relative variables
-	int nIntegerDigits = nUfIntegerDigits,				// # of integer digits in _numberString
-		nIntegerDigitsAfter = nIntegerDigits,			// # of integer digits in rounded string after rounding
-		nLeadingDecimalZeros = nUfLeadingDecimalZeros,
-		lengthFractionPart = nUfLengthFractionPart;		// in _numberString, may change below
-
-		// The following variables are for the displayable part of the result, including separator characters
-	int nSignLength = (_sign < 0 || fmt.mustUseSign) ? 1 : 0,	 // fixed length for sign
-		nIntLength = 1,	 // (default: Sci) length of integer digits plus the thousend separators
-		// required length of the display area for the fractional part including leading zeros
-		nFracLength = nLeadingDecimalZeros + lengthFractionPart; //  >= 0 ? lengthFractionPart : 0;	  // default value for all digits in fraction w.o. formatting
-
-	SmartString strExponent = _FormatExponent(fmt, exp-1); 
-	// length of exponent string - 0: not used
-	int nExpLength = 0;
-
-	auto calculateEngExponentAndIntegerDigits = [&]()
-		{
-			// 10's exp:    5  4  3  2  1  0	-1 -2 -3 -4 
-			// new Texp:	3  3  3  0  0  0	-3 -3 -3 -6
-			// int digits:	3  2  1  3	2  1	 3  2  1  0
-			// Texp %3:	    2  1  0  2	1  0	-1 -2  0 -1
-			// Texp/3:		1  1  1	 0	0  0	 0	0 -1 -1
-			// 
-			// exp			6  5  4  3  2  1	 0 -1 -2 -3 
-			// new exp:		4  4  4  1	1  1	-2 -2 -2 -5
-			// int digits:	3  2  1  3	2  1	 3  2  1  0
-			// exp/3:		1  1  1	 0	0  0	 0	 0 -1
-			// exp%3        2  1  0	 2	1  0	-1 -2  0
-			exp = _exponent;
-
-			--exp;	// real 10's exponent
-			nIntegerDigits = (exp < 0 ? (3 + (exp +1) % 3) : (exp % 3 + 1));		// 1,2, or 3
-			exp = (exp < 0 ? ((exp+1)/3 - 1) : (exp/3))* 3;
-			++exp;
-			strExponent = _FormatExponent(fmt, exp-1); 
-			nExpLength = (int)strExponent.length();
-			nIntLength = nIntegerDigits;		//no sign, AND decimal point but thousand separators where taken into account
-		};
-
-	if (isFloatingDisplay)
-	{
-		// strExponent = _FormatExponent(fmt, exp);
-
-		if (fmt.mainFormat == NumberFormat::rnfSci)
-		{
-			nIntegerDigits = 1;				// always, decrease 'exp' for display
-		}
-		else								// rnfEng
-		{
-			calculateEngExponentAndIntegerDigits();
-		}
-		nExpLength = (int)strExponent.length();
-
-		nLeadingDecimalZeros = 0;
-		nIntLength = nIntegerDigits;		//no sign, AND decimal point and no thousand separators are possible
-		lengthFractionPart = (int)_numberString.length() - nIntegerDigits;	// no separators
-		if (lengthFractionPart < 0)
-			lengthFractionPart = 0;
-	}
-	int	nFractionDigits = _numberString.length() - nIntegerDigits;	// # of fractional digits in _numberString
-
-	if (nFractionDigits < 0)	// _numberString only contains integer digits
-		nFractionDigits = 0;
-
-
-	int nDisplayWidth=-1;	// this many places are used to display the number or -1 if unlimited
-	auto requiredSpaceforIntegerDigits = [&]() -> int// how many characters are needed for the integer digits 
-		{											 // if 'nIntegerDigits' character from the string is the integer part?
-													 // w.o. separators, sign or decimal point
-			nIntLength = nIntegerDigits;	//	# of integer digits in _numberString to display w.o sign or decimal point 
-											// for SCi format nIntegerDigits is always 1
-
-			if (fmt.mainFormat == NumberFormat::rnfNormal)
-			{
-				int cntDelims = (fmt.strThousandSeparator.empty() ? 0 : ((nIntLength > 3 ? nIntLength / 3 : 0) - 1 + (nIntLength % 3 ? 2 - (nIntLength % 3) : 0)));
-				if(cntDelims > 0)
-					nIntLength = nIntLength + cntDelims * fmt.strThousandSeparator.length();
-			}
-			else if (fmt.mainFormat == NumberFormat::rnfEng)
-				nIntLength = std::abs(exp % 3) + 1;						// ENG		fmt.mainFormat == NumberFormat::rnfEng
-			// else Sci format, nINtlength is already 1
-			return nIntLength ? nIntLength : 1;					// on display: always use an integer part
-		};
-	auto roundingPositionInFractionalPart = [&]() -> int // and sets and uses the length of the exponent string	
-		{
-			if (fmt.decDigits <= 0 && nDisplayWidth < 0)	// no limit for decimal digits and no limit for display
-				return -1;								    // no need to round
-			if (lengthFractionPart <= 0 ) // || (fmt.decDigits > 0 && (fmt.decDigits < nLeadingDecimalZeros || fmt.decDigits > nLeadingDecimalZeros + (int)_numberString.length())) )
-				return fmt.decDigits;
-			// EXPEXTS: nIntLength contains the length of the integer part of the result string
-			//			nLeadingDecimalZeros is the number of leading zeros in fractional part
-			if (fmt.decDigits == 0)		// no fractional digits needed
-				return 0;
-
-				// exponent only used for SCi or ENG mode numbers, when there mustn't be any leading zeros
-			if (fmt.mainFormat != NumberFormat::rnfNormal && fmt.mainFormat != NumberFormat::rnfText)
-				nExpLength = strExponent.length();
-			else
-				nExpLength = 0;
-			 // 'nFracLength' spaces are left by the sign, the decimal point, the integer part and the exponent
-			 // 'nIntLength' is the result of a previous 'requiredSpaceForIntegerDigits()' call
-			 // required for the digits in the integer part including separators but excluding sign, and decimal point
-			int nIntLengthRequired = nIntLength > 0 ? nIntLength + 1 : 2; // even when no integer digits 1 digit and one decimal point is used
-			nFracLength = nDisplayWidth - nSignLength - nIntLengthRequired - nExpLength;
-			if (nFracLength <= 0)	// no space for decimal places
-			{
-				nFracLength = 0;	// no fraction digits
-				return lengthFractionPart ? 0 : -1;			// no rounding for numbers w.o. fractional part
-			}
-			if (nFracLength > lengthFractionPart || (size_t)nFracLength > (size_t)fmt.decDigits) // size_ makes large number from -1 :)
-				nFracLength = fmt.decDigits < 0 ? lengthFractionPart : fmt.decDigits;
-			
-			int rp = nFracLength;		// rounding position
-
-			// if fraction separator used then we need spaces after every third digit (except the last one)
-			// Example: number = 10/6 = 1.666666666...	=> _numberString="166666...", _exp = 1
-			//			nIntegerDigits = 1, rounding position = nIntegerDigits + rp		roundedString
-			//     (f)reeSpace    displ.				rp		=		f/4
-			//			 0		"2"						0		a		 0
-			//			 1		"1.7"					1		a		 0
-			//			 2		"1.17"					2		a		 0
-			//			 3		"1.167"					3		a		 0
-			// 
-			//           4		" 1.167"				3		a-1		 1
-			//			 5	    "1.166 7"				4		a-1		 1
-			//			 6	    "1.666 67"				5		a-1		 1
-			//			 7	    "1.666 667"				6		a-1		 1
-			// 
-			//			 8		" 1.666 667"			6		a-2		 2
-			//			 9		"1.666 666 6"			7		a-2		 2
-			//			10      "1.666 666 67" 			8		a-2		 2
-			//			11 		"1.666 666 667"			9		a-2		 2
-
-			if (fmt.useFractionSeparator)	// always a single space character
-				rp = rp - rp / 4;			
-			return rp >= nLeadingDecimalZeros? rp : -1;		// may be smaller than 'leadingDecimalZeros'
-		};
-	auto requriedSpaceForFraction = [&]()->int
-		{
-			nFracLength = lengthFractionPart; // already include leading zeros
-			if (nFracLength)
-			{
-				if (fmt.useFractionSeparator)
-					nFracLength += (nFracLength - 1) / 3;
-				++nFracLength;	// for decimal point
-			}
-			return nFracLength;
-		};
-
-	requiredSpaceforIntegerDigits();		// into nIntLength, no sign, decimal point but may be thousand separators
-	requriedSpaceForFraction();
-
-	// nTotalLength: total visible length of string for number w.o. delimiters
-	auto totalLength = [&]() -> int 
-		{ 
-			int lInt = nIntLength ? nIntLength : 1,	// single integer always shown
-				lFrac = fmt.decDigits >= 0 ? fmt.decDigits : nFracLength,	// this many fraction digits 
-				lDp = lFrac ? 1 : 0;				// decimal point
-				
-			return nSignLength + lInt + +lDp + lFrac + nExpLength; 
-		};
-	
-	// this is the total width of the displayable area or -1 if doesn't care
-	// fmtDecDigits < 0 : all decimal places can be used, fmt.displayWidth == 0 : no limitation for display
-	nDisplayWidth = fmt.decDigits < 0 ?	// then all fractional digits may be displayed if 'displayWidth allows it
-								fmt.displWidth : // can be <= 0
-										// otherwise (decDigits >= 0) the width may be determined by a valid displayWidth
-								(fmt.displWidth <= 0 ? totalLength() : std::min(fmt.displWidth, totalLength()));
-	switch (fmt.mainFormat)
-	{
-		case NumberFormat::rnfNormal:
-			if (fmt.displWidth >= 0 && ( (nIntLength?nIntLength:1) + nSignLength + nExpLength) > (int)fmt.displWidth)	// integer part is too long and no space for fraction
-				fmt.mainFormat = NumberFormat::rnfSci;					// try as Sci (and no break below)
-			else
-			{
-				int rp = roundingPositionInFractionalPart(); // of '_numberString'
-				if(rp >= 0)
-					nFractionDigits = rp;	// supposing there was a decimal point in the integer part, -1: no rounding
-				break;													// only break in this case, otherwise fall through
-			}
-		case NumberFormat::rnfSci:
-			nIntegerDigits	= 1;
-			nIntLength		= 1;		// w.o. decimal point or sign or exponent, no separators needed
-			nFractionDigits = roundingPositionInFractionalPart();	// supposing there was a decimal point in the integer part
-			break;						
-		case NumberFormat::rnfEng:
-			//   #			e				n	E	e/3		e%3		n=3+e%3		E=(e/3-1)*3
-			//  0.0000001	-6	  100E-9	3	-9	 -2		-0		  3				  -6
-			//  0.000001	-5	    1E-6	1	-6	 -1		-2		  1				  -6
-			//  0.00001		-4	   10E-6	2	-6	 -1		-1		  2				  -6
-			//  0.0001		-3	  100E-6	3	-6	 -1		 0		  3				  -6
-			//  0.001		-2	    1E-3	1	-3	  0		-2		  1				  -3
-			//  0.01		-1	   10E-3	2	-3	  0		-1		  2				  -3
-			//  0.1 		 0	  100E-3    3	-3	  0		 0		  3				  -3
-			// ------------------------------------------------	n=e%3 ? e%3 : 3	 E = [(e-1)/3]*3
-			//  1.			 1	    1E 0	1	 0	  0		 1		  1				  0
-			// 10.			 2	   10E 0	2	 0	  0		 2		  2				  0
-			// 100.			 3	  100E 0	3	 0	  1		 0		  3				  0
-			// 1000.		 4	    1E 3	1	 3	  1		 1		  1				  1
-			// 10000.		 5	   10E 3	2	 3	  1		 2		  2				  1
-			calculateEngExponentAndIntegerDigits();
-			nFractionDigits = roundingPositionInFractionalPart();	// supposing there was a decimal point in the integer part
-			break;
-
-		case NumberFormat::rnfText:
-		default:
-			break;
-	}
-	// now round the number string which does not contain decimal point, leading or trailing zeros, separators or exponent
-	// this may increment the number of integer digits by 1, which may mean an exponent change 
-	// in modes SCI or ENG and a change for the positions required by the rounded number in other modes
-	int nrp =  nLeadingDecimalZeros + nFractionDigits;	// round a string which starts with 'nIntegerDigits, integer digits plus
-								// and has 'nLeadingDecimalZeros' virtual '0' characters
-								// in the fractional part
-	roundedString = _RoundNumberString(r._numberString, nIntegerDigitsAfter = nIntegerDigits, nrp, nLeadingDecimalZeros);
-	// roundedString still does not contain leading or trailing zeros it can even be empty
-	// create the result string from 'roundedString'
-	if (fmt.displWidth >= 0 && roundedString.length() > (size_t)fmt.displWidth)	// not enough space so create an error string
-		return fmt.displWidth > 19 ? "Too Long To Display"_ss : SmartString(fmt.displWidth, u'#');
-	// now create the output string
-
-	if (nIntegerDigits != nIntegerDigitsAfter)
-	{
-		if (fmt.mainFormat == NumberFormat::rnfSci)	// SCI
-			++r._exponent;								// but nIntegerDigits doesn't change
-		else if (fmt.mainFormat == NumberFormat::rnfEng)
-		{
-			int nPrevExpSize = nExpLength;
-			++r._exponent;		// when 0.999 changed to 1.000 nIntLength won't change
-			calculateEngExponentAndIntegerDigits();		// there can be no thousand delimiters in SCI or ENG numbers
-		}
-	}
-	// at this point roundedDtring contains the whole displayable number w.o. sign or exponent
-	// or leading or trailing zeros, so it may be empty (all zeros), may contain the integer part
-	// and at most so many non zero decimal places as fit into the visible area
-	// 'nDisplayWidth'
-	// 'nFractionDigits' is either the number of digits in roundedString or -1
-	// when -1: then use all digits
-
-	auto appendFractionalPart = [&](SmartString &res)
-		{
-			size_t len = roundedString.length();
-			if (len > 0)	// otherwise no space for fraction or no fraction at all
-			{
-				int n = nIntegerDigits - nLeadingDecimalZeros;
-				res += _decPoint;
-
-				res += roundedString.at(n++, chZero);
-				int dp = 1;
-				for (int i = n; i < nLeadingDecimalZeros + (int)len; ++i)
-				{
-					if (fmt.useFractionSeparator && ((dp++ % 3) == 0))
-						res += chSpace;
-					res += roundedString.at(n++, chZero);
-				}
-				if (fmt.decDigits < 0)	// remove trailing zeros from fractional part
-				{
-					res.erase(std::find_if(res.rbegin(), res.rend(), [](SCharT ch) {return ch != chZero; }).base(), res.end());
-					if(res.at(res.length()-1, chZero) == _decPoint)
-						res.pop_back();	// decimal point
-				}
-			}
-		};
-
-	// now build up the number string which may have a sign, nIntLength integer digits and 
-	// may have a decimal dot and 'nFractionDigits' decimal digits and thousand and decimal separators
-	size_t nTmp = nIntegerDigits;
-	result = _IntegerPartToString(roundedString, _sign,fmt, nTmp, 3,false);
-	appendFractionalPart(result);
-	if (nExpLength)
-		result += strExponent;
-	return result;
-#endif
 }
 
 SmartString RealNumber::ToString(const DisplayFormat& format, TextFormat textFormat) const
@@ -1447,9 +1105,9 @@ SmartString RealNumber::ToString(const DisplayFormat& format, TextFormat textFor
 		// ENG is not switched back to SCI !
 		auto ShortenFractPart = [&]() -> bool
 			{
-				int lenI = posD < 0 ? 0 : posD,					// length of integer part w.o. decimal point and delimiters
+				int lenI = posD < 0 ? 0 : posD,					// length of integer part w. sign and w.o. decimal point and delimiters
 					pos2 = posE >= 0 ? posE : sres.length(),	// after the fractional part may include delimiters
-					lenF = pos2 - lenI - 2,						// length of fractional part w. decimal delimiters
+					lenF = pos2 - lenI - 1,						// length of fractional part w. decimal delimiters
 					lenO = lenI + (sres.length() - pos2) + 1,	// length of all non-fractional part w.o. exponent
 					nLeadingZerosInFraction = _exponent < 0 ? - _exponent : 0;
 				// see if the fractional part can be rounded so that the whole number fit
@@ -1466,6 +1124,8 @@ SmartString RealNumber::ToString(const DisplayFormat& format, TextFormat textFor
 					cntSep = fmt.useFractionSeparator ? (flenF - 1) / 3 : 0; // which contains this many separators
 										// which leaves
 				lenF = flenF - cntSep;// -nLeadingZerosInFraction;	// decimal characters in fraction
+				if (lenI && ( posD < 0 || sres[0] != chZero) )
+					--lenF;
 				RealNumber r(sres);
 				r.Round(lenF);
 				sres = r.ToDecimalString(fmt);
@@ -1477,7 +1137,7 @@ SmartString RealNumber::ToString(const DisplayFormat& format, TextFormat textFor
 			if ((int)sres.length() > fmt.displWidth) // Too Long To Display
 			{
 				posD = sres.indexOf(DecPoint());				
-				posE = sres.indexOf(u'E', posD + 1);
+				posE = _PosExpInNumberString(fmt, sres, posD + 1);
 
 				if (ShortenFractPart())
 					return sres;
@@ -1531,6 +1191,27 @@ SmartString RealNumber::_FormatExponent(const DisplayFormat fmt, int exp) const
 	}
 
 	return s;
+}
+
+int RealNumber::_PosExpInNumberString(const DisplayFormat fmt, const SmartString& s, int fromPos) const
+{
+	size_t posE;
+	switch (fmt.expFormat)
+	{
+		case ExpFormat::rnsfSciHTML:
+			posE = s.indexOf(u'x', fromPos + 1);
+			break;
+		case ExpFormat::rnsfSciTeX:
+			posE = s.indexOf(u'\\', fromPos + 1);
+			break;
+		case ExpFormat::rnsfGraph:
+			posE = s.indexOf(SCharT(183), fromPos + 1);
+			break;
+		default: // E
+			posE = s.indexOf(u'E', fromPos + 1);
+			break;
+	}
+	return posE;
 }
 
 
@@ -1723,7 +1404,7 @@ RealNumber RealNumber::Pow(const RealNumber &power) const
 	if (power == -RN_1)			// x^(-1) = 1/x
 		return RN_1 / *this;
 
-	if (_sign < 0 && (!IsInt()))	// maybe if we could detect r = 1/n, where n is odd
+	if (_sign < 0 && (power < RealNumber::RN_1))	// maybe if we could detect r = 1/n, where n is odd
 		return NaN;					// then we could return the corresponding root //!!TODO
 
 	RealNumber	rnIntPart  = power.Int(),
@@ -2341,13 +2022,13 @@ void RealNumber::_ShiftSmartString(RealNumber& rn, int byThisAmount)
  *			- trailing zero characters are discarded as a result the
  *				returned string may be empty
  *------------------------------------------------------------*/
-SmartString RealNumber::_RoundNumberString(SmartString &numString, int &intLen, int rPos, int leadingZeros) const
+SmartString RealNumber::_RoundNumberString(SmartString &numString, int &exponent, int rPos, int leadingZeros) const
 {
 	if (rPos < 0 || numString.at(0).IsAlpha()) 		// use all digits or string (NaN, Inf)
 		return numString;
 
 		// index of the digit to round up the string with
-	int	roundPos = intLen - leadingZeros + rPos;						// may be larger than length of 'numString'
+	int	roundPos = exponent - leadingZeros + rPos;						// may be larger than length of 'numString'
 	if (roundPos >= (int)numString.length())									// after the real string
 		return numString;
 
@@ -2365,27 +2046,22 @@ SmartString RealNumber::_RoundNumberString(SmartString &numString, int &intLen, 
 		return res;
 
 	SCharT ch=zero;
-	int trailing = 0;	// zeros
-
 	while (roundPos-- && carry)
 	{
 		ch = numString.at(roundPos, chZero).Unicode() + carry;
-		carry = 0;
 		if (ch > nine)
+			res.pop_back();
+		else
 		{
-			carry = 1;
-			ch = chZero;
-			++trailing;
+			carry = 0;
+			res[roundPos] = ch;
 		}
-		res[roundPos] = ch;
 	}
 
-	if (trailing)
-			res.erase(res.length() - trailing);
-	if (carry) // then all characters in the string is turned to 0, which we don't want
+	if (carry) // then 'res' is empty, and we have an overflow of '1'
 	{
 		res = SmartString(one);
-		++intLen;
+		++exponent;
 	}
 	return numString = res;
 }
@@ -2562,29 +2238,28 @@ void RealNumber::_MultiplyStrings(RealNumber& left, RealNumber& right) const
 	while (result.at(cntZeros).Unicode() == 0)
 		++cntZeros;
 	left._exponent += (int)(LengthOverFlow - cntZeros)-1;	// overflow in decimal places changes exponent
-	if (cntZeros)
+	if (cntZeros)			   // remove them
 	{
-		// delete zeros from front
-		for (size_t i = 0; i < cntZeros && i + cntZeros < l; ++i)
-			result[i] = result.at(cntZeros + i) + chZero;
-		// convert remaining values to decimal characters
-		for (size_t i = cntZeros; i < l-cntZeros; ++i)
-			result[i] = result.at(cntZeros + i) + chZero;
+		size_t i = cntZeros;
+		for(size_t j = 0; i < l; ++i, ++j)
+			result[j] = result.at(i) + chZero;
 		l -= cntZeros;
 		result.erase(l, String::npos);
 	}
 
 	result.erase(std::find_if(result.rbegin(), result.rend(), [](SCharT ch) {return ch != chZero; }).base(), result.end());
-	size_t maxLength = _maxLength + LengthOverFlow;
-	if (result.length() > maxLength)
+//	size_t maxLength = _maxLength + LengthOverFlow;
+	if (result.length() > _maxLength)
 	{
-		int fakeIntLength = 0;
+		int tensOverflow = 0;
 		int cntLeadingZeros = 0,
-			roundPos = (int)maxLength;	// round from here
+			roundPos = (int)_maxLength;	// round from here
 
-		_RoundNumberString(result, fakeIntLength, roundPos, cntLeadingZeros);	
+		_RoundNumberString(result, tensOverflow, roundPos, cntLeadingZeros);	
 		if(roundPos < (int)result.size())
 			result.erase(roundPos, std::string::npos);
+		if (tensOverflow)
+			++left._exponent;
 	}
 	left._numberString = result;
 }
@@ -2953,13 +2628,13 @@ RealNumber pow(RealNumber base, RealNumber power)
 	return base.Pow(power);
 }
 
-RealNumber root(RealNumber num, RealNumber r)
+RealNumber root(RealNumber num, int r)
 {
-	if (num.Sign() < 0 && (!r.IsInt() || !r.IsOdd()))
+	if (num.Sign() < 0 && !(r & 1))
 		return NaN;
-	if (r == RealNumber::RN_2)
-		return sqrt(r);
-	return exp( ln(num)/r);
+	if (r == 2)
+		return sqrt(num);
+	return exp( ln(num)/RealNumber(r) );
 }
 
 // transcendent functions
