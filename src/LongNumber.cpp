@@ -38,7 +38,7 @@ namespace LongNumber {
 		epsilon = RealNumber(SmartString("1"), 1, -(int)RealNumber::MaxLength());
 	}
 
-SCharT ByteToMyCharT(uint8_t digit)	// 0 <= digit <= 32
+SCharT ByteToMyCharT(uint16_t digit)	// 0 <= digit <= 32
 {
 	if (digit < 10)
 		return SCharT('0' + digit);
@@ -63,7 +63,7 @@ SmartString Utf8FromWideString(const std::wstring& ws)
 	return r;
 }
 
-SmartString ToHexByte(size_t byte)
+SmartString ToHexByte(uint16_t byte)
 {
 	SmartString res(2, chZero);
 	res[0] = ByteToMyCharT((byte & 0xF0) >> 4);
@@ -799,7 +799,7 @@ SmartString RealNumber::ToHexString(const DisplayFormat &format) const
 	{	
 		// 15's complement and add carry, used when 'format.mustUseSign'
 		uint8_t n = MyCharTToByte(hex.at(i));
-		n = 15 - i;
+		n = 15 - n;
 		if (carry)
 		{
 			n += + 1;

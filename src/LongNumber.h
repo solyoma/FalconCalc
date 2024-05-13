@@ -204,7 +204,7 @@ namespace LongNumber {
 
 	using LDouble = long double;
 
-	SCharT ByteToMyCharT(uint8_t digit);
+	SCharT ByteToMyCharT(uint16_t digit);
 	uint8_t MyCharTToByte(SCharT ch);
 
 	/*=============================================================
