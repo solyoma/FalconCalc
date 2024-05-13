@@ -1640,63 +1640,91 @@ RealNumber RealNumber::_Div(const RealNumber& divisor, RealNumber& remainder) co
 	return d;
 }
 
-RealNumber RealNumber::_LogOpWith(const RealNumber& ra, LogicalOperator lop) const
+RealNumber RealNumber::_LogOpWith(const RealNumber& ra, LogicalOperator lop) const	// only integer part!
 {
-	RealNumber left(*this);
-	int sign = left._sign * ra._sign;
+	int sign = _sign * ra._sign;
 	if (IsNaN() || ra.IsNaN() )
-	{
-		left = NaN;
-		return left;
-	}
+		return NaN;
 	if (IsInf() || ra.IsInf())
-	{
-		left = Inf;
-		left._sign = sign;
-		return left;
-	}
-	RealNumber right(ra);
+		return Inf * RealNumber(sign);
+
+	SmartString ssLeft = this->Int().Abs()._ToBase(16, RealNumber::MaxLength()),
+				ssRight = ra.Int().Abs()._ToBase(16, RealNumber::MaxLength());
 
 	int diff = _exponent - ra._exponent;
 	if (diff > (int)(_maxLength + LengthOverFlow))
 	{
+		RealNumber left(*this);
 		left._eFlags.insert(EFlag::rnfUnderflow);
 		return left;
 	}
 	else if (diff < -(int)(_maxLength + LengthOverFlow))
 	{
+		RealNumber right(ra);
 		right._eFlags.insert(EFlag::rnfUnderflow);
 		return right;
 	}
 
-	// add leading zeros to number with smaller exponent
-	// and increase its exponent
-	if (diff > 0)	// exponent of left is larger
-		right._ShiftSmartString(diff);
-	else if (diff < 0)
-		left._ShiftSmartString(-diff);
+	size_t	lenLeft = ssLeft.length(),
+			lenRight = ssRight.length(),
+			bigger = lenLeft > lenRight? lenLeft: lenRight;
 
-	SmartString res(left._exponent, chZero);
+	auto __toSize = [](SmartString& s, size_t size)
+		{
+			if (s.length() < size)
+				s = SmartString(size - s.length(), chZero) + s;
+		};
+	auto __fromHexChar = [](SCharT ch)->int16_t
+		{
+			int res = ch.Unicode();
+			if (res < '9')
+				res = res & 0x0F;
+			else
+				res = (res - 'A') + 0xA;
+			return res;
+		};
+	auto __toHexChar = [](int16_t ch)->SCharT
+		{
+			if (ch < 0xA)
+				return SCharT('0' + ch);
+			else
+				return SCharT('A' + (ch- 0xA) );
+		};
+	auto __or = [](int16_t l, int16_t r)	// of two hexadecimal character digits
+		{
+			return l | r;
+		};
+	auto __and = [](int16_t l, int16_t r)	// of two hexadecimal character digits
+		{
+			return l & r;
+		};
+	auto __xor = [](int16_t l, int16_t r)	// of two hexadecimal character digits
+		{
+			return l ^ r;
+		};
+
+	__toSize(ssLeft, bigger);
+	__toSize(ssRight, bigger);
 	switch (lop)		// all characters in _numberString are ASCII decimal places
 	{
 		case LogicalOperator::lopOr:
-			for (int i = 0; i < left._exponent; ++i)
-				res.at(i) = left._numberString.at(i) | right._numberString.at(i);
+			for (size_t i = 0; i < bigger; ++i)
+				ssLeft[i] = __toHexChar( __or(__fromHexChar(ssLeft[i]), __fromHexChar(ssRight[i])) );
 			break;
 		case LogicalOperator::lopXOr:
-			for (int i = 0; i < left._exponent; ++i)
-				res.at(i) = (left._numberString.at(i) ^ right._numberString.at(i)) + SCharT('0');	// xor removes high 4 bits
+			for (size_t i = 0; i < bigger; ++i)
+				ssLeft[i] = __toHexChar( __xor(__fromHexChar(ssLeft[i]), __fromHexChar(ssRight[i])) );
 			break;
 		case LogicalOperator::lopAnd:
-			for (int i = 0; i < left._exponent; ++i)
-				res.at(i) = (left._numberString.at(i) & right._numberString.at(i));
+			for (size_t i = 0; i < bigger; ++i)
+				ssLeft[i] = __toHexChar( __and(__fromHexChar(ssLeft[i]), __fromHexChar(ssRight[i])) );
 			break;
 	}
-	left._numberString = res;
-	left._leadingZeros = 0;
-	left._isNormalized = false;
-	left._Normalize();
-	return left;
+	ssLeft.erase(ssLeft.begin(), std::find_if(ssLeft.begin(), ssLeft.end(), [](SCharT ch) { return ch != chZero; }));
+	ssLeft = u"0x" + ssLeft;
+	RealNumber rln(ssLeft);
+	rln._sign = sign;
+	return rln;
 }
 
 /*=============================================================

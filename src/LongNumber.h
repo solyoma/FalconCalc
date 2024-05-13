@@ -377,8 +377,8 @@ namespace LongNumber {
 		RealNumber Or(const RealNumber& ra) const { return _LogOpWith(ra, LogicalOperator::lopOr); }
 		RealNumber XOr(const RealNumber& ra) const { return _LogOpWith(ra, LogicalOperator::lopXOr); }
 		RealNumber And(const RealNumber& ra) const { return _LogOpWith(ra, LogicalOperator::lopAnd); }
-		RealNumber Square() { return *this * *this; }
-		RealNumber Squared()
+		RealNumber Square() const { return *this * *this; }
+		RealNumber Squared() const
 		{
 			RealNumber r(*this);
 			r.Square();
@@ -434,7 +434,16 @@ namespace LongNumber {
 		inline RealNumber &ToAbs() { _sign = 1; return *this;  return *this; }
 
 
-		RealNumber Abs() const { RealNumber rn(*this); rn.ToAbs(); return rn; }
+		RealNumber Abs() const 
+		{ 
+			if(_sign == -1) 
+			{
+				RealNumber rn(*this); 
+				rn.ToAbs(); 
+				return rn;
+			}
+			return *this;
+		}
 		inline bool IsNaN()  const noexcept { return _numberString[0] == SCharT('N'); };
 		inline int  IsInf()  const noexcept { return _numberString[0] == SCharT('I'); };	// +Inf or -Inf
 		inline bool IsPure10Power() const noexcept { return _numberString == SmartString(chOne); }
