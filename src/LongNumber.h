@@ -205,7 +205,7 @@ namespace LongNumber {
 	using LDouble = long double;
 
 	SCharT ByteToMyCharT(uint16_t digit);
-	uint8_t MyCharTToByte(SCharT ch);
+	uint16_t MyCharTToByte(SCharT ch);
 
 	/*=============================================================
 	 * REAL_NUMBERS are arbitrary long floating point numbers
@@ -294,7 +294,8 @@ namespace LongNumber {
 
 	public:
 		// special values
-		static const RealNumber RN_0, RN_1, RN_2, RN_3, RN_4, RN_5, RN_6, RN_7, RN_8, RN_9, RN_10, RN_16;
+		static const RealNumber RN_0, RN_1, RN_2, RN_3, RN_4, RN_5, RN_6, RN_7, RN_8, RN_9, RN_10, 
+								RN_11, RN_12, RN_13, RN_14, RN_15, RN_16;
 
 	public:
 		// static functions

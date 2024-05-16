@@ -47,7 +47,7 @@ SCharT ByteToMyCharT(uint16_t digit)	// 0 <= digit <= 32
 	return SCharT(0);
 }
 
-uint8_t MyCharTToByte(SCharT ch)
+uint16_t MyCharTToByte(SCharT ch)
 {
 	if (ch < SCharT('0'))
 		return 0;
@@ -77,7 +77,7 @@ size_t RealNumber::_maxLength = 100;	// maximum length of string
 
 const RealNumber RealNumber::RN_0("0"), RealNumber::RN_1("1"), RealNumber::RN_2("2"), RealNumber::RN_3("3"), RealNumber::RN_4("4"), 
 				RealNumber::RN_5("5"), RealNumber::RN_6("6"), RealNumber::RN_7("7"), RealNumber::RN_8("8"), RealNumber::RN_9("9"), RealNumber::RN_10("10"),
-				RealNumber::RN_16("16");
+				RealNumber::RN_11("11"), RealNumber::RN_12("12"), RealNumber::RN_13("13"), RealNumber::RN_14("14"), RealNumber::RN_15("15"), RealNumber::RN_16("16");
 
 // constants and Functions that can be used with REAL_NUMBERs
 static const RealNumber rnNull("0"),
@@ -798,7 +798,7 @@ SmartString RealNumber::ToHexString(const DisplayFormat &format) const
 	auto addone = [&hex](int i, int& carry)
 	{	
 		// 15's complement and add carry, used when 'format.mustUseSign'
-		uint8_t n = MyCharTToByte(hex.at(i));
+		uint16_t n = MyCharTToByte(hex.at(i));
 		n = 15 - n;
 		if (carry)
 		{
@@ -1829,9 +1829,11 @@ void RealNumber::_FromNumberString()
 
 	int positionOfError=0;	// if there's an error in the number string
 
+	int posE = _numberString.indexOf(SCharT('E'));	// if a string has an exponent it must be decimal
+	if (_numberString.left(2) == u"0X")				// hexadecimal string may have an E inside
+		posE = -1;
 	// exponent 
 	_exponent = 0;
-	int posE = _numberString.indexOf(SCharT('E'));	// if a string has an exponent it must be decimal
 
 	if (posE > 0)
 	{
@@ -1951,11 +1953,14 @@ void RealNumber::_FromNumberString()
 	auto _convert = [&](const RealNumber &multiplier)
 	{
 		RealNumber number = zero;
-		int ch;
+		RealNumber arr[16] = {
+			RN_0, RN_1, RN_2, RN_3, RN_4, RN_5, RN_6, RN_7, RN_8, RN_9, RN_10,
+								RN_11, RN_12, RN_13, RN_14, RN_15 };
+		uint16_t ch;
 		for (int i = 0; i < (int)_numberString.length(); ++i)
 		{
 			ch = MyCharTToByte(_numberString.at(i));
-			number = number * multiplier + RealNumber(ch);
+			number = number * multiplier + arr[ch];
 		}
 		_numberString = number._numberString;
 		_exponent = number._exponent;
@@ -2517,8 +2522,8 @@ void RealNumber::_DivideInternal(RealNumber& left, RealNumber& right, RealNumber
 
 	if (pRemainder)	// remainder is in 'dividend' which does not start with 0
 	{				// remove trailing zeros
-		dividend.erase(std::find_if(dividend.rbegin(), dividend.rend(), [](SCharT ch) {return ch != chZero; }).base(), dividend.end());
 		pRemainder->_exponent		= (int)dividend.length();
+		dividend.erase(std::find_if(dividend.rbegin(), dividend.rend(), [](SCharT ch) {return ch != chZero; }).base(), dividend.end());
 		pRemainder->_numberString	= dividend;
 	}
 }
