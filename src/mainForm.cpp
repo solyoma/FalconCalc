@@ -713,7 +713,7 @@ TfrmMain::TfrmMain()
 	_coMoveDX = _coMoveDY = 0;
 	_bAutoSave = false;
 
-	RealNumber::SetMaxLength(70);	// but only display 64
+	RealNumber::SetMaxLength(65);	// but only display 59
     lengine = new FalconCalc::LittleEngine;
 	lengine->displayFormat.useNumberPrefix = true;
 	lengine->displayFormat.strThousandSeparator = " "_ss;

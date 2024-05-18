@@ -583,9 +583,8 @@ LittleEngine::LittleEngine() : clean(true)
        f.value = 0.0l;
 
 	   #define SET_BUILTIN_FUNC1(a,b,c) f.function.clear(); f.name = u#a; f.desc = u#b; f.function.funct1  = c; functions[#a##_ss] = f;
-	   #define SET_BUILTIN_FUNC2(a,b,c) f.function.clear(); f.name = u#a; f.desc = u#b; f.function.funct2r = c; functions[#a##_ss] = f;
-	   #define SET_BUILTIN_FUNC3(a,b,c) f.function.clear(); f.name = u#a; f.desc = u#b; f.function.funct2i = c; functions[#a##_ss] = f;
-	   #define SET_BUILTIN_FUNC4(a,b,c) f.function.clear(); f.name = u#a; f.desc = u#b; f.function.funct2a = c; functions[#a##_ss] = f;
+	   #define SET_BUILTIN_FUNC2R(a,b,c) f.function.clear(); f.name = u#a; f.desc = u#b; f.function.funct2r = c; functions[#a##_ss] = f;
+	   #define SET_BUILTIN_FUNC2I(a,b,c) f.function.clear(); f.name = u#a; f.desc = u#b; f.function.funct2i = c; functions[#a##_ss] = f;
        SET_BUILTIN_FUNC1(abs, absolute value, abs);
 
 	   f.useAngleUnitAsResult=true;
@@ -614,7 +613,7 @@ LittleEngine::LittleEngine() : clean(true)
        SET_BUILTIN_FUNC1(ch, hyperbolic cosine, cosh);
        SET_BUILTIN_FUNC1(coth, hyperbolic cotangent, coth);
        SET_BUILTIN_FUNC1(cth, hyperbolic cotangent, coth);
-       SET_BUILTIN_FUNC2(exp, power of e, pow);
+       SET_BUILTIN_FUNC1(exp, power of e, exp);
        SET_BUILTIN_FUNC1(fact, factorial, fact);
        SET_BUILTIN_FUNC1(frac, fractional part, frac);
        SET_BUILTIN_FUNC1(int, integer part, floor);
@@ -623,8 +622,9 @@ LittleEngine::LittleEngine() : clean(true)
        SET_BUILTIN_FUNC1(log2, base 2 logarithm, log2);
        SET_BUILTIN_FUNC1(log10, base 10 logarithm, log10);
        SET_BUILTIN_FUNC1(ln, natural logarithm, ln);
-       SET_BUILTIN_FUNC3(root, n-th root, root);
-       SET_BUILTIN_FUNC3(round, rounding, round);
+       SET_BUILTIN_FUNC2R(pow, pow(x,y)=x^y, pow);
+       SET_BUILTIN_FUNC2I(root, n-th root, root);
+       SET_BUILTIN_FUNC2I(round, rounding, round);
        SET_BUILTIN_FUNC1(sign, sign of number, Sign);
        SET_BUILTIN_FUNC1(sqrt, square root, sqrt);
        SET_BUILTIN_FUNC1(tanh, tangent, tanh);
@@ -1200,12 +1200,36 @@ void LittleEngine::_DoFunction(const Token &tok)
     Func &f = functions[tok.Text()];
     if(f.being_processed) // then recursive call
         Trigger(Trigger_Type::RECURSIVE_FUNCTIONS_ARE_NOT_ALLOWED);
-    RealNumber v;
-    if(f.builtin) // single argument on stack
+    RealNumber v,r;
+    int i;
+    if(f.builtin) // arguments on stack, except for 
     {
-        v = stack.peek(1).Value();
-        stack.pop(1);
-        v = f.function(v);
+        BuiltInFunction::ArgTyp argTyp = f.function.SecondArgumentType();
+        switch(argTyp)
+        {
+            case BuiltInFunction::atyNone:
+                v = stack.peek(1).Value();
+                stack.pop(1);
+                v = f.function(v);
+                break;
+            case BuiltInFunction::atyR:
+                r = stack.peek(1).Value();
+                stack.pop(1);
+                v = stack.peek(1).Value();
+                stack.pop(1);
+                v = f.function(v, r);
+                break;
+            case BuiltInFunction::atyI:
+                r = stack.peek(1).Value();
+                stack.pop(1);
+                v = stack.peek(1).Value();
+                stack.pop(1);
+                i = int(r.Int().ToInt64());
+                v = f.function(v, i);
+                break;
+            case BuiltInFunction::atyA:     // second argument is not on stack
+                break;
+        }
         v.RoundToDigits(RealNumber::MaxLength() + 1);
         stack.push(v);
         return;
@@ -1260,7 +1284,7 @@ void LittleEngine::_DoFunction(const Token &tok)
 
 static RealNumber Complement(const RealNumber& r)
 {
-    int64_t val = ~r.ToInt64();
+    int val = ~int(r.ToInt64());
     return RealNumber(val);
 }
 /*=======================================

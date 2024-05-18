@@ -213,16 +213,16 @@ namespace FalconCalc
     /*==================*/
     // variable or function does not know its name (see FunctionTable below)
     typedef RealNumber (*FUNCT1)(RealNumber val);
-    typedef RealNumber (*FUNCT2)(RealNumber x, RealNumber y);
-    typedef RealNumber (*FUNCT3)(RealNumber x, int y);
-    typedef RealNumber (*FUNCT4)(RealNumber x, AngularUnit au);
-    struct Function
+    typedef RealNumber (*FUNCT2R)(RealNumber x, RealNumber y);
+    typedef RealNumber (*FUNCT2I)(RealNumber x, int y);
+    typedef RealNumber (*FUNCT2A)(RealNumber x, AngularUnit au);
+    struct BuiltInFunction
     {
-        enum argtyp {atyR, atyI, atya}; // RealNumber, integer or AngularUnit
+        enum ArgTyp {atyNone, atyR, atyI, atyA}; // RealNumber, integer or AngularUnit
         FUNCT1 funct1 = nullptr;        // arguments RealNumber
-        FUNCT2 funct2r = nullptr;        // arguments RealNumber RealNumber
-        FUNCT3 funct2i = nullptr;        // arguments RealNumber integer
-        FUNCT4 funct2a = nullptr;        // arguments RealNumber Angular Units
+        FUNCT2R funct2r = nullptr;        // arguments RealNumber RealNumber
+        FUNCT2I funct2i = nullptr;        // arguments RealNumber integer
+        FUNCT2A funct2a = nullptr;        // arguments RealNumber Angular Units
         void clear() { funct1 = nullptr;  funct2r = nullptr; funct2i = nullptr; funct2a = nullptr; }
         RealNumber operator() (RealNumber r) 
         { 
@@ -230,9 +230,32 @@ namespace FalconCalc
                 return funct1(r); 
             return NaN; 
         }
-        RealNumber operator() (RealNumber x, RealNumber y) { if (funct2r) return funct2r(x,y); return NaN; }
-        RealNumber operator() (RealNumber x, int y) { if (funct2i) return funct2i(x,y); return NaN; }
-        RealNumber operator() (RealNumber r, AngularUnit au) { if (funct2a) return funct2a(r, au); return NaN; }
+        RealNumber operator() (RealNumber r1, RealNumber r2) 
+        { 
+            if (funct2r) 
+                return funct2r(r1,r2); 
+            return NaN; 
+        }
+        RealNumber operator() (RealNumber r, int i) 
+        { 
+            if (funct2i) 
+                return funct2i(r,i); 
+            return NaN; 
+        }
+        RealNumber operator() (RealNumber r, AngularUnit au) 
+        { 
+            if (funct2a) 
+                return funct2a(r,au); 
+            return NaN; 
+        }
+        ArgTyp SecondArgumentType() const 
+        {
+            if (funct1) return atyNone;
+            if (funct2r) return atyR;
+            if (funct2i) return atyI;
+            if (funct2a) return atyA;
+            return atyNone;
+        }
     };
 
 
@@ -309,7 +332,8 @@ namespace FalconCalc
         RealNumber value;           // defined or calculated value
             // for BI functions:
         bool builtin = true;            // builtin variable or function
-        Function function;              // for builtin functions only
+
+        BuiltInFunction function;              // for builtin functions only, at most 2 arguments
         bool useAngleUnit = false,      // for builtin trigonometric functions only (default: false)
              useAngleUnitAsResult=false;// for built in inverse trigonometric functions only
                                         // if true number is converted to deg or grad
@@ -349,6 +373,16 @@ namespace FalconCalc
             dirty = var.dirty;
             being_processed = var.being_processed;
             return *this;
+        }
+        int RequireddArgumentCount() const 
+        {
+            if (builtin)
+            {
+                if (function.funct1) return 1;
+                return 2;   // funct2r, funct2i, funct2a
+            }
+            else
+                return args.size();
         }
     };
 

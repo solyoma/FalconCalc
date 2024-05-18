@@ -14,7 +14,7 @@ namespace LongNumber {
 	using namespace SmString;				// SmartString.h
 	extern const SCharT chZero;				// = (SCharT)'0';
 	extern const SCharT chOne;				// = (SCharT)'1';
-	const size_t MaxAllowedDigits = 100;	// !!! Modify this  - no number string can have more digits than this + LengthOverflow
+	const size_t MaxAllowedDigits = 65;	// !!! Modify this  - no number string can have more digits than this + LengthOverflow
 	const size_t LengthOverFlow = 2;		// add this to the _maxLength of a RealNumber to get the real maximum string length
 
 	extern const SmartString NAN_STR;
@@ -400,10 +400,10 @@ namespace LongNumber {
 		size_t Precision() const { return _numberString.length(); }
 		size_t LargestExponent() const { return _maxExponent; }
 
-		RealNumber Rounded(int toThisManyDecimalPlaces) const; // returns a rounded copy
-		RealNumber Round(  int toThisManyDecimalPlaces);		   // rounds the number
-		RealNumber RoundedToDigits(int toThisManySignificantDigits) const;  // rounds _numberString in copy
-		RealNumber RoundToDigits(int toThisManySignificantDigits);		    // rounds _numberString in the number itself
+		RealNumber Rounded(int toThisManyDecimalPlaces				,int cntIntDigits=-1) const; // returns a rounded copy
+		RealNumber Round(  int toThisManyDecimalPlaces				,int cntIntDigits=-1);		   // rounds the number
+		RealNumber RoundedToDigits(int toThisManySignificantDigits	,int cntIntDigits=-1) const;  // rounds _numberString in copy
+		RealNumber RoundToDigits(int toThisManySignificantDigits	,int cntIntDigits=-1);		    // rounds _numberString in the number itself
 
 		SmartString ToBinaryString(const DisplayFormat& format) const;
 		SmartString ToOctalString(const DisplayFormat& format) const;
@@ -626,7 +626,10 @@ namespace LongNumber {
 		Constant& operator=(const SmartString sms) { name = sms; return *this; }
 		Constant& operator=(const RealNumber val) { value = val; return *this; }
 		operator const SmartString& () const { return name; }	// CAN'T use these to mdify content
-		operator const RealNumber& ()  const { return value; }
+		operator const RealNumber& ()  const 
+		{ 
+			return value; 
+		}
 		operator RealNumber() const { return value; }
 
 		Constant() {}
