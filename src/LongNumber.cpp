@@ -518,12 +518,12 @@ SmartString RealNumber::_ToBase(int base, size_t maxNumDigits) const	// base mus
  *				digits. May be larger than the length of 'sNumber'
  *				when 0: a single '0' character string is return
  *			chunkSize - this many digits are in one group
- *			prfxToAll - apply a number prefix to all group not just
- *				the first one
+ *			prfxToAll - apply a number prefix to all groups not just
+ *						to the first one
  * EXPECTS:	sNumber's format is the same as given in 'fmt'
  * GLOBALS: _sign
  * RETURNS:	number string for the integer part of the number 
- *			(includs delimiter.
+ *			(includes delimiter.)
  * REMARKS:	- returned string may end with '0's
  *------------------------------------------------------------*/
 SmartString RealNumber::_IntegerPartToString(const SmartString& sNumber, int sign, const DisplayFormat& format, size_t &nIntDigits, size_t chunkSize, bool prfxToAll) const
@@ -741,7 +741,10 @@ SmartString RealNumber::ToOctalString(const DisplayFormat& format) const
 	size_t n = leno;	// we need 'n' places in displayable result
 						// including a single space for "thousand separator"
 
-	return _IntegerPartToString(oct, _sign, format,leno,3,false);
+	oct = _IntegerPartToString(oct, _sign, format,leno,3,false);
+	if (format.displWidth > 0 && oct.length() > format.displWidth)
+		return SmartString("Too long");
+	return oct;
 }
 
 /*=============================================================
@@ -961,8 +964,8 @@ SmartString RealNumber::ToDecimalString(const DisplayFormat &format) const
 					// suppose format rnfNormal with sign, integer digits w. delimiters, decimal point, leading zeros and fractional part
 					// so _numberString has 'nIntegerDigits' digits and  (_numberString.length() - 'nIntegerDigits' decimal digits
 	int nTmp = (int)_numberString.length() - (int)nIntegerDigits;	// dec. digits in _numberstring, < 0 => no decimal digits there
-	size_t	nReqdDecDigits = fmt.decDigits < 0 ? (nTmp <= 0 ? 0 : (size_t)nTmp) : fmt.decDigits;	// this many decimal digits are in _numberString
-	size_t	nWFractionalPart = 0;  // includes decimal point
+	size_t	nReqdDecDigits = 0;		// this many decimal digits are in _numberString
+	size_t	nWFractionalPart = 0;	// includes decimal point
 
 	int cntThousandSeparators = (fmt.strThousandSeparator.empty() ? 0 : ((nWIntegerPart > 3 ? nWIntegerPart / 3 : 0) - 1 + (nWIntegerPart % 3 ? 2 - (nWIntegerPart % 3) : 0)));
 	if(cntThousandSeparators > 0)
@@ -1003,7 +1006,7 @@ SmartString RealNumber::ToDecimalString(const DisplayFormat &format) const
 			{
 				nIntegerDigits = exp > 0 ? exp : 0;
 				// switch to SCI for too long numbers
-				if (nIntegerDigits > fmt.nFormatSwitchLength || nLeadingDecimalZeros > fmt.nFormatSwitchLength)
+				if (nIntegerDigits > fmt.nFormatSwitchLength || (size_t) nLeadingDecimalZeros > fmt.nFormatSwitchLength)
 				{
 					fmt.mainFormat = NumberFormat::rnfSci;
 					nIntegerDigits = 1;
@@ -1013,16 +1016,24 @@ SmartString RealNumber::ToDecimalString(const DisplayFormat &format) const
 					fmt.mainFormat = NumberFormat::rnfNormal;
 			}
 			else if (fmt.mainFormat == NumberFormat::rnfSci)
-				nIntegerDigits = exp > 0 ? 1 : 0;
+			{
+				nIntegerDigits = 1;
+				nLeadingDecimalZeros = 0;
+			}
 			else // fmt.mainFormat == NumberFormat::rnfEng
 			{
-				nIntegerDigits = (exp < 0 ? (3 + (exp + 1) % 3) : (exp % 3 + 1));		// 1,2, or 3
-				exp = (exp < 0 ? ((exp + 1) / 3 - 1) : (exp / 3)) * 3;
+				// if exp was the 10's exponent: nIntegerDigits = (exp < 0 ? (3 - (exp + 1) % 3) : (exp % 3 + 1));		// 1,2, or 3
+				// but now it is (10's exponent+1)
+				nIntegerDigits = (exp < 0 ? (3 + exp % 3) : (exp % 3));		// 1,2, or 3
+				exp = exp - nIntegerDigits + 1; //  (exp < 0 ? (-(exp + 1) / 3 - 1) : (exp / 3)) * 3;
+				nLeadingDecimalZeros = 0;
 			}
+
+			int nTmp = (int)_numberString.length() - (int)nIntegerDigits;	// dec. digits in _numberstring, < 0 => no decimal digits there
+			nReqdDecDigits = fmt.decDigits < 0 ? (nTmp <= 0 ? 0 : (size_t)nTmp) : fmt.decDigits;	// this many decimal digits are in _numberString
+
 			--exp;	// real 10's exponent
-			strExponent = _FormatExponent(fmt, exp);
-			if (fmt.mainFormat == NumberFormat::rnfSci || fmt.mainFormat == NumberFormat::rnfEng)
-				expLen = strExponent.length();
+			strExponent = _FormatExponent(fmt, exp, expLen);
 			++exp;
 		};
 
@@ -1066,14 +1077,14 @@ SmartString RealNumber::ToDecimalString(const DisplayFormat &format) const
 		};
 	auto roundingPos = [&]()->int
 		{
-			int len1 = nWSign + nWIntegerPart + nWDecPoint, len2 = nWFractionalPart;
-			if( (nWDisplayW < 0) || ((int)nWDisplayW >= len1+len2+expLen) )
+			int len1 = nWSign + nWIntegerPart + nWDecPoint;
+			if( (nWDisplayW < 0) || ((int)nWDisplayW >= len1+nWFractionalPart+expLen) )
 				return -1; // len1+len2 + expLen;
-			len2 = (int)nWDisplayW - (len1 + expLen);
-			if (len2 < 0)
+			nWFractionalPart = (int)nWDisplayW - (len1 + expLen);
+			if (nWFractionalPart <= 1)	// nWFractionalPart contains the decimal point!
 				return -1;
-			int fracDelimCnt = fmt.useFractionSeparator ? (len2 > 0 ? (len2 - 1) / 3 : 0) : 0;
-			return len2 - fracDelimCnt;
+			int fracDelimCnt = fmt.useFractionSeparator ? (nWFractionalPart > 0 ? (nWFractionalPart - 1) / 3 : 0) : 0;
+			return nWFractionalPart - fracDelimCnt;
 		};
 	// ---- /lambda ----------
 
@@ -1144,7 +1155,7 @@ SmartString RealNumber::ToString(const DisplayFormat& format, TextFormat textFor
 	}
 
 	// sres may contain delimiters in the decimal part
-
+#if 0
 	if (format.displWidth >=0 && sres.length() > (size_t)format.displWidth)
 	{
 		DisplayFormat fmt = format;
@@ -1217,27 +1228,32 @@ SmartString RealNumber::ToString(const DisplayFormat& format, TextFormat textFor
 				sres = SmartString("Too Long");
 		}
 	}
-
+#endif
 	return sres;
 }
 
-SmartString RealNumber::_FormatExponent(const DisplayFormat fmt, int exp) const
+SmartString RealNumber::_FormatExponent(const DisplayFormat fmt, int exp, size_t& expLen) const
 {
 	SmartString s = SmartString(std::to_string(exp));
+	expLen = 0;				// no exponent for general or normal format
 	switch (fmt.expFormat)
 	{
 		case ExpFormat::rnsfE:
 			s = SmartString("E")+ s;
+			expLen = s.length();
 			break;
 		case ExpFormat::rnsfSciHTML:
 			s = SmartString("x10<sup>")+ s + SmartString("</sup>");
+			expLen = s.length();
 			break;
 		case ExpFormat::rnsfSciTeX:
 			s = SmartString(u"\\cdot10^{") + s + u"}";	// or "\\cdot10^("+s+")"
+			expLen = s.length() - 2;
 			break;
 		case ExpFormat::rnsfGraph:
 		default:
 			s = SmartString(1, SCharT(183)) + u"10^{" + s + u"}";
+			expLen = s.length() - 2;
 			break;
 	}
 

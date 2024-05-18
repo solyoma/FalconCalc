@@ -550,7 +550,7 @@ namespace LongNumber {
 					(format.signOption == SignOption::soLeaveSpaceForPositive ? " " : "")));
 		}
 
-		SmartString _FormatExponent(const DisplayFormat fmt, int exp) const;
+		SmartString _FormatExponent(const DisplayFormat fmt, int exp, size_t &expLen) const;
 
 		int _PosExpInNumberString(const DisplayFormat fmt, const SmartString& s, int fromPos) const;
 
