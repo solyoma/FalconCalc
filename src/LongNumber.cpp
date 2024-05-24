@@ -742,7 +742,7 @@ SmartString RealNumber::ToOctalString(const DisplayFormat& format) const
 						// including a single space for "thousand separator"
 
 	oct = _IntegerPartToString(oct, _sign, format,leno,3,false);
-	if (format.displWidth > 0 && oct.length() > format.displWidth)
+	if (format.displWidth > 0 && oct.length() > (size_t)format.displWidth)
 		return SmartString("Too long");
 	return oct;
 }
@@ -1236,14 +1236,16 @@ SmartString RealNumber::_FormatExponent(const DisplayFormat fmt, int exp, size_t
 {
 	SmartString s = SmartString(std::to_string(exp));
 	expLen = 0;				// no exponent for general or normal format
-	switch (fmt.expFormat)
+	if (fmt.mainFormat == NumberFormat::rnfSci || fmt.mainFormat == NumberFormat::rnfEng)
 	{
+		switch (fmt.expFormat)
+		{
 		case ExpFormat::rnsfE:
-			s = SmartString("E")+ s;
+			s = SmartString("E") + s;
 			expLen = s.length();
 			break;
 		case ExpFormat::rnsfSciHTML:
-			s = SmartString("x10<sup>")+ s + SmartString("</sup>");
+			s = SmartString("x10<sup>") + s + SmartString("</sup>");
 			expLen = s.length();
 			break;
 		case ExpFormat::rnsfSciTeX:
@@ -1255,8 +1257,8 @@ SmartString RealNumber::_FormatExponent(const DisplayFormat fmt, int exp, size_t
 			s = SmartString(1, SCharT(183)) + u"10^{" + s + u"}";
 			expLen = s.length() - 2;
 			break;
+		}
 	}
-
 	return s;
 }
 

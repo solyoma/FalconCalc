@@ -101,7 +101,7 @@ N_PUBLIC: /* Designer generated list of public members. Do not edit by hand. */
 	nlib::Checkbox *chkDWords;
 	nlib::Checkbox *chkIEEESingle;
 	nlib::Checkbox *chkIEEEDouble;
-	nlib::Combobox *cbInfix;
+//	nlib::Combobox *cbInfix;
 	nlib::Label *Label1;
 	nlib::Edit *edtChars;
 	nlib::FlatButton *btnFont;
@@ -156,8 +156,8 @@ N_PUBLIC: /* Designer generated list of public members. Do not edit by hand. */
 	void StartMove(void *sender, nlib::EventParameters param);
 	void pnlDecPaint(void *sender, nlib::PaintParameters param);
 	void rdNormalClick(void *sender, nlib::EventParameters param);
-	void cbInfixTextChanged(void *sender, nlib::EventParameters param);
-	void cbInfixKeyPress(void *sender, nlib::KeyPressParameters param);
+	//void cbInfixTextChanged(void *sender, nlib::EventParameters param);
+	//void cbInfixKeyPress(void *sender, nlib::KeyPressParameters param);
 protected:
 	virtual ~TfrmMain(); /* Don't make public. Call Destroy() to delete the object. */ 
 	virtual LRESULT WindowProc(UINT wMessage, WPARAM w,LPARAM l) override;

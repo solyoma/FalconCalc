@@ -552,13 +552,13 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	chkIEEEDouble->SetTooltipText(L"Double precision floating point format");
 	chkIEEEDouble->SetParent(Groupbox2);
 
-	cbInfix = new nlib::Combobox();
-	cbInfix->SetBounds(nlib::Rect(357, 21, 493, 45));
-	cbInfix->SetTabOrder(1);
-	cbInfix->Items().Add(L"");
-	cbInfix->Items().Add(L"1234*5678");
-	cbInfix->Items().Add(L"9876*1245.9");
-	cbInfix->SetParent(pnlHexOpt);
+	//cbInfix = new nlib::Combobox();
+	//cbInfix->SetBounds(nlib::Rect(357, 21, 493, 45));
+	//cbInfix->SetTabOrder(1);
+	//cbInfix->Items().Add(L"");
+	//cbInfix->Items().Add(L"1234*5678");
+	//cbInfix->Items().Add(L"9876*1245.9");
+	//cbInfix->SetParent(pnlHexOpt);
 
 	Label1 = new nlib::Label();
 	Label1->SetBounds(nlib::Rect(256, 177, 313, 193));
@@ -683,8 +683,8 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	chkDWords->OnClick = CreateEvent(this, &TfrmMain::chkAsDWordsClick);
 	chkIEEESingle->OnClick = CreateEvent(this, &TfrmMain::chkIEEESingleClick);
 	chkIEEEDouble->OnClick = CreateEvent(this, &TfrmMain::chkIEEEDoubleClick);
-	cbInfix->OnKeyPress = CreateEvent(this, &TfrmMain::cbInfixKeyPress);
-	cbInfix->OnChanged = CreateEvent(this, &TfrmMain::cbInfixTextChanged);
+	//cbInfix->OnKeyPress = CreateEvent(this, &TfrmMain::cbInfixKeyPress);
+	//cbInfix->OnChanged = CreateEvent(this, &TfrmMain::cbInfixTextChanged);
 	btnFont->OnClick = CreateEvent(this, &TfrmMain::btnFontClick);
 	btnCloseDecOptions->OnClick = CreateEvent(this, &TfrmMain::btnCloseDecOptionsClick);
 	btnCloseHexOptions->OnClick = CreateEvent(this, &TfrmMain::btnCloseHexOptionsClick);
@@ -921,7 +921,7 @@ void TfrmMain::edtInfixTextChanged(void *sender, nlib::EventParameters param)
         return;
     }
     wstring s = edtInfix->Text();
-	cbInfix->SetText(s);
+//	cbInfix->SetText(s);
     try
     {
 		lengine->infix = s;
@@ -1772,7 +1772,7 @@ void TfrmMain::rdNormalClick(void *sender, nlib::EventParameters param)
 	//sres.type = sres.mode == bmoNone ? stDecimal : stDecBeautified;
 	_ShowResults();
 }
-
+#if 0
 void TfrmMain::cbInfixTextChanged(void *sender, nlib::EventParameters param)
 {
 	if (_busy)
@@ -1815,4 +1815,4 @@ void TfrmMain::cbInfixKeyPress(void *sender, nlib::KeyPressParameters param)
 {
 	;
 }
-
+#endif
