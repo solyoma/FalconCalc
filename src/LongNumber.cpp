@@ -461,6 +461,8 @@ RealNumber RealNumber::Round(int countOfDecimalPlaces, int cntIntDigits)
 	int cntIntegerDigits		= cntIntDigits,
 		cntLeadingDecimalZeros	= _exponent < 0 ? -_exponent : 0;
 	_numberString = _RoundNumberString(_numberString,  cntIntegerDigits,  countOfDecimalPlaces, cntLeadingDecimalZeros);
+	if (cntIntegerDigits > cntIntDigits)
+		++_exponent;
 	return *this;
 }
 RealNumber RealNumber::Rounded(int countOfDecimalPlaces, int cntInteDigits) const
@@ -2839,18 +2841,21 @@ static RealNumber _sin(RealNumber r)		// sine	(RAD)	0<= r <= 2*pi =>  0 <= _sin 
 	RealNumber b, e, i, n, s, v;
 
 	  /* precondition r. */
-
-	v = rnPiP4; 	// π/4
+#if 1
+	// 	r in [0,π/2] (set in sin())
+	// quadrant and sign is handled there
+#else
 	//	scale = 0 // to get integer part only
 	RealNumber remainder;
-	n = (r / v + RealNumber::RN_2).Div(RealNumber::RN_4, remainder);	// remainder just to ensure integer divison
+	n = (r / rnPiP4 + RealNumber::RN_2).Div(RealNumber::RN_4, remainder);	// remainder just to ensure integer divison
 								// n = [(4r/π+2)/4] = [(r+π/2)/π], e.g. when r = π/4 => [(1/4+1/2)]=0
 								// n >0 when r >= π/2
-	if(n.IsNull())
-		r = r - RealNumber::RN_4 * n * v;		// move r into [0,π/2)
+	if(!n.IsNull())
+		r = r - rnPi * n;		// move r into [0,π/2)
 	if (n.IsOdd())	//		if (n % 2) x = -x		  for angles in quarters 3 or 4
 		r.SetSign(-r.Sign());
-
+#endif
+	v = rnPiP4; 	// π/4
 			/* Do the loop. */
 	RealNumber 	epsilon(SmartString("1"), 1, -(z + 2));
 
@@ -2864,8 +2869,8 @@ static RealNumber _sin(RealNumber r)		// sine	(RAD)	0<= r <= 2*pi =>  0 <= _sin 
 		if (e.Abs() <= epsilon)// x^(2n+1)/(2n+1)! < accuracy
 		{
 			RealNumber::SetMaxLength(z);
-			if (r.Abs() < RealNumber("1e-40"))		// max accuracy for sine
-				r = rnNull;
+			if (v.Abs() < RealNumber("1e-40"))		// max accuracy for sine
+				v = rnNull;
 			return v;
 		}
 		v += e;					  // sum
@@ -2976,7 +2981,7 @@ RealNumber sin (RealNumber r, AngularUnit au)		// sine
 			break;
 
 		case AngularUnit::auGrad:			// full circle 400 Grad
-			return sin(rn2Pi / RealNumber("400") * r);
+			return _sin(r / RealNumber("400") * rn2Pi).Round(58);	// display width is 59
 			break;
 	}
 	return RealNumber();

@@ -110,7 +110,7 @@ void TfrmHistOptions::Setup(size_t depth, size_t timeout, bool sorted)
     spinDepthBtn->SetEnabled(chkDepth->Checked());
     spinDepth->SetEnabled(chkDepth->Checked());
     chkAutoSave->SetChecked( timeout > 0);
-    chkAutoSave->SetEnabled(chkAutoSave->Checked());
+//    chkAutoSave->SetEnabled(chkAutoSave->Checked());
 
     int h = timeout/3600,
         m = (timeout/60) % 60,
