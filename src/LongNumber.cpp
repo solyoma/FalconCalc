@@ -1023,10 +1023,8 @@ SmartString RealNumber::ToDecimalString(const DisplayFormat &format) const
 			else // fmt.mainFormat == NumberFormat::rnfEng
 			{
 				--exp;	// real 10's exponent
-				// if exp was the 10's exponent: 
+				// exp is now the real 10's exponent and not our renormalised exponent 
 				nIntegerDigits = (exp < 0 ? (3 - (exp + 1) % 3) : (exp % 3 + 1));		// 1,2, or 3
-				// but now it is (10's exponent+1)
-//				nIntegerDigits = (exp-1 < 0 ? (3 + exp % 3) : (exp % 3));		// 1,2, or 3
 				exp = exp - nIntegerDigits + 1; //  (exp < 0 ? (-(exp + 1) / 3 - 1) : (exp / 3)) * 3;
 				nLeadingDecimalZeros = 0;
 				++exp;
@@ -1071,23 +1069,23 @@ SmartString RealNumber::ToDecimalString(const DisplayFormat &format) const
 			nWIntegerPart = nWIntegerPart ? nWIntegerPart : 1;		// on display: always use an integer part
 			return nWIntegerPart;
 		};
-	auto requriedSpaceForFraction = [&]()->int	   // incl decimal point
+	auto requriedSpaceForFraction = [&]()->int	   // if not 0 includes decimal point  w. no regard to display width
 		{
 			nWFractionalPart = nReqdDecDigits + (fmt.useFractionSeparator ? ((nReqdDecDigits - 1) / 3) : 0) + (nReqdDecDigits ? 1 : 0);
 			if(nWFractionalPart)
 				nWDecPoint = nWFractionalPart++ ? 1 : 0;
 			return nWFractionalPart;
 		};
-	auto roundingPos = [&]()->int
+	auto roundingPos = [&]()->int				// in _numberString returns -1 for no rounding required
 		{
-			int len1 = nWSign + nWIntegerPart + nWDecPoint;
-			if( (nWDisplayW < 0) || ((int)nWDisplayW >= len1+nWFractionalPart+expLen) )
-				return -1; // len1+len2 + expLen;
-			nWFractionalPart = (int)nWDisplayW - (len1 + expLen);
+			int len1 = nWSign + nWIntegerPart + expLen;	// no decimal point in len1	it is in nWFractionalPart
+			if( (nWDisplayW < 0) || ((int)nWDisplayW >= len1 + nWFractionalPart) )	
+				return -1; 
+			nWFractionalPart = (int)nWDisplayW - len1;
 			if (nWFractionalPart <= 1)	// nWFractionalPart contains the decimal point!
 				return -1;
 			int fracDelimCnt = fmt.useFractionSeparator ? (nWFractionalPart > 0 ? (nWFractionalPart - 1) / 3 : 0) : 0;
-			return nWFractionalPart - fracDelimCnt;
+			return nWFractionalPart - fracDelimCnt -nLeadingDecimalZeros - 1;
 		};
 	// ---- /lambda ----------
 
@@ -2829,9 +2827,8 @@ static inline RealNumber deg2rad(RealNumber deg)
 // ------------- flag to disallow recursive call with units in radian
 static bool _sinCalcOn = false;
 
-static RealNumber _sin(RealNumber r)		// sine	(DEG)	0<= r <= 360 =>  0 <= _sin <= 1
+static RealNumber _sin(RealNumber r)		// sine	(RAD)	0<= r <= 2*pi =>  0 <= _sin <= 1
 { 
-	r = deg2rad(r);
 	// from https://github.com/nlitsme/gnubc/blob/master/bc/libmath.b
 	// Sin(x)  uses the standard series:
 	//sin(x) = x - x^3/3! + x^5/5! - x^7/7! ...
@@ -2843,7 +2840,7 @@ static RealNumber _sin(RealNumber r)		// sine	(DEG)	0<= r <= 360 =>  0 <= _sin <
 
 	  /* precondition r. */
 
-	v = piP2.value / RealNumber::RN_2;	// π/4
+	v = rnPiP4; 	// π/4
 	//	scale = 0 // to get integer part only
 	RealNumber remainder;
 	n = (r / v + RealNumber::RN_2).Div(RealNumber::RN_4, remainder);	// remainder just to ensure integer divison
@@ -2907,7 +2904,7 @@ RealNumber sin (RealNumber r, AngularUnit au)		// sine
 
 			// now r is in 0<= r <= 90
 			if (r < epsilon)
-				return RealNumber::RN_1;
+				return RealNumber::RN_0;
 			else if (r == RealNumber("30"))
 			{
 				r = half;
@@ -2928,20 +2925,58 @@ RealNumber sin (RealNumber r, AngularUnit au)		// sine
 				r = RealNumber::RN_1;
 				return r.SetSign(sign);
 			}
-			else
-				return _sin(r).SetSign(sign);		   // 0 <= r <= 90
+			else									  // 0 <= r <= 90
+			{
+				r = deg2rad(r);
+				return _sin(r).SetSign(sign);		   
+			}
 			break;
 		}
 		case AngularUnit::auRad:
-			r /= twoPi.value;
-			r = r.Frac();				// 0 <= r <= 1
-			// [[fallthrough]];			// from C++17
+		{
+			RealNumber piP3 = rnPi / RealNumber(3), piP6 = rnPi / RealNumber(6);
+			r = fmod(r, rn2Pi);	// 0 <= r <= 2 π
+			if (r >= rnPi)
+			{
+				sign = -sign;
+				r -= rnPi;
+			}
+			//  0 <= r <= π
+			if (r > rnPiP2)					// sin(π/2+alpha)=cos(alpha)=sin(π/2-alpha), if alpha < π
+				r = rnPi - r;
+
+			if (r < epsilon)				// 0 <= r <= π/2
+				return RealNumber::RN_0;
+			else if ((r - piP6).Abs() < epsilon)		// 30
+			{
+				r = RealNumber::RN_0;
+				return r.SetSign(sign);
+			}
+			else if ((r - rnPiP4).Abs() < epsilon)		// 45
+			{
+				r = rsqrt2.value;
+				return r.SetSign(sign);
+			}
+			else if ((r - piP3).Abs() < epsilon)		// 60
+			{
+				r = sqrt3P2.value;
+				return r.SetSign(sign);
+			}
+			else if ((r - rnPiP2).Abs() < epsilon)		// 90
+			{
+				r = RealNumber::RN_1;
+				return r.SetSign(sign);
+			}
+			else									  // 0 <= r <= π/2
+				return _sin(r).SetSign(sign);
+		}
+			
 		case AngularUnit::auTurn:		// full circle 1 turn
-			return sin(r*rn360);		// must change to DEG, otherwise infinite loop!
+			return _sin(r*rn2Pi);		
 			break;
 
 		case AngularUnit::auGrad:			// full circle 400 Grad
-			return sin(rn360 / RealNumber("400") * r);
+			return sin(rn2Pi / RealNumber("400") * r);
 			break;
 	}
 	return RealNumber();

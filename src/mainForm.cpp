@@ -1639,8 +1639,9 @@ void TfrmMain::_AddToHistory(wstring text)
 {
 	SmartString ss(text);
 	ss.Trim();
-	if (LittleEngine::variables.count(ss))		// single variable or function?
+	if (LittleEngine::variables.count(ss) || LongNumber::constantsMap.count(ss) )		// single, already defined variable?
 	{
+		_added = true;	// so won't try it to add again
 		_watchdog = 0;
 		return;
 	}

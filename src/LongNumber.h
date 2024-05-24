@@ -568,7 +568,14 @@ namespace LongNumber {
 	inline RealNumber ceil(const RealNumber r) { return (r + RealNumber::RN_1).Int(); }
 	inline RealNumber frac(const RealNumber r) { return r.Frac(); }
 	inline RealNumber round(const RealNumber r, int decDigits) { return r.Rounded(decDigits); }
-	inline RealNumber fmod(const RealNumber x, const RealNumber& y) { return x - (x / y).Int() * y; }
+	inline RealNumber fmod(const RealNumber x, const RealNumber& y) 
+	{ 
+		RealNumber xi(x);
+		int sx = x.Sign(), sy = y.Sign();
+		if (x.Abs() < y.Abs())
+			return xi.SetSign(sx * sy);
+		return xi - (xi / y).Int() * y; 
+	}
 	RealNumber fact(const RealNumber n);
 	RealNumber RadToAu(RealNumber r, AngularUnit au);
 

@@ -599,8 +599,10 @@ LittleEngine::LittleEngine() : clean(true)
        f.useAngleUnit        =true;
        SET_BUILTIN_FUNC1(sin    , sine      , Sin);
        SET_BUILTIN_FUNC1(cos    , cosine    , Cos);
+       SET_BUILTIN_FUNC1(cot    , cotangent , Cot);
        SET_BUILTIN_FUNC1(tan    , tangent   , Tan);
        SET_BUILTIN_FUNC1(tg     , tangent   , Tan);
+       SET_BUILTIN_FUNC1(ctg    , cotangent , Cot);
        f.useAngleUnit        =false;
 
        SET_BUILTIN_FUNC1(asinh  , inverse of hyperbolic sine     , asinh);
