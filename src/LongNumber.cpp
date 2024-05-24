@@ -1022,11 +1022,14 @@ SmartString RealNumber::ToDecimalString(const DisplayFormat &format) const
 			}
 			else // fmt.mainFormat == NumberFormat::rnfEng
 			{
-				// if exp was the 10's exponent: nIntegerDigits = (exp < 0 ? (3 - (exp + 1) % 3) : (exp % 3 + 1));		// 1,2, or 3
+				--exp;	// real 10's exponent
+				// if exp was the 10's exponent: 
+				nIntegerDigits = (exp < 0 ? (3 - (exp + 1) % 3) : (exp % 3 + 1));		// 1,2, or 3
 				// but now it is (10's exponent+1)
-				nIntegerDigits = (exp < 0 ? (3 + exp % 3) : (exp % 3));		// 1,2, or 3
+//				nIntegerDigits = (exp-1 < 0 ? (3 + exp % 3) : (exp % 3));		// 1,2, or 3
 				exp = exp - nIntegerDigits + 1; //  (exp < 0 ? (-(exp + 1) / 3 - 1) : (exp / 3)) * 3;
 				nLeadingDecimalZeros = 0;
+				++exp;
 			}
 
 			int nTmp = (int)_numberString.length() - (int)nIntegerDigits;	// dec. digits in _numberstring, < 0 => no decimal digits there
