@@ -29,7 +29,7 @@ void TfrmHistOptions::InitializeFormAndControls() /* Control initialization func
 	chkAutoSave->SetText(L"&Time of automatic saves:");
 	chkAutoSave->SetTabOrder(1);
 	chkAutoSave->SetParent(this);
-	
+
 	chkSort = new nlib::Checkbox();
 	chkSort->SetBounds(nlib::Rect(16, 80, 96, 96));
 	chkSort->SetText(L"&Sorted");

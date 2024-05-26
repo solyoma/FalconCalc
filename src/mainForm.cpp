@@ -299,15 +299,15 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	pnlDecOpt->SetInnerBorderStyle(nlib::pbsNone);
 	pnlDecOpt->SetParent(this);
 
-	Groupbox1 = new nlib::Groupbox();
-	Groupbox1->SetBounds(nlib::Rect(11, 1, 230, 89));
-	Groupbox1->SetText(L"Decimal options");
-	Groupbox1->SetPadding(nlib::Rect(0, 0, 0, 0));
-	Groupbox1->GetFont().SetFamily(L"Tahoma");
-	Groupbox1->GetFont().SetSize(10);
-	Groupbox1->SetParentFont(false);
-	Groupbox1->SetTabOrder(0);
-	Groupbox1->SetParent(pnlDecOpt);
+	gbDecOptions = new nlib::Groupbox();
+	gbDecOptions->SetBounds(nlib::Rect(11, 1, 230, 89));
+	gbDecOptions->SetText(L"Decimal options");
+	gbDecOptions->SetPadding(nlib::Rect(0, 0, 0, 0));
+	gbDecOptions->GetFont().SetFamily(L"Tahoma");
+	gbDecOptions->GetFont().SetSize(10);
+	gbDecOptions->SetParentFont(false);
+	gbDecOptions->SetTabOrder(0);
+	gbDecOptions->SetParent(pnlDecOpt);
 
 	chkSep = new nlib::Checkbox();
 	chkSep->SetBounds(nlib::Rect(8, 16, 165, 33));
@@ -317,7 +317,7 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	chkSep->SetParentFont(false);
 	chkSep->SetTabOrder(0);
 	chkSep->SetState(nlib::csChecked);
-	chkSep->SetParent(Groupbox1);
+	chkSep->SetParent(gbDecOptions);
 
 	cbThousandSep = new nlib::Combobox();
 	cbThousandSep->SetBounds(nlib::Rect(168, 16, 215, 40));
@@ -332,7 +332,7 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	cbThousandSep->Items().Add(L".");
 	cbThousandSep->Items().Add(L";");
 	cbThousandSep->SetItemIndex(0);
-	cbThousandSep->SetParent(Groupbox1);
+	cbThousandSep->SetParent(gbDecOptions);
 
 	chkSci = new nlib::Checkbox();
 	chkSci->SetBounds(nlib::Rect(8, 32, 141, 49));
@@ -341,7 +341,7 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	chkSci->GetFont().SetSize(10);
 	chkSci->SetParentFont(false);
 	chkSci->SetTabOrder(2);
-	chkSci->SetParent(Groupbox1);
+	chkSci->SetParent(gbDecOptions);
 
 	chkEng = new nlib::Checkbox();
 	chkEng->SetBounds(nlib::Rect(8, 48, 149, 65));
@@ -350,7 +350,7 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	chkEng->GetFont().SetSize(10);
 	chkEng->SetParentFont(false);
 	chkEng->SetTabOrder(3);
-	chkEng->SetParent(Groupbox1);
+	chkEng->SetParent(gbDecOptions);
 
 	chkDecDigits = new nlib::Checkbox();
 	chkDecDigits->SetBounds(nlib::Rect(8, 64, 149, 81));
@@ -359,7 +359,7 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	chkDecDigits->GetFont().SetSize(10);
 	chkDecDigits->SetParentFont(false);
 	chkDecDigits->SetTabOrder(4);
-	chkDecDigits->SetParent(Groupbox1);
+	chkDecDigits->SetParent(gbDecOptions);
 
 	spnDecDigits = new nlib::Edit();
 	spnDecDigits->SetBounds(nlib::Rect(141, 63, 178, 84));
@@ -368,25 +368,25 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	spnDecDigits->GetFont().SetSize(10);
 	spnDecDigits->SetParentFont(false);
 	spnDecDigits->SetTabOrder(5);
-	spnDecDigits->SetParent(Groupbox1);
+	spnDecDigits->SetParent(gbDecOptions);
 
 	UpDownDecDigits = new nlib::UpDown();
 	UpDownDecDigits->SetBounds(nlib::Rect(177, 63, 194, 84));
 	UpDownDecDigits->SetMaxValue(80);
-	UpDownDecDigits->SetParent(Groupbox1);
+	UpDownDecDigits->SetParent(gbDecOptions);
 
-	rgAngleUnit = new nlib::Groupbox();
-	rgAngleUnit->SetBounds(nlib::Rect(236, 7, 428, 53));
-	rgAngleUnit->SetText(L"Angles in");
-	rgAngleUnit->SetPadding(nlib::Rect(0, 0, 0, 0));
-	rgAngleUnit->GetFont().SetFamily(L"Tahoma");
-	rgAngleUnit->GetFont().SetSize(10);
-	rgAngleUnit->SetParentFont(false);
-	rgAngleUnit->SetTabOrder(1);
-	rgAngleUnit->SetParent(pnlDecOpt);
+	gbAngleUnit = new nlib::Groupbox();
+	gbAngleUnit->SetBounds(nlib::Rect(236, 7, 492, 53));
+	gbAngleUnit->SetText(L"Angles in");
+	gbAngleUnit->SetPadding(nlib::Rect(0, 0, 0, 0));
+	gbAngleUnit->GetFont().SetFamily(L"Tahoma");
+	gbAngleUnit->GetFont().SetSize(10);
+	gbAngleUnit->SetParentFont(false);
+	gbAngleUnit->SetTabOrder(1);
+	gbAngleUnit->SetParent(pnlDecOpt);
 
 	rdDeg = new nlib::Radiobox();
-	rdDeg->SetTag(1);
+	rdDeg->SetTag(0);
 	rdDeg->SetBounds(nlib::Rect(11, 19, 59, 35));
 	rdDeg->SetText(L"De&g");
 	rdDeg->GetFont().SetFamily(L"Tahoma");
@@ -394,37 +394,44 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	rdDeg->SetParentFont(false);
 	rdDeg->SetTabOrder(0);
 	rdDeg->SetChecked(true);
-	rdDeg->SetParent(rgAngleUnit);
-
-	rdGrad = new nlib::Radiobox();
-	rdGrad->SetTag(2);
-	rdGrad->SetBounds(nlib::Rect(59, 19, 115, 35));
-	rdGrad->SetText(L"&Grad");
-	rdGrad->GetFont().SetFamily(L"Tahoma");
-	rdGrad->GetFont().SetSize(10);
-	rdGrad->SetParentFont(false);
-	rdGrad->SetTabOrder(1);
-	rdGrad->SetParent(rgAngleUnit);
+	rdDeg->SetParent(gbAngleUnit);
 
 	rdRad = new nlib::Radiobox();
-	rdRad->SetTag(0);
-	rdRad->SetBounds(nlib::Rect(123, 19, 187, 35));
+	rdRad->SetTag(1);
+	rdRad->SetBounds(nlib::Rect(59, 19, 114, 35));
 	rdRad->SetText(L"&Rad");
 	rdRad->GetFont().SetFamily(L"Tahoma");
 	rdRad->GetFont().SetSize(10);
 	rdRad->SetParentFont(false);
 	rdRad->SetTabOrder(2);
-	rdRad->SetParent(rgAngleUnit);
+	rdRad->SetParent(gbAngleUnit);
 
-	Groupbox3 = new nlib::Groupbox();
-	Groupbox3->SetBounds(nlib::Rect(236, 47, 492, 93));
-	Groupbox3->SetText(L"Display");
-	Groupbox3->SetPadding(nlib::Rect(0, 0, 0, 0));
-	Groupbox3->GetFont().SetFamily(L"Tahoma");
-	Groupbox3->GetFont().SetSize(10);
-	Groupbox3->SetParentFont(false);
-	Groupbox3->SetTabOrder(2);
-	Groupbox3->SetParent(pnlDecOpt);
+	rdGrad = new nlib::Radiobox();
+	rdGrad->SetTag(2);
+	rdGrad->SetBounds(nlib::Rect(116, 19, 172, 35));
+	rdGrad->SetText(L"&Grad");
+	rdGrad->GetFont().SetFamily(L"Tahoma");
+	rdGrad->GetFont().SetSize(10);
+	rdGrad->SetParentFont(false);
+	rdGrad->SetTabOrder(1);
+	rdGrad->SetParent(gbAngleUnit);
+
+	rdTurn = new nlib::Radiobox();
+	rdTurn->SetTag(3);
+	rdTurn->SetBounds(nlib::Rect(184, 19, 248, 37));
+	rdTurn->SetText(L"&Turns");
+	rdTurn->SetTabOrder(3);
+	rdTurn->SetParent(gbAngleUnit);
+
+	gbDisplayFormat = new nlib::Groupbox();
+	gbDisplayFormat->SetBounds(nlib::Rect(236, 47, 553, 93));
+	gbDisplayFormat->SetText(L"Display");
+	gbDisplayFormat->SetPadding(nlib::Rect(0, 0, 0, 0));
+	gbDisplayFormat->GetFont().SetFamily(L"Tahoma");
+	gbDisplayFormat->GetFont().SetSize(10);
+	gbDisplayFormat->SetParentFont(false);
+	gbDisplayFormat->SetTabOrder(2);
+	gbDisplayFormat->SetParent(pnlDecOpt);
 
 	rdNormal = new nlib::Radiobox();
 	rdNormal->SetBounds(nlib::Rect(11, 19, 91, 35));
@@ -434,7 +441,7 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	rdNormal->SetParentFont(false);
 	rdNormal->SetTabOrder(0);
 	rdNormal->SetChecked(true);
-	rdNormal->SetParent(Groupbox3);
+	rdNormal->SetParent(gbDisplayFormat);
 
 	rdHtml = new nlib::Radiobox();
 	rdHtml->SetTag(1);
@@ -444,7 +451,7 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	rdHtml->GetFont().SetSize(10);
 	rdHtml->SetParentFont(false);
 	rdHtml->SetTabOrder(1);
-	rdHtml->SetParent(Groupbox3);
+	rdHtml->SetParent(gbDisplayFormat);
 
 	rdTex = new nlib::Radiobox();
 	rdTex->SetTag(2);
@@ -454,14 +461,14 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	rdTex->GetFont().SetSize(10);
 	rdTex->SetParentFont(false);
 	rdTex->SetTabOrder(2);
-	rdTex->SetParent(Groupbox3);
+	rdTex->SetParent(gbDisplayFormat);
 
 	rdNone = new nlib::Radiobox();
 	rdNone->SetTag(3);
 	rdNone->SetBounds(nlib::Rect(198, 20, 238, 36));
 	rdNone->SetText(L"E");
 	rdNone->SetTabOrder(3);
-	rdNone->SetParent(Groupbox3);
+	rdNone->SetParent(gbDisplayFormat);
 
 	pnlHexOpt = new nlib::Panel();
 	pnlHexOpt->SetBounds(nlib::Rect(8, 293, 515, 375));
@@ -469,15 +476,15 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	pnlHexOpt->SetInnerBorderStyle(nlib::pbsNone);
 	pnlHexOpt->SetParent(this);
 
-	Groupbox2 = new nlib::Groupbox();
-	Groupbox2->SetBounds(nlib::Rect(8, 1, 337, 75));
-	Groupbox2->SetText(L"Hexadecimal Options");
-	Groupbox2->SetPadding(nlib::Rect(0, 0, 0, 0));
-	Groupbox2->GetFont().SetFamily(L"Tahoma");
-	Groupbox2->GetFont().SetSize(10);
-	Groupbox2->SetParentFont(false);
-	Groupbox2->SetTabOrder(0);
-	Groupbox2->SetParent(pnlHexOpt);
+	gbHexOptions = new nlib::Groupbox();
+	gbHexOptions->SetBounds(nlib::Rect(8, 1, 490, 75));
+	gbHexOptions->SetText(L"Hexadecimal Options");
+	gbHexOptions->SetPadding(nlib::Rect(0, 0, 0, 0));
+	gbHexOptions->GetFont().SetFamily(L"Tahoma");
+	gbHexOptions->GetFont().SetSize(10);
+	gbHexOptions->SetParentFont(false);
+	gbHexOptions->SetTabOrder(0);
+	gbHexOptions->SetParent(pnlHexOpt);
 
 	chkMinus = new nlib::Checkbox();
 	chkMinus->SetBounds(nlib::Rect(16, 18, 102, 35));
@@ -487,18 +494,18 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	chkMinus->SetParentFont(false);
 	chkMinus->SetTabOrder(0);
 	chkMinus->SetTooltipText(L"Absolute value of negative numbers are shown with a minus sign");
-	chkMinus->SetParent(Groupbox2);
+	chkMinus->SetParent(gbHexOptions);
 
 	chkLittleEndian = new nlib::Checkbox();
 	chkLittleEndian->SetTag(6);
-	chkLittleEndian->SetBounds(nlib::Rect(16, 52, 102, 69));
+	chkLittleEndian->SetBounds(nlib::Rect(360, 52, 446, 69));
 	chkLittleEndian->SetText(L"&Little endian");
 	chkLittleEndian->GetFont().SetFamily(L"Tahoma");
 	chkLittleEndian->GetFont().SetSize(10);
 	chkLittleEndian->SetParentFont(false);
 	chkLittleEndian->SetTabOrder(1);
 	chkLittleEndian->SetTooltipText(L"Left to right order of bytes from least significant to most significant (Intel ordering)");
-	chkLittleEndian->SetParent(Groupbox2);
+	chkLittleEndian->SetParent(gbHexOptions);
 
 	chkBytes = new nlib::Checkbox();
 	chkBytes->SetTag(1);
@@ -508,7 +515,7 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	chkBytes->GetFont().SetSize(10);
 	chkBytes->SetParentFont(false);
 	chkBytes->SetTabOrder(2);
-	chkBytes->SetParent(Groupbox2);
+	chkBytes->SetParent(gbHexOptions);
 
 	chkWords = new nlib::Checkbox();
 	chkWords->SetTag(2);
@@ -518,7 +525,7 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	chkWords->GetFont().SetSize(10);
 	chkWords->SetParentFont(false);
 	chkWords->SetTabOrder(3);
-	chkWords->SetParent(Groupbox2);
+	chkWords->SetParent(gbHexOptions);
 
 	chkDWords = new nlib::Checkbox();
 	chkDWords->SetTag(3);
@@ -528,7 +535,7 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	chkDWords->GetFont().SetSize(10);
 	chkDWords->SetParentFont(false);
 	chkDWords->SetTabOrder(4);
-	chkDWords->SetParent(Groupbox2);
+	chkDWords->SetParent(gbHexOptions);
 
 	chkIEEESingle = new nlib::Checkbox();
 	chkIEEESingle->SetTag(4);
@@ -539,7 +546,7 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	chkIEEESingle->SetParentFont(false);
 	chkIEEESingle->SetTabOrder(5);
 	chkIEEESingle->SetTooltipText(L"Single precision floating point format");
-	chkIEEESingle->SetParent(Groupbox2);
+	chkIEEESingle->SetParent(gbHexOptions);
 
 	chkIEEEDouble = new nlib::Checkbox();
 	chkIEEEDouble->SetTag(5);
@@ -550,15 +557,7 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	chkIEEEDouble->SetParentFont(false);
 	chkIEEEDouble->SetTabOrder(6);
 	chkIEEEDouble->SetTooltipText(L"Double precision floating point format");
-	chkIEEEDouble->SetParent(Groupbox2);
-
-	//cbInfix = new nlib::Combobox();
-	//cbInfix->SetBounds(nlib::Rect(357, 21, 493, 45));
-	//cbInfix->SetTabOrder(1);
-	//cbInfix->Items().Add(L"");
-	//cbInfix->Items().Add(L"1234*5678");
-	//cbInfix->Items().Add(L"9876*1245.9");
-	//cbInfix->SetParent(pnlHexOpt);
+	chkIEEEDouble->SetParent(gbHexOptions);
 
 	Label1 = new nlib::Label();
 	Label1->SetBounds(nlib::Rect(256, 177, 313, 193));
@@ -672,6 +671,7 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	rdDeg->OnClick = CreateEvent(this, &TfrmMain::rdDegClick);
 	rdGrad->OnClick = CreateEvent(this, &TfrmMain::rdDegClick);
 	rdRad->OnClick = CreateEvent(this, &TfrmMain::rdDegClick);
+	rdTurn->OnClick = CreateEvent(this, &TfrmMain::rdDegClick);
 	rdNormal->OnClick = CreateEvent(this, &TfrmMain::rdNormalClick);
 	rdHtml->OnClick = CreateEvent(this, &TfrmMain::rdNormalClick);
 	rdTex->OnClick = CreateEvent(this, &TfrmMain::rdNormalClick);

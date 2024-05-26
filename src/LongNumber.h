@@ -79,7 +79,7 @@ namespace LongNumber {
 
 
 	// ---------
-	enum class AngularUnit { auRad, auDeg, auGrad, auTurn };	// 1 turn = 2π
+	enum class AngularUnit { auDeg, auRad, auGrad, auTurn };	// 1 turn = 2π
 
 	/*
 	*	mainFormat, displWidth and decDigits together dictates what is visible and how:

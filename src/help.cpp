@@ -19,7 +19,7 @@ void TfrmHelp::InitializeFormAndControls() /* Control initialization function ge
 	SetClientRect(nlib::Rect(0, 0, 652, 472));
 
 	Label1 = new nlib::Label();
-	Label1->SetBounds(nlib::Rect(273, 15, 376, 34));
+	Label1->SetBounds(nlib::Rect(273, 15, 359, 34));
 	Label1->SetText(L"FalconCalc");
 	Label1->SetAnchors(nlib::caTop);
 	Label1->GetFont().SetFamily(L"Tahoma");

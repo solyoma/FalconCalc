@@ -19,7 +19,7 @@ void TfrmAbout::InitializeFormAndControls() /* Control initialization function g
 	SetClientRect(nlib::Rect(0, 0, 274, 222));
 
 	Label1 = new nlib::Label();
-	Label1->SetBounds(nlib::Rect(86, 15, 189, 34));
+	Label1->SetBounds(nlib::Rect(86, 15, 172, 34));
 	Label1->SetText(L"FalconCalc");
 	Label1->GetFont().SetFamily(L"Tahoma");
 	Label1->GetFont().SetSize(12);
@@ -38,7 +38,7 @@ void TfrmAbout::InitializeFormAndControls() /* Control initialization function g
 	Label3->SetParent(this);
 
 	Label4 = new nlib::Label();
-	Label4->SetBounds(nlib::Rect(50, 95, 242, 109));
+	Label4->SetBounds(nlib::Rect(50, 95, 233, 109));
 	Label4->SetText(L"Based on the 'FalconCalc Engine',");
 	Label4->SetParent(this);
 

@@ -123,10 +123,6 @@ void TfrmVariables::InitializeFormAndControls() /* Control initialization functi
 	btnClear->Image()->SetBitmap(new nlib::Bitmap(NULL, MAKEINTRESOURCE(28684)));
 
 	OnClose = CreateEvent(this, &TfrmVariables::FormClose);
-	sgUser->OnClick = CreateEvent(this, &TfrmVariables::sgUserClick);
-	sgUser->OnDblClick = CreateEvent(this, &TfrmVariables::sgUserDoubleClick);
-	sgBuiltin->OnClick = CreateEvent(this,    &TfrmVariables::sgBuiltinClick);
-	sgBuiltin->OnDblClick = CreateEvent(this, &TfrmVariables::sgBuiltinDoubleClick);
 	tcVars->OnTabChange = CreateEvent(this, &TfrmVariables::tcVarsTabChange);
 	sgUser->OnColumnSizing = CreateEvent(this, &TfrmVariables::sgUserColumnSizing);
 	sgUser->OnEditorKeyDown = CreateEvent(this, &TfrmVariables::sgUserEditorKeyDown);
@@ -500,24 +496,3 @@ void TfrmVariables::sgUserEditorKeyDown(void *sender, nlib::KeyParameters param)
 	}
 
 }
-
-void TfrmVariables::sgUserClick(void* sender, nlib::EventParameters param)
-{
-
-}
-void TfrmVariables::sgUserDoubleClick(void* sender, nlib::MouseButtonParameters param)
-{
-
-}
-void TfrmVariables::sgBuiltinClick(void* sender, nlib::EventParameters param)
-{
-
-}
-void TfrmVariables::sgBuiltinDoubleClick(void* sender, nlib::MouseButtonParameters param)
-{
-
-}
-
-
-
-
