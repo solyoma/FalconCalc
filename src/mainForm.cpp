@@ -71,8 +71,8 @@ static wstring _StringFromHex(STRING_RESULT sres)
 // TASK: test the iontersection of rectangle 'rect' with rectangle 'r'
 // RETURNS: flags in an integer for each corner of 'r' that is inside 'rect'
 //			0: no intersection,					1: top left of r is inside 'rect'
-//          2: top right of r is inside 'rect'  4: bottom right of r is inside 'rect', 
-//			8:bottom left of r is inside 'rect' 
+//          2: top right of r is inside 'rect'  4: bottom right of r is inside 'rect',
+//			8:bottom left of r is inside 'rect'
 int Intersect(RECT& rect, RECT& r)
 {
 	auto inside = [&](int x, int y, int resIfInside)->int
@@ -338,7 +338,7 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	pnlOct->SetTabOrder(5);
 	pnlOct->SetInnerBorderStyle(nlib::pbsSunken);
 	pnlOct->SetTextAlignment(nlib::taRight);
-	pnlOct->SetParent(gbResults);
+										pnlOct->SetParent(gbResults);
 
 	pnlBin = new nlib::Panel();
 	pnlBin->SetBounds(nlib::Rect(83, 93, 500, 118));
@@ -450,6 +450,7 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	rdDeg->GetFont().SetSize(10);
 	rdDeg->SetParentFont(false);
 	rdDeg->SetTabOrder(0);
+	rdDeg->SetTooltipText(L"Degrees");
 	rdDeg->SetChecked(true);
 	rdDeg->SetParent(gbAngleUnit);
 
@@ -460,7 +461,8 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	rdRad->GetFont().SetFamily(L"Tahoma");
 	rdRad->GetFont().SetSize(10);
 	rdRad->SetParentFont(false);
-	rdRad->SetTabOrder(2);
+	rdRad->SetTabOrder(1);
+	rdRad->SetTooltipText(L"Radians");
 	rdRad->SetParent(gbAngleUnit);
 
 	rdGrad = new nlib::Radiobox();
@@ -470,7 +472,8 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	rdGrad->GetFont().SetFamily(L"Tahoma");
 	rdGrad->GetFont().SetSize(10);
 	rdGrad->SetParentFont(false);
-	rdGrad->SetTabOrder(1);
+	rdGrad->SetTabOrder(2);
+	rdGrad->SetTooltipText(L"360º = 400 grad");
 	rdGrad->SetParent(gbAngleUnit);
 
 	rdTurn = new nlib::Radiobox();
@@ -478,6 +481,7 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	rdTurn->SetBounds(nlib::Rect(184, 19, 248, 37));
 	rdTurn->SetText(L"&Turns");
 	rdTurn->SetTabOrder(3);
+	rdTurn->SetTooltipText(L"360º = 1 turn");
 	rdTurn->SetParent(gbAngleUnit);
 
 	gbDisplayFormat = new nlib::Groupbox();
@@ -498,6 +502,7 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	rdNormal->SetParentFont(false);
 	rdNormal->SetTabOrder(0);
 	rdNormal->SetChecked(true);
+	rdNormal->SetTooltipText(L"Exponent display with 10's power");
 	rdNormal->SetParent(gbDisplayFormat);
 
 	rdHtml = new nlib::Radiobox();
@@ -508,6 +513,7 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	rdHtml->GetFont().SetSize(10);
 	rdHtml->SetParentFont(false);
 	rdHtml->SetTabOrder(1);
+	rdHtml->SetTooltipText(L"Exponent display with <sup>x</sup>");
 	rdHtml->SetParent(gbDisplayFormat);
 
 	rdTex = new nlib::Radiobox();
@@ -518,6 +524,7 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	rdTex->GetFont().SetSize(10);
 	rdTex->SetParentFont(false);
 	rdTex->SetTabOrder(2);
+	rdTex->SetTooltipText(L"Exponent display with {10^x}");
 	rdTex->SetParent(gbDisplayFormat);
 
 	rdNone = new nlib::Radiobox();
@@ -525,6 +532,7 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	rdNone->SetBounds(nlib::Rect(198, 20, 238, 36));
 	rdNone->SetText(L"E");
 	rdNone->SetTabOrder(3);
+	rdNone->SetTooltipText(L"Exponent display as 'Ex'");
 	rdNone->SetParent(gbDisplayFormat);
 
 	pnlHexOpt = new nlib::Panel();
@@ -552,6 +560,13 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	chkMinus->SetTabOrder(0);
 	chkMinus->SetTooltipText(L"Absolute value of negative numbers are shown with a minus sign");
 	chkMinus->SetParent(gbHexOptions);
+
+	chkHexPrefix = new nlib::Checkbox();
+	chkHexPrefix->SetBounds(nlib::Rect(16, 52, 111, 68));
+	chkHexPrefix->SetText(L"0x &prefix");
+	chkHexPrefix->SetTabOrder(7);
+	chkHexPrefix->SetChecked(true);
+	chkHexPrefix->SetParent(gbHexOptions);
 
 	chkLittleEndian = new nlib::Checkbox();
 	chkLittleEndian->SetTag(6);
@@ -735,6 +750,7 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	rdNone->OnClick = CreateEvent(this, &TfrmMain::rdNormalClick);
 	chkMinus->OnClick = CreateEvent(this, &TfrmMain::chkMinusClick);
 	chkLittleEndian->OnClick = CreateEvent(this, &TfrmMain::chkLittleEndianClick);
+	chkHexPrefix->OnClick = CreateEvent(this, &TfrmMain::chkHexPrefixClick);
 	chkBytes->OnClick = CreateEvent(this, &TfrmMain::chkAsBytesClick);
 	chkWords->OnClick = CreateEvent(this, &TfrmMain::chkAsWordsClick);
 	chkDWords->OnClick = CreateEvent(this, &TfrmMain::chkAsDWordsClick);
@@ -750,16 +766,16 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 
 // for fun
 	vector<MONITORINFOEX> monitors;
-// callback function called by EnumDisplayMonitors for each enabled monitor 
-BOOL CALLBACK EnumDispProc(HMONITOR hMon, HDC dcMon, RECT* pRcMon, LPARAM lParam) 
-{ 
+// callback function called by EnumDisplayMonitors for each enabled monitor
+BOOL CALLBACK EnumDispProc(HMONITOR hMon, HDC dcMon, RECT* pRcMon, LPARAM lParam)
+{
 	MONITORINFOEX mi;
 	mi.cbSize = sizeof(MONITORINFOEX);
 	if( GetMonitorInfo(hMon, &mi) )
 		monitors.push_back(mi);
 
 	return TRUE;	// continue enum
-} 
+}
 // /for fun
 TfrmMain::TfrmMain()
 {
@@ -802,7 +818,7 @@ TfrmMain::TfrmMain()
     pslHistory->SetSorted(false);
     pslHistory->LoadFromFile(AppendToPath(_wsUserDir, FalconCalc_HIST_FILE).c_str());
     _watchdog = 0;
-    _watchLimit = 5; // seconds	 
+    _watchLimit = 5; // seconds
 	_maxHistDepth=0; // unlimited
 
     if(!_LoadState(AppendToPath(_wsUserDir, FalconCalc_CFG_FILE).c_str()))
@@ -822,9 +838,9 @@ LRESULT TfrmMain::WindowProc(UINT msg, WPARAM w,LPARAM l)
 			    if(_bAutoSave && ++_watchdog >= _watchLimit && lengine->ResultOk() && !_added && !edtInfix->Text().empty())
 					    _AddToHistory(edtInfix->Text());
 				break;
-		case WM_CHANGECBCHAIN: 
-				// If the next clipboard viwer window is closing, repair the chain. 
-				// Otherwise, pass the message to the next link. 
+		case WM_CHANGECBCHAIN:
+				// If the next clipboard viwer window is closing, repair the chain.
+				// Otherwise, pass the message to the next link.
 				MyClipboard->ChangeNextViewer((HWND) w, (HWND) l);
 				break;
 		case WM_DRAWCLIPBOARD:
@@ -836,7 +852,7 @@ LRESULT TfrmMain::WindowProc(UINT msg, WPARAM w,LPARAM l)
 					tbPaste->SetEnabled(enable);
 			   }
 				// and pass the message on
-				MyClipboard->Forward( msg, w, l); 				
+				MyClipboard->Forward( msg, w, l);
 				break;
 
 		default: return Form::WindowProc(msg,w,l);
@@ -1043,22 +1059,20 @@ void TfrmMain::tbPasteClick(void *sender, nlib::EventParameters param)
 
 void TfrmMain::chkDecDigitsClick(void *sender, nlib::EventParameters param)
 {
-    if(chkDecDigits->Checked() )
-    {
-//        spnDecDigits->SetEnabled(true);
-		lengine->displayFormat.decDigits = UpDownDecDigits->Position();
-    }
-    else
-    {
-//        spnDecDigits->SetEnabled(false);
-        lengine->displayFormat.decDigits = -1;
-    }
+
+	lengine->displayFormat.decDigits = chkDecDigits->Checked() ? UpDownDecDigits->Position() : -1;
     _ShowResults();
 }
 
 void TfrmMain::chkMinusClick(void *sender, nlib::EventParameters param)
 {
 	lengine->displayFormat.bSignedBinOrHex = chkMinus->Checked();
+	_ShowResults();
+}
+
+void TfrmMain::chkHexPrefixClick(void* sender, nlib::EventParameters param)
+{
+	lengine->displayFormat.useNumberPrefix = chkHexPrefix->Checked();
 	_ShowResults();
 }
 
@@ -1387,7 +1401,7 @@ void TfrmMain::btnOpenHexOptionsClick(void *sender, nlib::EventParameters param)
      ShowHexOptions(true);
 }
 
-// SA 
+// SA
 void TfrmMain::_EnableMyTimer(bool enable)
 {
 //	if(_bAutoSave == enable)
@@ -1417,7 +1431,7 @@ FalconCalc::LittleEngine* TfrmMain::pEngine()
 *	last=<text of last expression>
 */
 
-static const wstring 
+static const wstring
 		MAINFORMAT(L"mainFormat="),
 		DECFORMAT(L"decFormat="),
 		HEXFORMAT(L"hexFormat="),
@@ -1498,12 +1512,12 @@ bool TfrmMain::_SaveState(wstring name)
 
 	//int u = UpDown1->Position() + (chkDecDigits->Checked() ? 0x100 : 0); // 0x100: checked state. must use Position as num_digits may be -1
 	wstring wsep = (chkSep->Checked() ? L"1" : L"0") + (std::to_wstring(cbThousandSep->ItemIndex()));
-	fs << DECFORMAT<< lengine->displayFormat.decDigits << "|" << (int)lengine->displayFormat.expFormat 
-	   << "|" << wsep <<  "|" << (int)lengine->displayFormat.useFractionSeparator 
+	fs << DECFORMAT<< lengine->displayFormat.decDigits << "|" << (int)lengine->displayFormat.expFormat
+	   << "|" << wsep <<  "|" << (int)lengine->displayFormat.useFractionSeparator
 	   << "|" << (int)lengine->AngleUnit() << "\n";
 
-    fs << HEXFORMAT<< (int)lengine->displayFormat.hexFormat << "|"<< (int)lengine->displayFormat.littleEndian << "|"<< 
-			(int)lengine->displayFormat.bSignedBinOrHex << "|" << (int)lengine->displayFormat.trippleE <<"\n";
+    fs << HEXFORMAT<< (int)lengine->displayFormat.hexFormat << "|"<< (int)lengine->displayFormat.littleEndian << "|"<<
+			(int)lengine->displayFormat.bSignedBinOrHex << "|" << (int)lengine->displayFormat.trippleE <<"|" << (int)lengine->displayFormat.useNumberPrefix << "\n";
 
 	fs << FONTNAME	<< edtChars->GetFont().Family() << "\n";
 	fs << FONTDATA	<< (int)edtChars->GetFont().Size() << "|"<< (int)edtChars->GetFont().CharacterSet() << "|"<< (COLORREF)edtChars->GetFont().GetColor() << "\n";
@@ -1522,18 +1536,18 @@ bool TfrmMain::_LoadState(wstring name)
 //	wstring s;
 	wchar_t wbuf[1024];// , nam[1024];
 	fs.getline(wbuf,1023);
-	
+
     if(wcscmp(wbuf, L"FalconCalc State File V1.0"))
         return false;
-    int n;
+    int n, val =0;
 
 	std::vector<wstring> data;
 	auto mainFormat = [&]()	-> bool // returns true if not processed, false if processed
 	{
-		if (data[0] == MAINFORMAT)
+		if (n==2 && data[0] == MAINFORMAT)	// only one field
 		{
-			n = std::stoi(data[1]);
-			lengine->displayFormat.mainFormat = static_cast<NumberFormat>(n);
+			val = std::stoi(data[1]);
+			lengine->displayFormat.mainFormat = static_cast<NumberFormat>(val);
 			_busy = true;
 			switch (lengine->displayFormat.mainFormat)
 			{
@@ -1543,7 +1557,7 @@ bool TfrmMain::_LoadState(wstring name)
 				case NumberFormat::rnfEng:
 					chkEng->SetChecked(true);
 					break;
-			}	   
+			}
 			_busy = false;
 			return true;
 		}
@@ -1551,20 +1565,20 @@ bool TfrmMain::_LoadState(wstring name)
 	};
 	auto decFormat = [&]()
 	{
-		if (data[0] == DECFORMAT)
+		if (n == 6 && data[0] == DECFORMAT)		// 6 fields
 		{
 			_busy = true;
 					// 1: decimal digits
-			n = std::stoi(data[1]);	// # of decimal digits n > 0 => used digits, n < 0 => used = abs(n+1)
-			lengine->displayFormat.decDigits = n;
-			if (n >= 0)
+			val = std::stoi(data[1]);	// # of decimal digits n > 0 => used digits, n < 0 => used = abs(n+1)
+			lengine->displayFormat.decDigits = val;
+			if (val >= 0)
 				chkDecDigits->SetChecked(true);
 			else
-				n = std::abs(n + 1);
-			UpDownDecDigits->SetPosition(n);
+				val = std::abs(val + 1);
+			UpDownDecDigits->SetPosition(val);
 					// 2: exponent display format
-			n = std::stoi(data[2]);	// (0)E: 1E5, (1)HTML: 1<sp>12</sup>, (2)TeX: 1^{12}, (3)normal: 1²³
-			lengine->displayFormat.expFormat = static_cast<ExpFormat>(n);
+			val = std::stoi(data[2]);	// (0)E: 1E5, (1)HTML: 1<sp>12</sup>, (2)TeX: 1^{12}, (3)normal: 1²³
+			lengine->displayFormat.expFormat = static_cast<ExpFormat>(val);
 			if(lengine->displayFormat.expFormat == ExpFormat::rnsfE)
 				rdNone->SetChecked(true);
 			else if(lengine->displayFormat.expFormat == ExpFormat::rnsfSciHTML)
@@ -1605,12 +1619,12 @@ bool TfrmMain::_LoadState(wstring name)
 	};
 	auto hexFormat = [&]()
 	{
-		if (data[0] == HEXFORMAT)
+		if (n == 6 && data[0] == HEXFORMAT)	// 5 fields
 		{
 			_busy = true;
 				// 1. main Hex format
-			int n = std::stoi(data[1]);
-			lengine->displayFormat.hexFormat = static_cast<HexFormat>(n);
+			int val = std::stoi(data[1]);
+			lengine->displayFormat.hexFormat = static_cast<HexFormat>(val);
 			switch (lengine->displayFormat.hexFormat)
 			{
 				case HexFormat::rnHexNormal:
@@ -1626,22 +1640,25 @@ bool TfrmMain::_LoadState(wstring name)
 					break;
 			}
 				// 2. endianness
-			n = std::stoi(data[2]);
-			if (n)
+			val = std::stoi(data[2]);
+			if (val)
 				chkLittleEndian->SetChecked(true);
 				// 3. signed bin or hex?
-			n = std::stoi(data[3]);
-			if (n)
+			val = std::stoi(data[3]);
+			if (val)
 				chkMinus->SetChecked(true);
 				// 4. IEEE format
-			n = std::stoi(data[4]);
-			// n = 0: no check
-			if (n==1)
+			val = std::stoi(data[4]);
+			// val = 0: no check
+			if (val==1)
 				chkIEEESingle->SetChecked(true);
-			else if(n==2)
+			else if(val==2)
 				chkIEEEDouble->SetChecked(true);
 			_busy = false;
-
+				// 5. number prefix is used on hex. numbers
+			val = std::stoi(data[5]);
+			lengine->displayFormat.useNumberPrefix = val;
+			chkHexPrefix->SetChecked(val);
 			return true;
 		}
 		return false;
@@ -1649,7 +1666,7 @@ bool TfrmMain::_LoadState(wstring name)
 	};
 	auto fontName = [&]()
 	{
-		if (data[0] == FONTNAME)
+		if (n==2 && data[0] == FONTNAME)  // 2 fields
 		{
 			Font f = edtChars->GetFont();
 			f.SetFamily(data[1]);
@@ -1661,7 +1678,7 @@ bool TfrmMain::_LoadState(wstring name)
 	};
 	auto fontData = [&]()
 	{
-		if (data[0] == FONTDATA)
+		if (n == 3 && data[0] == FONTDATA)	// 3 fields
 		{
 			Font f = edtChars->GetFont();
 			f.SetSize(std::stof(data[1]));
@@ -1672,9 +1689,9 @@ bool TfrmMain::_LoadState(wstring name)
 		return false;
 
 	};
-	auto options = [&]()
+	auto options = [&]()					  // 3 fields
 	{
-		if (data[0] == OPTIONS)
+		if (n == 3 && data[0] == OPTIONS)
 		{
 			pnlDecOpt->SetVisible(std::stoi(data[1]));
 			pnlHexOpt->SetVisible(std::stoi(data[2]));
@@ -1685,7 +1702,7 @@ bool TfrmMain::_LoadState(wstring name)
 	};
 	auto histOptions = [&]()
 	{
-		if (data[0] == HISTOPTIONS)
+		if (n == 4 && data[0] == HISTOPTIONS)	// 4 fields
 		{
 			_watchLimit = std::stoi(data[1]);
 			_maxHistDepth = std::stoi(data[2]);
@@ -1695,9 +1712,9 @@ bool TfrmMain::_LoadState(wstring name)
 		return false;
 
 	};
-	auto last = [&](wstring &lastinfix)
+	auto last = [&](wstring &lastinfix)		
 	{
-		if (data[0] == LAST)
+		if (n==2 && data[0] == LAST)
 		{
 			lastinfix = data[1];
 		}
@@ -1746,13 +1763,13 @@ void TfrmMain::_AddToHistory(wstring text)
             return;							// nothing to do
         pslHistory->Delete(n);				// not at top delete expression from inside
     }
-	else if(pslHistory->Sorted() )			// then must put original top line in correct position 
+	else if(pslHistory->Sorted() )			// then must put original top line in correct position
 	{										// first and add the new line afterwards, because
 		SmartString ws = (*pslHistory)[0];		// list may be truncated after adding a new line to it
 		pslHistory->Delete(0);				// delete original top line
 		pslHistory->Add(ws);					// and insert into string
 	}
-	
+
     pslHistory->Insert(0, ss);				// then insert new expression to top of list
 
     _added = true;
@@ -1896,9 +1913,9 @@ void TfrmMain::FormMove(void *sender, nlib::EventParameters param)
 	}
 }
 	// this single funcion deals with Normal, HTML, TeX and E display
-void TfrmMain::rdNormalClick(void *sender, nlib::EventParameters param) 
+void TfrmMain::rdNormalClick(void *sender, nlib::EventParameters param)
 {
-	
+
 	lengine->beautification = (LittleEngine::Beautification)((Radiobox*)sender)->Tag();
 	//sres.type = sres.mode == bmoNone ? stDecimal : stDecBeautified;
 	_ShowResults();

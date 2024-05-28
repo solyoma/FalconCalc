@@ -657,7 +657,15 @@ SmartString RealNumber::ToBinaryString(const DisplayFormat& format) const
 	if (IsInf() || IsNaN())
 		return _numberString;
 
-	if ( (bin == u"Inf" && !IsInf()) || (bin == u"NaN" && !IsNaN()))
+	size_t len = bin.length();
+	if (!len)
+		return bin;
+	if (format.strThousandSeparator.length())
+		len += (len / 4 - (len % 4 ? 0 : 1)) * format.strThousandSeparator.length();
+	if (format.bSignedBinOrHex)
+		++len;
+
+	if ((format.displWidth >0  && len > (size_t)format.displWidth) || (bin == u"Inf" && !IsInf()) || (bin == u"NaN" && !IsNaN()))
 		return u"Too long";
 
 	size_t lenb = bin.length();
@@ -894,7 +902,7 @@ SmartString RealNumber::ToHexString(const DisplayFormat &format) const
 		}
 	}
 
-	bool bPrefixToAllChunks = chunkLength <= 8;
+	bool bPrefixToAllChunks = format.useNumberPrefix && chunkLength <= 8;
 	lenh = hex.length();
 	return _IntegerPartToString(hex, sign, format, lenh, chunkLength, bPrefixToAllChunks);
 }

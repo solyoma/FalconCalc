@@ -7,8 +7,8 @@
     type Form
     {
         Name = "frmMain"
-        Left = "1470"
-        Top = "933"
+        Left = "435"
+        Top = "603"
         Text = "FalconCalc"
         class Font
         {
@@ -26,7 +26,7 @@
         CreationOrder = "0"
         Menu = "mnuMain"
         ClientWidth = "528"
-        ClientHeight = "372"
+        ClientHeight = "376"
         event OnStartSizeMove = "StartMove"
         event OnMove = "FormMove"
         event OnClose = "FormClose"
@@ -39,59 +39,6 @@
             {
                 Family = "Tahoma"
                 Size = "8"
-            }
-        }
-
-        type PopupMenu
-        {
-            Name = "pmCopy"
-            AccessLevel = "alPublic"
-
-            subtype Items : MenuItem
-            {
-                Name = "miCopyDec"
-                AccessLevel = "alPublic"
-                Text = "Copy &Decimal"
-                event OnClick = "miCopyDecClick"
-            }
-
-            subtype Items : MenuItem
-            {
-                Name = "miCopyHex"
-                AccessLevel = "alPublic"
-                Text = "Copy He&xadecimal"
-                event OnClick = "miCopyHexClick"
-            }
-
-            subtype Items : MenuItem
-            {
-                Name = "miCopyOct"
-                AccessLevel = "alPublic"
-                Text = "Copy &Octal"
-                event OnClick = "miCopyOctClick"
-            }
-
-            subtype Items : MenuItem
-            {
-                Name = "miCopyBin"
-                AccessLevel = "alPublic"
-                Text = "Copy &Binary"
-                event OnClick = "miCopyBinClick"
-            }
-
-            subtype Items : MenuItem
-            {
-                Name = "miCopySep"
-                AccessLevel = "alPublic"
-                Text = "-"
-            }
-
-            subtype Items : MenuItem
-            {
-                Name = "miCopyText"
-                AccessLevel = "alPublic"
-                Text = "Copy &Formula"
-                event OnClick = "miCopyClick"
             }
         }
 
@@ -304,6 +251,59 @@
                     Shortcut = "F1"
                     event OnClick = "miGenHelpClick"
                 }
+            }
+        }
+
+        type PopupMenu
+        {
+            Name = "pmCopy"
+            AccessLevel = "alPublic"
+
+            subtype Items : MenuItem
+            {
+                Name = "miCopyDec"
+                AccessLevel = "alPublic"
+                Text = "Copy &Decimal"
+                event OnClick = "miCopyDecClick"
+            }
+
+            subtype Items : MenuItem
+            {
+                Name = "miCopyHex"
+                AccessLevel = "alPublic"
+                Text = "Copy He&xadecimal"
+                event OnClick = "miCopyHexClick"
+            }
+
+            subtype Items : MenuItem
+            {
+                Name = "miCopyOct"
+                AccessLevel = "alPublic"
+                Text = "Copy &Octal"
+                event OnClick = "miCopyOctClick"
+            }
+
+            subtype Items : MenuItem
+            {
+                Name = "miCopyBin"
+                AccessLevel = "alPublic"
+                Text = "Copy &Binary"
+                event OnClick = "miCopyBinClick"
+            }
+
+            subtype Items : MenuItem
+            {
+                Name = "miCopySep"
+                AccessLevel = "alPublic"
+                Text = "-"
+            }
+
+            subtype Items : MenuItem
+            {
+                Name = "miCopyText"
+                AccessLevel = "alPublic"
+                Text = "Copy &Formula"
+                event OnClick = "miCopyClick"
             }
         }
 
@@ -861,7 +861,7 @@
                     Name = "rdGrad"
                     Tag = "2"
                     AccessLevel = "alPublic"
-                    Left = "116"
+                    Left = "121"
                     Top = "19"
                     Width = "56"
                     Height = "16"
@@ -882,7 +882,7 @@
                     Name = "rdRad"
                     Tag = "1"
                     AccessLevel = "alPublic"
-                    Left = "59"
+                    Left = "64"
                     Top = "19"
                     Width = "55"
                     Height = "16"
@@ -903,7 +903,7 @@
                     Name = "rdTurn"
                     Tag = "3"
                     AccessLevel = "alPublic"
-                    Left = "184"
+                    Left = "186"
                     Top = "19"
                     Width = "64"
                     Height = "18"
@@ -1194,6 +1194,18 @@
                     TabOrder = "6"
                     TooltipText = "Double precision floating point format"
                     event OnClick = "chkIEEEDoubleClick"
+                }
+
+                type Checkbox
+                {
+                    Name = "chkHexPrefix"
+                    AccessLevel = "alPublic"
+                    Left = "8"
+                    Top = "52"
+                    Width = "96"
+                    Height = "16"
+                    Text = "0x &prefix"
+                    TabOrder = "7"
                 }
             }
         }
@@ -1576,7 +1588,7 @@
         WantedKeyTypes = "wkArrows, wkTab, wkEnter, wkEscape, wkOthers"
         KeyPreview = "True"
         UnitName = "history"
-        DesignVisible = "True"
+        DesignVisible = "False"
         LastExportedName = "frmHistory"
         LastExportedEvents = "3400300034007C00789C9550ED0A83300CBCE7DACF7D311883C19E60156162AD503B41D8C3EF9A21ABDABA156993E62E77310A0E063BDC791728A1996B54CC6BBCA0565123B9C286DF013D7143FE956CCBD3F0ED782C3A720B3CD87343CBB79BA8A4911CFD7152CD8AC7637F11C3F23DF6B2874F7DE99242737C346F8713F93EFABD0CD455B3EDFFC70A7D2F643DC92EB16574D26512331C45B111AD567AE2B5507F89AF6BFB79FA89F2B792B3AFB1FBCCCA408E65EC7E20A1FE1C8DB9BC01E13FA0D8"
         CreationOrder = "3"
@@ -1760,8 +1772,8 @@
     type Form
     {
         Name = "frmVariables"
-        Left = "1979"
-        Top = "771"
+        Left = "209"
+        Top = "509"
         Text = "FalconCalc Functions/Variables"
         class Font
         {
@@ -1769,7 +1781,7 @@
         }
         WantedKeyTypes = "wkArrows, wkTab, wkEnter, wkEscape, wkOthers"
         UnitName = "variables"
-        DesignVisible = "True"
+        DesignVisible = "False"
         LastExportedName = "frmVariables"
         LastExportedEvents = "3700340032007C00789CAD54D90E8230109CEFF2D1EBC59818AF775182442C8643A3F1E39DAE5795D6829AA674D999DD59BAA5010A284CB0C01E213A481063890DCE089C88123B408BA327A822774466C6B9E57BC199217F64E9D0AF181D32B2AAE142BFD149E8D1B84DC58635D7E84A9D73878A0B6DA29323421B25F909BDB1D49ED22EC9D31D8971126FD4906BD660B2C6B40F376EE8A8E95563C88892FE1033ECBCA8A9FBC4744CC191126FA6D9957A552DC6BFB5B5A5BB578761D7BEE3EEDECF849761C0E791BC8C6B5E0335F5DE51BF5A0F2B46EB3DB9E77EEE625D9EAD029FEEE7B3ED67FD72AA0BFE9DD77F35C7946BC00C6BB98D22E9A00F37B5ABB85DB32F3BB795DB2195AFB3FBCCDC55DC96FB02E1EE28D7"
         CreationOrder = "5"

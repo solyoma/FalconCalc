@@ -101,6 +101,7 @@ N_PUBLIC: /* Designer generated list of public members. Do not edit by hand. */
 	nlib::Panel *pnlHexOpt;
 	nlib::Groupbox *gbHexOptions;
 	nlib::Checkbox *chkMinus;
+	nlib::Checkbox *chkHexPrefix;
 	nlib::Checkbox *chkLittleEndian;
 	nlib::Checkbox *chkBytes;
 	nlib::Checkbox *chkWords;
@@ -144,6 +145,7 @@ N_PUBLIC: /* Designer generated list of public members. Do not edit by hand. */
 	void chkAsBytesClick(void *sender, nlib::EventParameters param);
 	void chkLittleEndianClick(void *sender, nlib::EventParameters param);
 	void chkMinusClick(void *sender, nlib::EventParameters param);
+	void chkHexPrefixClick(void *sender, nlib::EventParameters param);
 	void rdDegClick(void *sender, nlib::EventParameters param);
 	void spnDecDigitsTextChanged(void *sender, nlib::EventParameters param);
 	void chkDecDigitsClick(void *sender, nlib::EventParameters param);
@@ -165,7 +167,7 @@ N_PUBLIC: /* Designer generated list of public members. Do not edit by hand. */
 	//void cbInfixTextChanged(void *sender, nlib::EventParameters param);
 	//void cbInfixKeyPress(void *sender, nlib::KeyPressParameters param);
 protected:
-	virtual ~TfrmMain(); /* Don't make public. Call Destroy() to delete the object. */ 
+	virtual ~TfrmMain(); /* Don't make public. Call Destroy() to delete the object. */
 	virtual LRESULT WindowProc(UINT wMessage, WPARAM w,LPARAM l) override;
 N_PROTECTED: /* Designer generated list of protected members. Do not edit by hand. */
 private:
@@ -175,9 +177,9 @@ private:
     // history options
     bool _added;		 // already added to history by timer, reset by keypress
 	bool _bAutoSave;	 // autosave activated?
-	int _coMoveHistDX,	 // not 0 then  move history window together with main 
+	int _coMoveHistDX,	 // not 0 then  move history window together with main
 		_coMoveHistDY,	 //  x and y coord difference between left tops of the windows
-		_coMoveVarFDX,	 // not 0 then  move functions/variables window together with main				
+		_coMoveVarFDX,	 // not 0 then  move functions/variables window together with main
 		_coMoveVarFDY;	 //  x and y coord difference between left tops of the windows
 	int _watchdog;		 // add to history if _watchdog is > given number, reset when formula changes
     int _watchLimit;	 // default: 10: 0 - switch off autosave
@@ -188,7 +190,7 @@ private:
 
 	void _EnableMyTimer(bool enable);
 
-	std::wstring _GetUserDir();			   
+	std::wstring _GetUserDir();
 	void _GetVirtualDisplaySize();
 	bool _LoadState(std::wstring name);
 	bool _SaveState(std::wstring name);

@@ -32,7 +32,6 @@ N_PUBLIC: /* Designer generated list of public members. Do not edit by hand. */
 	void sgUserEditorKeyDown(void *sender, nlib::KeyParameters param);
 	void sgUserColumnSizing(void *sender, nlib::ColumnRowSizeParameters param);
 	void tcVarsTabChange(void *sender, nlib::TabChangeParameters param);
-	void FormMove(void* sender, nlib::EventParameters param);
 	void FormClose(void *sender, nlib::FormCloseParameters param);
 protected:
 	virtual ~TfrmVariables(); /* Don't make public. Call Destroy() to delete the object. */ 

@@ -1,4 +1,7 @@
 ﻿#include "calculate.h"
+using namespace nlib;
+
+//#include "mainform.h"
 
 
 #include <math.h>
@@ -1613,6 +1616,7 @@ SmartString LittleEngine::ResultAsBinString() const
 {
     DisplayFormat fmt = displayFormat;
     fmt.base = DisplayBase::rnbBin;
+    fmt.useNumberPrefix = true;
     return calcResult.ToString(fmt);
 }
 
