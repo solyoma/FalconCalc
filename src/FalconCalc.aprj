@@ -7,8 +7,8 @@
     type Form
     {
         Name = "frmMain"
-        Left = "777"
-        Top = "436"
+        Left = "1470"
+        Top = "933"
         Text = "FalconCalc"
         class Font
         {
@@ -203,7 +203,7 @@
                     Tag = "1"
                     AccessLevel = "alPublic"
                     Text = "Edit User &Variables..."
-                    Shortcut = "Ctrl+U"
+                    Shortcut = "Alt+1"
                     event OnClick = "miEditVarsClick"
                 }
 
@@ -212,7 +212,7 @@
                     Name = "miEditFuncs"
                     AccessLevel = "alPublic"
                     Text = "Edit User &Functions..."
-                    Shortcut = "Ctrl+F"
+                    Shortcut = "Alt+2"
                     event OnClick = "miEditFuncsClick"
                 }
 
@@ -228,7 +228,7 @@
                     Name = "miShowHist"
                     AccessLevel = "alPublic"
                     Text = "Edit &History"
-                    Shortcut = "Ctrl+H"
+                    Shortcut = "Alt+3"
                     event OnClick = "miShowHistClick"
                 }
 
@@ -1566,8 +1566,8 @@
     type Form
     {
         Name = "frmHistory"
-        Left = "142"
-        Top = "981"
+        Left = "1884"
+        Top = "1172"
         Text = "FalconCalc History"
         class Font
         {
@@ -1760,8 +1760,8 @@
     type Form
     {
         Name = "frmVariables"
-        Left = "98"
-        Top = "218"
+        Left = "1979"
+        Top = "771"
         Text = "FalconCalc Functions/Variables"
         class Font
         {

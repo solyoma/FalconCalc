@@ -8,6 +8,9 @@ namespace FalconCalc {
 	class LittleEngine;
 }
 
+int Intersect(RECT& rect, RECT& r);
+int InsideSnapAreaFromMain(RECT& r, int dist=10);
+
 class TfrmMain : public nlib::Form
 {
 public:
@@ -15,6 +18,8 @@ public:
 
 	void ShowDecOptions(bool show);
 	void ShowHexOptions(bool show);
+	void SetCoMovingCoordinates(bool clear);
+	void OpenVarsOrFunctions(void* sender, int which, nlib::EventParameters param);
 
 	virtual void Destroy();
 
@@ -170,8 +175,10 @@ private:
     // history options
     bool _added;		 // already added to history by timer, reset by keypress
 	bool _bAutoSave;	 // autosave activated?
-	int _coMoveDX,		 // not 0 then  move history window together with main 
-		_coMoveDY;		 //  x and y coord difference between left tops of the windows
+	int _coMoveHistDX,	 // not 0 then  move history window together with main 
+		_coMoveHistDY,	 //  x and y coord difference between left tops of the windows
+		_coMoveVarFDX,	 // not 0 then  move functions/variables window together with main				
+		_coMoveVarFDY;	 //  x and y coord difference between left tops of the windows
 	int _watchdog;		 // add to history if _watchdog is > given number, reset when formula changes
     int _watchLimit;	 // default: 10: 0 - switch off autosave
     size_t _maxHistDepth;// == 0: unlimited

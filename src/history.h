@@ -8,7 +8,7 @@ public:
 								// 0:unconditional to visible 
 	int InsideSnapAreaFromMain(int dist);	// returns area index: 0: none 1 top, 2 right, 3 bottom, 4 left
 	void Snap(int dist);		// snap to main window if neare than dist pixels, 
-	bool snapped;
+	bool snapped = false;
 N_PUBLIC: /* Designer generated list of public members. Do not edit by hand. */
 	nlib::Listbox *lstHistory;
 	nlib::FlatButton *btnDelete;

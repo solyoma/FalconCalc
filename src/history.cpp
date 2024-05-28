@@ -89,7 +89,6 @@ void TfrmHistory::Destroy()
 TfrmHistory::TfrmHistory()
 {
 	InitializeFormAndControls();
-	snapped = false;
 }
 
 TfrmHistory::~TfrmHistory()
@@ -137,37 +136,51 @@ void TfrmHistory::FormKeyPress(void *sender, nlib::KeyPressParameters param)
 {
     SmartString s;
 
-    if(param.key == 22 )  // paste CTRL + V
-    {
-		s = MyClipboard->GetText();		 // MyClipboard must exist!
-		if(s.empty())
-			return;
-		frmMain->pslHistory->Add(s,true);
-		lstHistory->Items().SetLines(frmMain->pslHistory->Lines());
-    }
-    else if(param.key == 3)       // copy: Ctrl + C
-    {
-		for(int i =0; i < lstHistory->Items().Count(); ++i)
-			s += lstHistory->Items().Text(i) + L"\n";
-		MyClipboard->SetText(s.ToWideString());
-    }
-    else if(param.key == VK_RETURN && lstHistory->ItemIndex() >= 0)
-    {
-        int n;
-        if( (n = lstHistory->ItemIndex()) >= 0)
-        {
-			frmMain->edtInfix->SetText(lstHistory->Items().Text(n)) ;
-			frmMain->Focus();
-        }
-    }
-	else if(param.key == VK_ESCAPE)
-		Close();
+	switch (param.key)
+	{
+		case '1': 
+		case '2':
+			if (param.vkeys & vksAlt)	// functions or variables
+			{
+				nlib::EventParameters par;
+				frmMain->OpenVarsOrFunctions(nullptr, param.key - '0', par);
+			}
+			break;
+		case 22:						// paste CTRL + V
+			s = MyClipboard->GetText();		 // MyClipboard must exist!
+			if(s.empty())
+				break;
+			frmMain->pslHistory->Add(s,true);
+			lstHistory->Items().SetLines(frmMain->pslHistory->Lines());
+			break;
+		case 3:
+			for(int i =0; i < lstHistory->Items().Count(); ++i)
+				s += lstHistory->Items().Text(i) + L"\n";
+			MyClipboard->SetText(s.ToWideString());
+			break;
+		case VK_RETURN:
+			if(lstHistory->ItemIndex() >= 0)
+			{
+				int n;
+				if( (n = lstHistory->ItemIndex()) >= 0)
+				{
+					frmMain->edtInfix->SetText(lstHistory->Items().Text(n)) ;
+					frmMain->Focus();
+				}
+			}
+		case VK_ESCAPE:
+			Close();
+			break;
+		default:
+			break;
+	}
 }
 
 void TfrmHistory::FormClose(void *sender, nlib::FormCloseParameters param)
 {
     param.action = caDeleteForm;
 	frmHistory=NULL;
+	SetFocus(frmMain->Handle());
 }
 void TfrmHistory::chkSortClick(void *sender, nlib::EventParameters param)
 {
@@ -176,63 +189,17 @@ void TfrmHistory::chkSortClick(void *sender, nlib::EventParameters param)
 
 void TfrmHistory::FormMove(void *sender, nlib::EventParameters param)
 {
-	Snap(10);
-}
-
-// TASK: test the iontersection of rectangle 'rect' with rectangle 'r'
-// RETURNS: which corner of 'r' 0: no intersection, 1: top left of r is inside 'rect'
-//          2: top right  4: bottom right is inside, 8:bottom left 
-int Intersect(RECT &rect, RECT &r)
-{
-	return (( (rect.left <= r.left) && (rect.right >= r.left) && (rect.top <= r.top && rect.bottom >= r.top)) ? 1 : 0) |		// left top
-		   (( (rect.left <= r.right) && (rect.right >= r.right) && (rect.top <= r.top && rect.bottom >= r.top)) ? 2 : 0) |		// right top
-		   (( (rect.left <= r.right) && (rect.right >= r.right) && (rect.top <= r.bottom && rect.bottom >= r.bottom)) ? 4: 0) | // right bottom
-		   (( (rect.left <= r.left) && (rect.right >= r.left) && (rect.top <= r.bottom && rect.bottom >= r.bottom)) ? 8: 0);    // left bottom
+	if(!snapped)
+		Snap(10);
 }
 
 int TfrmHistory::InsideSnapAreaFromMain(int dist)
 {
-	RECT rT,rR,rB,rL,	// top right bottom left area beside the main window
-		 r;
-									// area of main  temporarily into top
-	rT.left = frmMain->Left();		
-	rT.top = frmMain->Top();
-	rT.right = frmMain->Right();
-	rT.bottom = frmMain->Bottom();
-
-	// area left of main
-	rL.left = rT.left - dist;
-	rL.right = rT.left;
-	rL.top = rT.top;
-	rL.bottom = rT.bottom;
-	// right of main
-	rR.left = rT.right;
-	rR.right = rT.right+dist;
-	rR.top = rT.top;
-	rR.bottom = rT.bottom;
-	// bottom of main
-	rB.left = rT.left;
-	rB.right = rT.right;
-	rB.bottom = rT.bottom + dist;
-	rB.top = rT.bottom;
-	// area above main
-	rT.bottom = rT.top;
-	rT.top -= dist;
-
 	// determine snap area index
 	//   0: none 1 top, 2 right, 3 bottom, 4 left
+	RECT r;
 	r.top = Top(); r.right = Right(); r.bottom = Bottom(); r.left = Left();
-
-	if(Intersect(rT, r) & (4|8))		// when bottom right or bottom left is inside top area of main
-		return 1;						// then snap to top of main
-	else if(Intersect(rR,r) & (1|8))	// when top left or bottom left is inside right area
-		return 2;						// snap to right of main
-	else if(Intersect(rB,r) & (2|1))	// when top left or top right is inside bottom area
-		return 3;						// snap to bottom of main
-	else if(Intersect(rL,r) & (2|4))	// when top right or bottom right is inside top area
-		return 4;						// snap to left of main
-	else
-		return 0;						// no snap
+	return ::InsideSnapAreaFromMain(r, dist);
 }
 
 void TfrmHistory::Snap(int dist)
@@ -296,4 +263,5 @@ void TfrmHistory::Snap(int dist)
 		}
 		snapped = true;
 	}
+	frmMain->SetCoMovingCoordinates(!snapped);
 }
