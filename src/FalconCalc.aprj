@@ -146,6 +146,28 @@
 
                 subtype Items : MenuItem
                 {
+                    Name = "MenuItem3"
+                    AccessLevel = "alPublic"
+                    Text = "-"
+                }
+
+                subtype Items : MenuItem
+                {
+                    Name = "miClearHist"
+                    AccessLevel = "alPublic"
+                    Text = "C&lear History"
+                    event OnClick = "miClearHistClick"
+                }
+            }
+
+            subtype Items : MenuItem
+            {
+                Name = "miView"
+                AccessLevel = "alPublic"
+                Text = "&View"
+				
+                subtype Items : MenuItem
+                {
                     Name = "miEditVars"
                     Tag = "1"
                     AccessLevel = "alPublic"
@@ -165,26 +187,11 @@
 
                 subtype Items : MenuItem
                 {
-                    Name = "MenuItem3"
-                    AccessLevel = "alPublic"
-                    Text = "-"
-                }
-
-                subtype Items : MenuItem
-                {
                     Name = "miShowHist"
                     AccessLevel = "alPublic"
                     Text = "Edit &History"
                     Shortcut = "Alt+3"
                     event OnClick = "miShowHistClick"
-                }
-
-                subtype Items : MenuItem
-                {
-                    Name = "miClearHist"
-                    AccessLevel = "alPublic"
-                    Text = "C&lear History"
-                    event OnClick = "miClearHistClick"
                 }
             }
 
@@ -474,8 +481,9 @@
             AccessLevel = "alPublic"
             Left = "8"
             Top = "29"
-            Width = "505"
+            Width = "513"
             Height = "21"
+            Anchors = "caLeft, caTop, caRight, caBottom"
             class Font
             {
                 Family = "Tahoma"
@@ -1316,6 +1324,21 @@
             }
             event OnClick = "btnCloseHexOptionsClick"
         }
+
+        type FlatButton
+        {
+            Name = "btnClearInfix"
+            AccessLevel = "alPublic"
+            Left = "502"
+            Top = "29"
+            Width = "19"
+            Height = "21"
+            Text = "x"
+            BorderStyle = "bsSingle"
+            Anchors = "caTop, caRight"
+            TabOrder = "11"
+            Margin = "0"
+        }
     }
     type Form
     {
@@ -1578,8 +1601,8 @@
     type Form
     {
         Name = "frmHistory"
-        Left = "1884"
-        Top = "1172"
+        Left = "435"
+        Top = "1033"
         Text = "FalconCalc History"
         class Font
         {
@@ -1588,11 +1611,11 @@
         WantedKeyTypes = "wkArrows, wkTab, wkEnter, wkEscape, wkOthers"
         KeyPreview = "True"
         UnitName = "history"
-        DesignVisible = "False"
+        DesignVisible = "True"
         LastExportedName = "frmHistory"
         LastExportedEvents = "3400300034007C00789C9550ED0A83300CBCE7DACF7D311883C19E60156162AD503B41D8C3EF9A21ABDABA156993E62E77310A0E063BDC791728A1996B54CC6BBCA0565123B9C286DF013D7143FE956CCBD3F0ED782C3A720B3CD87343CBB79BA8A4911CFD7152CD8AC7637F11C3F23DF6B2874F7DE99242737C346F8713F93EFABD0CD455B3EDFFC70A7D2F643DC92EB16574D26512331C45B111AD567AE2B5507F89AF6BFB79FA89F2B792B3AFB1FBCCCA408E65EC7E20A1FE1C8DB9BC01E13FA0D8"
         CreationOrder = "3"
-        ClientWidth = "517"
+        ClientWidth = "528"
         ClientHeight = "183"
         event OnKeyPress = "FormKeyPress"
         event OnMove = "FormMove"
@@ -1604,7 +1627,7 @@
             AccessLevel = "alPublic"
             Left = "8"
             Top = "8"
-            Width = "421"
+            Width = "432"
             Height = "158"
             Text = "lstHistory"
             Anchors = "caLeft, caTop, caRight, caBottom"
@@ -1617,7 +1640,7 @@
         {
             Name = "btnDelete"
             AccessLevel = "alPublic"
-            Left = "434"
+            Left = "445"
             Top = "8"
             Width = "23"
             Height = "22"
@@ -1637,7 +1660,7 @@
         {
             Name = "btnClear"
             AccessLevel = "alPublic"
-            Left = "434"
+            Left = "445"
             Top = "36"
             Width = "23"
             Height = "22"
@@ -1656,7 +1679,7 @@
         {
             Name = "chkSorted"
             AccessLevel = "alPublic"
-            Left = "437"
+            Left = "448"
             Top = "104"
             Width = "74"
             Height = "16"
@@ -1670,7 +1693,7 @@
         {
             Name = "btnCancel"
             AccessLevel = "alPublic"
-            Left = "435"
+            Left = "446"
             Top = "145"
             Width = "75"
             Height = "23"

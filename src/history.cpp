@@ -19,7 +19,7 @@ void TfrmHistory::InitializeFormAndControls() /* Control initialization function
 	GetFont().SetFamily(L"Tahoma");
 	SetWantedKeyTypes(nlib::wkArrows | nlib::wkTab | nlib::wkEnter | nlib::wkEscape | nlib::wkOthers);
 	SetKeyPreview(true);
-	SetClientRect(nlib::Rect(0, 0, 517, 183));
+	SetClientRect(nlib::Rect(0, 0, 528, 183));
 
 	lstHistory = new nlib::Listbox();
 	lstHistory->SetBounds(nlib::Rect(8, 8, 429, 166));
@@ -70,6 +70,7 @@ void TfrmHistory::InitializeFormAndControls() /* Control initialization function
 
 	OnKeyPress = CreateEvent(this, &TfrmHistory::FormKeyPress);
 	OnMove = CreateEvent(this, &TfrmHistory::FormMove);
+	OnEndSizeMove = CreateEvent(this, &TfrmHistory::FormSizeMoveEnded);
 	OnClose = CreateEvent(this, &TfrmHistory::FormClose);
 	lstHistory->OnDblClick = CreateEvent(this, &TfrmHistory::lstHistoryDblClick);
 	btnDelete->OnClick = CreateEvent(this, &TfrmHistory::btnDeleteClick);
@@ -189,79 +190,45 @@ void TfrmHistory::chkSortClick(void *sender, nlib::EventParameters param)
 
 void TfrmHistory::FormMove(void *sender, nlib::EventParameters param)
 {
-	if(!snapped)
-		Snap(10);
+	if (!frmMain->InMoving() && !_busy && GetSnapSide() != FalconCalc::wsNone)
+		Snap();
 }
 
-int TfrmHistory::InsideSnapAreaFromMain(int dist)
+void TfrmHistory::FormSizeMoveEnded(void* sender, nlib::SizePositionChangedParameters param)
+{
+	if (!frmMain->InMoving() && !_busy && GetSnapSide() != FalconCalc::wsNone)
+		Snap();
+#if defined(_DEBUG)
+	static char * s[] = {
+						 "snapped at top",
+						 "snapped at right",
+						 "snapped at bottom",
+						 "snapped at left"
+					   };
+	std::cout << "History: " <<
+		(_snappedToSide == FalconCalc::wsNone ? "unsnapped" : s[(int)_snappedToSide - 1]);
+
+#endif
+}
+
+FalconCalc::WindowSide TfrmHistory::GetSnapSide()
 {
 	// determine snap area index
 	//   0: none 1 top, 2 right, 3 bottom, 4 left
-	RECT r;
-	r.top = Top(); r.right = Right(); r.bottom = Bottom(); r.left = Left();
-	return ::InsideSnapAreaFromMain(r, dist);
+	RECT r = GetWindowRectWithoutDropShadow(Handle());
+	_snapDist = _snapPixelLimit;
+	return _snappedToSide = ::GetSnapSide(r, _snapDist);
 }
 
-void TfrmHistory::Snap(int dist)
+void TfrmHistory::Snap()
 {
-    RECT rsc,r; // rectangles for: screen size, temp
-	if(!SystemParametersInfo(SPI_GETWORKAREA,0,&rsc,0) )
-		return;
-
-	int which;
-
-	snapped = false;
-	if(!dist)
+	RECT rbase = frmMain->WindowRect(),
+		 dr	   = WindowRect();
+	if (::SnapTo(rbase, dr, _snappedToSide, WinDistance(rbase, dr, _snappedToSide) ))	// get snap displacement into 'dr'
 	{
-			// get correct window size
-		r = frmMain->ClientRect();
-		int captionHeight = frmMain->Height() - (r.bottom - r.top);	
-		if( frmMain->Bottom() + captionHeight > rsc.bottom)	// then history window's title bar is obscured if put below main
-			if(frmMain->Top() - Height() < rsc.top)		// then also obsured at above it too
-				if(frmMain->Right() + captionHeight >= rsc.right)    // and also at right
-					if(frmMain->Left() <= r.left)						// and even from left
-						;                        // then let Windows choose the position
-					else								// not obscured only when at left
-					{
-						SetTop(frmMain->Top());
-						SetHeight(frmMain->Height());
-						SetLeft(frmMain->Left() - Width());
-					}
-				else                             // not obscured at right
-				{
-					SetTop(frmMain->Top());
-					SetHeight(frmMain->Height() );
-					SetLeft(frmMain->Right());
-				}
-			else                                // show it above
-			{
-				SetTop (frmMain->Top() - Height());
-				SetLeft(frmMain->Left());
-				SetWidth(frmMain->Width());
-			}
-		else                                     // position below
-		{
-			SetTop(frmMain->Bottom());
-			SetLeft(frmMain->Left());
-			SetWidth(frmMain->Width());
-		}
-		snapped = true;
+		++_busy;
+		MoveWindow(Handle(), dr.left, dr.top, dr.right - dr.left, dr.bottom - dr.top, true);
+		--_busy;
 	}
-	else if((which = InsideSnapAreaFromMain(dist)) != 0 )		 // snap to main if distance is smaller than 'dist'
-	{
-		switch(which)
-		{
-			case 0: return;						// not inside
-			case 1: SetTop(frmMain->Top() - Height() );		// snap to top
-					break;
-			case 2: SetLeft(frmMain->Right() );				// to right
-					break;
-			case 3: SetTop(frmMain->Bottom() );				// to bottom
-					break;
-			case 4: SetLeft(frmMain->Left() - Width());		// to left
-					break;
-		}
-		snapped = true;
-	}
-	frmMain->SetCoMovingCoordinates(!snapped);
 }
+

@@ -325,6 +325,16 @@ namespace NLIBNS
         return top >= bottom || left >= right;
     }
 
+    Rect::operator RECT() const 
+    { 
+        RECT r; 
+        r.left = left; 
+        r.top = top; 
+        r.right = right; 
+        r.bottom = bottom; 
+        return r; 
+    }
+
     Rect::operator Gdiplus::Rect() const
     {
         return Gdiplus::Rect(left, top, Width(), Height());

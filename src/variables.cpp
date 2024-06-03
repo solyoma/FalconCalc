@@ -16,7 +16,7 @@ void TfrmVariables::InitializeFormAndControls() /* Control initialization functi
 	/* Generated member initialization. Do not modify. */
 	SetLeft(209);
 	SetTop(509);
-	SetText(L"FalconCalc Functions/Variables");
+	SetText(L"FalconCalc - Edit Functions/Variables");
 	GetFont().SetFamily(L"Tahoma");
 	SetWantedKeyTypes(nlib::wkArrows | nlib::wkTab | nlib::wkEnter | nlib::wkEscape | nlib::wkOthers);
 	SetClientRect(nlib::Rect(0, 0, 528, 569));
@@ -117,6 +117,8 @@ void TfrmVariables::InitializeFormAndControls() /* Control initialization functi
 	btnClear->Image()->SetBitmap(new nlib::Bitmap(NULL, MAKEINTRESOURCE(28684)));
 
 	OnClose = CreateEvent(this, &TfrmVariables::FormClose);
+	OnEndSizeMove = CreateEvent(this, &TfrmVariables::FormSizeMoveEnded);
+
 	tcVars->OnTabChange = CreateEvent(this, &TfrmVariables::tcVarsTabChange);
 	sgUser->OnColumnSizing = CreateEvent(this, &TfrmVariables::sgUserColumnSizing);
 	sgUser->OnEditorKeyDown = CreateEvent(this, &TfrmVariables::sgUserEditorKeyDown);
@@ -158,79 +160,35 @@ void TfrmVariables::Setup(const FalconCalc::VarFuncInfo &vfInfo)
 //	tcVarsTabChange(tcVars, TabChangeParameters(tcVars->SelectedTab()));
 }
 
-int TfrmVariables::InsideSnapAreaFromMain(int dist)
+
+void TfrmVariables::FormSizeMoveEnded(void* sender, nlib::SizePositionChangedParameters param)
+{
+	if (!frmMain->InMoving() && !_busy && GetSnapSide() != FalconCalc::wsNone)
+		Snap();
+}
+
+FalconCalc::WindowSide TfrmVariables::GetSnapSide()
 {
 	// determine snap area index
 	//   0: none 1 top, 2 right, 3 bottom, 4 left
-	RECT r;
-	r.top = Top(); r.right = Right(); r.bottom = Bottom(); r.left = Left();
-	return ::InsideSnapAreaFromMain(r, dist);
+	RECT r = GetWindowRectWithoutDropShadow(Handle());
+	_snapDist = _snapPixelLimit;
+	return _snappedToSide = ::GetSnapSide(r, _snapDist);
 }
 
-void TfrmVariables::Snap(int dist)
+void TfrmVariables::Snap()
 {
-	RECT rsc, r; // rectangles for: screen size, temp
-	if (!SystemParametersInfo(SPI_GETWORKAREA, 0, &rsc, 0))
-		return;
-
-	int which;
-
-	snapped = false;
-	if (!dist)
+	RECT rbase = frmMain->WindowRect(),
+		dr = WindowRect();
+	if (::SnapTo(rbase, dr, _snappedToSide, WinDistance(rbase, dr, _snappedToSide)))	// get snapped coordinates into 'dr'
 	{
-		// get correct window size
-		r = frmMain->ClientRect();
-		int captionHeight = frmMain->Height() - (r.bottom - r.top);
-		if (frmMain->Bottom() + captionHeight > rsc.bottom)	// then variables window's title bar is obscured if put below main
-			if (frmMain->Top() - Height() < rsc.top)		// then also obsured at above it too
-				if (frmMain->Right() + captionHeight >= rsc.right)    // and also at right
-					if (frmMain->Left() <= r.left)						// and even from left
-						;                        // then let Windows choose the position
-					else								// not obscured only when at left
-					{
-						SetTop(frmMain->Top());
-						SetHeight(frmMain->Height());
-						SetLeft(frmMain->Left() - Width());
-					}
-				else                             // not obscured at right
-				{
-					SetTop(frmMain->Top());
-					SetHeight(frmMain->Height());
-					SetLeft(frmMain->Right());
-				}
-			else                                // show it above
-			{
-				SetTop(frmMain->Top() - Height());
-				SetLeft(frmMain->Left());
-				SetWidth(frmMain->Width());
-			}
-		else                                     // position below
-		{
-			SetTop(frmMain->Bottom());
-			SetLeft(frmMain->Left());
-			SetWidth(frmMain->Width());
-		}
-		snapped = true;
+		++_busy;
+		MoveWindow(Handle(), dr.left, dr.top, dr.right - dr.left, dr.bottom - dr.top, true);
+		// DEBUG  1 line
+		RECT rNew = WindowRect();
+		--_busy;
 	}
-	else if ((which = InsideSnapAreaFromMain(dist)) != 0)		 // snap to main if distance is smaller than 'dist'
-	{
-		switch (which)
-		{
-		case 0: return;						// not inside
-		case 1: SetTop(frmMain->Top() - Height());		// snap to top
-			break;
-		case 2: SetLeft(frmMain->Right());				// to right
-			break;
-		case 3: SetTop(frmMain->Bottom());				// to bottom
-			break;
-		case 4: SetLeft(frmMain->Left() - Width());		// to left
-			break;
-		}
-		snapped = true;
-	}
-	frmMain->SetCoMovingCoordinates(!snapped);
 }
-
 
 void TfrmVariables::BuiltinMouseDown(void *sender, nlib::MouseButtonParameters param)
 {

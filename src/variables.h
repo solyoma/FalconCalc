@@ -1,5 +1,7 @@
 ﻿#pragma once
 
+class ConditionFlag;
+
 class TfrmVariables : public nlib::Form
 {
 public:
@@ -7,9 +9,12 @@ public:
 	TfrmVariables();
 
     void Setup(const FalconCalc::VarFuncInfo &vf);
-	int InsideSnapAreaFromMain(int dist);	// returns area index: 0: none 1 top, 2 right, 3 bottom, 4 left
-	void Snap(int dist);		// snap to main window if neare than dist pixels, 
-	bool snapped = false;
+
+	FalconCalc::WindowSide GetSnapSide();		// returns area index: 0: none 1 top, 2 right, 3 bottom, 4 left	
+	void Snap();				// snap this window to the side of the main window usin'_snappedSide' and '_snapDist'
+	constexpr bool Snapped() const { return _snappedToSide != FalconCalc::wsNone; }
+	constexpr FalconCalc::WindowSide SnappedSide() const { return _snappedToSide; }
+
 N_PUBLIC: /* Designer generated list of public members. Do not edit by hand. */
 	nlib::TabControl *tcVars;
 	nlib::StringGrid *sgUser;
@@ -33,14 +38,21 @@ N_PUBLIC: /* Designer generated list of public members. Do not edit by hand. */
 	void sgUserColumnSizing(void *sender, nlib::ColumnRowSizeParameters param);
 	void tcVarsTabChange(void *sender, nlib::TabChangeParameters param);
 	void FormClose(void *sender, nlib::FormCloseParameters param);
+	void FormSizeMoveEnded(void* sender, nlib::SizePositionChangedParameters param);
 protected:
 	virtual ~TfrmVariables(); /* Don't make public. Call Destroy() to delete the object. */ 
 N_PROTECTED: /* Designer generated list of protected members. Do not edit by hand. */
 private:
     FalconCalc::VarFuncInfo _vf;
     bool _changed = false;
+	ConditionFlag _busy;					// e.g. don't handle snap
 	bool _underResize = false;	// user/builtin function pane
 	int  _gridH;				// size of user var/function grid during resize
+
+	FalconCalc::WindowSide _snappedToSide = FalconCalc::wsNone;
+	int _snapPixelLimit = 10;	// pixels snap if inside this distance from, main window
+	int _snapDist = 0;			// when '_snapped' is true: distance from '_snappedToSide'
+
     void _CollectInto(SmartString &dest, size_t &cnt);    // from stringrid on actual page
 	void SetupGridLayout(int tabIndex = 0);	// 0: functions, 1: variables
 N_PRIVATE: /* Designer generated list of private members. Do not edit by hand. */

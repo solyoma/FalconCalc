@@ -6,10 +6,24 @@ class TStringList;
 
 namespace FalconCalc {
 	class LittleEngine;
-}
 
-int Intersect(RECT& rect, RECT& r);
-int InsideSnapAreaFromMain(RECT& r, int dist=10);
+	enum WindowSide{wsNone, wsTop, wsRight, wsBottom, wsLeft};
+}
+extern SIZE dropShadowSize;
+
+FalconCalc::WindowSide GetSnapSide(RECT& r, int &dist);
+bool SnapTo(RECT rBase, RECT &r, FalconCalc::WindowSide side, POINT dist);	// calculates snapped coordinates into input/output 'r'
+POINT WinDistance(RECT main, RECT other, FalconCalc::WindowSide side);
+RECT GetWindowRectWithoutDropShadow(HWND handle);
+
+class ConditionFlag
+{
+	int _cnt = 0;
+public:
+	int operator++() { return ++_cnt; }
+	int operator--() { if (_cnt) --_cnt; return _cnt; }
+	operator bool() { return _cnt; }
+};
 
 class TfrmMain : public nlib::Form
 {
@@ -18,13 +32,14 @@ public:
 
 	void ShowDecOptions(bool show);
 	void ShowHexOptions(bool show);
-	void SetCoMovingCoordinates(bool clear);
 	void OpenVarsOrFunctions(void* sender, int which, nlib::EventParameters param);
 
 	virtual void Destroy();
 
 	TStringList *pslHistory;
 	FalconCalc::LittleEngine *pEngine();
+
+	bool InMoving() { return (bool)_inMoving; }
 
 N_PUBLIC: /* Designer generated list of public members. Do not edit by hand. */
 	nlib::FontDialog *FontDialog1;
@@ -39,6 +54,7 @@ N_PUBLIC: /* Designer generated list of public members. Do not edit by hand. */
 	nlib::MenuItem *miFile;
 	nlib::MenuItem *miExit;
 	nlib::MenuItem *miEdit;
+	nlib::MenuItem *miView;
 	nlib::MenuItem *miCopy;
 	nlib::MenuItem *miPaste;
 	nlib::MenuItem *miAppend;
@@ -70,6 +86,7 @@ N_PUBLIC: /* Designer generated list of public members. Do not edit by hand. */
 	nlib::FlatButton *tbCopy;
 	nlib::FlatButton *tbPaste;
 	nlib::Edit *edtInfix;
+	nlib::FlatButton* btnClearInfix;
 	nlib::Groupbox *gbResults;
 	nlib::Button *btnDecimal;
 	nlib::Button *btnHexadecimal;
@@ -155,6 +172,7 @@ N_PUBLIC: /* Designer generated list of public members. Do not edit by hand. */
 	void btnCopyFormatClick(void *sender, nlib::EventParameters param);
 	void edtInfixTextChanged(void *sender, nlib::EventParameters param);
 	void edtInfixKeyDown(void *sender, nlib::KeyParameters param);
+	void btnClearInfixClick(void *sender, nlib::EventParameters param);
 	void tbPasteClick(void *sender, nlib::EventParameters param);
 	void tbCopyClick(void *sender, nlib::EventParameters param);
 	void tbHistoryClick(void *sender, nlib::EventParameters param);
@@ -162,6 +180,7 @@ N_PUBLIC: /* Designer generated list of public members. Do not edit by hand. */
 	void FormClose(void *sender, nlib::FormCloseParameters param);
 	void FormMove(void *sender, nlib::EventParameters param);
 	void StartMove(void *sender, nlib::EventParameters param);
+	void FormSizeMoveEnded(void* sender, nlib::SizePositionChangedParameters param);
 	void pnlDecPaint(void *sender, nlib::PaintParameters param);
 	void rdNormalClick(void *sender, nlib::EventParameters param);
 	//void cbInfixTextChanged(void *sender, nlib::EventParameters param);
@@ -173,14 +192,11 @@ N_PROTECTED: /* Designer generated list of protected members. Do not edit by han
 private:
     int _nDecOptTop,  // when open
         _nHexBtnTop;  // when dec options panel open
-	bool _busy;
+	ConditionFlag _busy,
+				_inMoving;
     // history options
     bool _added;		 // already added to history by timer, reset by keypress
 	bool _bAutoSave;	 // autosave activated?
-	int _coMoveHistDX,	 // not 0 then  move history window together with main
-		_coMoveHistDY,	 //  x and y coord difference between left tops of the windows
-		_coMoveVarFDX,	 // not 0 then  move functions/variables window together with main
-		_coMoveVarFDY;	 //  x and y coord difference between left tops of the windows
 	int _watchdog;		 // add to history if _watchdog is > given number, reset when formula changes
     int _watchLimit;	 // default: 10: 0 - switch off autosave
     size_t _maxHistDepth;// == 0: unlimited

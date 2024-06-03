@@ -444,6 +444,8 @@ namespace NLIBNS
         explicit Rect(const Gdiplus::RectF &orig);
         Rect& operator=(const Gdiplus::RectF &r);
 
+        operator RECT() const;
+
         Rect(const Point &topleft, const Point &bottomright);
 
         Rect Offset(const Point &pt) const; // Returns a new rectangle which has its sides offset by x and y.
