@@ -1379,6 +1379,7 @@ static const wstring
 		FONTDATA(L"fontData="),
 		OPTIONS(L"options="),
 		HISTOPTIONS(L"histOptions="),
+		VARCOLS(L"varCols="),
 		LAST(L"last=");
 
 
@@ -1408,16 +1409,17 @@ static int __ReadAndExpandLine(FileStream& fs, std::vector<wstring>& data)
 	int n = s.indexOf('=');
 	if (n < 0)
 		return -1;
-	sdata.push_back(s.left(++n));	// name + '='
+	SmartString name = s.left(++n);	// name + '='
 
 	if (!s.length())
 		sdata.clear();
 	else			   // cut name= and get the other fields
 		sdata = s.mid(n).Split(SCharT('|'), true);
 	data.clear();
+	data.push_back(name.ToWideString());
 	for (auto& s : sdata)
 		data.push_back(s.ToWideString());
-	return sdata.size();
+	return data.size();
 }
 
 std::wstring TfrmMain::_GetUserDir()
@@ -1463,6 +1465,14 @@ bool TfrmMain::_SaveState(wstring name)
 	fs << FONTDATA	<< (int)edtChars->GetFont().Size() << "|"<< (int)edtChars->GetFont().CharacterSet() << "|"<< (COLORREF)edtChars->GetFont().GetColor() << "\n";
     fs << OPTIONS	<< pnlDecOpt->Visible() << "|"<< pnlHexOpt->Visible()<<"\n";
     fs << HISTOPTIONS << _watchLimit << "|"<< _maxHistDepth << "|"<< pslHistory->Sorted() << "\n";
+	fs << VARCOLS; 
+	for (int i = 0; i < 2; ++i)
+		for (int col = 0; col < 4; ++col)
+		{
+			fs << TfrmVariables::_colW[i][col];
+			if(i != 1 || col != 3)
+				fs << "|";
+		}
     if(!edtInfix->Text().empty())
         fs << LAST <<  edtInfix->Text() << "\n";
     return true;
@@ -1652,6 +1662,17 @@ bool TfrmMain::_LoadState(wstring name)
 		return false;
 
 	};
+	auto varCols = [&]()
+		{
+			if (n == 9 && data[0] == VARCOLS)
+			{
+				for (int i = 0; i < 2; ++i)
+					for (int col = 0; col < 4; ++col)
+						TfrmVariables::_colW[i][col] = std::stoi(data[col + 4 * i+1]);
+				return true;
+			}
+			return false;
+		};
 	auto last = [&](wstring &lastinfix)		
 	{
 		if (n==2 && data[0] == LAST)
@@ -1661,6 +1682,7 @@ bool TfrmMain::_LoadState(wstring name)
 	};
 
 	wstring wsLlastInfix;
+
 	while ((n = __ReadAndExpandLine(fs, data)))
 	{
 		if (data[0][data[0].length() - 1] == SCharT('='))	// valid line
@@ -1672,7 +1694,8 @@ bool TfrmMain::_LoadState(wstring name)
 							if(!fontData())
 								if(!options())
 									if(!histOptions())
-										last(wsLlastInfix);
+										if(!varCols())
+											last(wsLlastInfix);
 		}
 	}
 
