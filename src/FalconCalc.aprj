@@ -42,6 +42,59 @@
             }
         }
 
+        type PopupMenu
+        {
+            Name = "pmCopy"
+            AccessLevel = "alPublic"
+
+            subtype Items : MenuItem
+            {
+                Name = "miCopyDec"
+                AccessLevel = "alPublic"
+                Text = "Copy &Decimal"
+                event OnClick = "miCopyDecClick"
+            }
+
+            subtype Items : MenuItem
+            {
+                Name = "miCopyHex"
+                AccessLevel = "alPublic"
+                Text = "Copy He&xadecimal"
+                event OnClick = "miCopyHexClick"
+            }
+
+            subtype Items : MenuItem
+            {
+                Name = "miCopyOct"
+                AccessLevel = "alPublic"
+                Text = "Copy &Octal"
+                event OnClick = "miCopyOctClick"
+            }
+
+            subtype Items : MenuItem
+            {
+                Name = "miCopyBin"
+                AccessLevel = "alPublic"
+                Text = "Copy &Binary"
+                event OnClick = "miCopyBinClick"
+            }
+
+            subtype Items : MenuItem
+            {
+                Name = "miCopySep"
+                AccessLevel = "alPublic"
+                Text = "-"
+            }
+
+            subtype Items : MenuItem
+            {
+                Name = "miCopyText"
+                AccessLevel = "alPublic"
+                Text = "Copy &Formula"
+                event OnClick = "miCopyClick"
+            }
+        }
+
         type Menubar
         {
             Name = "mnuMain"
@@ -149,6 +202,7 @@
                     Name = "MenuItem3"
                     AccessLevel = "alPublic"
                     Text = "-"
+                    Visible = "False"
                 }
 
                 subtype Items : MenuItem
@@ -165,7 +219,7 @@
                 Name = "miView"
                 AccessLevel = "alPublic"
                 Text = "&View"
-				
+
                 subtype Items : MenuItem
                 {
                     Name = "miEditVars"
@@ -258,59 +312,6 @@
                     Shortcut = "F1"
                     event OnClick = "miGenHelpClick"
                 }
-            }
-        }
-
-        type PopupMenu
-        {
-            Name = "pmCopy"
-            AccessLevel = "alPublic"
-
-            subtype Items : MenuItem
-            {
-                Name = "miCopyDec"
-                AccessLevel = "alPublic"
-                Text = "Copy &Decimal"
-                event OnClick = "miCopyDecClick"
-            }
-
-            subtype Items : MenuItem
-            {
-                Name = "miCopyHex"
-                AccessLevel = "alPublic"
-                Text = "Copy He&xadecimal"
-                event OnClick = "miCopyHexClick"
-            }
-
-            subtype Items : MenuItem
-            {
-                Name = "miCopyOct"
-                AccessLevel = "alPublic"
-                Text = "Copy &Octal"
-                event OnClick = "miCopyOctClick"
-            }
-
-            subtype Items : MenuItem
-            {
-                Name = "miCopyBin"
-                AccessLevel = "alPublic"
-                Text = "Copy &Binary"
-                event OnClick = "miCopyBinClick"
-            }
-
-            subtype Items : MenuItem
-            {
-                Name = "miCopySep"
-                AccessLevel = "alPublic"
-                Text = "-"
-            }
-
-            subtype Items : MenuItem
-            {
-                Name = "miCopyText"
-                AccessLevel = "alPublic"
-                Text = "Copy &Formula"
-                event OnClick = "miCopyClick"
             }
         }
 

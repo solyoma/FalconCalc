@@ -1,29 +1,10 @@
 ﻿#pragma once
 
+#include "wcommon.h"
 #include <fstream>
 #include <string>
+#include <locale>
 class TStringList;
-
-namespace FalconCalc {
-	class LittleEngine;
-
-	enum WindowSide{wsNone, wsTop, wsRight, wsBottom, wsLeft};
-}
-extern SIZE dropShadowSize;
-
-FalconCalc::WindowSide GetSnapSide(RECT& r, int &dist);
-bool SnapTo(RECT rBase, RECT &r, FalconCalc::WindowSide side, POINT dist);	// calculates snapped coordinates into input/output 'r'
-POINT WinDistance(RECT main, RECT other, FalconCalc::WindowSide side);
-RECT GetWindowRectWithoutDropShadow(HWND handle);
-
-class ConditionFlag
-{
-	int _cnt = 0;
-public:
-	int operator++() { return ++_cnt; }
-	int operator--() { if (_cnt) --_cnt; return _cnt; }
-	operator bool() { return _cnt; }
-};
 
 class TfrmMain : public nlib::Form
 {
@@ -202,7 +183,7 @@ private:
     size_t _maxHistDepth;// == 0: unlimited
 	std::wstring _wsUserDir;	// store user directory here
 
-    Checkbox *	_chkArr[7];
+    nlib::Checkbox *	_chkArr[7];
 
 	void _EnableMyTimer(bool enable);
 
@@ -219,4 +200,5 @@ N_PRIVATE: /* Designer generated list of private members. Do not edit by hand. *
 };
 
 extern TfrmMain *frmMain;
-
+class WindowInfo;
+extern WindowInfo wiMain;

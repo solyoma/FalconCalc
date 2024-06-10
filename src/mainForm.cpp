@@ -2,6 +2,7 @@
 #include "stdafx_zoli.h"
 #include "stdafx_lc.h"
 #undef max
+#include "wcommon.h"
 using namespace nlib;
 #include "application.h"
 #include "about.h"
@@ -36,156 +37,6 @@ const wchar_t *FalconCalc_HIST_FILE = L"FalconCalc.hist";
 const wchar_t *FalconCalc_DAT_FILE  = L"FalconCalc.dat";
 const wchar_t *FalconCalc_CFG_FILE  = L"FalconCalc.cfg";
 
-SIZE dropShadowSize;
-
-#if 0
-static inline size_t _HexD2Char(_CHART ch)
-{ // ch is one hex digit: 0..9,A..F
-    ch -= ((ch > '9') ? 'A'-10 : '0');
-    return (size_t)ch;
-}
-
-static wstring _StringFromHex(STRING_RESULT sres)
-{
-    STRING_RESULT r = sres;
-    r.type = stHex;
-    r.hexFormat = hfNormal;
-    r.showAs = shaBytes;
-    wstring s = r.ToString();
-    if(s[0] == '-')       // wstring may start with '-'
-        s = s.substr(1);
-    if(s[0] == 'T' || s[0] == 'I')
-        return L"";
-    size_t j = 0;
-    size_t i = 0;
-    while(i < s.length()-2)
-    {
-        s[j] = (_HexD2Char(s[i]) << 4) + _HexD2Char(s[i+1]);
-        if(s[j] < ' ' )
-            s[j] = '.';
-            ++j;
-        i+=3;
-    }
-    s[j++] = (_HexD2Char(s[i]) << 4) + _HexD2Char(s[i+1]);
-    return s.substr(0,j);
-}
-#endif
-
-POINT WinDistance(RECT main, RECT other, FalconCalc::WindowSide side)
-{
-	switch (side)
-	{
-		case FalconCalc::wsNone:  return { 0,0 };
-		case FalconCalc::wsTop:	  return {main.left - other.left, main.top - other.bottom};
-		case FalconCalc::wsRight: return {other.left - main.right, main.top - other.top};
-		case FalconCalc::wsBottom:return { main.left - other.left, other.top - main.bottom};
-		case FalconCalc::wsLeft:  return {main.left - other.right, main.top - other.top};
-	}
-	return { 0,0 };
-}
-
-RECT GetWindowRectWithoutDropShadow(HWND hWnd)
-{
-	RECT windowRect;
-	RECT clientRect;
-	GetWindowRect(hWnd, &windowRect);
-	GetClientRect(hWnd, &clientRect);
-
-	WINDOWINFO wi;
-	wi.cbSize = sizeof(WINDOWINFO);
-	GetWindowInfo(hWnd, &wi);
-
-	int borderWidth = (windowRect.right - windowRect.left) - clientRect.right;
-	int borderHeight = (windowRect.bottom - windowRect.top) - clientRect.bottom;
-
-	RECT rectWithoutShadow;
-	rectWithoutShadow.left = windowRect.left + wi.cxWindowBorders;
-	rectWithoutShadow.top = windowRect.top + wi.cyWindowBorders;
-	rectWithoutShadow.right = windowRect.right - wi.cxWindowBorders;
-	rectWithoutShadow.bottom = windowRect.bottom - wi.cyWindowBorders;
-
-	return rectWithoutShadow;
-}
-
-
-// TASK: test the iontersection of rectangle 'rect' with rectangle 'r'
-// RETURNS: flags in an integer for each corner of 'r' that is inside 'rect'
-//			0: no intersection,					
-//			1: top	left of r is inside 'rect' or top left of 'rect' is inside 'r'
-//          2: top right of r is inside 'rect' or top right of 'rect' is inside 'r' 
-//			4: bottom right of r is inside 'rect' or bottom right of 'rect' is inside 'r',
-//			8:bottom left of r is inside 'rect'
-
-
-FalconCalc::WindowSide GetSnapSide(RECT& r, int &dist)	// 'dist' will be set to the distance of corresponding sides
-{
-	Rect rT;	// area beside the main window
-				// area of main  temporarily stored in rT, which is modified below
-	rT = GetWindowRectWithoutDropShadow(frmMain->Handle() );
-	//rT.left = frmMain->Left();
-	//rT.top = frmMain->Top();
-	//rT.right = frmMain->Right();
-	//rT.bottom = frmMain->Bottom();
-	if (dropShadowSize.cx || dropShadowSize.cy)
-		rT = rT.Inflate(dropShadowSize.cx, dropShadowSize.cy);
-
-	if (rT.DoesIntersect(r))				// windows intersect -> no snap
-		return FalconCalc::wsNone;
-
-	Rect rSnapArea = rT;
-
-										// check area above main form
-	rSnapArea.bottom = rT.top;
-	rSnapArea.top	  = rT.top - dist;
-	if (rSnapArea.DoesIntersect(r))
-	{
-		dist = rT.top - r.bottom;
-		return FalconCalc::wsTop;
-	}
-										// check area right of main form
-	rSnapArea = rT;
-	rSnapArea.left = rT.right;
-	rSnapArea.right = rT.right + dist;
-	if (rSnapArea.DoesIntersect(r))
-	{
-		dist =  r.left - rT.right;
-		return FalconCalc::wsRight;
-	}
-										// check area below main window
-	rSnapArea = rT;
-	rSnapArea.top = rT.bottom;
-	rSnapArea.bottom = rT.bottom + dist;
-	if (rSnapArea.DoesIntersect(r))
-	{
-		dist = r.top - rT.bottom;
-		return FalconCalc::wsBottom;
-	}
-										// check area left of main window
-	rSnapArea = rT;
-	rSnapArea.left = rT.left - dist;
-	rSnapArea.right = rT.left;
-	if (rSnapArea.DoesIntersect(r))
-	{
-		dist = rT.left - r.right;
-		return FalconCalc::wsLeft;
-	}
-
-	return FalconCalc::wsNone;
-}
-
-bool SnapTo(RECT rBase, RECT& r, FalconCalc::WindowSide side, POINT dist)	// calculates snapped coordinates into input/output 'r'
-{
-	switch(side)
-	{
-		default:
-		case FalconCalc::wsNone: return false;									// move
-		case FalconCalc::wsTop:		OffsetRect(&r,  dist.x,  dist.y); break;	//		down
-		case FalconCalc::wsRight:	OffsetRect(&r, -dist.x,  dist.y); break;	//		left
-		case FalconCalc::wsBottom:	OffsetRect(&r,  dist.x, -dist.y); break;	//		up
-		case FalconCalc::wsLeft:	OffsetRect(&r,  dist.x,  dist.y); break;	//		right
-	}
-	return true;
-}
 /****************************************************************************************************************************************/
 
 void TfrmMain::InitializeFormAndControls() /* Control initialization function generated by the designer. Modifications will be lost. */
@@ -198,7 +49,7 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	GetFont().SetSize(10);
 	SetWantedKeyTypes(nlib::wkArrows | nlib::wkTab | nlib::wkEnter | nlib::wkEscape | nlib::wkOthers);
 	SetShowPosition(nlib::fspActiveMonitorCenter);
-	SetBorderStyle(nlib::fbsSingle);
+	SetBorderStyle(nlib::fbsSingle);	// setting to fbsSingle makes this unmoveable
 	SetClientRect(nlib::Rect(0, 0, 528, 372 + GetSystemMetrics(SM_CYMENU)));
 
 	FontDialog1 = new nlib::FontDialog();
@@ -240,10 +91,10 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 
 	miView = mnuMain->Add(L"&View");
 	miEditVars = miView->Add(L"Edit User &Variables...");
-	miEditVars->SetTag(1);
 	miEditVars->SetShortcut(L"Alt+1");
 	miEditFuncs = miView->Add(L"Edit User &Functions...");
 	miEditFuncs->SetShortcut(L"Alt+2");
+	miEditFuncs->SetTag(1);
 	miShowHist = miView->Add(L"Edit &History");
 	miShowHist->SetShortcut(L"Alt+3");
 
@@ -416,7 +267,7 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	pnlOct->SetTabOrder(5);
 	pnlOct->SetInnerBorderStyle(nlib::pbsSunken);
 	pnlOct->SetTextAlignment(nlib::taRight);
-										pnlOct->SetParent(gbResults);
+	pnlOct->SetParent(gbResults);
 
 	pnlBin = new nlib::Panel();
 	pnlBin->SetBounds(nlib::Rect(83, 93, 500, 118));
@@ -860,6 +711,7 @@ BOOL CALLBACK EnumDispProc(HMONITOR hMon, HDC dcMon, RECT* pRcMon, LPARAM lParam
 TfrmMain::TfrmMain()
 {
 	InitializeFormAndControls();
+	wiMain.InitInfo(this, L"frmMain");
 	_wsUserDir = _GetUserDir();
 	_GetVirtualDisplaySize();
 	// /for fun
@@ -1213,14 +1065,22 @@ void TfrmMain::miEditVarsClick(void *sender, nlib::EventParameters param)
 	int tag = ((MenuItem*)sender)->Tag();
 	if (frmVariables)
 	{
-		frmVariables->Close();
-		((MenuItem*)sender)->SetChecked(false);
+		if (tag != frmVariables->tcVars->SelectedTab())		// switch TAB
+			frmVariables->tcVars->SetSelectedTab(tag);
+		else
+		{
+			frmVariables->Close();
+			((MenuItem*)sender)->SetChecked(false);
+			frmVariables = nullptr;
+			wiVars.RefreshInfo();
+		}
 	}
 	else
 	{
 		OpenVarsOrFunctions(sender, tag, param);
 		((MenuItem*)sender)->SetChecked(true);
 	}
+	SetFocus(edtInfix->Handle());
 }
 
 void TfrmMain::miEditFuncsClick(void *sender, nlib::EventParameters param)
@@ -1238,8 +1098,7 @@ void TfrmMain::miShowHistClick(void *sender, nlib::EventParameters param)
 	{
 		frmHistory->Close();
 		((MenuItem*)sender)->SetChecked(false);
-		//frmHistory->Show();
-		//return;
+		frmHistory = nullptr;
 	}
 	else
 	{
@@ -1254,6 +1113,7 @@ void TfrmMain::miShowHistClick(void *sender, nlib::EventParameters param)
 		frmHistory->Show();
 		((MenuItem*)sender)->SetChecked(true);
 	}
+	wiHist.InitInfo(frmHistory, L"frmHistory");
 	SetFocus(edtInfix->Handle());
 }
 
@@ -1430,25 +1290,34 @@ void TfrmMain::OpenVarsOrFunctions(void* sender, int which, nlib::EventParameter
 {
 	VarFuncInfo vf;
 	lengine->GetVarFuncInfo(vf);
-	Rect wrect = GetWindowRectWithoutDropShadow(Handle());
+	Rect wrect = wiMain.BareVisibleWindowRect();
 
 	if (!frmVariables)
 	{
 		frmVariables = new TfrmVariables;
 		frmVariables->SetTopLevelParent(this);
 		frmVariables->SetLeft(wrect.right+1);
-		frmVariables->SetTop(wrect.top);
+		frmVariables->SetTop(WindowRect().top);
 
 		frmVariables->Setup(vf);
+		wiVars.InitInfo(frmVariables, L"frmVariables");
 	}
 	else
 	{
 		TabChangeParameters par(which);
 		frmVariables->tcVarsTabChange(sender, par);
+		wiVars.RefreshInfo();
 	}
 	frmVariables->tcVars->SetSelectedTab(which);
+	if (frmVariables->GetSnapSide() != FalconCalc::WindowSide::wsNone)
+		frmVariables->Snap();
 
 	frmVariables->Show();
+
+	if( frmVariables->GetSnapSide() != FalconCalc::WindowSide::wsNone)
+		frmVariables->Snap();
+
+
 	SetFocus(edtInfix->Handle());
 }
 
@@ -1933,18 +1802,21 @@ void TfrmMain::StartMove(void *sender, nlib::EventParameters param)
 
 void TfrmMain::FormSizeMoveEnded(void* sender, nlib::SizePositionChangedParameters param)
 {
+	--_inMoving;
+	wiMain.RefreshInfo();
+
 	if (frmHistory && !frmHistory->Snapped())
-		if (frmVariables->GetSnapSide() != FalconCalc::wsNone)
+		if (frmHistory->GetSnapSide() != FalconCalc::wsNone)
 			frmHistory->Snap();
 
 	if (frmVariables && !frmVariables->Snapped())
 		if (frmVariables->GetSnapSide() != FalconCalc::wsNone)
 			frmVariables->Snap();
-	--_inMoving;
 }
 
 void TfrmMain::FormMove(void *sender, nlib::EventParameters param)
 {
+	wiMain.RefreshInfo();
 	if (frmHistory && frmHistory->Snapped())
 		frmHistory->Snap();
 
@@ -1954,52 +1826,7 @@ void TfrmMain::FormMove(void *sender, nlib::EventParameters param)
 	// this single funcion deals with Normal, HTML, TeX and E display
 void TfrmMain::rdNormalClick(void *sender, nlib::EventParameters param)
 {
-
 	lengine->beautification = (LittleEngine::Beautification)((Radiobox*)sender)->Tag();
 	//sres.type = sres.mode == bmoNone ? stDecimal : stDecBeautified;
 	_ShowResults();
 }
-#if 0
-void TfrmMain::cbInfixTextChanged(void *sender, nlib::EventParameters param)
-{
-	if (_busy)
-		return;
-
-	++_busy;
-	if (cbInfix->Text().empty())
-	{
-		lengine->resultValid = LittleEngine::ResValid::rvInvalid;
-		_ShowResults();
-		return;
-	}
-	wstring s = cbInfix->Text();
-	edtInfix->SetText(s);
-	try
-	{
-		lengine->infix = s;
-		RealNumber res = lengine->Calculate();
-		gbResults->SetText(L"Results");
-		lengine->resultValid = LittleEngine::ResValid::rvOk;
-		_ShowResults();
-		s = lengine->Postfix().ToWideString();
-	}
-	catch (Trigger_Type tt)
-	{
-		gbResults->SetText(triggerMap[tt].ToWideString());
-		lengine->resultValid = LittleEngine::ResValid::rvInvalid;
-
-		_ShowResults();
-	}
-	catch (...)
-	{
-		lengine->resultValid = LittleEngine::ResValid::rvInvalid;
-		_ShowResults();
-	}
-	--_busy;
-}
-
-void TfrmMain::cbInfixKeyPress(void *sender, nlib::KeyPressParameters param)
-{
-	;
-}
-#endif

@@ -1,10 +1,8 @@
 ﻿#include "calculate.h"
 using namespace nlib;
 
-//#include "mainform.h"
-
-
 #include <math.h>
+
 int _matherr (struct _exception *a)
 {
     if (a->type == OVERFLOW)
@@ -29,6 +27,10 @@ int _matherr (struct _exception *a)
     }
     return 1;
 }
+
+bool IsAlpha(wchar_t ch, locale loc);    // In ,wcommon.cpp, needed for names in one locale when working in another localse
+bool IsAlnum(wchar_t ch, locale loc);    // In ,wcommon.cpp, needed for names in one locale when working in another localse
+
 
 using namespace SmString;
 using namespace LongNumber;
@@ -85,8 +87,6 @@ void Trigger(Trigger_Type tt)
 {
 		throw tt;
 }
-
-
 
 // Class MathOperator
 map<SmartString, OP> MathOperator::ops; // operator table
@@ -219,7 +219,7 @@ void Token::_GetOperator(const SmartString &text, unsigned &pos)
 		cn = (pos == text.length() ? 0 : text[pos].unicode() );
 #else
 	SCharT c = text[pos++],
-		 cn = SCharT(pos >= text.length() ? 0 : text[pos] );
+		  cn = SCharT(pos >= text.length() ? 0 : text[pos] );
 #endif
 	SmartString s;
 	s = c;
@@ -262,10 +262,7 @@ void Token::_GetOperator(const SmartString &text, unsigned &pos)
 				    break;
 	    case '~' :  if (!cn) // no more character in line
 					    Trigger(Trigger_Type::ILLEGAL_OPERATOR_AT_LINE_END);
-				    if (isdigit(cn) || cn == SCharT('#') )		// if decimal, octal, hexadecimal or binary number
-				    {
-                        name = u"~"; break;
-				    }
+                    name = u"~"; 
                     break;
 	    default:  *this = s;
 			      return;
@@ -456,7 +453,7 @@ void Token::_GetVarOrFuncOrOperator(const SmartString &text, unsigned &pos)
 {
 	locale loc = cout.getloc();
 	int startpos = pos;
-	while(pos < text.length() && (isalnum(text[pos],loc) || text[pos] == '_'))
+	while(pos < text.length() && (IsAlnum(text[pos],loc) || text[pos] == '_'))
 		++pos;
 	SmartString s = text.substr(startpos, pos - startpos);
 	name = s;  //  set name
@@ -523,7 +520,7 @@ void Token::FromText(const SmartString &text, unsigned &pos)
 			_GetDecimalNumber(text, pos); // start at the first number/decimal point
 		}
 	}
-    else if (isalpha(c, loc)) // variable, function or text operator (e.g. 'or')
+    else if (IsAlpha(c,loc)) // variable, function or text operator (e.g. 'or')
         _GetVarOrFuncOrOperator(text, pos);
 	else // a possible operator character
 		_GetOperator(text, pos);
@@ -728,42 +725,61 @@ void LittleEngine::_HandleBrace(Token* tok)
  /*=============================================================
   * TASK   : convert single infix expression in 'expr'
   *             to postfix expression in 'tvPostfix'
-  * PARAMS : 'expr' - infix expression
+  * PARAMS : 'expr' - infix expression which may contain a variable
+  *             and a function definition as well
   * EXPECTS: - 'infix' may end with '\n' 
-  *          -  may contain variable/function definitions with 
-  *             units and comments at the end.
-  *          - if it does they are separated by 'schCommentDelimiter'
-  *             characters
+  *          - 'infix' may contain variable/function definitions 
+  *             possibly followed by measurement unit then comment 
+  *             separated by 'schCommentDelimiter' characters
+  *          - unit and comment may be missing
   * GLOBALS: 'infix', 'tvPostFix'
   * RETURNS: 0      : found assignment expression
   *          1      : other
   *          and  'tvPostfix' is the token vector of expression
-  * REMARKS: and  units and Comments are separated 
-  *             from the definition by  
-  *             characters which must be different from
-  *             any characters allowed in an expression.
+  * REMARKS: - variable definitions start with the variable name
+  *             followed by an equal sign, then the expression of 
+  *             the variable. This expression may use already defined
+  *             variables and functions. The definition may also contain 
+  *             a unit and a comment field. Field delimiter is the semicolon
+  *             Example: "twopi=2*pi:2 times pi"
+  *                      "VAT=18:value added tax:percent
+  *          - function definition starts with the function name 
+  *            followed by a list of comma separated argument names 
+  *             in parantheses then an equal sign then the function
+  *             body followed by the comment and the possible unit:
+  *             Example: 
+  *              "Quad(a,b,c,s)=(-b+s*sqrt(b^2-4*a*c))/2/a:quadratic equation"
   *------------------------------------------------------------*/
-int LittleEngine::_InfixToPostFix(const SmartString& expr)
+int LittleEngine::_InfixToPostFix(const SmartString expr)
 {
     //check for (invalid characters up to the comment field
 	locale loc = cout.getloc();
-	infix = expr;
-    infix.Trim();
+    infix.clear();
     //if( infix[  infix.length() -1] == '\n')
     //    infix = infix.substr(0, infix.length()-1);
 	SmartString pattern = "=*^/<>!&|~%().,+-_#'"_ss;
+    //                    "!+-*/_.,^%@#()=<>|\\:'\"~&"
     bool quoted = false;
-
-    for(SmartString::iterator it = infix.begin(); it != infix.end() && *it != FalconCalc::schCommentDelimiter; ++it)
+    //int poseq = 0;
+    //if ( (poseq = expr.indexOf(L'=')) > 0)
+    //    infix = expr.left(poseq);
+    // copy string into infix and drop internal spaces
+    SmartString::const_iterator it;
+    for(it = expr.begin()/* + poseq*/; it != expr.end() && *it != FalconCalc::schCommentDelimiter; ++it)
     {
-        if(!quoted && !isalnum((wchar_t)*it, loc) && !isspace((wchar_t)*it,loc) && pattern.find_first_of(*it) == std::string::npos )
-    	    Trigger (Trigger_Type::ILLEGAL_CHARACTER);
-
+        if (!quoted)
+        {
+            if (isspace(*it, loc))  // drop spaces inside
+                continue;
+            if (!IsAlnum((wchar_t)*it, loc) && pattern.find_first_of(*it) == std::string::npos)
+                Trigger(Trigger_Type::ILLEGAL_CHARACTER);
+        }
         if(*it == '\'')
             quoted ^= true;
         else if(!quoted)
-            *it = tolower(*it, loc);
+            infix.push_back(*it);   //  tolower(*it, loc) ); don't lower anything here
     }
+    infix += expr.mid(it - expr.begin());   // add comment and unit
 
     int result = 1;     // not an assignment
     tvPostfix.clear();  // get rid of previous result
@@ -788,104 +804,116 @@ int LittleEngine::_InfixToPostFix(const SmartString& expr)
 	unsigned pos = 0;
 	Token *tok = new Token(infix, pos);
 					// Shunting yard algorithm from Wikiedia (http://en.wikipedia.org/wiki/Shunting-yard_algorithm)
-	while(tok->Type() != tknEOL) // get all tokens from line
+	while (tok->Type() != tknEOL) // get all tokens from line
 	{
-        if(needOp && tok->Type() != tknOperator && tok->Type() != tknUnknown && tok->Oper() != opCloseBrace) // then suppose it's implicit multiplication
-        {
-            OP d;
-            d.oper = opMUL;
-            d.precedence = 7; // C.f. MathOperator::Setup()
-            Token *op = new Token(tknOperator, "*"_ss, d);
-            _HandleOperator(op);
-            delete op;
-            needOp = false;
-        }
-
-		switch(tok->Type() )
+		try
 		{
-            case tknCharacter:                          // number from character SmartString (as BIG endian!)
-			case tknNumber:								// If the token is a number then add it to the output queue.
-								tvPostfix.push_back(*tok);
-                                needOp = true;
-                                break;
-            case tknVariable:	  						// If the token is a variable check for assignments
-                                if(_VariableAssignment(infix, pos, tok) == 0 )   // handles assignment
-                                {
-                                    if(functions.count(tok->Text()) )   // then this isnt a variable just missing the braces yet
-                                        Trigger(Trigger_Type::FUNCTION_MISSING_OPENING_BRACE);
-    								tvPostfix.push_back(*tok);          // add variable to the output queue.
-                                    needOp = true;
-                                }
-                                else
-                                    result = 0;
-                                break;
-			case tknFunction:							// If the token is a function name token,
-                                if(!_FunctionAssignment(infix, pos, tok) )
-                                {
-                                    if (pos >= expr.length() || expr.at(pos) == SCharT(')') )    // eg 'sin(' or 'sin()' w.o. argument
-                                        Trigger(Trigger_Type::NO_FUNCTION_ARGUMENT);
-                                    stack.push(*tok);   // then push it onto the stack.
-                                    //unsigned pos = 0;
-                                    //SmartString s("(");
-                                    //Token brace(s, pos);   // function token ate opening brace
-                                    //stack.push(brace);
-                                }
-                                else                     // function asignment
-                                {
-                                    result = 0;     
-                                    pos = expr.length(); // function body processed already
-                                }
-                                break;
-			case tknUnknown:
-								_HandleUnknown(tok);
-                                needOp = false;
-                                break;
-			case tknOperator:   if(!needOp)     // '!', 'not' '~', unary '-' or '+'
-                                {
-                                    // check for too many '+' or '-'
-                                    unsigned pn = pos; // look ahead
-                                    Token *next = new Token(infix, pn);
-                                    if(next->Type() == tknOperator)
-                                    {
-                                        delete next;
-                                        delete tok;
-                                        Trigger(Trigger_Type::SYNTAX_ERROR);
-                                    }
-                                    delete next;
+			if (needOp && tok->Type() != tknOperator && tok->Type() != tknUnknown && tok->Oper() != opCloseBrace) // then suppose it's implicit multiplication
+			{
+				OP d;
+				d.oper = opMUL;
+				d.precedence = 7; // C.f. MathOperator::Setup()
+				Token* op = new Token(tknOperator, "*"_ss, d);
+				_HandleOperator(op);
+				delete op;
+				needOp = false;
+			}
 
-									if (tok->Oper() == opMINUS)   // unary -
-									{
-										OP d;
-										d.oper = opUMIN;
-										d.precedence = 8; // Cf MathOperator::Setup() !
-										Token *op = new Token(tknOperator, "@"_ss, d);
-										delete tok;
-										tok = op;
-									}
-									else if (tok->Oper() == opPLUS)   // unary +
-										break;  // skip it
-									else if (tok->Oper() == opNOT || tok->Oper() == opCompl)
-									{
-										_HandleOperator(tok);
-										break;
-									}
-                                    else
-                                    {
-                                        delete tok;
-                                        Trigger(Trigger_Type::SYNTAX_ERROR);
-                                    }
-                                }
-                                _HandleOperator(tok);
-                                needOp = false;
-                                break;
-            case tknBrace:      _HandleBrace(tok);
-                                break;
-            default: break;     // to make compilers happy
+			switch (tok->Type())
+			{
+				case tknCharacter:                          // number from character SmartString (as BIG endian!)
+				case tknNumber:								// If the token is a number then add it to the output queue.
+					tvPostfix.push_back(*tok);
+					needOp = true;
+					break;
+				case tknVariable:	  						// If the token is a variable check for assignments
+					if (!_VariableAssignment(infix, pos, tok))   // handles assignment
+					{
+						if (functions.count(tok->Text()))   // then this isnt a variable just missing the braces yet
+							Trigger(Trigger_Type::FUNCTION_MISSING_OPENING_BRACE);
+						tvPostfix.push_back(*tok);          // add variable to the output queue.
+						needOp = true;
+					}
+					else
+						result = 0;
+					break;
+				case tknFunction:							// If the token is a function name token,
+					if (!_FunctionAssignment(infix, pos, tok))
+					{
+						if (pos >= expr.length() || expr.at(pos) == SCharT(')'))    // eg 'sin(' or 'sin()' w.o. argument
+							Trigger(Trigger_Type::NO_FUNCTION_ARGUMENT);
+						stack.push(*tok);   // then push it onto the stack.
+					}
+					else                     // function asignment
+					{
+						result = 0;
+						pos = expr.length(); // function body processed already
+					}
+					break;
+				case tknUnknown:
+					_HandleUnknown(tok);
+					needOp = false;
+					break;
+				case tknOperator:   
+                    if (!needOp)     // '!', 'not' '~', unary '-' or '+'
+				    {
+					    // check for too many '+' or '-'
+					    unsigned pn = pos; // look ahead
+					    Token* next = new Token(infix, pn);
+                                
+                        if (next->Type() == tknOperator)
+                        {
+                            bool badOp = (next->Oper() != opMINUS) && 
+                                         (next->Oper() != opPLUS)  &&
+                                         (next->Oper() != opNOT)   &&
+                                         (next->Oper() != opCompl);
+                            if (badOp)
+                            {
+                                delete next;
+                                delete tok;
+                                Trigger(Trigger_Type::SYNTAX_ERROR);
+                            }
+                        }
+					    delete next;
+
+					    if (tok->Oper() == opMINUS)   // unary -
+					    {
+						    OP d;
+						    d.oper = opUMIN;
+						    d.precedence = 8; // Cf MathOperator::Setup() !
+						    Token* op = new Token(tknOperator, "@"_ss, d);
+						    delete tok;
+						    tok = op;
+					    }
+					    else if (tok->Oper() == opPLUS)   // unary +
+						    break;  // skip it
+					    else if (tok->Oper() == opNOT || tok->Oper() == opCompl)
+					    {
+						    _HandleOperator(tok);
+						    break;
+					    }
+					    else
+					    {
+						    delete tok;
+						    Trigger(Trigger_Type::SYNTAX_ERROR);
+					    }
+				    }
+					_HandleOperator(tok);
+					needOp = false;
+					break;
+				case tknBrace:      _HandleBrace(tok);
+					break;
+				default: break;     // to make compilers happy
+			}
+			//      delete tok;
+				  //tok = new Token(infix, pos);
 		}
-  //      delete tok;
-		//tok = new Token(infix, pos);
-        tok->FromText(infix, pos);  // new token 
-	}
+		catch (...)
+		{
+			;
+		}
+		tok->FromText(infix, pos);  // new token 
+    }
     delete tok;
 		// When there are no more tokens to read:
 
@@ -911,14 +939,19 @@ int LittleEngine::_InfixToPostFix(const SmartString& expr)
 void LittleEngine::_MarkDirty(const SmartString name)
 {
     FunctionTable::iterator it;
+    SmartString lcName = name.asLowerCase();
     for(it = functions.begin(); it != functions.end(); ++it)
     {
         TokenVec::iterator tvit;
         for(tvit = it->second.definition.begin(); tvit != it->second.definition.end(); ++tvit)
-            if(tvit->Type() == tknVariable && tvit->Text() == name)
+            if (tvit->Type() == tknVariable)
             {
-                it->second.dirty = true;
-                break;
+
+                if (tvit->Text().asLowerCase() == lcName)
+                {
+                    it->second.dirty = true;
+                    break;
+                }
             }
     }
 }
@@ -931,33 +964,35 @@ void LittleEngine::_MarkDirty(const SmartString name)
  *          'pos' start position after name  - a line may only contain a
  *                single variable definition,
  *          'tok' pointer to variable, must not be nullptr, already contains
- *                  the name of the variable
+ *                  the name of the variable in any character case
+ *                  for calculations the name will be converted to lower case
  * RETURNS: true if this is an assignment and variable definition or
  *                  redefinition is stored in VARIABLES
  *         false if first non-whitespace character is not an equal sign
  * REMARKS: variable name already processed and in 'tok'
  *---------------------------------------------------------*/
-bool LittleEngine::_VariableAssignment(const SmartString &expr   , unsigned &pos, Token *tok)
+bool LittleEngine::_VariableAssignment(const SmartString &expr, unsigned &pos, Token *tok)
 {
 	locale loc = cout.getloc();
 
     while(pos < expr.length() && isspace((wchar_t)expr[pos], loc))
       ++pos;
-    if( pos == expr.length()  || expr[pos] != '=')
+    if( pos == expr.length()  || (expr[pos] != '=' && expr[pos] != schCommentDelimiter) )
         return false;       // not an assignment
 
     Variable v;
-
-    if(constantsMap.count(tok->Text() )) 
+    SmartString lcName = tok->Text().asLowerCase();
+    if(constantsMap.count(lcName )) 
         Trigger(Trigger_Type::BUILTIN_VARIABLES_CANNOT_BE_REDEFINED);
-    else if(variables.count(tok->Text() )) // already defined
-        v.data.value = variables[ tok->Text()].data.value; // v = variables[ tok->Text()];
+    else if(variables.count(lcName)) // already defined
+        v.data.value = variables[lcName].data.value; // v = variables[ tok->Text()];
     ++pos;   // skip '='
 
-    StringVector sv(expr.mid(pos), schCommentDelimiter, false, true);     // pos after the '=' sign, drop empty fields
+    StringVector sv(expr.mid(pos), schCommentDelimiter, true, true);     // pos after the '=' sign, doesn't drop empty fields
         // sv[0] = body, sv[1] = comment, sv[2] = unit
 
-    v.data.name = tok->Text();
+    v.data.name = tok->Text();  // not necessarily in lower case
+    // sv: body:comment:unit
     switch(sv.size())
     {
         case 3:
@@ -971,7 +1006,6 @@ bool LittleEngine::_VariableAssignment(const SmartString &expr   , unsigned &pos
             break;
         default:
             Trigger(Trigger_Type::VARIABLE_DEFINITION_MISSING);
-            break;
             break;
     }
 #if 0
@@ -1016,9 +1050,9 @@ bool LittleEngine::_VariableAssignment(const SmartString &expr   , unsigned &pos
     else // leave it dirty :) ??? it wasn't
         v.data.value = if2pf._CalcPostfix(if2pf.tvPostfix);
 
-    variables[ tok->Text()] = v;
+    variables[tok->Text().asLowerCase()] = v;
     // mark variables whose definition contains this variable dirty
-    _MarkDirty(tok->Text());
+    _MarkDirty(tok->Text());    // uses lowercase name
     clean = false;  // table modified
 
     calcResult = v.data.value;
@@ -1046,11 +1080,15 @@ bool LittleEngine::_VariableAssignment(const SmartString &expr   , unsigned &pos
 {
    calcResult = RealNumber::RN_0;
    unsigned poseq = expr.find_first_of(u'=', pos);
-   if(poseq == SmartString::npos) // no equal sign
-        return false;
-
-   if(functions.count(tok->Text()) ) // already defined
-        if(functions[ tok->Text()].builtin)
+   if (poseq == SmartString::npos) // no equal sign, maybe a colon?
+   {
+       poseq = expr.find_first_of(schCommentDelimiter, pos);
+       if (poseq == SmartString::npos) // no colon either?
+           return false;
+   }
+   SmartString lcName = tok->Text().asLowerCase();
+   if(functions.count(lcName) ) // already defined
+        if(functions [lcName].builtin)
             Trigger(Trigger_Type::BUILTIN_FUNCTIONS_CANNOT_BE_REDEFINED);
    if(expr[poseq-1] != ')')
         Trigger(Trigger_Type::FUNCTION_DEFINITION_MISSING_RIGHT_BRACE);
@@ -1062,7 +1100,9 @@ bool LittleEngine::_VariableAssignment(const SmartString &expr   , unsigned &pos
 
    f.args = StringVector(arguments, ',' /*_argSeparator */ , false, true);
 
-   StringVector svFields(expr.mid(poseq+1), schCommentDelimiter, false, true);
+   StringVector svFields(expr.mid(poseq+1), schCommentDelimiter, true, true);
+
+   // fields: body:comment:unit
    switch (svFields.size())
    {
         case 3:
@@ -1097,7 +1137,7 @@ bool LittleEngine::_VariableAssignment(const SmartString &expr   , unsigned &pos
 //        while(n < bpos && (expr[n].isLetterOrNumber() ) || expr[n] == '_')) // get word
 //            ++n;
 //#else
-        while(n < bpos && (isalnum((wchar_t)expr[n]) || expr[n] == '_')) // get word
+        while(n < bpos && (IsAlnum((wchar_t)expr[n]) || expr[n] == '_')) // get word
             ++n;
 //#endif
         f.args.push_back(expr.substr(pos, n - pos) );   // store argument name
@@ -1157,14 +1197,14 @@ bool LittleEngine::_VariableAssignment(const SmartString &expr   , unsigned &pos
  *-------------------------------------*/
 void LittleEngine::_DoVariable(const Token &tok)
 {
-    SmartString name = tok.Text();
+    SmartString name = tok.Text().asLowerCase();
     if (constantsMap.count(name))
     {
         stack.push(constantsMap[name]->value);
     }
-    else if(variables.count(tok.Text()) )   // existing variable
+    else if(variables.count(name) )   // existing variable
     {
-        Variable &var = variables[tok.Text()];
+        Variable &var = variables[name];
         if(var.dirty && !var.being_processed)
         {
             try
@@ -1199,10 +1239,11 @@ void LittleEngine::_DoVariable(const Token &tok)
  *-------------------------------------*/
 void LittleEngine::_DoFunction(const Token &tok)
 {
-    if(!functions.count(tok.Text()) ) // non existing function
+    SmartString name = tok.Text().asLowerCase();
+    if(!functions.count(name) ) // non existing function
         Trigger(Trigger_Type::UNKNOWN_FUNCTION_IN_EXPRESSION);
 
-    Func &f = functions[tok.Text()];
+    Func &f = functions[name];
     if(f.being_processed) // then recursive call
         Trigger(Trigger_Type::RECURSIVE_FUNCTIONS_ARE_NOT_ALLOWED);
     RealNumber v,r;
@@ -1259,7 +1300,7 @@ void LittleEngine::_DoFunction(const Token &tok)
         if(tok->Type() == tknVariable) // then if it is a parameter then
         {                              // replace it with the parameter's value
             for(unsigned j = 0; j < f.args.size(); ++j)
-                if(tok->Text() == f.args[j]) // parameter
+                if(tok->Text().asLowerCase() == f.args[j].asLowerCase()) // parameter
                 {
                     tok = new Token(params[j]);
                     allocd=true;
@@ -1494,14 +1535,20 @@ bool LittleEngine::SaveTables(SmartString filename) // if it wasn't read and no 
 	if( ofs.fail() )
 			return false;
 	ofs << VERSION_STRING << L"\nVariables\n";
+    std::wstring sDelim = ssCommentDelimiterString.ToWideString();
 	if(variables.size() )                       // these are the user defined variables only
 	{
         VariableTable::iterator vit;
 		for(vit = variables.begin(); vit != variables.end(); ++vit)
         {
 			ofs << vit->first.ToWideString() << L"=" << vit->second.body.ToWideString();
-			if(!vit->second.data.desc.empty() )
-				ofs << schCommentDelimiter << vit->second.data.desc.ToWideString();
+            if (!vit->second.data.desc.empty())
+                ofs << sDelim << vit->second.data.desc.ToWideString();
+            else if (!vit->second.data.unit.empty())
+                ofs << sDelim;
+            if(!vit->second.data.unit.empty())
+				ofs << sDelim << vit->second.data.unit.ToWideString();
+
 			ofs << endl;
 		}
 	}
@@ -1542,29 +1589,29 @@ bool LittleEngine::ReadTables(SmartString name)
     if(name.empty())
         name = ssNameOfDatFile;
 
-        std::wifstream in(SmartString(name).ToWideString(), ios_base::in);
-		if(in.fail() )
-			return false;
+    std::wifstream in(SmartString(name).ToWideString(), ios_base::in);
+	if(in.fail() )
+		return false;
 
-		std::wstring line;
-		std::getline(in, line);
-		if(line.substr(0, 12) != L"FalconCalc V" )
-			return false;
+	std::wstring line;
+	std::getline(in, line);
+	if(line.substr(0, 12) != L"FalconCalc V" )
+		return false;
 
-        while (std::getline(in, line))
+    while (std::getline(in, line))
+    {
+        if ((line != L"Variables:") && line != L"Functions:")
         {
-            if ((line != L"Variables:") && line != L"Functions:")
+            try
             {
-                try
-                {
-                    _InfixToPostFix(SmartString(line));    // handles assignements and function definitions as well
-                }
-                catch (...) // and puts them into 'variables' or 'functions'
-                {
-                    throw;
-                }
+                _InfixToPostFix(SmartString(line));    // handles assignements and function definitions as well
+            }
+            catch (...) // and puts them into 'variables' or 'functions'
+            {
+                throw;
             }
         }
+    }
     return clean = true;
 }
 /*========================================================
@@ -1661,14 +1708,14 @@ SmartString LittleEngine::ResultAsCharString() const
 void LittleEngine::GetVarFuncInfo(VarFuncInfo &vf)
 {
     vf.uBuiltinFuncCnt = numBuiltinFuncs;
-    vf.sBuiltinFuncs   = GetFunctions(true);
+    vf.sBuiltinFuncs   = SerializeFunctions(true);
     vf.uBuiltinVarCnt  = numBuiltinVars;
-    vf.sBuiltinVars    = GetVariables(true);
+    vf.sBuiltinVars    = SerializeVariables(true);
 
     vf.uUserFuncCnt    = functions.size() - numBuiltinFuncs;
-    vf.sUserFuncs      = GetFunctions(false);
+    vf.sUserFuncs      = SerializeFunctions(false);
     vf.uUserVarCnt     = variables.size();// -numBuiltinVars;
-    vf.sUserVars       = GetVariables(false);
+    vf.sUserVars       = SerializeVariables(false);
 
     vf.pOwner          = this;
 }
@@ -1681,10 +1728,10 @@ void LittleEngine::GetVarFuncInfo(VarFuncInfo &vf)
  * EXPECTS: flag for what to show
  * RETURNS: single SmartString containing variables in lines
  *          line format:
- *              name:value:unit:comment\n - for builins
- *              name:body:unit:comment\n - for user variables
+ *              name:value:comment:unit\n - for builins
+ *              name:body:comment:unit\n - for user variables
  *-----------------------------------------------------------*/
-SmartString LittleEngine::GetVariables(bool builtin) const
+SmartString LittleEngine::SerializeVariables(bool builtin) const
 {
     SmartString sres;
 
@@ -1708,8 +1755,9 @@ SmartString LittleEngine::GetVariables(bool builtin) const
     {
         for (auto& it : variables)
         {
-            sres += it.first + ssCommentDelimiterString + it.second.data.unit + ssCommentDelimiterString + 
-                    it.second.body + ssCommentDelimiterString + it.second.data.desc + "\n"_ss;
+            sres += it.first + ssCommentDelimiterString + it.second.body + 
+                            ssCommentDelimiterString + it.second.data.desc + 
+                            ssCommentDelimiterString + it.second.data.unit + "\n"_ss;
         }
     }
     return sres;
@@ -1725,7 +1773,7 @@ SmartString LittleEngine::GetVariables(bool builtin) const
  *            line format:
  *              name(arguments):body:description\n
  *-----------------------------------------------------------*/
-SmartString LittleEngine::GetFunctions(bool whatToShow) const
+SmartString LittleEngine::SerializeFunctions(bool whatToShow) const
 {
     SmartString sres;
     constexpr const int BUILTIN = 1;
@@ -1780,25 +1828,17 @@ bool LittleEngine::AddUserVariablesAndFunctions(SmartString def, int what) //wha
         // erase user functions/variables or both depending on 'what'
     VariableTable::iterator vit;
     FunctionTable::iterator fit;
-    vector<SmartString> names;
     switch(what)
     {
         case 0:
 				// erase existing user variables
-				// BUG: if a variable name was edited it is not erased and remains
-        case 1: for(vit = variables.begin(); vit != variables.end(); ++vit)
-                    names.push_back(vit->first);
-                for(unsigned i = 0; i < names.size(); ++i)
-                    variables.erase(names[i]);
+        case 1: variables.clear();
                 if(what == 1) // for 0: fall through
                     break;
 				// erase existing user functions
-				// BUG: if a function name was edited it is not erased and remains
-        case 2: for(fit = functions.begin(); fit != functions.end(); ++fit)
-                    if(!fit->second.builtin)
-                        names.push_back(fit->first);
-                for(unsigned i = 0; i < names.size(); ++i)
-                    functions.erase(names[i]);
+        case 2: for(auto &f:functions)
+                    if(!f.second.builtin)
+                        functions.erase(f.first);
         default:
                 break;
     }

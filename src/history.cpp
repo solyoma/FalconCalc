@@ -1,5 +1,5 @@
-﻿
-#include "StdAfx_zoli.h"
+﻿#include "StdAfx_zoli.h"
+#include "wcommon.h"
 using namespace nlib;
 #include "mainForm.h"
 #include "TStringList.h"
@@ -205,8 +205,8 @@ void TfrmHistory::FormSizeMoveEnded(void* sender, nlib::SizePositionChangedParam
 						 "snapped at bottom",
 						 "snapped at left"
 					   };
-	std::cout << "History: " <<
-		(_snappedToSide == FalconCalc::wsNone ? "unsnapped" : s[(int)_snappedToSide - 1]);
+	std::string dbgs = std::string("History: ") + std::string((_snappedToSide == FalconCalc::wsNone ? "unsnapped" : s[(int)_snappedToSide - 1]));
+	OutputDebugStringA(dbgs.c_str());
 
 #endif
 }
@@ -214,17 +214,17 @@ void TfrmHistory::FormSizeMoveEnded(void* sender, nlib::SizePositionChangedParam
 FalconCalc::WindowSide TfrmHistory::GetSnapSide()
 {
 	// determine snap area index
-	//   0: none 1 top, 2 right, 3 bottom, 4 left
-	RECT r = GetWindowRectWithoutDropShadow(Handle());
+	RECT r = wiHist.BareVisibleWindowRect();
 	_snapDist = _snapPixelLimit;
 	return _snappedToSide = ::GetSnapSide(r, _snapDist);
 }
 
 void TfrmHistory::Snap()
 {
-	RECT rbase = frmMain->WindowRect(),
-		 dr	   = WindowRect();
-	if (::SnapTo(rbase, dr, _snappedToSide, WinDistance(rbase, dr, _snappedToSide) ))	// get snap displacement into 'dr'
+	RECT rbase = wiMain.BareVisibleWindowRect(),
+			dr = wiHist.BareVisibleWindowRect();
+
+	if (::SnapTo(dr, _snappedToSide, WinDistance(rbase, dr, _snappedToSide) ))	// get snap displacement into 'dr'
 	{
 		++_busy;
 		MoveWindow(Handle(), dr.left, dr.top, dr.right - dr.left, dr.bottom - dr.top, true);

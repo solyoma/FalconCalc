@@ -279,8 +279,8 @@ namespace FalconCalc
                                 // 'dirty:' must re-calculate 'value', 
                                 // because any variable/function in 'definition' is redefined: 
 
-        SmartString body;       // text from the right hand side of the equal sign, none for builtins
-        TokenVec definition;    // processed body in postfix, none for builtins
+        SmartString body;       // text from the right hand side of the equal sign, empty for builtins
+        TokenVec definition;    // processed body in postfix, empty for builtins
 
         bool being_processed=false;     // under calculation (prevent recursion)
 
@@ -331,7 +331,7 @@ namespace FalconCalc
         SmartString desc;           // optional description
         RealNumber value;           // defined or calculated value
             // for BI functions:
-        bool builtin = true;            // builtin variable or function
+        bool builtin = true;            // builtin function (builtin variables are constants)
 
         BuiltInFunction function;              // for builtin functions only, at most 2 arguments
         bool useAngleUnit = false,      // for builtin trigonometric functions only (default: false)
@@ -481,7 +481,7 @@ namespace FalconCalc
         void _DoVariable(const Token &tok);
         void _DoFunction(const Token &tok);
         void _DoOperator(const Token &tok);
-		int _InfixToPostFix(const SmartString &expr); // postfix in 'tvPostfix' and returns 0 for assignment expression
+		int _InfixToPostFix(const SmartString expr); // postfix in 'tvPostfix' and returns 0 for assignment expression
         RealNumber _CalcPostfix(TokenVec& tv); // calculate the value using 'tv'
         SCharT _argSeparator = ',';
 	public:
@@ -491,10 +491,10 @@ namespace FalconCalc
         RealNumber Calculate();                                 // using infix and angleUnit
 		SmartString Postfix() const;                            // get converted data as SmartString
         void GetVarFuncInfo(VarFuncInfo &vf);                  // how many and what are they
-        SmartString GetVariables(bool builtin=false) const;     // in a single SmartString
-        SmartString GetFunctions(bool builtin=false) const;     // each line contains one var/func
-                                                                // <name>=<body>;<comment>ar/a
-                                                                // <name(arg1,...)>=<body>;<comment>
+        SmartString SerializeVariables(bool builtin=false) const;     // in a single SmartString
+                                                                // <name>:<body>:<comment>:<unit>
+        SmartString SerializeFunctions(bool builtin=false) const;     // each line contains one var/func
+                                                                // <name(arg1,...)>:<body>:<comment>
         bool AddUserVariablesAndFunctions(SmartString definition, int what); //0: any, 1: vars, 2: functions
 
 

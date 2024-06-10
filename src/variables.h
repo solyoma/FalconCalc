@@ -5,8 +5,8 @@ class ConditionFlag;
 class TfrmVariables : public nlib::Form
 {
 public:
-	virtual void Destroy();
 	TfrmVariables();
+	virtual void Destroy();
 
     void Setup(const FalconCalc::VarFuncInfo &vf);
 
@@ -48,12 +48,14 @@ private:
 	ConditionFlag _busy;					// e.g. don't handle snap
 	bool _underResize = false;	// user/builtin function pane
 	int  _gridH;				// size of user var/function grid during resize
+	int _activeTab = 0;
 
 	FalconCalc::WindowSide _snappedToSide = FalconCalc::wsNone;
 	int _snapPixelLimit = 10;	// pixels snap if inside this distance from, main window
 	int _snapDist = 0;			// when '_snapped' is true: distance from '_snappedToSide'
+	int _colW[2][4] = { {80,100,60,300},{50,200,60,300} };
 
-    void _CollectInto(SmartString &dest, size_t &cnt);    // from stringrid on actual page
+    void _SerializeInto(SmartString &dest, size_t &cnt);    // from stringrid on actual page
 	void SetupGridLayout(int tabIndex = 0);	// 0: functions, 1: variables
 N_PRIVATE: /* Designer generated list of private members. Do not edit by hand. */
 	void InitializeFormAndControls(); /* Control initializations. Do not remove. */

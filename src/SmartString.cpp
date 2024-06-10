@@ -127,6 +127,11 @@ namespace SmString {
 		rTrim();
 	}
 
+	void SmartString::RemoveWhiteSpace()
+	{
+		erase(std::remove_if(begin(), end(), [](SCharT ch) {return std::isspace((wchar_t)ch.Unicode(), std::cout.getloc()); }), end());
+	}
+
 	StringVector SmartString::Split(const SCharT ch, bool keepEmpty) const
 	{
 		StringVector sv;
@@ -359,17 +364,20 @@ namespace SmString {
 			return -1;
 #endif
 	}
-	void SmartString::toUpper()
+	SmartString& SmartString::toUpper()
 	{
 		std::locale loc = std::cout.getloc();
 		for (auto& ch : *this)
 			ch = (char16_t)std::toupper((wchar_t)ch, loc);
+		return *this;
 	}
-	void SmartString::toLower()
+	SmartString& SmartString::toLower()
 	{
 		std::locale loc = std::cout.getloc();
+		//std::locale loc("HU_hu");
 		for (auto& ch : *this)
 			ch = (char16_t)std::tolower((wchar_t)ch, loc);
+		return *this;
 	}
 
 	void SmartString::Reverse() // order of characters

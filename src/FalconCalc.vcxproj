@@ -124,6 +124,7 @@
     </ClCompile>
     <ClCompile Include="TStringList.cpp" />
     <ClCompile Include="variables.cpp" />
+    <ClCompile Include="wcommon.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="calculate.h" />
@@ -140,6 +141,7 @@
     <ClInclude Include="stdafx_lc.h" />
     <ClInclude Include="TStringlist.h" />
     <ClInclude Include="variables.h" />
+    <ClInclude Include="wcommon.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="nresource.rc" />

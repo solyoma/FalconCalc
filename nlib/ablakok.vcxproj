@@ -154,10 +154,10 @@
       <Optimization>Disabled</Optimization>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PreprocessorDefinitions>ZLIB_WINAPI;DESIGNING;DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>\vegyes\FalconCalc\nlib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeaderFile>stdafx_zoli.h</PrecompiledHeaderFile>
       <LanguageStandard>Default</LanguageStandard>
-      <PreprocessToFile>true</PreprocessToFile>
+      <PreprocessToFile>false</PreprocessToFile>
       <ShowIncludes>false</ShowIncludes>
     </ClCompile>
     <Link>

@@ -140,8 +140,8 @@ public:
 	int indexOf(const SCharT ch, size_t pos = 0) const;			// start from 'pos'
 	int indexOf(const SmartString ns, size_t pos = 0) const;	// only first occurance
 	int indexOfRegex(const SmartString regexpString, size_t pos = 0) const;		// only first occurance
-	void toUpper();
-	void toLower();
+	SmartString& toUpper();			// in this strin
+	SmartString& toLower();
 	SmartString asUpperCase() const { SmartString s = *this; s.toUpper(); return s; }
 	SmartString asLowerCase() const { SmartString s = *this; s.toLower(); return s; }
 
@@ -153,6 +153,7 @@ public:
 	void lTrim();
 	void rTrim();
 	void Trim();
+	void RemoveWhiteSpace();	// eben from inside
 
 	StringVector Split(const SCharT ch, bool keepEmpty) const;
 	StringVector SplitRegex(const SmartString regex, bool keepEmpty) const;	// TODO
