@@ -724,7 +724,14 @@ TfrmMain::TfrmMain()
 	lengine->displayFormat.displWidth = 59;
 
 	lengine->ssNameOfDatFile = SmartString(AppendToPath(_wsUserDir, FalconCalc_DAT_FILE).c_str());
-    lengine->ReadTables();
+	try
+	{
+		lengine->LoadUserData();	// may throw because of many errors
+	}
+	catch (...)
+	{
+		;
+	}
 	// add the clipboard and set this window as a "viewer"
 	MyClipboard = new Clipboard();	   // messages arrive after
 	MyClipboard->Activate( Handle() ); // Handle() is called first
@@ -796,7 +803,7 @@ TfrmMain::~TfrmMain()
 
 void TfrmMain::Destroy()
 {
-	lengine->SaveTables();
+	lengine->SaveUserData();
     _SaveState(AppendToPath(_wsUserDir, FalconCalc_CFG_FILE).c_str());
     pslHistory->SaveToFile(AppendToPath(_wsUserDir, FalconCalc_HIST_FILE).c_str());
     delete pslHistory;
@@ -1062,23 +1069,31 @@ void TfrmMain::miAppendClick(void *sender, nlib::EventParameters param)
 
 void TfrmMain::miEditVarsClick(void *sender, nlib::EventParameters param)
 {
-	int tag = ((MenuItem*)sender)->Tag();
+	MenuItem* pVarMenu = (MenuItem*)sender;
+	int tag = pVarMenu->Tag();		// 0 variables,  1: functions
 	if (frmVariables)
 	{
 		if (tag != frmVariables->tcVars->SelectedTab())		// switch TAB
+		{
 			frmVariables->tcVars->SetSelectedTab(tag);
+			bool bvar = tag ? false : true,
+				bfunc = tag ? true : false;
+			miEditVars->SetChecked(bvar);
+			miEditFuncs->SetChecked(bfunc);
+		}
 		else
 		{
 			frmVariables->Close();
-			((MenuItem*)sender)->SetChecked(false);
 			frmVariables = nullptr;
 			wiVars.RefreshInfo();
+			miEditVars->SetChecked (false);
+			miEditFuncs->SetChecked(false);
 		}
 	}
 	else
 	{
 		OpenVarsOrFunctions(sender, tag, param);
-		((MenuItem*)sender)->SetChecked(true);
+		pVarMenu->SetChecked(true);
 	}
 	SetFocus(edtInfix->Handle());
 }
@@ -1393,19 +1408,22 @@ static const wstring
  *			==0 => error, equal line not found
  * REMARKS: keeps empty fields as empty wstrings
  *------------------------------------------------------------*/
-static int __ReadAndExpandLine(FileStream& fs, std::vector<wstring>& data)
+static int __ReadAndSplitLine(FileStream& fs, std::vector<wstring>& data)
 {
 	if (fs.eof())	// no more output?
 		return 0;
 
 	wchar_t wbuf[1024];
-	fs.getline(wbuf, 1023);
-
-	SmartString s(wbuf);
+	SmartString s;
+	do
+	{
+		fs.getline(wbuf, 1023);
+		s = SmartString(wbuf);
+		s.Trim();
+	} while (!fs.eof() && s.empty() );
 
 	std::vector<SmartString> sdata;
 
-	s.Trim();
 	int n = s.indexOf('=');
 	if (n < 0)
 		return -1;
@@ -1449,7 +1467,7 @@ bool TfrmMain::_SaveState(wstring name)
 
      if(fs.fail())
         return false;
-    fs << "FalconCalc State File V1.0\n";
+    fs << STATE_VER_STRING << "\n";
 	fs << MAINFORMAT<< (int)lengine->displayFormat.mainFormat << "\n";
 
 	//int u = UpDown1->Position() + (chkDecDigits->Checked() ? 0x100 : 0); // 0x100: checked state. must use Position as num_digits may be -1
@@ -1487,8 +1505,9 @@ bool TfrmMain::_LoadState(wstring name)
 	wchar_t wbuf[1024];// , nam[1024];
 	fs.getline(wbuf,1023);
 
-    if(wcscmp(wbuf, L"FalconCalc State File V1.0"))
+    if(wcscmp(wbuf, STATE_VER_STRING) )
         return false;
+
     int n, val =0;
 
 	std::vector<wstring> data;
@@ -1683,7 +1702,7 @@ bool TfrmMain::_LoadState(wstring name)
 
 	wstring wsLlastInfix;
 
-	while ((n = __ReadAndExpandLine(fs, data)))
+	while ((n = __ReadAndSplitLine(fs, data)))
 	{
 		if (data[0][data[0].length() - 1] == SCharT('='))	// valid line
 		{

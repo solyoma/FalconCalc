@@ -1,5 +1,9 @@
 ﻿#include "calculate.h"
+
 using namespace nlib;
+
+constexpr auto VERSION_STRING = L"FalconCalc V1.1";
+
 
 #include <math.h>
 
@@ -44,10 +48,6 @@ extern FalconCalc::LittleEngine* lengine;
  * NAMESPACE FalconCalc
  *-------------------------------------------------------------*/
 namespace FalconCalc {
-// originally this was a 'const SmartString', but it became(?) empty in
-// SaveTables() under RAD Studio XE
-constexpr auto VERSION_STRING = "FalconCalc V1.0";
-
 
 const SCharT schCommentDelimiter = SCharT(':');
 const SmartString ssCommentDelimiterString(1,schCommentDelimiter);
@@ -284,7 +284,7 @@ void Token::_GetDecDigits(const SmartString &text, unsigned &pos)
 //#else
 	locale loc = cout.getloc();
 //#endif
-	while(pos < text.length() && isdigit(text[pos],loc) )
+	while(pos < text.length() && isdigit(text[pos], loc) )
 		++pos;
 }
 
@@ -1520,7 +1520,7 @@ SmartString LittleEngine::Postfix() const
  * RETURNS: true: if there was no need to save the data or the save was
  *          successful, false otherwise
  *-----------------------------------------------------------*/
-bool LittleEngine::SaveTables(SmartString filename) // if it wasn't read and no name is given it won't be saved
+bool LittleEngine::SaveUserData(SmartString filename) // if it wasn't read and no name is given it won't be saved
 {
     if(clean && (filename.empty() || ssNameOfDatFile == filename))                    // 
         return true;       // don't save if it was saved already into this file
@@ -1534,45 +1534,47 @@ bool LittleEngine::SaveTables(SmartString filename) // if it wasn't read and no 
 	ofs.open(SmartString(filename).ToWideString(), ios_base::out);
 	if( ofs.fail() )
 			return false;
-	ofs << VERSION_STRING << L"\nVariables\n";
+    locale loc = cout.getloc();
+    SmartString sLocale(loc.name());
+
+	ofs << VERSION_STRING << "\n[Locale]\nloc=" <<  sLocale.ToWideString()
+        << L"\n\n[Variables]\n";
     std::wstring sDelim = ssCommentDelimiterString.ToWideString();
 	if(variables.size() )                       // these are the user defined variables only
 	{
-        VariableTable::iterator vit;
-		for(vit = variables.begin(); vit != variables.end(); ++vit)
+		for(auto &vit : variables)
         {
-			ofs << vit->first.ToWideString() << L"=" << vit->second.body.ToWideString();
-            if (!vit->second.data.desc.empty())
-                ofs << sDelim << vit->second.data.desc.ToWideString();
-            else if (!vit->second.data.unit.empty())
+			ofs << vit.second.data.name.ToWideString() << L"=" << vit.second.body.ToWideString();
+            if (!vit.second.data.desc.empty())
+                ofs << sDelim << vit.second.data.desc.ToWideString();
+            else if (!vit.second.data.unit.empty())
                 ofs << sDelim;
-            if(!vit->second.data.unit.empty())
-				ofs << sDelim << vit->second.data.unit.ToWideString();
+            if(!vit.second.data.unit.empty())
+				ofs << sDelim << vit.second.data.unit.ToWideString();
 
 			ofs << endl;
 		}
 	}
-	ofs << ("Functions\n"_ss).ToWideString();
+	ofs << ("\n[Functions]\n"_ss).ToWideString();
 	if(functions.size() )
 	{
-        FunctionTable::iterator fit;
-		for(fit = functions.begin(); fit != functions.end(); ++fit)
+		for(auto &fit : functions)
 		{
-			if(fit->second.builtin)
+			if(fit.second.builtin)
 				continue;
-			ofs << fit->first.ToWideString() << ("("_ss).ToWideString();
-			if(!fit->second.args.empty())
+			ofs << fit.second.name.ToWideString() << ("("_ss).ToWideString();
+			if(!fit.second.args.empty())
 			{
 				vector<SmartString>::const_iterator vit;
-				vit = fit->second.args.begin();
+				vit = fit.second.args.begin();
 				ofs << (*vit).ToWideString();
 				++vit;
-				for( ; vit != fit->second.args.end(); ++vit)
+				for( ; vit != fit.second.args.end(); ++vit)
 					ofs << ", " << (*vit).ToWideString();
 			}
-			ofs << " = " << fit->second.body.ToWideString();
-			if(!fit->second.desc.empty() )
-				ofs << schCommentDelimiter << fit->second.desc.ToWideString();
+			ofs << " = " << fit.second.body.ToWideString();
+			if(!fit.second.desc.empty() )
+				ofs << schCommentDelimiter << fit.second.desc.ToWideString();
 			ofs << endl;
 		}
 	}
@@ -1584,7 +1586,7 @@ bool LittleEngine::SaveTables(SmartString filename) // if it wasn't read and no 
  * EXPECTS: file name
  * RETURNS: true for success or false for error
  *-----------------------------------------------------------*/
-bool LittleEngine::ReadTables(SmartString name)
+bool LittleEngine::LoadUserData(SmartString name)
 {
     if(name.empty())
         name = ssNameOfDatFile;
@@ -1595,23 +1597,55 @@ bool LittleEngine::ReadTables(SmartString name)
 
 	std::wstring line;
 	std::getline(in, line);
+    
 	if(line.substr(0, 12) != L"FalconCalc V" )
 		return false;
 
-    while (std::getline(in, line))
+    SmartString s;
+    auto __GetLine = [&]()
+        {
+            int i = -1;
+            while (std::getline(in, line))
+            {
+                s = line;
+                if ((i = s.indexOf('#')) >= 0)
+                    s.erase(s.begin() + i, s.end());
+                s.Trim();
+                if (!s.empty())
+                    return s;
+            }
+            s.clear();
+            return s;
+        };
+
+    if (!__GetLine().empty() && s == SmartString("[Locale]") )   // get locale name
     {
-        if ((line != L"Variables:") && line != L"Functions:")
+        if (!__GetLine().empty() )
+            if(s.indexOf(u'=') > 0 )   // loc=locale
+            {
+                locale      loc(s.mid(s.indexOf(u'=')+1).ToUtf8String().c_str());
+                in.imbue(   loc);
+                cout.imbue( loc);
+                __GetLine();
+            }
+    }
+
+    while (!s.empty())
+    {
+        if (s != SmartString("[Variables]") && s != SmartString("[Functions]"))
         {
             try
             {
-                _InfixToPostFix(SmartString(line));    // handles assignements and function definitions as well
+                _InfixToPostFix(s);    // handles assignements and function definitions as well
             }
             catch (...) // and puts them into 'variables' or 'functions'
             {
                 throw;
             }
         }
+        __GetLine();
     }
+
     return clean = true;
 }
 /*========================================================
@@ -1755,7 +1789,7 @@ SmartString LittleEngine::SerializeVariables(bool builtin) const
     {
         for (auto& it : variables)
         {
-            sres += it.first + ssCommentDelimiterString + it.second.body + 
+            sres += it.second.data.name + ssCommentDelimiterString + it.second.body + 
                             ssCommentDelimiterString + it.second.data.desc + 
                             ssCommentDelimiterString + it.second.data.unit + "\n"_ss;
         }
@@ -1778,21 +1812,20 @@ SmartString LittleEngine::SerializeFunctions(bool whatToShow) const
     SmartString sres;
     constexpr const int BUILTIN = 1;
 
-    FunctionTable::const_iterator it;
-    for(it = functions.begin(); it != functions.end(); ++it)
-        if(it->second.builtin == whatToShow)
+    for(auto &it : functions)
+        if(it.second.builtin == whatToShow)
         {
-            sres += it->first + "("_ss;
+            sres += it.second.name + "("_ss;
             if (whatToShow)
                 sres += "x"_ss;
             else
-                for(unsigned j = 0; j < it->second.args.size(); ++j)
+                for(unsigned j = 0; j < it.second.args.size(); ++j)
                 {
                     if(j)
                         sres += SmartString(_argSeparator) + SmartString(" "_ss);
-                    sres += it->second.args[j];
+                    sres += it.second.args[j];
                 }
-            sres += ")"_ss + ssCommentDelimiterString + it->second.body + SmartString(schCommentDelimiter) + it->second.desc + "\n"_ss;
+            sres += ")"_ss + ssCommentDelimiterString + it.second.body + SmartString(schCommentDelimiter) + it.second.desc + "\n"_ss;
         }
     return sres;
 }

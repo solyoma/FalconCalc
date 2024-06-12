@@ -495,11 +495,12 @@ namespace FalconCalc
                                                                 // <name>:<body>:<comment>:<unit>
         SmartString SerializeFunctions(bool builtin=false) const;     // each line contains one var/func
                                                                 // <name(arg1,...)>:<body>:<comment>
+
         bool AddUserVariablesAndFunctions(SmartString definition, int what); //0: any, 1: vars, 2: functions
 
 
-        bool ReadTables(SmartString name=SmartString()); // no name: uses FalconCal_DAT_FILE in user directorr
-        bool SaveTables(SmartString name=SmartString()); // if it wasn't read and no name is given it wont be saved
+        bool LoadUserData(SmartString name=SmartString()); // no name: uses FalconCal_DAT_FILE in user directorr
+        bool SaveUserData(SmartString name=SmartString()); // if it wasn't read and no name is given it wont be saved
         bool ResultOk() const { return calcResult.IsValid(); }
         RealNumber Result() const { return calcResult; }
         SmartString ResultAsDecString();

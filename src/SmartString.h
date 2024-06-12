@@ -150,10 +150,13 @@ public:
 	void FromWideString(const std::wstring& ws);
 	std::wstring ToWideString() const;
 
-	void lTrim();
-	void rTrim();
+	void LTrim();
+	void RTrim();
 	void Trim();
-	void RemoveWhiteSpace();	// eben from inside
+	SmartString LTrimmed() { SmartString s = *this; s.LTrim(); return s; }
+	SmartString RTrimmed() { SmartString s = *this; s.RTrim(); return s; }
+	SmartString Trimmed () { SmartString s = *this; s.Trim(); return s; }
+	void RemoveWhiteSpace();	// even from inside
 
 	StringVector Split(const SCharT ch, bool keepEmpty) const;
 	StringVector SplitRegex(const SmartString regex, bool keepEmpty) const;	// TODO

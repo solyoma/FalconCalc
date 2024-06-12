@@ -111,20 +111,20 @@ namespace SmString {
 		}
 	}
 
-	void SmartString::lTrim()
+	void SmartString::LTrim()
 	{
 		erase(begin(), std::find_if(begin(), end(), [](SCharT ch) {return !std::isspace((wchar_t)ch.Unicode(), std::cout.getloc()); }));
 	}
 
-	void SmartString::rTrim()
+	void SmartString::RTrim()
 	{
 		erase(std::find_if(rbegin(), rend(), [](SCharT ch) {return !std::isspace((wchar_t)ch.Unicode(), std::cout.getloc()); }).base(), end());
 	}
 
 	void SmartString::Trim()
 	{
-		lTrim();
-		rTrim();
+		LTrim();
+		RTrim();
 	}
 
 	void SmartString::RemoveWhiteSpace()
