@@ -1671,7 +1671,7 @@ SmartString LittleEngine::ResultAsDecString()
  * EXPECTS:
  * RETURNS:
  *-----------------------------------------------------------*/
-SmartString LittleEngine::ResultAsHexString() const
+SmartString LittleEngine::ResultAsHexString() 
 {
     DisplayFormat fmt = displayFormat;
     fmt.base = DisplayBase::rnbHex;
@@ -1682,7 +1682,7 @@ SmartString LittleEngine::ResultAsHexString() const
  * EXPECTS:
  * RETURNS:
  *-----------------------------------------------------------*/
-SmartString LittleEngine::ResultAsOctString() const
+SmartString LittleEngine::ResultAsOctString() 
 {
     DisplayFormat fmt = displayFormat;
     fmt.base = DisplayBase::rnbOct;
@@ -1693,7 +1693,7 @@ SmartString LittleEngine::ResultAsOctString() const
  * EXPECTS:
  * RETURNS:
  *-----------------------------------------------------------*/
-SmartString LittleEngine::ResultAsBinString() const
+SmartString LittleEngine::ResultAsBinString() 
 {
     DisplayFormat fmt = displayFormat;
     fmt.base = DisplayBase::rnbBin;
@@ -1711,7 +1711,7 @@ SmartString LittleEngine::ResultAsBinString() const
  * REMARKS: example: 3 684 666 -> 0x38393A -> "89:"
  *          only the integer part of 
  *------------------------------------------------------------*/
-SmartString LittleEngine::ResultAsCharString() const
+SmartString LittleEngine::ResultAsCharString() 
 {
     DisplayFormat fmt;
     fmt.base = DisplayBase::rnbHex;

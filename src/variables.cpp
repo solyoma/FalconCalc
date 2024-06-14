@@ -34,7 +34,7 @@ void TfrmVariables::InitializeFormAndControls() /* Control initialization functi
 	tcVars->SetTabOrder(VARIABLES);
 	nlib::Tab *temp_var0062653624 = tcVars->AddTab(L"&Functions");
 	temp_var0062653624->SetTag(1);
-	tcVars->SetSelectedTab(FUNCTIONS);
+	tcVars->SetSelectedTab(VARIABLES);
 	tcVars->SetParent(this);
 
 	sgUser = new nlib::StringGrid();
@@ -390,27 +390,28 @@ void TfrmVariables::tcVarsTabChange(void *sender, nlib::TabChangeParameters para
 			break;
 		case VARIABLES:
 			sUserData = psUser->Split(SCharT('\n'), false);
-			if (sUserData.size() < 2)
-				break;
-			// fields: <name>:<definition>[:<comment>[:<unit>]]
-			// size: 2,3,4
-			for (size_t i = 1; i <= cntUser; ++i)
+			if (!sUserData.empty())
 			{
-				sUserLines = sUserData[i-1].Split(schCommentDelimiter, true);
-				sgUser->SetString(0,i,sUserLines[0].ToWideString());		// name
-				sgUser->SetString(1,i,sUserLines[1].ToWideString());		// definition
-				sgUser->SetString(2,i,L"-");								// unit (may be modified below)
-				switch (sUserLines.size())
+				// fields: <name>:<definition>[:<comment>[:<unit>]]
+				// size: 2,3,4
+				for (size_t i = 1; i <= cntUser; ++i)
 				{
-					case 2:	// nothing, no comment, no unit
-						break;
-					case 3:	// comment but no unit
-						sgUser->SetString(3, i, sUserLines[2].ToWideString());
-						break;
-					default:// comment and unit
-						sgUser->SetString(2, i, sUserLines[3].ToWideString());
-						sgUser->SetString(3, i, sUserLines[2].ToWideString());
-						break;
+					sUserLines = sUserData[i - 1].Split(schCommentDelimiter, true);
+					sgUser->SetString(0, i, sUserLines[0].ToWideString());		// name
+					sgUser->SetString(1, i, sUserLines[1].ToWideString());		// definition
+					sgUser->SetString(2, i, L"-");								// unit (may be modified below)
+					switch (sUserLines.size())
+					{
+						case 2:	// nothing, no comment, no unit
+							break;
+						case 3:	// comment but no unit
+							sgUser->SetString(3, i, sUserLines[2].ToWideString());
+							break;
+						default:// comment and unit
+							sgUser->SetString(2, i, sUserLines[3].ToWideString());
+							sgUser->SetString(3, i, sUserLines[2].ToWideString());
+							break;
+					}
 				}
 			}
 			sBuiltinData = psBuiltin->Split(SCharT('\n'), false);

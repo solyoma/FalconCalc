@@ -7,8 +7,8 @@
     type Form
     {
         Name = "frmMain"
-        Left = "435"
-        Top = "603"
+        Left = "454"
+        Top = "615"
         Text = "FalconCalc"
         class Font
         {
@@ -26,7 +26,7 @@
         CreationOrder = "0"
         Menu = "mnuMain"
         ClientWidth = "528"
-        ClientHeight = "376"
+        ClientHeight = "419"
         event OnStartSizeMove = "StartMove"
         event OnMove = "FormMove"
         event OnClose = "FormClose"
@@ -320,7 +320,7 @@
             Name = "btnOpenHexOptions"
             AccessLevel = "alPublic"
             Left = "14"
-            Top = "279"
+            Top = "311"
             Width = "228"
             Height = "12"
             Text = "-----------Hex. options------------------"
@@ -483,7 +483,7 @@
             Left = "8"
             Top = "29"
             Width = "513"
-            Height = "21"
+            Height = "22"
             Anchors = "caLeft, caTop, caRight, caBottom"
             class Font
             {
@@ -665,7 +665,7 @@
             Left = "8"
             Top = "191"
             Width = "505"
-            Height = "86"
+            Height = "110"
             TabOrder = "3"
             InnerBorderStyle = "pbsNone"
 
@@ -676,7 +676,7 @@
                 Left = "11"
                 Top = "1"
                 Width = "219"
-                Height = "88"
+                Height = "104"
                 Text = "Decimal options"
                 Padding = "0, 0, 0, 0"
                 class Font
@@ -711,9 +711,9 @@
                 {
                     Name = "cbThousandSep"
                     AccessLevel = "alPublic"
-                    Left = "168"
-                    Top = "16"
-                    Width = "47"
+                    Left = "166"
+                    Top = "13"
+                    Width = "51"
                     Height = "24"
                     Text = "spc"
                     class Font
@@ -742,7 +742,7 @@
                     Name = "chkSci"
                     AccessLevel = "alPublic"
                     Left = "8"
-                    Top = "32"
+                    Top = "45"
                     Width = "133"
                     Height = "17"
                     Text = "&Scientific format"
@@ -761,7 +761,7 @@
                     Name = "chkEng"
                     AccessLevel = "alPublic"
                     Left = "8"
-                    Top = "48"
+                    Top = "62"
                     Width = "141"
                     Height = "17"
                     Text = "Engeneering f&ormat"
@@ -780,7 +780,7 @@
                     Name = "chkDecDigits"
                     AccessLevel = "alPublic"
                     Left = "8"
-                    Top = "64"
+                    Top = "80"
                     Width = "141"
                     Height = "17"
                     Text = "&Decimal digits:"
@@ -798,8 +798,8 @@
                 {
                     Name = "spnDecDigits"
                     AccessLevel = "alPublic"
-                    Left = "141"
-                    Top = "63"
+                    Left = "166"
+                    Top = "77"
                     Width = "37"
                     Height = "21"
                     Text = "0"
@@ -815,14 +815,26 @@
 
                 type UpDown
                 {
-                    Name = "UpDown1"
+                    Name = "UpDownDecDigits"
                     AccessLevel = "alPublic"
-                    Left = "177"
-                    Top = "63"
+                    Left = "202"
+                    Top = "77"
                     Width = "17"
                     Height = "21"
                     AttachedEditor = "spnDecDigits"
                     MaxValue = "20"
+                }
+
+                type Checkbox
+                {
+                    Name = "chkDecDelim"
+                    AccessLevel = "alPublic"
+                    Left = "8"
+                    Top = "31"
+                    Width = "152"
+                    Height = "16"
+                    Text = "Use decimal separator"
+                    TabOrder = "6"
                 }
             }
 
@@ -921,18 +933,6 @@
                     TooltipText = "360º = 1 turn"
                     event OnClick = "rdDegClick"
                 }
-
-                type Radiobox
-                {
-                    Name = "Radiobox2"
-                    AccessLevel = "alPublic"
-                    Left = "100"
-                    Top = "22"
-                    Width = "96"
-                    Height = "0"
-                    Text = "Radiobox2"
-                    TabOrder = "4"
-                }
             }
 
             type Groupbox
@@ -940,7 +940,7 @@
                 Name = "gbDisplayFormat"
                 AccessLevel = "alPublic"
                 Left = "236"
-                Top = "47"
+                Top = "59"
                 Width = "256"
                 Height = "46"
                 Text = "Display"
@@ -1038,7 +1038,7 @@
             Name = "pnlHexOpt"
             AccessLevel = "alPublic"
             Left = "8"
-            Top = "293"
+            Top = "325"
             Width = "507"
             Height = "82"
             TabOrder = "4"
@@ -1308,7 +1308,7 @@
             Name = "btnCloseHexOptions"
             AccessLevel = "alPublic"
             Left = "14"
-            Top = "279"
+            Top = "311"
             Width = "228"
             Height = "12"
             Text = "-------------------------------------------"
@@ -1602,8 +1602,8 @@
     type Form
     {
         Name = "frmHistory"
-        Left = "435"
-        Top = "1033"
+        Left = "443"
+        Top = "1090"
         Text = "FalconCalc History"
         class Font
         {

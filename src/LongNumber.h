@@ -115,8 +115,10 @@ namespace LongNumber {
 		SignOption signOption = SignOption::soNormal;
 		SmartString strThousandSeparator;		// for decimal format. Empty: no separator
 		bool useFractionSeparator = false;		// when true use a space character
-		size_t nFormatSwitchLength = 40;		// for decimal display: if abs. value of the exponent is
-												// larger than this display will change to Sci automatically
+		size_t nFormatSwitchIntLength = 40,		// for decimal display: if the exponent is
+												// larger than this 
+				nFormatSwitchFracLength = 9;	// or -exp larger than this
+												// display will change to Sci automatically
 												// for non base 10 display the maximum length
 												// of the string in that base
 // only hex or binary display
@@ -405,20 +407,20 @@ namespace LongNumber {
 		RealNumber RoundedToDigits(int toThisManySignificantDigits	,int cntIntDigits=-1) const;  // rounds _numberString in copy
 		RealNumber RoundToDigits(int toThisManySignificantDigits	,int cntIntDigits=-1);		    // rounds _numberString in the number itself
 
-		SmartString ToBinaryString(const DisplayFormat& format) const;
-		SmartString ToOctalString(const DisplayFormat& format) const;
-		SmartString ToHexString(const DisplayFormat& format) const;
-		SmartString ToDecimalString(const DisplayFormat& format) const;
+		SmartString ToBinaryString(const DisplayFormat& format);
+		SmartString ToOctalString(const DisplayFormat& format);
+		SmartString ToHexString(const DisplayFormat& format);
+		SmartString ToDecimalString(const DisplayFormat& format);
 		SmartString ToTextString(const DisplayFormat& format, TextFormat textFormat) const;
 
-		SmartString ToString(const DisplayFormat& format, TextFormat textFormat = TextFormat::rntfAnsi) const;
-		SmartString ToString() const				// format as decimal string with default settings
+		SmartString ToString(const DisplayFormat& format, TextFormat textFormat = TextFormat::rntfAnsi);
+		SmartString ToString()					// format as decimal string with default settings
 		{
 			DisplayFormat format;
 			return ToString(format);
 		}
 
-		LDouble ToLongDouble() const;	// may return +/- Inf if number is infinite or doesn't fit into a (long) double and NaN if number is Nan
+		LDouble ToLongDouble();	// may return +/- Inf if number is infinite or doesn't fit into a (long) double and NaN if number is Nan
 		int64_t ToInt64() const;
 
 		RealNumber Int() const;		// discard fractional part
@@ -484,6 +486,27 @@ namespace LongNumber {
 		static SCharT _decPoint;	// get from locale
 		EFlagSet _eFlags;
 
+		struct _DisplData
+		{
+			DisplayFormat fmt;
+
+			int		nLeadingDecimalZeros = 0;
+			int		cntThousandSeparators = 0;
+			int		exp;
+
+			size_t	nWSign = 0;
+			size_t	nIntegerDigits = 0;		// in _numberString ( if > _numberstring.length() logically right extended by '0's when needed)
+			size_t  nWIntegerPart = 1;		// width of whole integer part of formatted string w.o. sign
+			size_t  nWDisplayW =size_t(-1);
+			size_t	nReqdDecDigits = 0;		// this many decimal digits are in _numberString
+			size_t	nWFractionalPart = 0;	// includes decimal point
+			size_t	expLen = 0;
+			size_t	nWDecPoint = 0;
+
+			SmartString strExponent;
+		};
+		_DisplData _dsplD;
+
 	private:	  // these are modified every time _maxLength is changed
 		inline void _GetDecPoint() noexcept
 		{
@@ -527,7 +550,7 @@ namespace LongNumber {
 		void _SetInf();
 								// allocates may change nIntDigits: stores the position in the result string
 		SmartString _IntegerPartToString(const SmartString &sNumber, int sign, const DisplayFormat &format, size_t &nIntDigits, size_t chunkSize, bool prefixToAllChunks) const;
-		SmartString _DecimalPartToString(const SmartString& sNumber, const DisplayFormat& format, size_t& nIntDigits, int cntLeadingZeros) const;
+		SmartString _DecimalPartToString(const SmartString& sNumber, _DisplData &disp, size_t& nIntDigits) const;
 		SmartString _RoundNumberString(SmartString& s, int& cntIntegerDigits /* == _exponent + 1 */, int roundingPosition, int cntLeadingZeros) const;
 
 		SCharT _AddDigits(SCharT digit1, SCharT digit2, int& carry) const;

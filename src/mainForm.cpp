@@ -50,7 +50,7 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	SetWantedKeyTypes(nlib::wkArrows | nlib::wkTab | nlib::wkEnter | nlib::wkEscape | nlib::wkOthers);
 	SetShowPosition(nlib::fspActiveMonitorCenter);
 	SetBorderStyle(nlib::fbsSingle);	// setting to fbsSingle makes this unmoveable
-	SetClientRect(nlib::Rect(0, 0, 528, 372 + GetSystemMetrics(SM_CYMENU)));
+	SetClientRect(nlib::Rect(0, 0, 528, 419 + GetSystemMetrics(SM_CYMENU)));
 
 	FontDialog1 = new nlib::FontDialog();
 	FontDialog1->GetFont().SetFamily(L"Tahoma");
@@ -113,7 +113,7 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	mnuMain->SetParent(this);
 
 	btnOpenHexOptions = new nlib::FlatButton();
-	btnOpenHexOptions->SetBounds(nlib::Rect(14, 279, 242, 291));
+	btnOpenHexOptions->SetBounds(nlib::Rect(14, 311, 242, 323));
 	btnOpenHexOptions->SetText(L"-----------Hex. options------------------");
 	btnOpenHexOptions->SetVisible(false);
 	btnOpenHexOptions->GetFont().SetFamily(L"Tahoma");
@@ -280,13 +280,13 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	pnlBin->SetParent(gbResults);
 
 	pnlDecOpt = new nlib::Panel();
-	pnlDecOpt->SetBounds(nlib::Rect(8, 191, 513, 277));
+	pnlDecOpt->SetBounds(nlib::Rect(8, 191, 513, 301));
 	pnlDecOpt->SetTabOrder(3);
 	pnlDecOpt->SetInnerBorderStyle(nlib::pbsNone);
 	pnlDecOpt->SetParent(this);
 
 	gbDecOptions = new nlib::Groupbox();
-	gbDecOptions->SetBounds(nlib::Rect(11, 1, 230, 89));
+	gbDecOptions->SetBounds(nlib::Rect(11, 1, 230, 105));
 	gbDecOptions->SetText(L"Decimal options");
 	gbDecOptions->SetPadding(nlib::Rect(0, 0, 0, 0));
 	gbDecOptions->GetFont().SetFamily(L"Tahoma");
@@ -305,8 +305,14 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	chkSep->SetState(nlib::csChecked);
 	chkSep->SetParent(gbDecOptions);
 
+	chkDecDelim = new nlib::Checkbox();
+	chkDecDelim->SetBounds(nlib::Rect(8, 31, 160, 47));
+	chkDecDelim->SetText(L"Use decimal separator");
+	chkDecDelim->SetTabOrder(6);
+	chkDecDelim->SetParent(gbDecOptions);
+
 	cbThousandSep = new nlib::Combobox();
-	cbThousandSep->SetBounds(nlib::Rect(168, 16, 215, 40));
+	cbThousandSep->SetBounds(nlib::Rect(166, 13, 217, 40));
 	cbThousandSep->SetText(L"spc");
 	cbThousandSep->GetFont().SetFamily(L"Tahoma");
 	cbThousandSep->GetFont().SetSize(10);
@@ -321,7 +327,7 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	cbThousandSep->SetParent(gbDecOptions);
 
 	chkSci = new nlib::Checkbox();
-	chkSci->SetBounds(nlib::Rect(8, 32, 141, 49));
+	chkSci->SetBounds(nlib::Rect(8, 45, 141, 62));
 	chkSci->SetText(L"&Scientific format");
 	chkSci->GetFont().SetFamily(L"Tahoma");
 	chkSci->GetFont().SetSize(10);
@@ -330,7 +336,7 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	chkSci->SetParent(gbDecOptions);
 
 	chkEng = new nlib::Checkbox();
-	chkEng->SetBounds(nlib::Rect(8, 48, 149, 65));
+	chkEng->SetBounds(nlib::Rect(8, 62, 149, 79));
 	chkEng->SetText(L"Engeneering f&ormat");
 	chkEng->GetFont().SetFamily(L"Tahoma");
 	chkEng->GetFont().SetSize(10);
@@ -339,7 +345,7 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	chkEng->SetParent(gbDecOptions);
 
 	chkDecDigits = new nlib::Checkbox();
-	chkDecDigits->SetBounds(nlib::Rect(8, 64, 149, 81));
+	chkDecDigits->SetBounds(nlib::Rect(8, 80, 149, 97));
 	chkDecDigits->SetText(L"&Decimal digits:");
 	chkDecDigits->GetFont().SetFamily(L"Tahoma");
 	chkDecDigits->GetFont().SetSize(10);
@@ -348,7 +354,7 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	chkDecDigits->SetParent(gbDecOptions);
 
 	spnDecDigits = new nlib::Edit();
-	spnDecDigits->SetBounds(nlib::Rect(141, 63, 178, 84));
+	spnDecDigits->SetBounds(nlib::Rect(166, 77, 202, 98));
 	spnDecDigits->SetText(L"0");
 	spnDecDigits->GetFont().SetFamily(L"Tahoma");
 	spnDecDigits->GetFont().SetSize(10);
@@ -357,7 +363,7 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	spnDecDigits->SetParent(gbDecOptions);
 
 	UpDownDecDigits = new nlib::UpDown();
-	UpDownDecDigits->SetBounds(nlib::Rect(177, 63, 194, 84));
+	UpDownDecDigits->SetBounds(nlib::Rect(177, 77, 194, 98));
 	UpDownDecDigits->SetMaxValue(80);
 	UpDownDecDigits->SetParent(gbDecOptions);
 
@@ -414,8 +420,8 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	rdTurn->SetParent(gbAngleUnit);
 
 	gbDisplayFormat = new nlib::Groupbox();
-	gbDisplayFormat->SetBounds(nlib::Rect(236, 47, 553, 93));
-	gbDisplayFormat->SetText(L"Display");
+	gbDisplayFormat->SetBounds(nlib::Rect(236, 59, 492, 105));
+	gbDisplayFormat->SetText(L"Display as");
 	gbDisplayFormat->SetPadding(nlib::Rect(0, 0, 0, 0));
 	gbDisplayFormat->GetFont().SetFamily(L"Tahoma");
 	gbDisplayFormat->GetFont().SetSize(10);
@@ -465,7 +471,7 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	rdNone->SetParent(gbDisplayFormat);
 
 	pnlHexOpt = new nlib::Panel();
-	pnlHexOpt->SetBounds(nlib::Rect(8, 293, 515, 375));
+	pnlHexOpt->SetBounds(nlib::Rect(8, 325, 515, 407));
 	pnlHexOpt->SetTabOrder(4);
 	pnlHexOpt->SetInnerBorderStyle(nlib::pbsNone);
 	pnlHexOpt->SetParent(this);
@@ -598,7 +604,7 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	btnCloseDecOptions->SetParent(this);
 
 	btnCloseHexOptions = new nlib::FlatButton();
-	btnCloseHexOptions->SetBounds(nlib::Rect(14, 279, 242, 291));
+	btnCloseHexOptions->SetBounds(nlib::Rect(14, 311, 242, 323));
 	btnCloseHexOptions->SetText(L"-------------------------------------------");
 	btnCloseHexOptions->GetFont().SetFamily(L"Tahoma");
 	btnCloseHexOptions->GetFont().SetSize(10);
@@ -670,6 +676,7 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	chkSci->OnClick = CreateEvent(this, &TfrmMain::chkSciClick);
 	chkEng->OnClick = CreateEvent(this, &TfrmMain::chkSciClick);
 	chkDecDigits->OnClick = CreateEvent(this, &TfrmMain::chkDecDigitsClick);
+	chkDecDelim->OnClick = CreateEvent(this, &TfrmMain::chkDecDelimClick);
 	spnDecDigits->OnTextChanged = CreateEvent(this, &TfrmMain::spnDecDigitsTextChanged);
 	rdDeg->OnClick = CreateEvent(this, &TfrmMain::rdDegClick);
 	rdGrad->OnClick = CreateEvent(this, &TfrmMain::rdDegClick);
@@ -1005,6 +1012,12 @@ void TfrmMain::chkDecDigitsClick(void *sender, nlib::EventParameters param)
     _ShowResults();
 }
 
+void TfrmMain::chkDecDelimClick(void* sender, nlib::EventParameters param)
+{
+	lengine->displayFormat.useFractionSeparator = chkDecDelim->Checked();
+	_ShowResults();
+}
+
 void TfrmMain::chkMinusClick(void *sender, nlib::EventParameters param)
 {
 	lengine->displayFormat.bSignedBinOrHex = chkMinus->Checked();
@@ -1036,7 +1049,7 @@ void TfrmMain::chkSepClick(void *sender, nlib::EventParameters param)
     cbThousandSep->SetEnabled(b);
 	if (b && cbThousandSep->ItemIndex() >= 0)
 	{
-		lengine->displayFormat.strThousandSeparator = SmartString((cbThousandSep->ItemIndex() > 0 ? cbThousandSep->Text()[0] : ' '));
+		lengine->displayFormat.strThousandSeparator = SmartString(cbThousandSep->ItemIndex() > 0 ? cbThousandSep->Text()[0] : ' ');
 	}
 	else
 		lengine->displayFormat.strThousandSeparator.clear();
@@ -1243,7 +1256,7 @@ void TfrmMain::miCopyBinClick(void *sender, nlib::EventParameters param)
 }
 void TfrmMain::cbThousandSepChanged(void *sender, nlib::EventParameters param)
 {
-	lengine->displayFormat.strThousandSeparator =  SmartString(cbThousandSep->Text()[0]);
+	lengine->displayFormat.strThousandSeparator =  SmartString(cbThousandSep->ItemIndex() > 0 ? cbThousandSep->Text()[0] : ' ');
 	if(lengine->displayFormat.strThousandSeparator == SmartString('s') )
 		lengine->displayFormat.strThousandSeparator = " ";
 	_ShowResults();
@@ -1570,11 +1583,11 @@ bool TfrmMain::_LoadState(wstring name)
 				else if (data[3][1] == L'2')
 					cbThousandSep->SetItemIndex(2);
 				if (chkSep->Checked())
-					lengine->displayFormat.strThousandSeparator = cbThousandSep->Text();
+					lengine->displayFormat.strThousandSeparator = SmartString(cbThousandSep->ItemIndex() > 0 ? cbThousandSep->Text()[0] : ' ');
 			}
 					// 4: fraction separator
-			if (!data[4].empty())
-				lengine->displayFormat.useFractionSeparator = true;
+			if (!data[4].empty() && data[4] == L"1")
+				chkDecDelim->SetState(nlib::csChecked);
 					// 5: angular unit 0:
 			if (!data[5].empty())
 				lengine->displayFormat.angUnit = static_cast<AngularUnit>(std::stoi(data[5]));

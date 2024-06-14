@@ -504,10 +504,10 @@ namespace FalconCalc
         bool ResultOk() const { return calcResult.IsValid(); }
         RealNumber Result() const { return calcResult; }
         SmartString ResultAsDecString();
-        SmartString ResultAsHexString() const;
-        SmartString ResultAsOctString() const;
-        SmartString ResultAsBinString() const;
-        SmartString ResultAsCharString() const;
+        SmartString ResultAsHexString();
+        SmartString ResultAsOctString();
+        SmartString ResultAsBinString();
+        SmartString ResultAsCharString();
         AngularUnit AngleUnit() const { return displayFormat.angUnit; }
 	};
 
