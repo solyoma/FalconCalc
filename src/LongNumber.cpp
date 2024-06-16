@@ -605,7 +605,7 @@ SmartString RealNumber::_DecimalPartToString(const SmartString& roundedString, _
 
 	int dd = disp.fmt.decDigits < 0 ? len - n + disp.nLeadingDecimalZeros : disp.fmt.decDigits; // # of digits to be shown
 
-	int dp = 0;
+	size_t dp = 0;
 	if (disp.nLeadingDecimalZeros)
 	{
 		int dd0 = disp.nLeadingDecimalZeros;
@@ -951,14 +951,6 @@ SmartString RealNumber::ToDecimalString(const DisplayFormat &format)
 	SmartString signStr = _SignString(format);
 	if (IsInf())
 		return 	signStr + _numberString;
-		// special case for 0, which reamins 0 even for Sci and Eng modes
-	//if (format.base == DisplayBase::rnb10 && !_exponent && (_numberString.empty() || (_numberString.length() == 1 && _numberString.at(0, chZero) == chZero)))
-	//{
-	//	if (format.decDigits > 0)
-	//		return SmartString("0."_ss) + SmartString(format.decDigits, chZero);
-	//	else
-	//		return SmartString(chZero);
-	//}
 	
 		// create a decimal string in the required format for the number without rounding
 		// including optional sign, decimal point,thousand and decimal separators, exponent
@@ -1129,8 +1121,10 @@ SmartString RealNumber::ToDecimalString(const DisplayFormat &format)
 			// re-calculate decimal (fractional) part because of 'nDisplayW'
 			_dsplD.nWFractionalPart = (int)_dsplD.nWDisplayW - __lenIntPart;
 			if (_dsplD.nWFractionalPart <= 1)	// _dsplD.nWFractionalPart contains the decimal point!
-				return -1;
-			int fracDelimCnt = _dsplD.fmt.useFractionSeparator ? (_dsplD.nWFractionalPart > 0 ? (_dsplD.nWFractionalPart - 1) / 3 : 0) : 0;
+				return -1;						// no place for fractional part
+			// how many delimiters are in this wide space?
+			int fracDelimCnt = _dsplD.fmt.useFractionSeparator ? (_dsplD.nWFractionalPart - 1 - 1 ) / 4 : 0;	// -1 : decimal point, other -1: for width
+			// rounding position in _numberstring
 			return _dsplD.nWFractionalPart - fracDelimCnt -_dsplD.nLeadingDecimalZeros - 1;
 		};
 	// ---- /lambda ----------

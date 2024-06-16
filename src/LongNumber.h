@@ -117,7 +117,7 @@ namespace LongNumber {
 		bool useFractionSeparator = false;		// when true use a space character
 		size_t nFormatSwitchIntLength = 40,		// for decimal display: if the exponent is
 												// larger than this 
-				nFormatSwitchFracLength = 9;	// or -exp larger than this
+			   nFormatSwitchFracLength = 40;	// or -exp larger than this
 												// display will change to Sci automatically
 												// for non base 10 display the maximum length
 												// of the string in that base
