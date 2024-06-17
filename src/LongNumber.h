@@ -498,12 +498,52 @@ namespace LongNumber {
 			size_t	nIntegerDigits = 0;		// in _numberString ( if > _numberstring.length() logically right extended by '0's when needed)
 			size_t  nWIntegerPart = 1;		// width of whole integer part of formatted string w.o. sign
 			size_t  nWDisplayW =size_t(-1);
-			size_t	nReqdDecDigits = 0;		// this many decimal digits are in _numberString
+			size_t	cntDecDigitsToDisplay = 0;
+			size_t	cntDecDigitsInNumberString = 0;
 			size_t	nWFractionalPart = 0;	// includes decimal point
 			size_t	expLen = 0;
 			size_t	nWDecPoint = 0;
 
 			SmartString strExponent;
+			SmartString strRounded;			// rounded string of digits
+			int nRoundPos = 0;
+
+			void Setup(const DisplayFormat& format, RealNumber& rN)
+			{
+				exp = rN._exponent;			// position of the decimal point. 
+				// Example #1 exp = 0, _numberstring = 123 => number  = .123
+				// Example #2 exp = 1, _numberstring = 123 => number  = 1.23
+
+				fmt = format;		// may change
+				strRounded = rN._numberString;
+
+				// names starting with 'nW' are display data, starting with 'n' are for _numberString
+						 // set/change formats when needed
+				nWSign = fmt.signOption != SignOption::soNormal || rN._sign < 0 ? 1 : 0;
+				nIntegerDigits = exp > 0 ? exp : 0;	// in _numberString ( if > _numberstring.length() logically right extended by '0's when needed)
+				nWIntegerPart = nIntegerDigits ? nIntegerDigits : 1;	// width of whole integer part of formatted string w.o. sign
+				nWDisplayW = fmt.displWidth <= 0 ? size_t(-1) : fmt.displWidth;
+
+				nLeadingDecimalZeros = exp >= 0 ? 0 : -exp;
+				if (format.base == DisplayBase::rnb10 && !exp && (strRounded.empty() || (strRounded.length() == 1 && strRounded.at(0, chZero) == chZero)))
+					nLeadingDecimalZeros = fmt.decDigits > 0 ? fmt.decDigits : 0;
+				// suppose format rnfNormal with sign, integer digits w. delimiters, decimal point, leading zeros and fractional part
+				// so strRounded has 'nIntegerDigits' digits and  (strRounded.length() - 'nIntegerDigits' decimal digits
+				int nTmp = (int)strRounded.length() - (int)nIntegerDigits;	// dec. digits in strRounded, < 0 => no decimal digits there
+
+				cntThousandSeparators = (fmt.strThousandSeparator.empty() ? 0 :
+					((nWIntegerPart > 3 ? nWIntegerPart / 3 : 0) - 1 + (nWIntegerPart % 3 ? 2 - (nWIntegerPart % 3) : 0)));
+				if (cntThousandSeparators > 0)
+					nWIntegerPart = nWIntegerPart + cntThousandSeparators * fmt.strThousandSeparator.length();
+
+			}
+			SmartString FormatExponent(const DisplayFormat fmt, int exp, size_t &expLen) const;
+
+			void CalculateExponentAndIntegerDigits();
+			int RequiredSpaceforIntegerDigits();
+			int RequriedSpaceForFraction();
+			int RoundingPos();
+			void Round();
 		};
 		_DisplData _dsplD;
 
@@ -572,8 +612,6 @@ namespace LongNumber {
 				(format.signOption == SignOption::soAlwaysShow ? "+" :
 					(format.signOption == SignOption::soLeaveSpaceForPositive ? " " : "")));
 		}
-
-		SmartString _FormatExponent(const DisplayFormat fmt, int exp, size_t &expLen) const;
 
 		int _PosExpInNumberString(const DisplayFormat fmt, const SmartString& s, int fromPos) const;
 
