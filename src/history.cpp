@@ -198,6 +198,7 @@ void TfrmHistory::FormSizeMoveEnded(void* sender, nlib::SizePositionChangedParam
 {
 	if (!frmMain->InMoving() && !_busy && GetSnapSide() != FalconCalc::wsNone)
 		Snap();
+/*
 #if defined(_DEBUG)
 	static char * s[] = {
 						 "snapped at top",
@@ -208,7 +209,7 @@ void TfrmHistory::FormSizeMoveEnded(void* sender, nlib::SizePositionChangedParam
 	std::string dbgs = std::string("History: ") + std::string((_snappedToSide == FalconCalc::wsNone ? "unsnapped" : s[(int)_snappedToSide - 1]));
 	OutputDebugStringA(dbgs.c_str());
 
-#endif
+#endif	*/
 }
 
 FalconCalc::WindowSide TfrmHistory::GetSnapSide()
@@ -223,6 +224,10 @@ void TfrmHistory::Snap()
 {
 	RECT rbase = wiMain.BareVisibleWindowRect(),
 			dr = wiHist.BareVisibleWindowRect();
+
+	POINT pt = WinDistance(rbase, dr, _snappedToSide);
+	rbase = wiMain.WindowRect();
+	dr = wiHist.WindowRect();
 
 	if (::SnapTo(dr, _snappedToSide, WinDistance(rbase, dr, _snappedToSide) ))	// get snap displacement into 'dr'
 	{

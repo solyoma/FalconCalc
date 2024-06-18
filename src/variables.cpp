@@ -186,6 +186,7 @@ void TfrmVariables::Snap()
 	RECT rbase = wiMain.BareVisibleWindowRect(),
 			dr = wiVars.BareVisibleWindowRect(true);
 	// DEBUG
+	/*
 	auto _DbgStr = [](std::wstring label,RECT r) ->std::wstring
 		{
 			return label + L":((" + to_wstring(r.left) + L"," + to_wstring(r.top) + L"), (" + to_wstring(r.right) + L"," + to_wstring(r.bottom) + L"))  [" +
@@ -193,6 +194,7 @@ void TfrmVariables::Snap()
 		};
 	DebugMsg(_DbgStr(L"rbase",rbase));
 	DebugMsg(_DbgStr(L"dr   ",dr));
+	*/
 	// /DEBUG
 	POINT pt = WinDistance(rbase, dr, _snappedToSide);
 	rbase = wiMain.WindowRect();
