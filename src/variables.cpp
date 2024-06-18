@@ -176,7 +176,7 @@ void TfrmVariables::FormSizeMoveEnded(void* sender, nlib::SizePositionChangedPar
 FalconCalc::WindowSide TfrmVariables::GetSnapSide()
 {
 	// determine snap area index
-	RECT r = wiVars.BareVisibleWindowRect();
+	RECT r = wiVars.BareVisibleWindowRect(true);
 	_snapDist = _snapPixelLimit;
 	return _snappedToSide = ::GetSnapSide(r, _snapDist);
 }
@@ -184,8 +184,20 @@ FalconCalc::WindowSide TfrmVariables::GetSnapSide()
 void TfrmVariables::Snap()
 {
 	RECT rbase = wiMain.BareVisibleWindowRect(),
-			dr = wiVars.BareVisibleWindowRect();
-	if (::SnapTo(dr, _snappedToSide, WinDistance(rbase, dr, _snappedToSide)))	// get snapped coordinates into 'dr'
+			dr = wiVars.BareVisibleWindowRect(true);
+	// DEBUG
+	auto _DbgStr = [](std::wstring label,RECT r) ->std::wstring
+		{
+			return label + L":((" + to_wstring(r.left) + L"," + to_wstring(r.top) + L"), (" + to_wstring(r.right) + L"," + to_wstring(r.bottom) + L"))  [" +
+				to_wstring(r.right - r.left) + L", " + to_wstring(r.bottom - r.top) + L"]\n";
+		};
+	DebugMsg(_DbgStr(L"rbase",rbase));
+	DebugMsg(_DbgStr(L"dr   ",dr));
+	// /DEBUG
+	POINT pt = WinDistance(rbase, dr, _snappedToSide);
+	rbase = wiMain.WindowRect();
+	dr    = wiVars.WindowRect();
+	if (::SnapTo(dr, _snappedToSide, pt))	// get snapped coordinates into 'dr'
 	{
 		++_busy;
 		MoveWindow(Handle(), dr.left, dr.top, dr.right - dr.left, dr.bottom - dr.top, true);

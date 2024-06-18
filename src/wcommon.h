@@ -49,9 +49,9 @@ public:
 	nlib::Rect WindowRect() { _GetRects(); return rcWindow; }
 	nlib::Rect ClientRect() { _GetRects(); return rcClient; }
 	nlib::Rect WindowRectNoDropShadow() { _GetRects(); return _noShadowRect; }
-	nlib::Rect BareVisibleWindowRect()
+	nlib::Rect BareVisibleWindowRect(bool getActualSize = false)
 	{
-		_GetRects();
+		_GetRects(getActualSize);
 		return _noBorderRect;
 	}
 private:

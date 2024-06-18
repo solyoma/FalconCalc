@@ -1342,10 +1342,6 @@ void TfrmMain::OpenVarsOrFunctions(void* sender, int which, nlib::EventParameter
 
 	frmVariables->Show();
 
-	if( frmVariables->GetSnapSide() != FalconCalc::WindowSide::wsNone)
-		frmVariables->Snap();
-
-
 	SetFocus(edtInfix->Handle());
 }
 
