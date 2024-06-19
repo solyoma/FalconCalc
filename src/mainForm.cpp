@@ -1771,7 +1771,10 @@ void TfrmMain::_AddToHistory(wstring text)
 
 void TfrmMain::FormClose(void *sender, nlib::FormCloseParameters param)
 {
-
+	if (frmHistory)
+		frmHistory->Close();
+	if (frmVariables)
+		frmVariables->Close();
 }
 
 void TfrmMain::chkAsBytesClick(void *sender, nlib::EventParameters param)
