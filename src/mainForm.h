@@ -183,6 +183,7 @@ private:
 	int _watchdog;		 // add to history if _watchdog is > given number, reset when formula changes
     int _watchLimit;	 // default: 10: 0 - switch off autosave
     size_t _maxHistDepth;// == 0: unlimited
+	size_t _minCharLength = 0;	// 0: all, else # of characters below which there's no save
 	std::wstring _wsUserDir;	// store user directory here
 
     nlib::Checkbox *	_chkArr[7];

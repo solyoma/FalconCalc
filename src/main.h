@@ -67,14 +67,13 @@ N_PUBLIC: /* Designer generated list of public members. Do not edit by hand. */
 	nlib::Checkbox *chkEng;
 	nlib::Checkbox *chkDecDigits;
 	nlib::Edit *spnDecDigits;
-	nlib::UpDown *UpDown1;
+	nlib::UpDown *UpDownDecDigits;
 	nlib::Checkbox *chkDecDelim;
 	nlib::Groupbox *gbAngleUnit;
 	nlib::Radiobox *rdDeg;
 	nlib::Radiobox *rdGrad;
 	nlib::Radiobox *rdRad;
 	nlib::Radiobox *rdTurn;
-	nlib::Radiobox *Radiobox2;
 	nlib::Groupbox *gbDisplayFormat;
 	nlib::Radiobox *rdNormal;
 	nlib::Radiobox *rdHtml;

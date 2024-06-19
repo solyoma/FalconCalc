@@ -1475,8 +1475,8 @@
     type Form
     {
         Name = "frmHistOptions"
-        Left = "300"
-        Top = "523"
+        Left = "638"
+        Top = "417"
         Text = "FalconCalc - History options"
         class Font
         {
@@ -1487,12 +1487,12 @@
         ShowPosition = "fspActiveMonitorCenter"
         BorderStyle = "fbsSingle"
         UnitName = "histopt"
-        DesignVisible = "False"
+        DesignVisible = "True"
         LastExportedName = "frmHistOptions"
         LastExportedEvents = "3300300037007C00789C958FC10AC2301044E7BBBC89F5201E2AF8054D2D541A5389B522F8F13E5390626369081B7667666712A34E4E1B15DCA52A597AAB337DA397CC2CEB426FB4E26CD5C33BF407D49EBA307794D7EDEB94B337F5FF45537C2B9D987641F1C17A14567BFAA732B57AC02C558D73072E9E59AAE69D47F63CE8F8E5FF99943F0D2E6BDDC15ADC8AA09FE6CC29D2F332E62B681D498A73CB33DE9B5679DE"
         CreationOrder = "2"
-        ClientWidth = "284"
-        ClientHeight = "159"
+        ClientWidth = "340"
+        ClientHeight = "192"
 
         type Checkbox
         {
@@ -1515,7 +1515,7 @@
             Top = "56"
             Width = "158"
             Height = "16"
-            Text = "&Time of automatic saves:"
+            Text = "&Save after this interval:"
             TabOrder = "1"
             event OnClick = "chkAutoSaveClick"
         }
@@ -1525,7 +1525,7 @@
             Name = "chkSort"
             AccessLevel = "alPublic"
             Left = "16"
-            Top = "80"
+            Top = "144"
             Width = "80"
             Height = "16"
             Text = "&Sorted"
@@ -1576,8 +1576,8 @@
         {
             Name = "btnOk"
             AccessLevel = "alPublic"
-            Left = "184"
-            Top = "96"
+            Left = "248"
+            Top = "128"
             Width = "75"
             Height = "23"
             Text = "Ok"
@@ -1589,8 +1589,8 @@
         {
             Name = "btnCancel"
             AccessLevel = "alPublic"
-            Left = "184"
-            Top = "120"
+            Left = "248"
+            Top = "152"
             Width = "75"
             Height = "23"
             Text = "Cancel"
@@ -1598,11 +1598,57 @@
             Cancel = "True"
             event OnClick = "btnCancelClick"
         }
+
+        type Label
+        {
+            Name = "Label1"
+            AccessLevel = "alPublic"
+            Left = "261"
+            Top = "59"
+            Width = "66"
+            Height = "14"
+            Text = "(HH:MM:SS)"
+        }
+
+        type Edit
+        {
+            Name = "edtMinLength"
+            AccessLevel = "alPublic"
+            Left = "176"
+            Top = "85"
+            Width = "80"
+            Height = "22"
+            Text = "0"
+            TabOrder = "7"
+            event OnTextChanged = "edtMinLengthChanged"
+        }
+
+        type UpDown
+        {
+            Name = "sbMinLength"
+            AccessLevel = "alPublic"
+            Left = "255"
+            Top = "85"
+            Width = "17"
+            Height = "22"
+            AttachedEditor = "edtMinLength"
+        }
+
+        type Label
+        {
+            Name = "Label2"
+            AccessLevel = "alPublic"
+            Left = "18"
+            Top = "89"
+            Width = "148"
+            Height = "14"
+            Text = "Min. length to save: (0:all):"
+        }
     }
     type Form
     {
         Name = "frmHistory"
-        Left = "443"
+        Left = "454"
         Top = "1090"
         Text = "FalconCalc History"
         class Font
@@ -1811,6 +1857,7 @@
         CreationOrder = "5"
         ClientWidth = "528"
         ClientHeight = "569"
+        event OnEndSizeMove = "FormSizeMoveEnded"
         event OnClose = "FormClose"
 
         type TabControl

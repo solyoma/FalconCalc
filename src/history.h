@@ -27,8 +27,8 @@ N_PUBLIC: /* Designer generated list of public members. Do not edit by hand. */
 	void lstHistoryDblClick(void *sender, nlib::MouseButtonParameters param);
 	void FormClose(void *sender, nlib::FormCloseParameters param);
 	void FormMove(void *sender, nlib::EventParameters param);
-	void FormSizeMoveEnded(void *sender, nlib::SizePositionChangedParameters param);
 	void FormKeyPress(void *sender, nlib::KeyPressParameters param);
+	void FormSizeMoveEnded(void* sender, nlib::SizePositionChangedParameters param);
 protected:
 	virtual ~TfrmHistory(); /* Don't make public. Call Destroy() to delete the object. */ 
 N_PROTECTED: /* Designer generated list of protected members. Do not edit by hand. */

@@ -498,7 +498,7 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 
 	chkHexPrefix = new nlib::Checkbox();
 	chkHexPrefix->SetBounds(nlib::Rect(16, 52, 111, 68));
-	chkHexPrefix->SetText(L"0x &prefix");
+	chkHexPrefix->SetText(L"0x p&refix");
 	chkHexPrefix->SetTabOrder(7);
 	chkHexPrefix->SetChecked(true);
 	chkHexPrefix->SetParent(gbHexOptions);
@@ -1166,7 +1166,7 @@ void TfrmMain::miHistOptsClick(void *sender, nlib::EventParameters param)
 {
 	frmHistOptions = new TfrmHistOptions;
 	frmHistOptions->SetTopLevelParent(this);
-    frmHistOptions->Setup(_maxHistDepth, _watchLimit, pslHistory->Sorted() );
+    frmHistOptions->Setup(_maxHistDepth, _watchLimit, pslHistory->Sorted() , _minCharLength);
 
 	if(frmHistOptions->ShowModal() == mrOk)
     {
@@ -1177,6 +1177,7 @@ void TfrmMain::miHistOptsClick(void *sender, nlib::EventParameters param)
 			if(frmHistory)
 				frmHistory->lstHistory->Items().SetLines(pslHistory->Lines());
         }
+		_minCharLength = stoi(frmHistOptions->edtMinLength->Text());
         if(frmHistOptions->chkAutoSave->Checked())
         {
 			wstring str = frmHistOptions->edtInterval->Text();
@@ -1491,7 +1492,7 @@ bool TfrmMain::_SaveState(wstring name)
 	fs << FONTNAME	<< edtChars->GetFont().Family() << "\n";
 	fs << FONTDATA	<< (int)edtChars->GetFont().Size() << "|"<< (int)edtChars->GetFont().CharacterSet() << "|"<< (COLORREF)edtChars->GetFont().GetColor() << "\n";
     fs << OPTIONS	<< pnlDecOpt->Visible() << "|"<< pnlHexOpt->Visible()<<"\n";
-    fs << HISTOPTIONS << _watchLimit << "|"<< _maxHistDepth << "|"<< pslHistory->Sorted() << "\n";
+    fs << HISTOPTIONS << _watchLimit << "|"<< _maxHistDepth << "|"<< pslHistory->Sorted() << "|" << _minCharLength << "\n";
 	fs << VARCOLS; 
 	for (int i = 0; i < 2; ++i)
 		for (int col = 0; col < 4; ++col)
@@ -1680,11 +1681,12 @@ bool TfrmMain::_LoadState(wstring name)
 	};
 	auto histOptions = [&]()
 	{
-		if (n == 4 && data[0] == HISTOPTIONS)	// 4 fields
+		if (n == 5 && data[0] == HISTOPTIONS)	// 5 fields
 		{
 			_watchLimit = std::stoi(data[1]);
 			_maxHistDepth = std::stoi(data[2]);
 			pslHistory->SetSorted(std::stoi(data[3]));
+			_minCharLength = std::stoi(data[4]);
 			return true;
 		}
 		return false;
@@ -1740,6 +1742,10 @@ void TfrmMain::_AddToHistory(wstring text)
 {
 	SmartString ss(text);
 	ss.Trim();
+
+	if (_minCharLength >= ss.length())	// do not add to short strings
+		return;
+
 	if (LittleEngine::variables.count(ss) || LongNumber::constantsMap.count(ss) )		// single, already defined variable?
 	{
 		_added = true;	// so won't try it to add again
