@@ -537,13 +537,13 @@ namespace LongNumber {
 					nWIntegerPart = nWIntegerPart + cntThousandSeparators * fmt.strThousandSeparator.length();
 
 			}
-			SmartString FormatExponent(const DisplayFormat fmt, int exp, size_t &expLen) const;
+			SmartString FormatExponent();
 
 			void CalculateExponentAndIntegerDigits();
 			int RequiredSpaceforIntegerDigits();
 			int RequriedSpaceForFraction();
 			int RoundingPos();
-			void Round();
+			bool Round();
 		};
 		_DisplData _dsplD;
 

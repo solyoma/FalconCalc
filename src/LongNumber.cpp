@@ -969,7 +969,7 @@ void RealNumber::_DisplData::CalculateExponentAndIntegerDigits()
 		nLeadingDecimalZeros = 0;
 		++exp;
 	}
-	strExponent = FormatExponent(fmt, exp, expLen);	// real 10's exponent
+	strExponent = FormatExponent();	// real 10's exponent
 };
 
 /*=============================================================
@@ -1058,14 +1058,14 @@ int RealNumber::_DisplData::RoundingPos()
 	return nWFractionalPart - fracDelimCnt - nLeadingDecimalZeros - 1;
 };
 
-void RealNumber::_DisplData::Round()
+bool RealNumber::_DisplData::Round()
 {
 	--exp;
 	nRoundPos = RoundingPos();		 // index of the digit to round up the string with in strRounded
-	if (nRoundPos < 0 || nRoundPos > strRounded.length() || strRounded.at(0).IsAlpha() || (nLeadingDecimalZeros && nLeadingDecimalZeros >= nRoundPos))	// use all digits or string (NaN, Inf)
+	if (nRoundPos < 0 || nRoundPos > (int)strRounded.length() || strRounded.at(0).IsAlpha() || (nLeadingDecimalZeros && nLeadingDecimalZeros >= nRoundPos))	// use all digits or string (NaN, Inf)
 	{
 		++exp;
-		return;// strRounded;
+		return false;	// exponent doesn't change
 	}
 
 	SCharT
@@ -1082,7 +1082,7 @@ void RealNumber::_DisplData::Round()
 	{
 		++exp;
 		strRounded = res;
-		return;
+		return false;	// exponent doesn't change
 	}
 	SCharT ch = zero;
 	while (nRoundPos-- && carry)
@@ -1097,14 +1097,16 @@ void RealNumber::_DisplData::Round()
 		}
 	}
 
+	bool bExpChanged = false;
 	if (carry) // then 'res' is empty, and we have an overflow of '1'
 	{		   // example: 0.999991 rounded to 3 decimal places: 1.000
 		res = SmartString(one);
 		++exp;
+		bExpChanged = true;
 	}
 	strRounded = res;
 	++exp;
-	return;// strRounded = res;
+	return bExpChanged;
 }
 
 /*=============================================================================
@@ -1156,7 +1158,8 @@ SmartString RealNumber::ToDecimalString(const DisplayFormat &format)
 
 	(void)_dsplD.RequriedSpaceForFraction();	// get _dsplD.nWFractionalPart
 
-	_dsplD.Round();
+	if (_dsplD.Round())
+		_dsplD.FormatExponent();
 
 	// now create the number string
 	size_t nResultLength = _dsplD.nWSign + _dsplD.nWIntegerPart + _dsplD.nLeadingDecimalZeros + _dsplD.nWFractionalPart + _dsplD.expLen; // DEBUG line
@@ -1279,7 +1282,7 @@ SmartString RealNumber::ToString(const DisplayFormat& format, TextFormat textFor
  *			'expLen'
  * REMARKS:
  *------------------------------------------------------------*/
-SmartString RealNumber::_DisplData::FormatExponent(const DisplayFormat fmt, int exp, size_t& expLen) const
+SmartString RealNumber::_DisplData::FormatExponent()
 {
 	SmartString s = SmartString(std::to_string(exp-1));
 	expLen = 0;				// no exponent for general or normal format
@@ -1306,7 +1309,7 @@ SmartString RealNumber::_DisplData::FormatExponent(const DisplayFormat fmt, int 
 			break;
 		}
 	}
-	return s;
+	return strExponent = s;
 }
 
 int RealNumber::_PosExpInNumberString(const DisplayFormat fmt, const SmartString& s, int fromPos) const
