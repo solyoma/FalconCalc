@@ -47,10 +47,10 @@ namespace LongNumber {
 		rnfText				// ASCII or UTF-8, etc
 	};
 	enum class ExpFormat {
-		rnsfE,				// exponent string is 'E'+ [+|-] + exp digits
+		rnsfGraph,			// exponent after ^, like -1.234^{567}
 		rnsfSciHTML,		// format for html : -1.234x10<sup>-567</sup>
 		rnsfSciTeX,			// format for TeX: -1.234\cdot10^{-567}
-		rnsfGraph			// exponent after ^, like -1.234^{567}
+		rnsfE				// exponent string is 'E'+ [+|-] + exp digits
 	};
 	enum class HexFormat {
 		rnHexNormal, 		// -1234567890ABCDEF OR EDCBA09876543210	

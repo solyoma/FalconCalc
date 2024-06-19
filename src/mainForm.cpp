@@ -1880,7 +1880,7 @@ void TfrmMain::FormMove(void *sender, nlib::EventParameters param)
 	// this single funcion deals with Normal, HTML, TeX and E display
 void TfrmMain::rdNormalClick(void *sender, nlib::EventParameters param)
 {
-	lengine->beautification = (LittleEngine::Beautification)((Radiobox*)sender)->Tag();
+	lengine->displayFormat.expFormat= (LongNumber::ExpFormat)((Radiobox*)sender)->Tag();
 	//sres.type = sres.mode == bmoNone ? stDecimal : stDecBeautified;
 	_ShowResults();
 }

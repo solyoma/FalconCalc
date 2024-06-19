@@ -409,12 +409,6 @@ namespace FalconCalc
 	{
     public:
         enum class ResultType { rtNumber, rtDefinition, rtInvalid};
-        enum class Beautification {
-            bmoGraphText, 			// 3.1e-5 => 3.1 dot 10^{-5}
-            bmoHtml, 				// 3.1e-5 => 3.1 dot 10<sup>-5</sup>
-            bmoTEX, 				// 3.1e-5 => 3.1 \cdot 10^{-5}
-            bmoNone					// 3.1e-5 =>  3.1e-5
-        };
         enum class ResValid { rvOk, rvInvalid, rvDef };            // validity of result: OK, invalid, function, etc definition
 
         static bool builtinsOk; // built in functions are set up
@@ -430,7 +424,6 @@ namespace FalconCalc
         static FunctionTable functions;
         SmartString ssNameOfDatFile;
         ResValid resultValid = ResValid::rvOk;
-        Beautification beautification = Beautification::bmoGraphText;
         bool clean; // no changes to variables or functions?
     private:
         /* ==========

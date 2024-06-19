@@ -1655,13 +1655,6 @@ bool LittleEngine::LoadUserData(SmartString name)
  *-----------------------------------------------------------*/
 SmartString LittleEngine::ResultAsDecString()
 {
-    displayFormat.expFormat = (beautification == Beautification::bmoNone ?
-        ExpFormat::rnsfE :
-        (beautification == Beautification::bmoGraphText ?
-        ExpFormat::rnsfGraph :
-        (beautification == Beautification::bmoHtml ?
-        ExpFormat::rnsfSciHTML :
-        ExpFormat::rnsfSciTeX)) );
     DisplayFormat fmt = displayFormat;
     fmt.base = DisplayBase::rnb10;
     return calcResult.ToString(fmt);
