@@ -178,7 +178,7 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 
 	edtInfix = new nlib::Edit();
 	edtInfix->SetBounds(nlib::Rect(8, 29, 513, 50));
-	edtInfix->SetAnchors(nlib::caLeft | nlib::caTop | nlib::caRight | nlib::caBottom);
+	edtInfix->SetAnchors(nlib::caLeft | nlib::caTop);
 	edtInfix->GetFont().SetFamily(L"Tahoma");
 	edtInfix->GetFont().SetSize(10);
 	edtInfix->SetParentFont(false);
