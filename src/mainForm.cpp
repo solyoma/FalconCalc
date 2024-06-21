@@ -1671,8 +1671,8 @@ bool TfrmMain::_LoadState(wstring name)
 	{
 		if (n == 3 && data[0] == OPTIONS)
 		{
-			pnlDecOpt->SetVisible(std::stoi(data[1]));
-			pnlHexOpt->SetVisible(std::stoi(data[2]));
+			ShowDecOptions(std::stoi(data[1])!=0);
+			ShowHexOptions(std::stoi(data[2])!=0);
 			return true;
 		}
 		return false;
