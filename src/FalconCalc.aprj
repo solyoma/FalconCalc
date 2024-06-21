@@ -1,6 +1,6 @@
 ﻿project "FalconCalc.aprj"
 {
-    SourcePath = "."
+    SourcePath = "./tmp"
     ResourcePath = "."
     ProjectName = "FalconCalc"
     AppIcon = "300043003A005C00500072006F006A0065006300740073005C006C006900740074006C006500630061006C0063002B002B005C005200410044002000530074007500640069006F005C00630061006C00630075006C00610074002E00690063006F00FE020000789CB592310EC3200C457FA28AB95367C61E83A10761A858938D95A3711AD43153BBD5B5814821129D92F731C6B66C240430B0B4BE42788DC08DFD9D4DB319B601975C0B233A84BC104271223EC418D94B86F20251712249C97630EAF9D86254725B8C7A5BAC02384ED35CE5FD2CF569A9225ADCDF7EDBF6B39A7ED629FDBE50E36429F3E9D6EBCBD4F8DB60D08C77B6FBB027413B227FB780FA9D0E3099B7BF63CB0F892FD8B7"
@@ -126,7 +126,7 @@
                 {
                     Name = "miCopy"
                     AccessLevel = "alPublic"
-                    Text = "&Copy"
+                    Text = "&Copy expression"
                     ShortcutText = "Ctrl+C"
                     event OnClick = "miCopyClick"
                 }
@@ -135,7 +135,7 @@
                 {
                     Name = "miPaste"
                     AccessLevel = "alPublic"
-                    Text = "&Paste"
+                    Text = "&Paste expression"
                     ShortcutText = "Ctrl+V"
                     event OnClick = "miPasteClick"
                 }
@@ -144,65 +144,90 @@
                 {
                     Name = "miAppend"
                     AccessLevel = "alPublic"
-                    Text = "Paste &After"
+                    Text = "Paste &After expression"
                     event OnClick = "miAppendClick"
                 }
 
                 subtype Items : MenuItem
                 {
-                    Name = "MenuItem1"
+                    Name = "separator1"
                     AccessLevel = "alPublic"
                     Text = "-"
                 }
 
                 subtype Items : MenuItem
                 {
-                    Name = "miCopyDecimal"
+                    Name = "mnuEditCopy"
                     AccessLevel = "alPublic"
-                    Text = "Copy &Decimal"
-                    event OnClick = "miCopyDecClick"
+                    Text = "Cop&y ..."
+
+                    subtype Items : MenuItem
+                    {
+                        Name = "miCopyDecimal"
+                        AccessLevel = "alPublic"
+                        Text = "Copy &Decimal"
+                        event OnClick = "miCopyDecClick"
+                    }
+
+                    subtype Items : MenuItem
+                    {
+                        Name = "miCopyHexadecimal"
+                        Tag = "1"
+                        AccessLevel = "alPublic"
+                        Text = "Copy &Hexadecimal"
+                        event OnClick = "miCopyHexClick"
+                    }
+
+                    subtype Items : MenuItem
+                    {
+                        Name = "miCopyOctal"
+                        Tag = "2"
+                        AccessLevel = "alPublic"
+                        Text = "Copy &Octal"
+                        event OnClick = "miCopyOctClick"
+                    }
+
+                    subtype Items : MenuItem
+                    {
+                        Name = "miCopyBinary"
+                        Tag = "3"
+                        AccessLevel = "alPublic"
+                        Text = "Copy &Binary"
+                        event OnClick = "miCopyBinClick"
+                    }
                 }
 
                 subtype Items : MenuItem
                 {
-                    Name = "miCopyHexadecimal"
+                    Name = "miData"
                     Tag = "1"
                     AccessLevel = "alPublic"
-                    Text = "Copy &Hexadecimal"
-                    event OnClick = "miCopyHexClick"
+                    Text = "&Data..."
+
+                    subtype Items : MenuItem
+                    {
+                        Name = "miEditVars"
+                        AccessLevel = "alPublic"
+                        Text = "Edit User &Variables..."
+                        Shortcut = "Alt+1"
+                        event OnClick = "miEditVarsClick"
+                    }
+
+                    subtype Items : MenuItem
+                    {
+                        Name = "miEditFuncs"
+                        AccessLevel = "alPublic"
+                        Text = "Edit User &Functions..."
+                        Shortcut = "Alt+2"
+                        event OnClick = "miEditFuncsClick"
+                    }
                 }
 
                 subtype Items : MenuItem
                 {
-                    Name = "miCopyOctal"
-                    Tag = "2"
-                    AccessLevel = "alPublic"
-                    Text = "Copy &Octal"
-                    event OnClick = "miCopyOctClick"
-                }
-
-                subtype Items : MenuItem
-                {
-                    Name = "miCopyBinary"
-                    Tag = "3"
-                    AccessLevel = "alPublic"
-                    Text = "Copy &Binary"
-                    event OnClick = "miCopyBinClick"
-                }
-
-                subtype Items : MenuItem
-                {
-                    Name = "MenuItem2"
-                    AccessLevel = "alPublic"
-                    Text = "-"
-                }
-
-                subtype Items : MenuItem
-                {
-                    Name = "MenuItem3"
+                    Name = "separator2"
                     AccessLevel = "alPublic"
                     Text = "-"
-                    Visible = "False"
                 }
 
                 subtype Items : MenuItem
@@ -219,41 +244,6 @@
                 Name = "miView"
                 AccessLevel = "alPublic"
                 Text = "&View"
-
-                subtype Items : MenuItem
-                {
-                    Name = "miEditVars"
-                    Tag = "1"
-                    AccessLevel = "alPublic"
-                    Text = "Edit User &Variables..."
-                    Shortcut = "Alt+1"
-                    event OnClick = "miEditVarsClick"
-                }
-
-                subtype Items : MenuItem
-                {
-                    Name = "miEditFuncs"
-                    AccessLevel = "alPublic"
-                    Text = "Edit User &Functions..."
-                    Shortcut = "Alt+2"
-                    event OnClick = "miEditFuncsClick"
-                }
-
-                subtype Items : MenuItem
-                {
-                    Name = "miShowHist"
-                    AccessLevel = "alPublic"
-                    Text = "Edit &History"
-                    Shortcut = "Alt+3"
-                    event OnClick = "miShowHistClick"
-                }
-            }
-
-            subtype Items : MenuItem
-            {
-                Name = "miOptions"
-                AccessLevel = "alPublic"
-                Text = "&Options"
 
                 subtype Items : MenuItem
                 {
@@ -279,6 +269,29 @@
                     AccessLevel = "alPublic"
                     Text = "&Font For 'As String...' Display"
                     event OnClick = "miCharFontClick"
+                }
+            }
+
+            subtype Items : MenuItem
+            {
+                Name = "miHistory"
+                AccessLevel = "alPublic"
+                Text = "&History"
+
+                subtype Items : MenuItem
+                {
+                    Name = "miShowHist"
+                    AccessLevel = "alPublic"
+                    Text = "Edit &History"
+                    Shortcut = "Alt+3"
+                    event OnClick = "miShowHistClick"
+                }
+
+                subtype Items : MenuItem
+                {
+                    Name = "separator3"
+                    AccessLevel = "alPublic"
+                    Text = "-"
                 }
 
                 subtype Items : MenuItem
@@ -1475,8 +1488,8 @@
     type Form
     {
         Name = "frmHistOptions"
-        Left = "638"
-        Top = "417"
+        Left = "626"
+        Top = "286"
         Text = "FalconCalc - History options"
         class Font
         {
@@ -1487,9 +1500,9 @@
         ShowPosition = "fspActiveMonitorCenter"
         BorderStyle = "fbsSingle"
         UnitName = "histopt"
-        DesignVisible = "True"
+        DesignVisible = "False"
         LastExportedName = "frmHistOptions"
-        LastExportedEvents = "3300300037007C00789C958FC10AC2301044E7BBBC89F5201E2AF8054D2D541A5389B522F8F13E5390626369081B7667666712A34E4E1B15DCA52A597AAB337DA397CC2CEB426FB4E26CD5C33BF407D49EBA307794D7EDEB94B337F5FF45537C2B9D987641F1C17A14567BFAA732B57AC02C558D73072E9E59AAE69D47F63CE8F8E5FF99943F0D2E6BDDC15ADC8AA09FE6CC29D2F332E62B681D498A73CB33DE9B5679DE"
+        LastExportedEvents = "3400380039007C00789CAD92ED0A82301885CF75F52FB21F5151E015381317AD19CB94A08BEFB845492EDD2064F27E3C3B67CE57A086C60219DF390A28C60A47C6273C2046BBDAC602333E4B34EC6BF27BD286EBCCBCE632B8BE9576DC37D4FFAEC6E81638305B59A2AB352414D68CEF4850A1652794EAFBBA9EDF3387E43953EE33ACF64FFEBB13F34D4E658E1B6B15D532CB0F7DC68878BF84F98555E971F2F7E2FFD396BCC6C692E54B4FDAE92A2D11CEFDC3DB3F25D35CE89C38BD9437D7297EEED0EF3BCD85F93E018049C211"
         CreationOrder = "2"
         ClientWidth = "340"
         ClientHeight = "192"
@@ -1516,7 +1529,7 @@
             Width = "158"
             Height = "16"
             Text = "&Save after this interval:"
-            TabOrder = "1"
+            TabOrder = "2"
             event OnClick = "chkAutoSaveClick"
         }
 
@@ -1529,7 +1542,7 @@
             Width = "80"
             Height = "16"
             Text = "&Sorted"
-            TabOrder = "2"
+            TabOrder = "5"
             event OnClick = "chkSortClick"
         }
 
@@ -1542,7 +1555,8 @@
             Width = "80"
             Height = "21"
             Text = "100"
-            TabOrder = "3"
+            TabOrder = "1"
+            event OnKeyDown = "edtSpinDepthKeyDown"
         }
 
         type UpDown
@@ -1581,7 +1595,7 @@
             Width = "75"
             Height = "23"
             Text = "Ok"
-            TabOrder = "5"
+            TabOrder = "6"
             event OnClick = "btnOkClick"
         }
 
@@ -1594,7 +1608,7 @@
             Width = "75"
             Height = "23"
             Text = "Cancel"
-            TabOrder = "6"
+            TabOrder = "7"
             Cancel = "True"
             event OnClick = "btnCancelClick"
         }
@@ -1619,7 +1633,8 @@
             Width = "80"
             Height = "22"
             Text = "0"
-            TabOrder = "7"
+            TabOrder = "3"
+            event OnKeyDown = "edtMinLengthKeyDown"
             event OnTextChanged = "edtMinLengthChanged"
         }
 
@@ -1853,7 +1868,7 @@
         UnitName = "variables"
         DesignVisible = "False"
         LastExportedName = "frmVariables"
-        LastExportedEvents = "3700340032007C00789CAD54D90E8230109CEFF2D1EBC59818AF775182442C8643A3F1E39DAE5795D6829AA674D999DD59BAA5010A284CB0C01E213A481063890DCE089C88123B408BA327A822774466C6B9E57BC199217F64E9D0AF181D32B2AAE142BFD149E8D1B84DC58635D7E84A9D73878A0B6DA29323421B25F909BDB1D49ED22EC9D31D8971126FD4906BD660B2C6B40F376EE8A8E95563C88892FE1033ECBCA8A9FBC4744CC191126FA6D9957A552DC6BFB5B5A5BB578761D7BEE3EEDECF849761C0E791BC8C6B5E0335F5DE51BF5A0F2B46EB3DB9E77EEE625D9EAD029FEEE7B3ED67FD72AA0BFE9DD77F35C7946BC00C6BB98D22E9A00F37B5ABB85DB32F3BB795DB2195AFB3FBCCDC55DC96FB02E1EE28D7"
+        LastExportedEvents = "3800310034007C00789CAD94DB6EC2301044E7BBFA58485F10122AA5EF8444216A70502EAD407C3CE3851097D8D82955146C76C67BD6973846038525D6F8468A090AE4D8E00B27C44E45493FC60B9F485445EF82CE8AEF8EFF1BBE15EA5B9609E38AA3538E1C325CEA5F3805235AB7516CDA78C654EAFC74505CEA184E8D0CAF68E92F18CDA5F692FD963EBD23398E12CD467ACD1A4CD73BFB3F576FEAA8E93763CE112DE32956D87B5593DB6B7A4CC3A7A43E8E39957A5590E3BFD9BAA7772FC4616777BA7BEF57E2AB30E3EF81BE8A6D1DA09ABC7BD54F8B9070B45E932E77BF8AA13E5B053EEEE3B3ED773D73AA1B7E9D976FB5C607DB9819B6721B65B2833EDD640F753BF34D566E27B74329B3B3C7CCDC43FD71EE6ED6DD598B982D619B047A4C76BF829A9CCB792FE59EE9679A58EB3903FADF455E"
         CreationOrder = "5"
         ClientWidth = "528"
         ClientHeight = "569"

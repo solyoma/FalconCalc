@@ -70,42 +70,41 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	miFile = mnuMain->Add(L"&File");
 	miExit = miFile->Add(L"E&xit");
 	miExit->SetShortcut(L"Alt+X");
-
 	miEdit = mnuMain->Add(L"&Edit");
-	miCopy = miEdit->Add(L"&Copy");
+	miCopy = miEdit->Add(L"&Copy expression");
 	miCopy->SetShortcutText(L"Ctrl+C");
-	miPaste = miEdit->Add(L"&Paste");
+	miPaste = miEdit->Add(L"&Paste expression");
 	miPaste->SetShortcutText(L"Ctrl+V");
-	miAppend = miEdit->Add(L"Paste &After");
-	MenuItem1 = miEdit->Add(L"-");
-	miCopyDecimal = miEdit->Add(L"Copy &Decimal");
-	miCopyHexadecimal = miEdit->Add(L"Copy &Hexadecimal");
+	miAppend = miEdit->Add(L"Paste &After expression");
+	separator1 = miEdit->Add(L"-");
+	mnuEditCopy = miEdit->Add(L"Cop&y ...");
+	miCopyDecimal = mnuEditCopy->Add(L"Copy &Decimal");
+	miCopyHexadecimal = mnuEditCopy->Add(L"Copy &Hexadecimal");
 	miCopyHexadecimal->SetTag(1);
-	miCopyOctal = miEdit->Add(L"Copy O&ctal");
+	miCopyOctal = mnuEditCopy->Add(L"Copy &Octal");
 	miCopyOctal->SetTag(2);
-	miCopyBinary = miEdit->Add(L"Copy &Binary");
+	miCopyBinary = mnuEditCopy->Add(L"Copy &Binary");
 	miCopyBinary->SetTag(3);
-	MenuItem2 = miEdit->Add(L"-");
-	MenuItem3 = miEdit->Add(L"-");
-	miClearHist = miEdit->Add(L"C&lear History");
-
-	miView = mnuMain->Add(L"&View");
-	miEditVars = miView->Add(L"Edit User &Variables...");
+	miData = miEdit->Add(L"&Data...");
+	miData->SetTag(1);
+	miEditVars = miData->Add(L"Edit User &Variables...");
 	miEditVars->SetShortcut(L"Alt+1");
-	miEditFuncs = miView->Add(L"Edit User &Functions...");
+	miEditFuncs = miData->Add(L"Edit User &Functions...");
 	miEditFuncs->SetShortcut(L"Alt+2");
 	miEditFuncs->SetTag(1);
-	miShowHist = miView->Add(L"Edit &History");
-	miShowHist->SetShortcut(L"Alt+3");
-
-	miOptions = mnuMain->Add(L"O&ptions");
-	miShowDecOpts = miOptions->Add(L"Show &Decimal Options");
+	separator2 = miEdit->Add(L"-");
+	miClearHist = miEdit->Add(L"C&lear History");
+	miView = mnuMain->Add(L"&View");
+	miShowDecOpts = miView->Add(L"Show &Decimal Options");
 	miShowDecOpts->SetShortcutText(L"Ctrl+D");
-	miShowHexOpts = miOptions->Add(L"Show &Hexadecimal  Options");
+	miShowHexOpts = miView->Add(L"Show &Hexadecimal  Options");
 	miShowHexOpts->SetShortcut(L"Ctrl+X");
-	miCharFont = miOptions->Add(L"&Font For 'As String...' Display");
-	miHistOpts = miOptions->Add(L"Histor&y Options...");
-
+	miCharFont = miView->Add(L"&Font For 'As String...' Display");
+	miHistory = mnuMain->Add(L"&History");
+	miShowHist = miHistory->Add(L"Edit &History");
+	miShowHist->SetShortcut(L"Alt+3");
+	separator3 = miHistory->Add(L"-");
+	miHistOpts = miHistory->Add(L"Histor&y Options...");
 	miHelp = mnuMain->Add(L"&Help");
 	miAbout = miHelp->Add(L"&About");
 	miGenHelp = miHelp->Add(L"&General Help");
@@ -179,6 +178,7 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 
 	edtInfix = new nlib::Edit();
 	edtInfix->SetBounds(nlib::Rect(8, 29, 513, 50));
+	edtInfix->SetAnchors(nlib::caLeft | nlib::caTop | nlib::caRight | nlib::caBottom);
 	edtInfix->GetFont().SetFamily(L"Tahoma");
 	edtInfix->GetFont().SetSize(10);
 	edtInfix->SetParentFont(false);
@@ -411,6 +411,7 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	rdGrad->SetTooltipText(L"360º = 400 grad");
 	rdGrad->SetParent(gbAngleUnit);
 
+
 	rdTurn = new nlib::Radiobox();
 	rdTurn->SetTag(3);
 	rdTurn->SetBounds(nlib::Rect(184, 19, 248, 37));
@@ -566,6 +567,12 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	chkIEEEDouble->SetTooltipText(L"Double precision floating point format");
 	chkIEEEDouble->SetParent(gbHexOptions);
 
+	chkHexPrefix = new nlib::Checkbox();
+	chkHexPrefix->SetBounds(nlib::Rect(8, 52, 104, 68));
+	chkHexPrefix->SetText(L"0x &prefix");
+	chkHexPrefix->SetTabOrder(7);
+	chkHexPrefix->SetParent(gbHexOptions);
+
 	Label1 = new nlib::Label();
 	Label1->SetBounds(nlib::Rect(256, 177, 313, 193));
 	Label1->SetText(L"As String:");
@@ -654,6 +661,7 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	miShowDecOpts->OnClick = CreateEvent(this, &TfrmMain::miShowDecOptsClick);
 	miShowHexOpts->OnClick = CreateEvent(this, &TfrmMain::miShowHexOptsClick);
 	miCharFont->OnClick = CreateEvent(this, &TfrmMain::miCharFontClick);
+	miShowHist->OnClick = CreateEvent(this, &TfrmMain::miShowHistClick);
 	miHistOpts->OnClick = CreateEvent(this, &TfrmMain::miHistOptsClick);
 	miAbout->OnClick = CreateEvent(this, &TfrmMain::miAboutClick);
 	miGenHelp->OnClick = CreateEvent(this, &TfrmMain::miGenHelpClick);
@@ -694,13 +702,10 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	chkDWords->OnClick = CreateEvent(this, &TfrmMain::chkAsDWordsClick);
 	chkIEEESingle->OnClick = CreateEvent(this, &TfrmMain::chkIEEESingleClick);
 	chkIEEEDouble->OnClick = CreateEvent(this, &TfrmMain::chkIEEEDoubleClick);
-	//cbInfix->OnKeyPress = CreateEvent(this, &TfrmMain::cbInfixKeyPress);
-	//cbInfix->OnChanged = CreateEvent(this, &TfrmMain::cbInfixTextChanged);
 	btnFont->OnClick = CreateEvent(this, &TfrmMain::btnFontClick);
 	btnCloseDecOptions->OnClick = CreateEvent(this, &TfrmMain::btnCloseDecOptionsClick);
 	btnCloseHexOptions->OnClick = CreateEvent(this, &TfrmMain::btnCloseHexOptionsClick);
 }
-
 
 // for fun
 	vector<MONITORINFOEX> monitors;
