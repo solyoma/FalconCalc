@@ -488,7 +488,7 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	gbHexOptions->SetParent(pnlHexOpt);
 
 	chkMinus = new nlib::Checkbox();
-	chkMinus->SetBounds(nlib::Rect(16, 18, 102, 35));
+	chkMinus->SetBounds(nlib::Rect(8, 18, 102, 35));
 	chkMinus->SetText(L"M&inus sign");
 	chkMinus->GetFont().SetFamily(L"Tahoma");
 	chkMinus->GetFont().SetSize(10);
@@ -498,7 +498,7 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	chkMinus->SetParent(gbHexOptions);
 
 	chkHexPrefix = new nlib::Checkbox();
-	chkHexPrefix->SetBounds(nlib::Rect(16, 52, 111, 68));
+	chkHexPrefix->SetBounds(nlib::Rect(8, 52, 111, 68));
 	chkHexPrefix->SetText(L"0x p&refix");
 	chkHexPrefix->SetTabOrder(7);
 	chkHexPrefix->SetChecked(true);
@@ -566,12 +566,6 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	chkIEEEDouble->SetTabOrder(6);
 	chkIEEEDouble->SetTooltipText(L"Double precision floating point format");
 	chkIEEEDouble->SetParent(gbHexOptions);
-
-	chkHexPrefix = new nlib::Checkbox();
-	chkHexPrefix->SetBounds(nlib::Rect(8, 52, 104, 68));
-	chkHexPrefix->SetText(L"0x &prefix");
-	chkHexPrefix->SetTabOrder(7);
-	chkHexPrefix->SetParent(gbHexOptions);
 
 	Label1 = new nlib::Label();
 	Label1->SetBounds(nlib::Rect(256, 177, 313, 193));
@@ -1797,7 +1791,7 @@ void TfrmMain::chkAsBytesClick(void *sender, nlib::EventParameters param)
 		lengine->displayFormat.hexFormat = HexFormat::rnHexByte;
 	else
 		lengine->displayFormat.hexFormat = HexFormat::rnHexNormal;
-	chkLittleEndian->SetEnabled(b);
+//	chkLittleEndian->SetEnabled(b);
 	_ShowResults();
 }
 
@@ -1810,7 +1804,7 @@ void TfrmMain::chkAsWordsClick(void *sender, nlib::EventParameters param)
 		lengine->displayFormat.hexFormat = HexFormat::rnHexWord;
 	else
 		lengine->displayFormat.hexFormat = HexFormat::rnHexNormal;
-	chkLittleEndian->SetEnabled(b);
+//	chkLittleEndian->SetEnabled(b);
 	_ShowResults();
 }
 
@@ -1823,7 +1817,7 @@ void TfrmMain::chkAsDWordsClick(void *sender, nlib::EventParameters param)
 		lengine->displayFormat.hexFormat = HexFormat::rnHexDWord;
 	else
 		lengine->displayFormat.hexFormat = HexFormat::rnHexNormal;
-	chkLittleEndian->SetEnabled(b);
+//	chkLittleEndian->SetEnabled(b);
 	_ShowResults();
 }
 
