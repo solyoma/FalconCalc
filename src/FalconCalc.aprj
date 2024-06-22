@@ -7,8 +7,8 @@
     type Form
     {
         Name = "frmMain"
-        Left = "454"
-        Top = "615"
+        Left = "875"
+        Top = "275"
         Text = "FalconCalc"
         class Font
         {
@@ -497,7 +497,6 @@
             Top = "29"
             Width = "513"
             Height = "22"
-            Anchors = "caLeft, caTop, caRight, caBottom"
             class Font
             {
                 Family = "Tahoma"
@@ -1663,8 +1662,8 @@
     type Form
     {
         Name = "frmHistory"
-        Left = "454"
-        Top = "1090"
+        Left = "875"
+        Top = "749"
         Text = "FalconCalc History"
         class Font
         {

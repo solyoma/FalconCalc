@@ -978,8 +978,10 @@ void TfrmMain::rdDegClick(void *sender, nlib::EventParameters param)
 void TfrmMain::spnDecDigitsTextChanged(void *sender, nlib::EventParameters param)
 {
 	lengine->displayFormat.decDigits = UpDownDecDigits->Position();
-	if(chkDecDigits->Checked())
+	if (chkDecDigits->Checked())
 		_ShowResults();
+	else
+		lengine->displayFormat.decDigits = - (lengine->displayFormat.decDigits+1);	// changed, but not shown
 	//else
 	//	SetFocus(edtInfix->Handle());
 }
