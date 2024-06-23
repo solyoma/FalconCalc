@@ -423,7 +423,7 @@ void Token::_GetNumberFromQuotedString(const SmartString &text, unsigned &pos)
 	while(pos < text.length() && (text[pos] != '\'' || (pos > 0 && text[pos-1] == '\\')) )
     {
 		SCharT ch = text[pos];
-        lval = lval * r256 + RealNumber( String(1, ch) ) ;
+        lval = lval * r256 + RealNumber(ch.Unicode()) ;
 		++pos;
     }
 	if(pos == startpos)
@@ -495,7 +495,7 @@ void Token::FromText(const SmartString &text, unsigned &pos)
     --pos;  // go back to start of token
 
     if(c == SCharT('\'') )   // character SmartString
-        _GetNumberFromQuotedString(text,pos);
+        _GetNumberFromQuotedString(text, ++pos);
 	else if(isdigit(c,loc) || c == decpoint || c == SCharT('#'))		// token is a decimal, hexadecimal, octal or binary number
 	{
 		bool bDecpF = (c == decpoint),							        // decimal point found ?
@@ -776,8 +776,7 @@ int LittleEngine::_InfixToPostFix(const SmartString expr)
         }
         if(*it == '\'')
             quoted ^= true;
-        else if(!quoted)
-            infix.push_back(*it);   //  tolower(*it, loc) ); don't lower anything here
+        infix.push_back(*it);   //  even quted string don't lowercase anything here
     }
     infix += expr.mid(it - expr.begin());   // add comment and unit
 
