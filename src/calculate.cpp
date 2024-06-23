@@ -74,10 +74,10 @@ std::map<Trigger_Type, SmartString> triggerMap
     {Trigger_Type::INVALID_CHARACTER_IN_FUNCTION_DEFINITION,"Invalid character in function definition"_ss},
     {Trigger_Type::INVALID_FUNCTION_DEFINITION,"Invalid function definition"_ss},
     {Trigger_Type::MISMATCHED_PARENTHESIS,"Mismatched parenthesis"_ss},
-    {Trigger_Type::MISMATCHED_PARENTHESIS,"Mismatched parenthesis"_ss},
     {Trigger_Type::MISSING_BINARY_NUMBER,"Missing binary number"_ss},
     {Trigger_Type::NO_FUNCTION_ARGUMENT,"No function argument"_ss},
     {Trigger_Type::RECURSIVE_FUNCTIONS_ARE_NOT_ALLOWED,"Recursive functions are not allowed"_ss},
+    {Trigger_Type::STACK_ERROR,"Stack error"_ss},
     {Trigger_Type::SYNTAX_ERROR,"Syntax error"_ss},
     {Trigger_Type::UNKNOWN_FUNCTION_IN_EXPRESSION,"Unknown function in expression"_ss},
     {Trigger_Type::VARIABLE_DEFINITION_MISSING,"Variable definition missing"_ss}
@@ -901,13 +901,21 @@ int LittleEngine::_InfixToPostFix(const SmartString expr)
 					_HandleOperator(tok);
 					needOp = false;
 					break;
-				case tknBrace:      _HandleBrace(tok);
+				case tknBrace:      
+                    _HandleBrace(tok);
 					break;
 				default: break;     // to make compilers happy
 			}
 			//      delete tok;
 				  //tok = new Token(infix, pos);
 		}
+        catch (Trigger_Type tt)
+        {
+            if (tok->Type() == tknBrace && tt == Trigger_Type::STACK_ERROR)
+                throw Trigger_Type::MISMATCHED_PARENTHESIS;
+            else
+                throw;
+        }
 		catch (...)
 		{
 			;

@@ -837,7 +837,7 @@ void TfrmMain::edtInfixKeyDown(void *sender, nlib::KeyParameters param)
     else if(param.keycode != VK_RIGHT && param.keycode != VK_LEFT && param.keycode != VK_UP && param.keycode != VK_DOWN &&
             param.keycode != VK_TAB)
     {
-		if(param.keycode != 17 || !param.vkeys.contains(vksCtrl))  // 17 - Ctrl-H
+		//if(param.keycode != 17 || !param.vkeys.contains(vksCtrl))  // 17 - Ctrl-H
                 _added = false;
     }
 }
