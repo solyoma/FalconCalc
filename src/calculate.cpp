@@ -458,7 +458,7 @@ void Token::_GetVarOrFuncOrOperator(const SmartString &text, unsigned &pos)
 	while(pos < text.length() && (IsAlnum(text[pos],loc) || text[pos] == '_'))
 		++pos;
 	SmartString s = text.substr(startpos, pos - startpos);
-    if (s.length() == 1 & s == u"π")
+    if (s.length() == 1 && s == u"π")
         s = u"pi";
 	name = s;  //  set name
     while(pos < text.length() && isspace((wchar_t)text[pos],loc))
