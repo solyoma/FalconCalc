@@ -69,17 +69,18 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	mnuMain = new nlib::Menubar();
 	miFile = mnuMain->Add(L"&File");
 	miExit = miFile->Add(L"E&xit");
-	miExit->SetShortcut(L"Alt+X");
+	miExit->SetShortcut(L"CTRL+W");
 	miEdit = mnuMain->Add(L"&Edit");
 	miCopy = miEdit->Add(L"&Copy expression");
 	miCopy->SetShortcutText(L"Ctrl+C");
 	miPaste = miEdit->Add(L"&Paste expression");
 	miPaste->SetShortcutText(L"Ctrl+V");
 	miAppend = miEdit->Add(L"Paste &After expression");
+	miAppend->SetShortcut(L"Ctrl+Shift+V");
 	separator1 = miEdit->Add(L"-");
 	mnuEditCopy = miEdit->Add(L"Cop&y ...");
 	miCopyDecimal = mnuEditCopy->Add(L"Copy &Decimal");
-	miCopyHexadecimal = mnuEditCopy->Add(L"Copy &Hexadecimal");
+	miCopyHexadecimal = mnuEditCopy->Add(L"Copy He&xadecimal");
 	miCopyHexadecimal->SetTag(1);
 	miCopyOctal = mnuEditCopy->Add(L"Copy &Octal");
 	miCopyOctal->SetTag(2);
@@ -97,10 +98,10 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	miView = mnuMain->Add(L"&View");
 	miShowDecOpts = miView->Add(L"Show &Decimal Options");
 	miShowDecOpts->SetShortcutText(L"Ctrl+D");
-	miShowHexOpts = miView->Add(L"Show &Hexadecimal  Options");
+	miShowHexOpts = miView->Add(L"Show Hexadecimal  Options");
 	miShowHexOpts->SetShortcut(L"Ctrl+X");
 	miCharFont = miView->Add(L"&Font For 'As String...' Display");
-	miHistory = mnuMain->Add(L"&History");
+	miHistory = mnuMain->Add(L"H&istory");
 	miShowHist = miHistory->Add(L"Edit &History");
 	miShowHist->SetShortcut(L"Alt+3");
 	separator3 = miHistory->Add(L"-");
@@ -215,7 +216,7 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	btnHexadecimal = new nlib::Button();
 	btnHexadecimal->SetTag(1);
 	btnHexadecimal->SetBounds(nlib::Rect(1, 41, 80, 64));
-	btnHexadecimal->SetText(L"&Hexadecimal");
+	btnHexadecimal->SetText(L"He&xadecimal");
 	btnHexadecimal->SetTabOrder(2);
 	btnHexadecimal->SetTooltipText(L"Copy hexadec. number to clipboard");
 	btnHexadecimal->SetParent(gbResults);
@@ -297,7 +298,7 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 
 	chkSep = new nlib::Checkbox();
 	chkSep->SetBounds(nlib::Rect(8, 16, 165, 33));
-	chkSep->SetText(L"Use t&housand separator:");
+	chkSep->SetText(L"Use thousand se&parator:");
 	chkSep->GetFont().SetFamily(L"Tahoma");
 	chkSep->GetFont().SetSize(10);
 	chkSep->SetParentFont(false);
@@ -307,7 +308,7 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 
 	chkDecDelim = new nlib::Checkbox();
 	chkDecDelim->SetBounds(nlib::Rect(8, 31, 160, 47));
-	chkDecDelim->SetText(L"Use decimal separator");
+	chkDecDelim->SetText(L"&Use decimal separator");
 	chkDecDelim->SetTabOrder(6);
 	chkDecDelim->SetParent(gbDecOptions);
 
@@ -444,7 +445,7 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	rdHtml = new nlib::Radiobox();
 	rdHtml->SetTag(1);
 	rdHtml->SetBounds(nlib::Rect(77, 20, 141, 36));
-	rdHtml->SetText(L"&HTML");
+	rdHtml->SetText(L"HT&ML");
 	rdHtml->GetFont().SetFamily(L"Tahoma");
 	rdHtml->GetFont().SetSize(10);
 	rdHtml->SetParentFont(false);

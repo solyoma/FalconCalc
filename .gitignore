@@ -409,3 +409,4 @@ nlib/DebugLibraryBuild
 .o
 enc_temp_folder/*
 *.bak
+src/tmp/*

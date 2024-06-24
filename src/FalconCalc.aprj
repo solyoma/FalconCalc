@@ -24,6 +24,7 @@
         LastExportedName = "frmMain"
         LastExportedEvents = "32003800300036007C00789CAD586153DB300CD5EFE21BD076708CB1BBEEE0F312B236471B7A4D0AE58E1FBF67B559D358B22DB3EB95267A2F7AB26CC9266BAA694A7BFCEDE89A56F82DE9853E69ADD81BBE2EE8029F29BD51054B473FE9376DF15DE3BEC3774BEDD1C735BDD2863E3CDF92DDEADB212DDBC6DE65C4EAFF12116E98F5EC2968586E7E26B0966A967C3457E706D6BDAAE3A3B93A0F78DE5F513A9AAB7385EB46D5F151ABCE14F3EB6AE09119AD50233A9EAB35A31D9865404D6658F5E6B4449EDE31EB3557CB582D84DBE76B857B876A6A6146EED80E95F380D5D009F98CB3F273EA2A29A6ABB3ECF95D323683DF46CCAE8E5BB5FAF9D14617C2ED3DB840C43B61443262F5FF8D196E1E568876ACA1A3169D02D70D67A3F7D6CF79CDB3719E211B3B3F8EE19A8FC71163DBE3704FBFE2BE4ACC483AFF2BB1A465259D6F8F45AA501DB1F82FD1035E10B1AB9A82BBEDD05318B5EBCC79EF5D283A1A6AD7B9C4F5849E10F716BB632B688518797A31B5FFA97585738CB36B5A326ED7FACE278B8E6764CAE7DA1ACC46504D61DAF5EF7945ECC471CA9845C3CD86ABD5C59907D96AF1DBA2F2FBEE38C1530BCE4D4BBFB84775C77DD7ADF40A5A767E4E7D8F7D4B551EE2E4D47A793CC18DAB7C6CB7F92E90972577A496B3F20C8F15EFC4E7594A67E68CAD1AEDFD9A3D67DF39FC9F32E37EB1064BEAFB319645D765A1A35B30FEE099BDBAEE52795FD1BE83E583779C77D8E2F850EB80C93A1D38F21B001DB18CC37991DE5F6876ABEFFEFCEC66DB57D051AB8EF47E47B35B7CF7EBF4744A926D439F3E1EF67D8FDFB733CF278B25D639AE9DBD1B3C2FD92C3E37CC3EF458C7A899ABDB87BE4F767D1FFBF1AF0FACBCDD4CC3AC7D375EF969AC7CDDBEC2B77CB649C1A5FED0A3A10E7F8BC8DC277C328EB1EC3B4BEF317C528EB1D275FF0244B057E2"
         CreationOrder = "0"
+        Icon = "240053003A005C007600650067007900650073005C00460061006C0063006F006E00430061006C0063005C007300720063005C00700072006F006700720061006D002E00690063006F00FE020000789CB592310EC3200C457FA28AB95367C61E83A10761A858938D95A3711AD43153BBD5B5814821129D92F731C6B66C240430B0B4BE42788DC08DFD9D4DB319B601975C0B233A84BC104271223EC418D94B86F20251712249C97630EAF9D86254725B8C7A5BAC02384ED35CE5FD2CF569A9225ADCDF7EDBF6B39A7ED629FDBE50E36429F3E9D6EBCBD4F8DB60D08C77B6FBB027413B227FB780FA9D0E3099B7BF63CB0F892FD8B7"
         Menu = "mnuMain"
         ClientWidth = "528"
         ClientHeight = "419"
@@ -39,6 +40,59 @@
             {
                 Family = "Tahoma"
                 Size = "8"
+            }
+        }
+
+        type PopupMenu
+        {
+            Name = "pmCopy"
+            AccessLevel = "alPublic"
+
+            subtype Items : MenuItem
+            {
+                Name = "miCopyDec"
+                AccessLevel = "alPublic"
+                Text = "Copy &Decimal"
+                event OnClick = "miCopyDecClick"
+            }
+
+            subtype Items : MenuItem
+            {
+                Name = "miCopyHex"
+                AccessLevel = "alPublic"
+                Text = "Copy He&xadecimal"
+                event OnClick = "miCopyHexClick"
+            }
+
+            subtype Items : MenuItem
+            {
+                Name = "miCopyOct"
+                AccessLevel = "alPublic"
+                Text = "Copy &Octal"
+                event OnClick = "miCopyOctClick"
+            }
+
+            subtype Items : MenuItem
+            {
+                Name = "miCopyBin"
+                AccessLevel = "alPublic"
+                Text = "Copy &Binary"
+                event OnClick = "miCopyBinClick"
+            }
+
+            subtype Items : MenuItem
+            {
+                Name = "miCopySep"
+                AccessLevel = "alPublic"
+                Text = "-"
+            }
+
+            subtype Items : MenuItem
+            {
+                Name = "miCopyText"
+                AccessLevel = "alPublic"
+                Text = "Copy &Formula"
+                event OnClick = "miCopyClick"
             }
         }
 
@@ -272,59 +326,6 @@
                     Shortcut = "F1"
                     event OnClick = "miGenHelpClick"
                 }
-            }
-        }
-
-        type PopupMenu
-        {
-            Name = "pmCopy"
-            AccessLevel = "alPublic"
-
-            subtype Items : MenuItem
-            {
-                Name = "miCopyDec"
-                AccessLevel = "alPublic"
-                Text = "Copy &Decimal"
-                event OnClick = "miCopyDecClick"
-            }
-
-            subtype Items : MenuItem
-            {
-                Name = "miCopyHex"
-                AccessLevel = "alPublic"
-                Text = "Copy He&xadecimal"
-                event OnClick = "miCopyHexClick"
-            }
-
-            subtype Items : MenuItem
-            {
-                Name = "miCopyOct"
-                AccessLevel = "alPublic"
-                Text = "Copy &Octal"
-                event OnClick = "miCopyOctClick"
-            }
-
-            subtype Items : MenuItem
-            {
-                Name = "miCopyBin"
-                AccessLevel = "alPublic"
-                Text = "Copy &Binary"
-                event OnClick = "miCopyBinClick"
-            }
-
-            subtype Items : MenuItem
-            {
-                Name = "miCopySep"
-                AccessLevel = "alPublic"
-                Text = "-"
-            }
-
-            subtype Items : MenuItem
-            {
-                Name = "miCopyText"
-                AccessLevel = "alPublic"
-                Text = "Copy &Formula"
-                event OnClick = "miCopyClick"
             }
         }
 
@@ -1372,7 +1373,8 @@
         LastExportedName = "frmAbout"
         LastExportedEvents = "3100300031007C00789C858D310A80301443DFB9DC449D5CBC422B2D885541AB227878832E0E45F94B92477E3C3303399689954841A0A3A5E7C47FB0F1D6964C57B1E194441A8C3A462D27E7A497C49F5AE4A094DBD5FAE7EFAD87A5762E08CA2840"
         CreationOrder = "1"
-        ClientWidth = "274"
+        Icon = "240053003A005C007600650067007900650073005C00460061006C0063006F006E00430061006C0063005C007300720063005C00700072006F006700720061006D002E00690063006F00FE020000789CB592310EC3200C457FA28AB95367C61E83A10761A858938D95A3711AD43153BBD5B5814821129D92F731C6B66C240430B0B4BE42788DC08DFD9D4DB319B601975C0B233A84BC104271223EC418D94B86F20251712249C97630EAF9D86254725B8C7A5BAC02384ED35CE5FD2CF569A9225ADCDF7EDBF6B39A7ED629FDBE50E36429F3E9D6EBCBD4F8DB60D08C77B6FBB027413B227FB780FA9D0E3099B7BF63CB0F892FD8B7"
+        ClientWidth = "288"
         ClientHeight = "222"
         event OnKeyDown = "frmAboutKeyDown"
         event OnClick = "frmAboutClick"
@@ -1381,7 +1383,7 @@
         {
             Name = "Label1"
             AccessLevel = "alPublic"
-            Left = "86"
+            Left = "98"
             Top = "15"
             Width = "86"
             Height = "19"
@@ -1399,8 +1401,8 @@
         {
             Name = "Label2"
             AccessLevel = "alPublic"
-            Left = "44"
-            Top = "47"
+            Left = "41"
+            Top = "41"
             Width = "201"
             Height = "14"
             Text = "A handy little calculator for everyone"
@@ -1410,61 +1412,44 @@
         {
             Name = "Label3"
             AccessLevel = "alPublic"
-            Left = "39"
-            Top = "71"
-            Width = "213"
+            Left = "7"
+            Top = "62"
+            Width = "268"
             Height = "14"
-            Text = "(but especially useful for programmers)"
+            Text = "(especially useful for physicists and programmers)"
         }
 
         type Label
         {
             Name = "Label4"
             AccessLevel = "alPublic"
-            Left = "50"
-            Top = "95"
-            Width = "183"
+            Left = "25"
+            Top = "84"
+            Width = "233"
             Height = "14"
-            Text = "Based on the 'FalconCalc Engine',"
+            Text = "Based on the 'LongNumber' cross platform"
         }
 
         type Label
         {
             Name = "Label5"
             AccessLevel = "alPublic"
-            Left = "54"
-            Top = "119"
-            Width = "179"
+            Left = "60"
+            Top = "105"
+            Width = "163"
             Height = "14"
-            Text = "a cross platform arithmetic library"
-        }
-
-        type Label
-        {
-            Name = "Label6"
-            AccessLevel = "alPublic"
-            Left = "108"
-            Top = "143"
-            Width = "61"
-            Height = "14"
-            Text = "Copyright"
-            class Font
-            {
-                Family = "Tahoma"
-                Bold = "True"
-            }
-            ParentFont = "False"
+            Text = "arithmetic library of A. Sólyom"
         }
 
         type Label
         {
             Name = "Label7"
             AccessLevel = "alPublic"
-            Left = "85"
-            Top = "167"
-            Width = "115"
+            Left = "68"
+            Top = "169"
+            Width = "147"
             Height = "14"
-            Text = "A. Sólyom - 2012. "
+            Text = "© A. Sólyom - 2012-24 "
             class Font
             {
                 Family = "Tahoma"
@@ -1477,11 +1462,33 @@
         {
             Name = "Label8"
             AccessLevel = "alPublic"
-            Left = "46"
+            Left = "43"
             Top = "191"
             Width = "196"
             Height = "14"
-            Text = "This program is in the public domain"
+            Text = "This program is open source (GPL3)"
+        }
+
+        type Label
+        {
+            Name = "Label9"
+            AccessLevel = "alPublic"
+            Left = "131"
+            Top = "126"
+            Width = "20"
+            Height = "14"
+            Text = "and"
+        }
+
+        type Label
+        {
+            Name = "Label10"
+            AccessLevel = "alPublic"
+            Left = "54"
+            Top = "148"
+            Width = "174"
+            Height = "14"
+            Text = "on the NLIB library © Z. Sólyom"
         }
     }
     type Form
@@ -1503,6 +1510,7 @@
         LastExportedName = "frmHistOptions"
         LastExportedEvents = "3400380039007C00789CAD92ED0A82301885CF75F52FB21F5151E015381317AD19CB94A08BEFB845492EDD2064F27E3C3B67CE57A086C60219DF390A28C60A47C6273C2046BBDAC602333E4B34EC6BF27BD286EBCCBCE632B8BE9576DC37D4FFAEC6E81638305B59A2AB352414D68CEF4850A1652794EAFBBA9EDF3387E43953EE33ACF64FFEBB13F34D4E658E1B6B15D532CB0F7DC68878BF84F98555E971F2F7E2FFD396BCC6C692E54B4FDAE92A2D11CEFDC3DB3F25D35CE89C38BD9437D7297EEED0EF3BCD85F93E018049C211"
         CreationOrder = "2"
+        Icon = "240053003A005C007600650067007900650073005C00460061006C0063006F006E00430061006C0063005C007300720063005C00700072006F006700720061006D002E00690063006F00FE020000789CB592310EC3200C457FA28AB95367C61E83A10761A858938D95A3711AD43153BBD5B5814821129D92F731C6B66C240430B0B4BE42788DC08DFD9D4DB319B601975C0B233A84BC104271223EC418D94B86F20251712249C97630EAF9D86254725B8C7A5BAC02384ED35CE5FD2CF569A9225ADCDF7EDBF6B39A7ED629FDBE50E36429F3E9D6EBCBD4F8DB60D08C77B6FBB027413B227FB780FA9D0E3099B7BF63CB0F892FD8B7"
         ClientWidth = "340"
         ClientHeight = "192"
 
@@ -1662,8 +1670,8 @@
     type Form
     {
         Name = "frmHistory"
-        Left = "875"
-        Top = "749"
+        Left = "688"
+        Top = "340"
         Text = "FalconCalc History"
         class Font
         {
@@ -1676,6 +1684,7 @@
         LastExportedName = "frmHistory"
         LastExportedEvents = "3400300034007C00789C9550ED0A83300CBCE7DACF7D311883C19E60156162AD503B41D8C3EF9A21ABDABA156993E62E77310A0E063BDC791728A1996B54CC6BBCA0565123B9C286DF013D7143FE956CCBD3F0ED782C3A720B3CD87343CBB79BA8A4911CFD7152CD8AC7637F11C3F23DF6B2874F7DE99242737C346F8713F93EFABD0CD455B3EDFFC70A7D2F643DC92EB16574D26512331C45B111AD567AE2B5507F89AF6BFB79FA89F2B792B3AFB1FBCCCA408E65EC7E20A1FE1C8DB9BC01E13FA0D8"
         CreationOrder = "3"
+        Icon = "240053003A005C007600650067007900650073005C00460061006C0063006F006E00430061006C0063005C007300720063005C00700072006F006700720061006D002E00690063006F00FE020000789CB592310EC3200C457FA28AB95367C61E83A10761A858938D95A3711AD43153BBD5B5814821129D92F731C6B66C240430B0B4BE42788DC08DFD9D4DB319B601975C0B233A84BC104271223EC418D94B86F20251712249C97630EAF9D86254725B8C7A5BAC02384ED35CE5FD2CF569A9225ADCDF7EDBF6B39A7ED629FDBE50E36429F3E9D6EBCBD4F8DB60D08C77B6FBB027413B227FB780FA9D0E3099B7BF63CB0F892FD8B7"
         ClientWidth = "528"
         ClientHeight = "183"
         event OnKeyPress = "FormKeyPress"
@@ -1791,6 +1800,7 @@
         LastExportedName = "frmHelp"
         LastExportedEvents = "3100340033007C00789CF361486448624865C8613066700692990CC90CD90C350C3E38C4F3C0EC24062B2074652803AAC86328610800AA2E02E25C20BF04888B188A816AD380742E8307D89402145370CB906FBE3790AE647061C8672807EA21248B6C0F440E9B1D002ACD380D"
         CreationOrder = "4"
+        Icon = "240053003A005C007600650067007900650073005C00460061006C0063006F006E00430061006C0063005C007300720063005C00700072006F006700720061006D002E00690063006F00FE020000789CB592310EC3200C457FA28AB95367C61E83A10761A858938D95A3711AD43153BBD5B5814821129D92F731C6B66C240430B0B4BE42788DC08DFD9D4DB319B601975C0B233A84BC104271223EC418D94B86F20251712249C97630EAF9D86254725B8C7A5BAC02384ED35CE5FD2CF569A9225ADCDF7EDBF6B39A7ED629FDBE50E36429F3E9D6EBCBD4F8DB60D08C77B6FBB027413B227FB780FA9D0E3099B7BF63CB0F892FD8B7"
         ClientWidth = "652"
         ClientHeight = "472"
         event OnKeyDown = "frmHelpKeyDown"
@@ -1869,6 +1879,7 @@
         LastExportedName = "frmVariables"
         LastExportedEvents = "3800310034007C00789CAD94DB6EC2301044E7BBFA58485F10122AA5EF8444216A70502EAD407C3CE3851097D8D82955146C76C67BD6973846038525D6F8468A090AE4D8E00B27C44E45493FC60B9F485445EF82CE8AEF8EFF1BBE15EA5B9609E38AA3538E1C325CEA5F3805235AB7516CDA78C654EAFC74505CEA184E8D0CAF68E92F18CDA5F692FD963EBD23398E12CD467ACD1A4CD73BFB3F576FEAA8E93763CE112DE32956D87B5593DB6B7A4CC3A7A43E8E39957A5590E3BFD9BAA7772FC4616777BA7BEF57E2AB30E3EF81BE8A6D1DA09ABC7BD54F8B9070B45E932E77BF8AA13E5B053EEEE3B3ED773D73AA1B7E9D976FB5C607DB9819B6721B65B2833EDD640F753BF34D566E27B74329B3B3C7CCDC43FD71EE6ED6DD598B982D619B047A4C76BF829A9CCB792FE59EE9679A58EB3903FADF455E"
         CreationOrder = "5"
+        Icon = "240053003A005C007600650067007900650073005C00460061006C0063006F006E00430061006C0063005C007300720063005C00700072006F006700720061006D002E00690063006F00FE020000789CB592310EC3200C457FA28AB95367C61E83A10761A858938D95A3711AD43153BBD5B5814821129D92F731C6B66C240430B0B4BE42788DC08DFD9D4DB319B601975C0B233A84BC104271223EC418D94B86F20251712249C97630EAF9D86254725B8C7A5BAC02384ED35CE5FD2CF569A9225ADCDF7EDBF6B39A7ED629FDBE50E36429F3E9D6EBCBD4F8DB60D08C77B6FBB027413B227FB780FA9D0E3099B7BF63CB0F892FD8B7"
         ClientWidth = "528"
         ClientHeight = "569"
         event OnEndSizeMove = "FormSizeMoveEnded"
@@ -2060,10 +2071,12 @@
         Top = "1412"
         Text = "FalconCalc - input panel"
         WantedKeyTypes = "wkArrows, wkTab, wkEnter, wkEscape, wkOthers"
+        UnitName = "input"
         DesignVisible = "True"
         LastExportedName = "frmInput"
+        LastExportedEvents = "350031007C00789C4B622861C8637066480492C90CA90C3940760E4326909DCD50C3908457360FCC4E62B00242578632A07C1E507D0050751110E702F925405CC450CC00000C661408"
         CreationOrder = "6"
-        ClientWidth = "0"
+        ClientWidth = "120"
         ClientHeight = "0"
 
         type TabControl

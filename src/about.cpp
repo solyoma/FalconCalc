@@ -1,4 +1,4 @@
-﻿#include "Stdafx_zoli.h"
+﻿#include "StdAfx_zoli.h"
 
 using namespace nlib;
 #include "about.h"
@@ -16,10 +16,10 @@ void TfrmAbout::InitializeFormAndControls() /* Control initialization function g
 	SetShowPosition(nlib::fspActiveMonitorCenter);
 	SetBorderStyle(nlib::fbsDialog);
 	SetKeyPreview(true);
-	SetClientRect(nlib::Rect(0, 0, 274, 222));
+	SetClientRect(nlib::Rect(0, 0, 288, 222));
 
 	Label1 = new nlib::Label();
-	Label1->SetBounds(nlib::Rect(86, 15, 172, 34));
+	Label1->SetBounds(nlib::Rect(98, 15, 184, 34));
 	Label1->SetText(L"FalconCalc");
 	Label1->GetFont().SetFamily(L"Tahoma");
 	Label1->GetFont().SetSize(12);
@@ -28,49 +28,61 @@ void TfrmAbout::InitializeFormAndControls() /* Control initialization function g
 	Label1->SetParent(this);
 
 	Label2 = new nlib::Label();
-	Label2->SetBounds(nlib::Rect(44, 47, 245, 61));
+	Label2->SetBounds(nlib::Rect(41, 41, 242, 55));
 	Label2->SetText(L"A handy little calculator for everyone");
 	Label2->SetParent(this);
 
 	Label3 = new nlib::Label();
-	Label3->SetBounds(nlib::Rect(39, 71, 252, 85));
-	Label3->SetText(L"(but especially useful for programmers)");
+	Label3->SetBounds(nlib::Rect(7, 62, 275, 76));
+	Label3->SetText(L"(especially useful for physicists and programmers)");
 	Label3->SetParent(this);
 
 	Label4 = new nlib::Label();
-	Label4->SetBounds(nlib::Rect(50, 95, 233, 109));
-	Label4->SetText(L"Based on the 'FalconCalc Engine',");
+	Label4->SetBounds(nlib::Rect(25, 84, 258, 98));
+	Label4->SetText(L"Based on the 'LongNumber' cross platform");
 	Label4->SetParent(this);
 
 	Label5 = new nlib::Label();
-	Label5->SetBounds(nlib::Rect(54, 119, 233, 133));
-	Label5->SetText(L"a cross platform arithmetic library");
+	Label5->SetBounds(nlib::Rect(60, 105, 223, 119));
+	Label5->SetText(L"arithmetic library of A. Sólyom");
 	Label5->SetParent(this);
 
-	Label6 = new nlib::Label();
-	Label6->SetBounds(nlib::Rect(108, 143, 169, 157));
-	Label6->SetText(L"Copyright");
-	Label6->GetFont().SetFamily(L"Tahoma");
-	Label6->GetFont().SetBold(true);
-	Label6->SetParentFont(false);
-	Label6->SetParent(this);
-
 	Label7 = new nlib::Label();
-	Label7->SetBounds(nlib::Rect(85, 167, 200, 181));
-	Label7->SetText(L"A. Sólyom - 2012. ");
+	Label7->SetBounds(nlib::Rect(68, 169, 215, 183));
+	Label7->SetText(L"© A. Sólyom - 2012-24 ");
 	Label7->GetFont().SetFamily(L"Tahoma");
 	Label7->GetFont().SetBold(true);
 	Label7->SetParentFont(false);
 	Label7->SetParent(this);
 
 	Label8 = new nlib::Label();
-	Label8->SetBounds(nlib::Rect(46, 191, 242, 205));
-	Label8->SetText(L"This program is in the public domain");
+	Label8->SetBounds(nlib::Rect(43, 191, 239, 205));
+	Label8->SetText(L"This program is open source (GPL3)");
 	Label8->SetParent(this);
+
+	Label9 = new nlib::Label();
+	Label9->SetBounds(nlib::Rect(131, 126, 151, 140));
+	Label9->SetText(L"and");
+	Label9->SetParent(this);
+
+	Label10 = new nlib::Label();
+	Label10->SetBounds(nlib::Rect(54, 148, 228, 162));
+	Label10->SetText(L"on the NLIB library © Z. Sólyom");
+	Label10->SetParent(this);
 
 
 	OnKeyDown = CreateEvent(this, &TfrmAbout::frmAboutKeyDown);
 	OnClick = CreateEvent(this, &TfrmAbout::frmAboutClick);
+}
+
+TfrmAbout::TfrmAbout()
+{
+	InitializeFormAndControls(); /* Control initializations. Do not remove. */
+}
+
+TfrmAbout::~TfrmAbout()
+{
+	/* Don't 'delete' the form. Call Destroy() instead which has access to the protected destructor. */
 }
 
 void TfrmAbout::Destroy()
@@ -81,24 +93,13 @@ void TfrmAbout::Destroy()
 	Form::Destroy();
 }
 
-TfrmAbout::TfrmAbout()
-{
-	InitializeFormAndControls();
-}
-
-TfrmAbout::~TfrmAbout()
-{
-	/* Don't 'delete' the form. Call Destroy() instead which has access to the protected destructor. */
-}
-
 void TfrmAbout::frmAboutClick(void *sender, nlib::EventParameters param)
 {
-    Close();
+	;
 }
 
 void TfrmAbout::frmAboutKeyDown(void *sender, nlib::KeyParameters param)
 {
-    Close();
+	;
 }
-
 
