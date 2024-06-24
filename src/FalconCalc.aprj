@@ -42,59 +42,6 @@
             }
         }
 
-        type PopupMenu
-        {
-            Name = "pmCopy"
-            AccessLevel = "alPublic"
-
-            subtype Items : MenuItem
-            {
-                Name = "miCopyDec"
-                AccessLevel = "alPublic"
-                Text = "Copy &Decimal"
-                event OnClick = "miCopyDecClick"
-            }
-
-            subtype Items : MenuItem
-            {
-                Name = "miCopyHex"
-                AccessLevel = "alPublic"
-                Text = "Copy He&xadecimal"
-                event OnClick = "miCopyHexClick"
-            }
-
-            subtype Items : MenuItem
-            {
-                Name = "miCopyOct"
-                AccessLevel = "alPublic"
-                Text = "Copy &Octal"
-                event OnClick = "miCopyOctClick"
-            }
-
-            subtype Items : MenuItem
-            {
-                Name = "miCopyBin"
-                AccessLevel = "alPublic"
-                Text = "Copy &Binary"
-                event OnClick = "miCopyBinClick"
-            }
-
-            subtype Items : MenuItem
-            {
-                Name = "miCopySep"
-                AccessLevel = "alPublic"
-                Text = "-"
-            }
-
-            subtype Items : MenuItem
-            {
-                Name = "miCopyText"
-                AccessLevel = "alPublic"
-                Text = "Copy &Formula"
-                event OnClick = "miCopyClick"
-            }
-        }
-
         type Menubar
         {
             Name = "mnuMain"
@@ -325,6 +272,59 @@
                     Shortcut = "F1"
                     event OnClick = "miGenHelpClick"
                 }
+            }
+        }
+
+        type PopupMenu
+        {
+            Name = "pmCopy"
+            AccessLevel = "alPublic"
+
+            subtype Items : MenuItem
+            {
+                Name = "miCopyDec"
+                AccessLevel = "alPublic"
+                Text = "Copy &Decimal"
+                event OnClick = "miCopyDecClick"
+            }
+
+            subtype Items : MenuItem
+            {
+                Name = "miCopyHex"
+                AccessLevel = "alPublic"
+                Text = "Copy He&xadecimal"
+                event OnClick = "miCopyHexClick"
+            }
+
+            subtype Items : MenuItem
+            {
+                Name = "miCopyOct"
+                AccessLevel = "alPublic"
+                Text = "Copy &Octal"
+                event OnClick = "miCopyOctClick"
+            }
+
+            subtype Items : MenuItem
+            {
+                Name = "miCopyBin"
+                AccessLevel = "alPublic"
+                Text = "Copy &Binary"
+                event OnClick = "miCopyBinClick"
+            }
+
+            subtype Items : MenuItem
+            {
+                Name = "miCopySep"
+                AccessLevel = "alPublic"
+                Text = "-"
+            }
+
+            subtype Items : MenuItem
+            {
+                Name = "miCopyText"
+                AccessLevel = "alPublic"
+                Text = "Copy &Formula"
+                event OnClick = "miCopyClick"
             }
         }
 
@@ -1672,7 +1672,7 @@
         WantedKeyTypes = "wkArrows, wkTab, wkEnter, wkEscape, wkOthers"
         KeyPreview = "True"
         UnitName = "history"
-        DesignVisible = "True"
+        DesignVisible = "False"
         LastExportedName = "frmHistory"
         LastExportedEvents = "3400300034007C00789C9550ED0A83300CBCE7DACF7D311883C19E60156162AD503B41D8C3EF9A21ABDABA156993E62E77310A0E063BDC791728A1996B54CC6BBCA0565123B9C286DF013D7143FE956CCBD3F0ED782C3A720B3CD87343CBB79BA8A4911CFD7152CD8AC7637F11C3F23DF6B2874F7DE99242737C346F8713F93EFABD0CD455B3EDFFC70A7D2F643DC92EB16574D26512331C45B111AD567AE2B5507F89AF6BFB79FA89F2B792B3AFB1FBCCCA408E65EC7E20A1FE1C8DB9BC01E13FA0D8"
         CreationOrder = "3"
@@ -1865,7 +1865,7 @@
         }
         WantedKeyTypes = "wkArrows, wkTab, wkEnter, wkEscape, wkOthers"
         UnitName = "variables"
-        DesignVisible = "True"
+        DesignVisible = "False"
         LastExportedName = "frmVariables"
         LastExportedEvents = "3800310034007C00789CAD94DB6EC2301044E7BBFA58485F10122AA5EF8444216A70502EAD407C3CE3851097D8D82955146C76C67BD6973846038525D6F8468A090AE4D8E00B27C44E45493FC60B9F485445EF82CE8AEF8EFF1BBE15EA5B9609E38AA3538E1C325CEA5F3805235AB7516CDA78C654EAFC74505CEA184E8D0CAF68E92F18CDA5F692FD963EBD23398E12CD467ACD1A4CD73BFB3F576FEAA8E93763CE112DE32956D87B5593DB6B7A4CC3A7A43E8E39957A5590E3BFD9BAA7772FC4616777BA7BEF57E2AB30E3EF81BE8A6D1DA09ABC7BD54F8B9070B45E932E77BF8AA13E5B053EEEE3B3ED773D73AA1B7E9D976FB5C607DB9819B6721B65B2833EDD640F753BF34D566E27B74329B3B3C7CCDC43FD71EE6ED6DD598B982D619B047A4C76BF829A9CCB792FE59EE9679A58EB3903FADF455E"
         CreationOrder = "5"
@@ -2056,15 +2056,15 @@
     type Form
     {
         Name = "frmInput"
-        Left = "491"
-        Top = "502"
+        Left = "0"
+        Top = "1412"
         Text = "FalconCalc - input panel"
         WantedKeyTypes = "wkArrows, wkTab, wkEnter, wkEscape, wkOthers"
         DesignVisible = "True"
         LastExportedName = "frmInput"
         CreationOrder = "6"
-        ClientWidth = "738"
-        ClientHeight = "573"
+        ClientWidth = "0"
+        ClientHeight = "0"
 
         type TabControl
         {
@@ -2283,13 +2283,12 @@
                 type FlatButton
                 {
                     Name = "bE"
-                    Tag = "54"
+                    Tag = "101"
                     AccessLevel = "alPublic"
                     Left = "220"
                     Top = "48"
                     Width = "27"
                     Height = "23"
-					Tag = "101"
                     Text = "e"
                     TabOrder = "5"
                 }
@@ -2374,12 +2373,12 @@
                 type FlatButton
                 {
                     Name = "bPi"
+                    Tag = "960"
                     AccessLevel = "alPublic"
                     Left = "220"
                     Top = "16"
                     Width = "27"
                     Height = "23"
-					Tag = "960"
                     Text = "π"
                     TabOrder = "23"
                 }
@@ -2414,8 +2413,8 @@
         {
             Name = "btnCancel"
             AccessLevel = "alPublic"
-            Left = "749"
-            Top = "759"
+            Left = "11"
+            Top = "186"
             Width = "75"
             Height = "23"
             Text = "&Cancel"

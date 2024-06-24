@@ -412,18 +412,20 @@ void Token::_GetBinaryNumber(const SmartString &text, unsigned &pos)
  *          - 'pos' at input: points to after the opening single quote
  * RETURNS: nothing, type and number SmartString is set in 'data' member
  *         'pos' is positioned after the closing single quote
- * REMARKS: The character SmartString is considered a BIG_ENDIAN
- *          number
+ * REMARKS: - Each character is 16 bit long UTF16 character
+ *          - The ersult is a number where each character has its own 16 bits
+ *          - The character SmartString is considered a BIG_ENDIAN
+ *              number
  *-----------------------------------------------------------*/
 void Token::_GetNumberFromQuotedString(const SmartString &text, unsigned &pos)
 {
 	locale loc = cout.getloc();
 	unsigned startpos = pos;
-    RealNumber lval = RealNumber::RN_0, r256 = RealNumber(256.0);
+    RealNumber lval = RealNumber::RN_0, r10k = RealNumber(0x10000);
 	while(pos < text.length() && (text[pos] != '\'' || (pos > 0 && text[pos-1] == '\\')) )
     {
 		SCharT ch = text[pos];
-        lval = lval * r256 + RealNumber(ch.Unicode()) ;
+        lval = lval * r10k + RealNumber(ch.Unicode()) ;
 		++pos;
     }
 	if(pos == startpos)
@@ -456,6 +458,8 @@ void Token::_GetVarOrFuncOrOperator(const SmartString &text, unsigned &pos)
 	while(pos < text.length() && (IsAlnum(text[pos],loc) || text[pos] == '_'))
 		++pos;
 	SmartString s = text.substr(startpos, pos - startpos);
+    if (s.length() == 1 & s == u"π")
+        s = u"pi";
 	name = s;  //  set name
     while(pos < text.length() && isspace((wchar_t)text[pos],loc))
         ++pos; // skip whitespace because of function definitions
@@ -1713,25 +1717,7 @@ SmartString LittleEngine::ResultAsBinString()
  *------------------------------------------------------------*/
 SmartString LittleEngine::ResultAsCharString() 
 {
-    DisplayFormat fmt;
-    fmt.base = DisplayBase::rnbHex;
-    fmt.useNumberPrefix = false;
-	SmartString s = calcResult.Int().ToHexString(fmt); 
-    if (s.length() & 1)  // odd?
-        s = "0"_ss + s;
-    size_t i = 0, j = 0;
-    while (j < s.length()) // s.length() is always even
-    {
-        // DEBUG
-        char16_t ch16a = (s[j] & 0x0F) << 4,
-                 ch16b = s[j+1] & 0x0F;
-        // /DEBUG
-        s[i] = ((s[j] & 0x0F) << 4) + (s[j + 1] & 0x0F);
-        j += 2;
-        s[++i] = 0;
-    }
-    s.erase(i);
-    return s;
+    return calcResult.ToSmartString();
 }
 
 /*========================================================

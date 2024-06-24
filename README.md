@@ -1,26 +1,33 @@
-# FalconCalc
-Windows scientist and programmer calculator featuring arbitrary precision, history and more
+﻿# FalconCalc
+Windows scientist and programmer calculator featuring decimal arithmetic, arbitrary precision, built in mathematical and physics constants, history and more
 
 # Description
-  Every Windows has a desktop calculator with many features but FalconCalc offers many 
+  Every Windows version has a desktop calculator with many features but FalconCalc offers many 
   unique features not found in them:
 
-    - In FalconCalc an expression may contain built-in and user defined constants and functions of any
-      number of arguments which are evaluated continuously as they are entered.
+    - FalconCalc continuously evaluates expressions as they are entered that may contain built-in and 
+      *user defined* constants and functions of any number of arguments.
 
     - *Numbers* may be entered in decimal, hexadecimal, octal or binary notation or as character strings.
-                       Examples (decimal equivalent in parenthesis):
-                           123.4567890e+2     - decimal number (12345.67890)"
-                           0x1234567890ABCDEF - hexadecimal number 
-                                (decimal 1 311 768 467 294 899 695)
-                           012345670          - octal number (2 739 128)
-                           #10101             - binary number (21)
-                           'FalconCalc'       - character string (7 810 723 214 453 320 491)\n
+             Examples       number string        what it is          decimal value
+             -----------------------------------------------------------------------
+                           123.4567890e+2       decimal number       12345.67890
+                           0x1234567890ABCDEF - hexadecimal number   1,311,768,467,294,899,695
+                           012345670          - octal number         2,739,128
+                           #101010101         - binary number        341
+                           'FalconCalc'       - character string     1.5610851718... x 10^45
 
     - Results are displayed simultaneously as decimal, hexadecimal, octal and binary numbers and as a 
       string of characters
 
     - Decimal formats: general, scientific and engeneering
+
+    - Decimal display formats:  normal, html, TEX and 'E' (1.2·10³, 1.2x10<sup>3</sup>, 1.2\cdot10^{8},1.2E3)
+
+    - Hexadecimal format: normal, as bytes, as words, as dwords, as IEEE754 single or double (when applicable), 
+      big- or little endian, with or without 0x prefix, unsigned or signed 
+
+    - Angular units: degrees, radians, gradians and turns
 
     - Formulas may contain the following operators:
           arithmetics: +, -, *, /, ^(power), | (or 'or'), & (or 'and'), xor, << (or 'shl' - shift left), 
@@ -29,22 +36,25 @@ Windows scientist and programmer calculator featuring arbitrary precision, histo
 
     - Built-in functions (alternative names in parenthesis)
           abs, arcsin (asin), arccos (acos), arctan (atan), cos, cosh (ch), coth (cth), exp, fact, frac, int, 
-          log (ln), log2, log10 round, sign, sin, sinh (sh), sqrt, tan (tg), trunc
+          log (ln), log2, log10 (lg), round, sign, sin, sinh (sh), sqrt, tan (tg), trunc
 
     - Built in mathematical constants:
-           e (base of the natural logarithm), log2e (base 2 logarithm of e), log10e or 
-           lge (base 10 logarithm of e), ln2 (natural logarithm of 2)
-           pi, pi2 (pi/2), pi4 (pi/4), ppi (1/pi), tpi (2/pi), spi (sqrt(pi)), sqrt2, psqrt2 (1/sqrt(2))
+           e (base of the natural logarithm), log2e (base 2 logarithm of e), log10e (or lge - base
+           10 logarithm of e), ln2 (natural logarithm of 2)
+           pi(or π), pi2 (π/2), pi4 (π/4), ppi (1/π), tpi (2/√π), sqpi (√π), 
+           sqrt2 (√2), psqrt2 (1/√2)), sqrt3 (√3), sqrt3P2 (√3/2)
 
-    - Built-in physical constants:
-           c (speed of light in vacuum (definition - exact value) [m/s]), h (Planck constant  [Js]), 
-           hbar (reduced Planck constant [Js]), qe elementary charge [As]), me (electron mass [kg]), 
-           mp (proton mass [kg]), u (atomic mass unit [1]), k (Boltzmann constant [J/K])
-           G (Newtonian constant of gravitation [m^3/kg/s^2]), 
-           eps0 (electric constant (vacuum permittivity) defined [F /m])
-           mu0 (magnetic constant (vacuum permeability) defined [N/A^2] = 4 pi 1e-7), 
-           kc (Coulomb's constant 1/4pi eps0 [N m^2/C^2])
-           LA (Avogadro's number [1/mol])
+    - Built-in physical constants (units in []):
+           au - astronomical unit [m], c - speed of light in vacuum (definition - exact value) [m/s], 
+           h  - Planck constant  [Js], hbar - reduced Planck constant [Js], 
+           qe - elementary charge [As], me - electron mass [kg], mp - proton mass [kg], 
+           u - atomic mass unit [1], k - Boltzmann constant [J/K],G  - Newtonian constant of gravitation [m^3/kg/s^2], 
+           gf - mean value of the gravitational acceleration on Earth (9.81 m/s²)
+           eps0 - electric constant (vacuum permittivity) exact value [F /m]
+           mu0  - magnetic constant (vacuum permeability) exact value [N/A^2] = 4π·10^(-7), 
+           kc  - Coulomb's constant 1/4π eps0 [N m^2/C^2], LA  - Avogadro's number [1/mol],
+           rf - Earth's radius [m], rg  - molar gas constant (8.31 J/ mol K), rs - Sun's radius
+           u - atomic mass unit
 
     - Any number of user constants and functions may be defined with any valid arithmetic formula 
       including other constants and variables.

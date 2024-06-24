@@ -30,7 +30,7 @@ namespace LongNumber {
 		rnbHex,				// base 16
 		rnbOct,				// base 8
 		rnbBin,				// base 2
-		rnbAscii			// each byte one ascii character no UTF-XX
+		rnbText				// each byte is one UTF-16 character
 	};
 
 	enum class NumberFormat {
@@ -411,9 +411,12 @@ namespace LongNumber {
 		SmartString ToOctalString(const DisplayFormat& format);
 		SmartString ToHexString(const DisplayFormat& format);
 		SmartString ToDecimalString(const DisplayFormat& format);
-		SmartString ToTextString(const DisplayFormat& format, TextFormat textFormat) const;
+		SmartString ToTextString(const DisplayFormat& format, TextFormat textFormat);
+		SmartString ToSmartString() const;
+		UTF8String  ToUtf8String() const;
+		std::wstring ToWideString() const;
 
-		SmartString ToString(const DisplayFormat& format, TextFormat textFormat = TextFormat::rntfAnsi);
+		SmartString ToString(const DisplayFormat& format);
 		SmartString ToString()					// format as decimal string with default settings
 		{
 			DisplayFormat format;
@@ -579,6 +582,8 @@ namespace LongNumber {
 			int ix = (int)_numberString.length() + _leadingZeros;
 			return (position < ix && position >= _leadingZeros) ? (SCharT)_numberString[position - _leadingZeros] : chZero;
 		}
+
+		SmartString _AsSmartString() const;
 
 		static void _RescaleConstants(int maxLength);
 

@@ -179,8 +179,8 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	edtInfix = new nlib::Edit();
 	edtInfix->SetBounds(nlib::Rect(8, 29, 513, 50));
 	edtInfix->SetAnchors(nlib::caLeft | nlib::caTop);
-	edtInfix->GetFont().SetFamily(L"Tahoma");
-	edtInfix->GetFont().SetSize(10);
+	edtInfix->GetFont().SetFamily(L"Calibri");
+	edtInfix->GetFont().SetSize(12);
 	edtInfix->SetParentFont(false);
 	edtInfix->SetTabOrder(0);
 	edtInfix->SetParent(this);
@@ -577,8 +577,8 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 
 	edtChars = new nlib::Edit();
 	edtChars->SetBounds(nlib::Rect(317, 176, 438, 197));
-	edtChars->GetFont().SetFamily(L"Tahoma");
-	edtChars->GetFont().SetSize(10);
+	edtChars->GetFont().SetFamily(L"Calibri");
+	edtChars->GetFont().SetSize(11);
 	edtChars->SetParentFont(false);
 	edtChars->SetTabOrder(5);
 	edtChars->SetReadOnly(true);

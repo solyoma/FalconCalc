@@ -19,7 +19,7 @@ typedef std::u16string String;
 
 class SCharT
 {
-	char16_t _unicode;
+	char16_t _unicode = 0;
 
 	int _Utf8CodeLengthFrom(const UTF8String& u8str, size_t pos);  // -1: error
 	int _FromString(const UTF8String& u8str, size_t pos);
@@ -82,10 +82,10 @@ public:
 	SCharT ToLower(std::locale loc) { _unicode = std::tolower(_unicode, loc); return *this;}
 };
 
-using UTF8Pos = size_t;			// when used for unicode position (no unicode character in string: same as position
+using UTF8Pos = size_t;			// when used for unicode position (no unicode character in string: same as position)
 
 // An UTF16 String class with some convenience functions not present in the STL
-// wchar_t's size is 16 bit in Windows and 32 bit in Linux, but this class is always uses 16 bit
+// wchar_t's size is 16 bit in Windows and 32 bit in Linux, but this class always uses 16 bit
 // Besides the usual concatenation and length functions it contains
 // left(), right(), mid() with an optional fill character
 // normal and regular expression search and toUpper() and toLower() functions

@@ -153,7 +153,7 @@ Constant
 			sqrt2 	{ u"sqrt2"	, rnSqrt2	, u"-"				, u"√2"													,&rnSqrt2		},
 			rsqrt2 	{ u"rsqrt2"	, rnPSqrt2	, u"-"				, u"1/√2"												,&rnPSqrt2		},
 			sqrt3 	{ u"sqrt3"	, rnSqrt3	, u"-"				, u"√3"													,&rnSqrt3		},
-			sqrt3P2 { u"sqrt3P2", rnSqrt3P2 , u"-"				, u"3√pi/2"												,&rnSqrt3P2  	}, 
+			sqrt3P2 { u"sqrt3P2", rnSqrt3P2 , u"-"				, u"√3/2"												,&rnSqrt3P2  	}, 
 			ln10 	{ u"ln10"	, rnLn10	, u"-"				, u"ln(10)"												,&rnLn10		},
 			ln2		{ u"ln2"	, rnLn2		, u"-"				, u"natural logarithm of 2, ln2)"						,&rnLn2			},
 			rln10  	{ u"rln10"	, pln10		, u"-"				, u"1/ln(10)"											,&pln10			},
@@ -1173,11 +1173,23 @@ SmartString RealNumber::ToDecimalString(const DisplayFormat &format)
 	return result;
 }
 
-SmartString RealNumber::ToString(const DisplayFormat& format, TextFormat textFormat)
+SmartString RealNumber::ToSmartString() const
 {
-	if (format.mainFormat == NumberFormat::rnfText)
-		return ToTextString(format, textFormat);
+	return _AsSmartString();
+}
 
+UTF8String RealNumber::ToUtf8String() const
+{
+	return _AsSmartString().ToUtf8String();
+}
+
+std::wstring RealNumber::ToWideString() const
+{
+	return _AsSmartString().ToWideString();
+}
+
+SmartString RealNumber::ToString(const DisplayFormat& format)
+{
 	SmartString sres;
 	switch (format.base)
 	{
@@ -1190,83 +1202,10 @@ SmartString RealNumber::ToString(const DisplayFormat& format, TextFormat textFor
 			sres = ToOctalString(format); break;
 		case DisplayBase::rnbBin:
 			sres = ToBinaryString(format); break;
+		case DisplayBase::rnbText:
+			sres = ToSmartString(); break;
 	}
 
-	// sres may contain delimiters in the decimal part
-#if 0
-	if (format.displWidth >=0 && sres.length() > (size_t)format.displWidth)
-	{
-		DisplayFormat fmt = format;
-		int posD, posE;	// set in sres.length() > fmt.displWidth
-		// if possible shorten fractional part and modify sres
-		// if not fills 'sres' with '#' characters
-		// only called when the number format is SCI or ENG
-		// ENG is not switched back to SCI !
-		auto ShortenFractPart = [&]() -> bool
-			{
-				int lenI = posD < 0 ? 0 : posD,					// length of integer part w. sign and w.o. decimal point and delimiters
-					pos2 = posE >= 0 ? posE : sres.length(),	// after the fractional part may include delimiters
-					lenF = pos2 - lenI - 1,						// length of fractional part w. decimal delimiters
-					lenO = lenI + (sres.length() - pos2) + 1,	// length of all non-fractional part w.o. exponent
-					nLeadingDecimalZerosInFraction = _exponent < 0 ? - _exponent : 0;
-				// see if the fractional part can be rounded so that the whole number fit
-				// examples:  displWidth == 4, SCI 
-				//	#		_exp 	| #string		length	 pos1   pos2   	result	  is OKround 
-				//	8765     10		| 8.765E9		 7		  1		 5		 9E9		+	
-				//	9765     10		| 9.765E9		 7		  1		 5		 1E10		+	
-				//	9765     20		| 9.765E19		 8		  1		 5		 1E20		+	
-				//	9765     100	| 9.765E99		 8		  1      5		 1E100		-	
-				if (fmt.displWidth - lenO < 0)		// less than no room for fractional part :)
-					return false;
-				
-				int flenF = fmt.displWidth - lenO,	// this many space for fractional decimal digits invl. leading 0s and separators
-					cntSep = fmt.useFractionSeparator ? (flenF - 1) / 3 : 0; // which contains this many separators
-										// which leaves
-				lenF = flenF - cntSep;// -nLeadingDecimalZerosInFraction;	// decimal characters in fraction
-				if (lenI && ( posD < 0 || sres[0] != chZero) )
-					--lenF;
-				RealNumber r(*this);	// sres may have thousand separators !!!
-				int intCount = fmt.mainFormat != NumberFormat::rnfSci && fmt.mainFormat != NumberFormat::rnfEng ? (_exponent > 0 ? _exponent : 0) : 1;
-				r.Round(lenF, intCount);
-				sres = r.ToDecimalString(fmt);
-				return (int)sres.length() <= fmt.displWidth;
-			};
-
-		if (format.base == DisplayBase::rnb10)
-		{
-			if ((int)sres.length() > fmt.displWidth) // Too Long To Display
-			{
-				posD = sres.indexOf(DecPoint());				
-				posE = _PosExpInNumberString(fmt, sres, posD + 1);
-
-				if (ShortenFractPart())
-					return sres;
-
-				if (fmt.mainFormat != NumberFormat::rnfSci &&
-					fmt.mainFormat != NumberFormat::rnfEng)
-				{		 // try again in SCI mode
-					fmt.mainFormat = NumberFormat::rnfSci;
-					sres = ToDecimalString(fmt);		
-					if ((int)sres.length() > fmt.displWidth)		// still too long: can't display
-					{
-						if (!ShortenFractPart())
-							sres = SmartString(fmt.displWidth, u'#');
-					}
-				}
-				else if (!ShortenFractPart())	// already sci or eng and too long
-						sres = SmartString(format.displWidth, u'#');
-				return sres;
-			}
-		}
-		else
-		{
-			if (format.displWidth < (int)String(u"Too long").length())
-				sres = SmartString(format.displWidth, u'#');
-			else
-				sres = SmartString("Too Long");
-		}
-	}
-#endif
 	return sres;
 }
 
@@ -1334,44 +1273,49 @@ int RealNumber::_PosExpInNumberString(const DisplayFormat fmt, const SmartString
 }
 
 
-SmartString RealNumber::ToTextString(const DisplayFormat& format, TextFormat dtf) const
+/*=============================================================
+ * TASK   : takes a real number and emits character representation 
+ *			of the integer part of this number
+ * PARAMS :	'dtf' : text format to use
+ * EXPECTS:
+ * GLOBALS:
+ * RETURNS:
+ * REMARKS:	- the interpretation of the real number depends
+ *				on the resulting format, which always contain 
+ *				utf-16 characters although how these display
+ *				depends on the format
+ *			- unprintable characters are replaced by '?'
+ *------------------------------------------------------------*/
+SmartString RealNumber::_AsSmartString() const
 {
-	DisplayFormat fmt(format);
+	DisplayFormat fmt;
 	fmt.useNumberPrefix = false;
 	fmt.hexFormat = HexFormat::rnHexNormal;
 	fmt.bSignedBinOrHex = false;
 
-	RealNumber r(*this);
-	r._exponent = (int)_numberString.length();	// make integer number
+	RealNumber r(this->Int());	// use only the integer part of the string
 
-	// use all digits even with non-integers and forget exponent
-	SmartString strh(r.Round((int)_maxLength)._ToBase(16, _maxLength)),
+	SmartString strh(r._ToBase(16, _maxLength)),
 				str;
-	size_t len = strh.length(), start=0;
-	SCharT ch;
-	if (len & 1)	// odd number of digits
+	size_t	len = strh.length(), 
+			size = 2*sizeof(SCharT),	// 16 bit char is 4 bytes in hex string
+			rem = size - (len % size);
+	if (rem)	// too few number of digits: prepend u'0' characters
 	{
-		start = 1;
-		ch = (char)0xFF;
-		str.push_back(ch);
+		strh = SmartString(rem, chZero) + strh;
+		len += rem;
 	}
-	for (size_t i = start; i < len; i += 2)
+	for (size_t i = 0; i < len; /**/)
 	{
-		ch = strh[i];
-		ch = (MyCharTToByte(SCharT(strh[i])) << 4) + MyCharTToByte(SCharT(strh[i + 1]));
-		str.push_back(ch);
+		char16_t c16 = 0;
+		for(size_t n = 0; n < size; ++n,++i)
+			c16 = (c16 << 4) + char16_t(MyCharTToByte(strh[i]));
+		if(c16 < u' ')
+			str.push_back(u'?');
+		else
+			str.push_back(SCharT(c16));
 	}
-	switch (dtf)
-	{ 
-		case TextFormat::rntfUtf8:
-			//!! TODO
-			break;
-		case TextFormat::rntfUtf16:
-			//!! TODO
-			break;
-		default:
-			break;
-	}
+
 	return str;
 }
 
