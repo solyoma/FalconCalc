@@ -1,5 +1,7 @@
 ﻿# FalconCalc
 Windows scientist and programmer calculator featuring decimal arithmetic, arbitrary precision, built in mathematical and physics constants, history and more
+# Screenshot
+![falconcalc1](https://github.com/solyoma/FalconCalc/assets/37068759/4abcf0bd-c4e4-4df7-a300-778cb7338cc9)
 
 # Description
   Every Windows version has a desktop calculator with many features but FalconCalc offers many 
