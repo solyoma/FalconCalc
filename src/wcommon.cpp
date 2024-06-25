@@ -13,6 +13,7 @@ void DebugMsg(std::wstring ws)
 
 
 // DEBUG 
+#ifdef _DEBUG
 BOOL CALLBACK EnumTypesFunc(HMODULE hModule, LPTSTR lpType, LONG_PTR lParam);
 BOOL CALLBACK EnumNamesFunc(HMODULE hModule, LPCTSTR lpType, LPTSTR lpName, LONG_PTR lParam);
 
@@ -99,6 +100,7 @@ BOOL CALLBACK EnumNamesFunc(HMODULE hModule, LPCTSTR lpType, LPTSTR lpName, LONG
 
 	return TRUE;
 }
+#endif
 // /DEBUG
 
 void MyLoadWindowIcon(nlib::Form* f)
@@ -106,7 +108,9 @@ void MyLoadWindowIcon(nlib::Form* f)
 	if (!f->IconFromResource(nullptr, MAKEINTRESOURCEW(IDI_MAINICON)))
 	{
 		DWORD dw = GetLastError();
+#if _DEBUG
 		DebugMsg(L"IconFromResource returned false, Error code:" + std::to_wstring(dw));
+#endif
 	}
 }
 

@@ -55,7 +55,9 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	SetClientRect(nlib::Rect(0, 0, 528, 419 + GetSystemMetrics(SM_CYMENU)));
 
 	// DEBUG 
+	#ifdef _DEBUG
 	DebugEnumResources();
+	#endif
 	// /DEBUG
 	MyLoadWindowIcon(this);
 
