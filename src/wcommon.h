@@ -7,6 +7,9 @@
 
 #include <windows.h>
 #include <locale>
+
+#include "resource.h"
+
 namespace FalconCalc {
 	class LittleEngine;
 
@@ -85,5 +88,8 @@ bool SnapTo(RECT& r, FalconCalc::WindowSide side, POINT dist);	// calculates sna
 
 bool IsAlpha(wchar_t ch, std::locale loc);    // needed for names in one locale when working in another localse
 bool IsAlnum(wchar_t ch, std::locale loc);    // needed for names in one locale when working in another localse
+
+int DebugEnumResources();
+void MyLoadWindowIcon(nlib::Form* f);
 
 #endif

@@ -17,6 +17,7 @@ using namespace nlib;
 
 #include "calculate.h"
 
+#include "resource.h"
 #include "variables.h"
 
 #include <windows.h>
@@ -44,6 +45,7 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	/* Generated member initialization. Do not modify. */
 	SetLeft(777);
 	SetTop(436);
+
 	SetText(L"FalconCalc");
 	GetFont().SetFamily(L"Tahoma");
 	GetFont().SetSize(10);
@@ -51,6 +53,11 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	SetShowPosition(nlib::fspActiveMonitorCenter);
 	SetBorderStyle(nlib::fbsSingle);	// setting to fbsSingle makes this unmoveable
 	SetClientRect(nlib::Rect(0, 0, 528, 419 + GetSystemMetrics(SM_CYMENU)));
+
+	// DEBUG 
+	DebugEnumResources();
+	// /DEBUG
+	MyLoadWindowIcon(this);
 
 	FontDialog1 = new nlib::FontDialog();
 	FontDialog1->GetFont().SetFamily(L"Tahoma");
@@ -307,7 +314,7 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	chkSep->SetParent(gbDecOptions);
 
 	chkDecDelim = new nlib::Checkbox();
-	chkDecDelim->SetBounds(nlib::Rect(8, 31, 160, 47));
+	chkDecDelim->SetBounds(nlib::Rect(8, 33, 160, 47));
 	chkDecDelim->SetText(L"&Use decimal separator");
 	chkDecDelim->SetTabOrder(6);
 	chkDecDelim->SetParent(gbDecOptions);
@@ -328,7 +335,7 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	cbThousandSep->SetParent(gbDecOptions);
 
 	chkSci = new nlib::Checkbox();
-	chkSci->SetBounds(nlib::Rect(8, 45, 141, 62));
+	chkSci->SetBounds(nlib::Rect(8, 48, 141, 62));
 	chkSci->SetText(L"&Scientific format");
 	chkSci->GetFont().SetFamily(L"Tahoma");
 	chkSci->GetFont().SetSize(10);
@@ -337,7 +344,7 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	chkSci->SetParent(gbDecOptions);
 
 	chkEng = new nlib::Checkbox();
-	chkEng->SetBounds(nlib::Rect(8, 62, 149, 79));
+	chkEng->SetBounds(nlib::Rect(8, 64, 149, 79));
 	chkEng->SetText(L"Engeneering f&ormat");
 	chkEng->GetFont().SetFamily(L"Tahoma");
 	chkEng->GetFont().SetSize(10);
@@ -490,7 +497,7 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 
 	chkMinus = new nlib::Checkbox();
 	chkMinus->SetBounds(nlib::Rect(8, 18, 102, 35));
-	chkMinus->SetText(L"M&inus sign");
+	chkMinus->SetText(L"Mi&nus sign");
 	chkMinus->GetFont().SetFamily(L"Tahoma");
 	chkMinus->GetFont().SetSize(10);
 	chkMinus->SetParentFont(false);
@@ -743,7 +750,7 @@ TfrmMain::TfrmMain()
 	MyClipboard = new Clipboard();	   // messages arrive after
 	MyClipboard->Activate( Handle() ); // Handle() is called first
 
-    _chkArr[0] = chkMinus;
+	_chkArr[0] = chkMinus;
     _chkArr[1] = chkBytes;
     _chkArr[2] = chkWords;
     _chkArr[3] = chkDWords;

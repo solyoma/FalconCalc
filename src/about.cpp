@@ -66,8 +66,8 @@ void TfrmAbout::InitializeFormAndControls() /* Control initialization function g
 	Label9->SetParent(this);
 
 	Label10 = new nlib::Label();
-	Label10->SetBounds(nlib::Rect(54, 148, 228, 162));
-	Label10->SetText(L"on the NLIB library © Z. Sólyom");
+	Label10->SetBounds(nlib::Rect(58, 148, 228, 162));
+	Label10->SetText(L"the NLIB library © Z. Sólyom");
 	Label10->SetParent(this);
 
 
@@ -95,11 +95,11 @@ void TfrmAbout::Destroy()
 
 void TfrmAbout::frmAboutClick(void *sender, nlib::EventParameters param)
 {
-	;
+	Close();
 }
 
 void TfrmAbout::frmAboutKeyDown(void *sender, nlib::KeyParameters param)
 {
-	;
+	Close();
 }
 

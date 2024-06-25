@@ -2,6 +2,10 @@
 #include "stdafx_lc.h"
 
 using namespace nlib;
+
+#include "resource.h"
+void MyLoadWindowIcon(nlib::Form* f);
+
 #include "histopt.h"
 
 TfrmHistOptions *frmHistOptions;
@@ -17,6 +21,8 @@ void TfrmHistOptions::InitializeFormAndControls() /* Control initialization func
 	SetShowPosition(nlib::fspActiveMonitorCenter);
 	SetBorderStyle(nlib::fbsSingle);
 	SetClientRect(nlib::Rect(0, 0, 340, 192));
+
+	MyLoadWindowIcon(this);
 
 	chkDepth = new nlib::Checkbox();
 	chkDepth->SetBounds(nlib::Rect(16, 32, 161, 48));

@@ -12,6 +12,105 @@ void DebugMsg(std::wstring ws)
 #endif
 
 
+// DEBUG 
+BOOL CALLBACK EnumTypesFunc(HMODULE hModule, LPTSTR lpType, LONG_PTR lParam);
+BOOL CALLBACK EnumNamesFunc(HMODULE hModule, LPCTSTR lpType, LPTSTR lpName, LONG_PTR lParam);
+
+int DebugEnumResources()
+{
+	// Load the executable module
+	HMODULE hModule = GetModuleHandle(NULL); // NULL to get the handle of the current process
+
+	if (hModule == NULL) {
+		DebugMsg(L"Error loading module: " + std::to_wstring(GetLastError()));
+		return 1;
+	}
+
+	// Enumerate resource types
+	if (!EnumResourceTypesW(hModule, EnumTypesFunc, 0)) {
+		DebugMsg(L"Error enumerating resource types: " + std::to_wstring(GetLastError()));
+		return 1;
+	}
+
+	return 0;
+}
+
+// Callback function to enumerate resource types
+BOOL CALLBACK EnumTypesFunc(HMODULE hModule, LPTSTR lpType, LONG_PTR lParam)
+{
+
+	static const std::wstring __names[] = {
+			L"",					// 
+			L"CURSOR      ",		// 1
+			L"BITMAP      ",		// 2
+			L"ICON        ",		// 3
+			L"MENU        ",		// 4
+			L"DIALOG      ",		// 5
+			L"STRING      ",		// 6
+			L"FONTDIR     ",		// 7
+			L"FONT        ",		// 8
+			L"ACCELERATOR ",		// 9
+			L"RCDATA      ",		// 10
+			L"MESSAGETABLE",		// 11
+			L"GROUP_CURSOR",		// 12
+			L"?",					// 13
+			L"GROUP_ICON  ",		// 14
+			L"?",					// 15
+			L"VERSION     ",		// 16
+			L"DLGINCLUDE  ",		// 17
+			L"?",					// 18
+			L"PLUGPLAY    ",		// 19
+			L"VXD         ",		// 20
+			L"ANICURSOR   ",		// 21
+			L"ANIICON     ",		// 22
+			L"HTML        ",		// 23
+			L"MANIFEST    "			// 24
+	};
+	DebugMsg(L"Resource Type: ");
+
+	if (IS_INTRESOURCE(lpType)) {
+		DebugMsg(__names[(long)lpType] + L"(" + std::to_wstring((long)lpType) + L") ");
+	}
+	else {
+		DebugMsg(lpType);
+	}
+
+	// Enumerate names for the given resource type
+	if (!EnumResourceNamesW(hModule, lpType, EnumNamesFunc, 0)) {
+		DebugMsg(L"Error enumerating resource names: " + std::to_wstring(GetLastError()));
+		return FALSE;
+	}
+
+	return TRUE;
+}
+
+// Callback function to enumerate resource names
+BOOL CALLBACK EnumNamesFunc(HMODULE hModule, LPCTSTR lpType, LPTSTR lpName, LONG_PTR lParam)
+{
+	DebugMsg(L"  Resource Name: ");
+
+	if (IS_INTRESOURCE(lpName)) {
+		DebugMsg(std::to_wstring((long)lpName));
+	}
+	else {
+		DebugMsg(lpName);
+	}
+	DebugMsg(L"\n");
+
+	return TRUE;
+}
+// /DEBUG
+
+void MyLoadWindowIcon(nlib::Form* f)
+{
+	if (!f->IconFromResource(nullptr, MAKEINTRESOURCEW(IDI_MAINICON)))
+	{
+		DWORD dw = GetLastError();
+		DebugMsg(L"IconFromResource returned false, Error code:" + std::to_wstring(dw));
+	}
+}
+
+
 bool IsAlpha(wchar_t ch, std::locale loc)
 {
 	static  const wchar_t* notCtrl = L"!+-*/_.,^%@#()=<>|\\:'\"~&";
@@ -31,8 +130,6 @@ bool IsAlnum(wchar_t ch, std::locale loc)
 		return false;
 	return true;
 }
-
-
 
 
 using namespace nlib;

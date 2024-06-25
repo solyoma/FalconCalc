@@ -1,6 +1,7 @@
 ﻿#include <set>
 #include "stdafx_zoli.h"
 #include "stdafx_lc.h"
+#include "resource.h"
 #include "wcommon.h"
 
 using namespace nlib;
@@ -25,6 +26,9 @@ void TfrmVariables::InitializeFormAndControls() /* Control initialization functi
 	GetFont().SetFamily(L"Tahoma");
 	SetWantedKeyTypes(nlib::wkArrows | nlib::wkTab | nlib::wkEnter | nlib::wkEscape | nlib::wkOthers);
 	SetClientRect(nlib::Rect(0, 0, 528, 569));
+
+	MyLoadWindowIcon(this);
+
 
 	tcVars = new nlib::TabControl();
 	tcVars->SetBounds(nlib::Rect(0, 0, 439, 569));

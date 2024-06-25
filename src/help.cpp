@@ -1,5 +1,8 @@
 ﻿#include "Stdafx_zoli.h"
 
+#include "resource.h"
+void MyLoadWindowIcon(nlib::Form* f);
+
 using namespace nlib;
 #include "help.h"
 
@@ -17,6 +20,8 @@ void TfrmHelp::InitializeFormAndControls() /* Control initialization function ge
 	SetBorderStyle(nlib::fbsDialog);
 	SetKeyPreview(true);
 	SetClientRect(nlib::Rect(0, 0, 652, 472));
+
+	MyLoadWindowIcon(this);
 
 	Label1 = new nlib::Label();
 	Label1->SetBounds(nlib::Rect(273, 15, 359, 34));
@@ -64,38 +69,42 @@ void TfrmHelp::Destroy()
 TfrmHelp::TfrmHelp()
 {
 	InitializeFormAndControls();
-	wchar_t* text =    L"Every Windows has a desktop calculator with many features but FalconCalc offers many unique features not found in them:\n\n"
-                       L"In FalconCalc a complete arithmetic expression containing built-in and even user defined constants and functions of any\n"
-                       L"number of arguments may be entered and are evaluated continuously.\n"
-                       L"Numbers may be entered in decimal, hexadecimal, octal or binary notation and even as character strings.\n"
-                       L"Examples (decimal equivalent in parenthesis):\n"
-                       L"    123.4567890e+2     - decimal number (12345.67890)"
-                       L"    0x1234567890ABCDEF - hexadecimal number \n"
-                       L"              (1 311 768 467 294 899 695)\n"
-                       L"    012345670          - octal number (2 739 128)\n"
-                       L"    #10101             - binary number (21)\n"
-                       L"    'FalconCalc'     - character string (7 810 723 214 453 320 491)\n\n"
-                       L"Results are displayed simultaneously as decimal, hexadecimal, octal and binary numbers and as a string of characters\n\n"
-                       L"Decimal formats: general, scientific and engeneering\n"
-                       L"Arithmetic formulas may contain the following operators:\n"
-                       L"+, -, *, /, ^(power), | (or 'or'), & (or 'and'), xor, << (or 'shl' - shift left), << (or 'shl' - shift right),\n"
-                       L"==, != (not equal), <, >, <=, >= (these results in 1 or 0)\n"
-                       L" % (or mod - remainder), ! (or 'not')\n\n"
-                       L"Built-in functions (alternative names in parenthesis)\n"
-                       L"abs, arcsin (asin), arccos (acos), arctan (atan), cos, cosh (ch), coth (cth), exp, fact, frac, int, log (ln), log2, log10\n"
-                       L"round, sign, sin, sinh (sh), sqrt, tan (tg), trunc\n\n"
-                       L"Built in mathematical constants:\n"
-                       L"e (base of the natural logarithm), log2e (base 2 logarithm of e), log10e or lge (base 10 logarithm of e), ln2 (natural logarithm of 2)\n"
-                       L"pi, pi2 (pi/2), pi4 (pi/4), ppi (1/pi), tpi (2/pi), spi (sqrt(pi)), sqrt2, psqrt2 (1/sqrt(2))\n\n"
-                       L"Built-in physical constants:\n"
-                       L"c (speed of light in vacuum (definition - exact value) [m/s]), h (Planck constant  [Js]), hbar (reduced Planck constant [Js])\n"
-                       L"qe elementary charge [As]), me (electron mass [kg]), mp (proton mass [kg]), u (atomic mass unit [1]), k (Boltzmann constant [J/K])\n"
-                       L"G (Newtonian constant of gravitation [m^3/kg/s^2]), eps0 (electric constant (vacuum permittivity) defined [F /m])\n"
-                       L"mu0 (magnetic constant (vacuum permeability) defined [N/A^2] = 4 pi 1e-7), kc (Coulomb's constant 1/4pi eps0 [N m^2/C^2])\n"
-                       L"LA (Avogadro's number [1/mol])\n\n"
-                       L"Any number of user constants and functions may be defined with any valid arithmetic formula including other constants and variables.\n"
-                       L"When a variable is modified the value of all dependent variables and functions are automatically changed\n"
-                       L"Functions may have any number of arguments with any names that is different from the name of any built-in function or constant.\n";
+	wchar_t* text = L"Every Windows has a desktop calculator with many features but FalconCalc offers many unique features not found in them:\n\n"
+                    L"FalconCalc continuously evaluates expressions as they are entered. Those may contain built-in and user defined constants\n"
+					L"and functions of any number of arguments with many important digits (currently 65, but can be any number).\n\n"
+
+                    L"Results are displayed simultaneously as decimal, hexadecimal, octal and binary numbers and as a string of characters.\n\n"
+                    L"By pressing the corresponding button the result can be copied to the clipboard in any of theses formats.\n\n"
+                    L"Arithmetic formulas may contain the following operators:\n"
+                    L"+, -, *, /, ^(power), | (or 'or'), & (or 'and'), xor, << (or 'shl'=shift left), << (or 'shr'=shift right),\n"
+                    L" % (or mod - remainder), '~' bit negation\n\n"
+					L"Logical operators:\n"
+                    L"==, != (not equal), <, >, <=, >= (these results in 1 or 0)\n\n"
+                    L"Built-in functions (alternative names in parenthesis)\n"
+					L"abs, arcsin(asin), arccos(acos), arctan(atan), cos, cosh(ch), coth(cth), exp, fact, frac, int,\n"
+					L"log(ln), log2, log10(lg), round, sign, sin, sinh(sh), sqrt, tan(tg), trunc\n\n"
+					L"Built in mathematical constants:\n"
+                    L"e (base of the natural logarithm), log2e (base 2 logarithm of e), log10e (or lge - base\n"
+					L"10 logarithm of e), ln2 (natural logarithm of 2)\n"
+					L"pi(or π), pi2 (π/2), pi4 (π/4), ppi (1/π), tpi (2/√π), sqpi (√π), \n"
+					L"sqrt2 (√2), psqrt2 (1/√2)), sqrt3 (√3), sqrt3P2 (√3/2)\n\n"
+                    L"Built-in physical constants:\n"
+                    L"au - astronomical unit [m], c - speed of light in vacuum (definition - exact value) [m/s], \n"
+                    L"h  - Planck constant  [Js], hbar - reduced Planck constant [Js], \n"
+                    L"qe - elementary charge [As], me - electron mass [kg], mp - proton mass [kg], \n"
+                    L"u - atomic mass unit [1], k - Boltzmann constant [J/K],G  - Newtonian constant of gravitation [m^3/kg/s^2],\n"
+                    L"gf - mean value of the gravitational acceleration on Earth (9.81 m/s²)\n"
+                    L"eps0 - electric constant (vacuum permittivity) exact value [F /m]\n"
+                    L"mu0  - magnetic constant (vacuum permeability) exact value [N/A^2] = 4π·10^(-7), \n"
+                    L"kc  - Coulomb's constant 1/4π eps0 [N m^2/C^2], LA  - Avogadro's number [1/mol],\n"
+                    L"rf - Earth's radius [m], rg  - molar gas constant (8.31 J/ mol K), rs - Sun's radius\n"
+                    L"u - atomic mass unit\n\n"
+                    L"Any number of user constants and functions may be defined with any valid arithmetic formula including other constants and variables:\n\n"
+					L"Example:\n"
+					L"      solvequad(a, b, c, s) = (-b + s * sqrt(b ^ 2 - 4 * a * c)) / 2 / a:solves the quadratic equation ax² + bx + c = 0\n\n"
+                    L"When a variable is modified the value of all dependent variables and functions are automatically changed\n"
+                    L"Functions may have any number of arguments with any names that is different from the name of any built-in function or constant.\n";
+
 	Label3->SetWidth(Width() - Label3->Left() * 2);
 	Label3->SetText(text);
 	(void)Label3->Handle();

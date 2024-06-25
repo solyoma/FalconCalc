@@ -1,4 +1,5 @@
 ﻿#include "StdAfx_zoli.h"
+#include "resource.h"
 #include "wcommon.h"
 using namespace nlib;
 #include "mainForm.h"
@@ -20,6 +21,8 @@ void TfrmHistory::InitializeFormAndControls() /* Control initialization function
 	SetWantedKeyTypes(nlib::wkArrows | nlib::wkTab | nlib::wkEnter | nlib::wkEscape | nlib::wkOthers);
 	SetKeyPreview(true);
 	SetClientRect(nlib::Rect(0, 0, 528, 183));
+
+	MyLoadWindowIcon(this);
 
 	lstHistory = new nlib::Listbox();
 	lstHistory->SetBounds(nlib::Rect(8, 8, 440, 166));
