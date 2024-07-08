@@ -1462,7 +1462,7 @@ RealNumber RealNumber::Pow(const RealNumber &power) const
 	if (IsNull())							// 0^x = 0
 		return *this;
 
-	if (power == RN_1)				// x^1 = x
+	if (power == RN_1 || *this == RN_1)				// x^1 = x	  1^x = 1
 		return *this;
 	if (power == -RN_1)			// x^(-1) = 1/x
 		return RN_1 / *this;
@@ -2741,7 +2741,7 @@ RealNumber exp(RealNumber power)						// e^x = e^(int(x)) x e^(frac(x))
 	if (!rnFracPart.IsNull())
 	{
 		RealNumber x(rnFracPart), resp(zero), xn, fact(RealNumber::RN_1);
-		// tailor series for fractional part: e^x = 1 + sum_1^inf(x^n/n$)
+		// tailor series for fractional part: e^x = 1 + sum_1^inf(x^n/n!)
 		int n = 1;			// fract^n is calculated by fract^n = x*fract, x = fract^(n-1)
 		while ((res - resp).Abs() > epsilon || n < (int)RealNumber::MaxLength())
 		{

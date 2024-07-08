@@ -1138,6 +1138,7 @@ void TfrmMain::miShowHistClick(void *sender, nlib::EventParameters param)
 		frmHistory->Close();
 		((MenuItem*)sender)->SetChecked(false);
 		frmHistory = nullptr;
+		wiHist.InitInfo(frmHistory, L"frmHistory");
 	}
 	else
 	{
@@ -1146,13 +1147,13 @@ void TfrmMain::miShowHistClick(void *sender, nlib::EventParameters param)
 		frmHistory->SetLeft(Left());
 		frmHistory->SetTop(Bottom() + 1);
 		frmHistory->chkSorted->SetChecked(pslHistory->Sorted());
+		wiHist.InitInfo(frmHistory, L"frmHistory");
+		frmHistory->Show();
 		frmHistory->GetSnapSide();
 		frmHistory->Snap();
 		frmHistory->lstHistory->Items().SetLines(pslHistory->Lines());
-		frmHistory->Show();
 		((MenuItem*)sender)->SetChecked(true);
 	}
-	wiHist.InitInfo(frmHistory, L"frmHistory");
 	SetFocus(edtInfix->Handle());
 }
 

@@ -36,7 +36,7 @@ private:
 	ConditionFlag _busy;
 	FalconCalc::WindowSide _snappedToSide = FalconCalc::wsNone;
 	int _snapDist = 0;				// from '_side'
-	int _snapPixelLimit = 10;		// snap if inside this distance from, main window
+	int _snapPixelLimit = 30;		// snap if inside this distance from, main window
 
 N_PRIVATE: /* Designer generated list of private members. Do not edit by hand. */
 	void InitializeFormAndControls(); /* Control initializations. Do not remove. */

@@ -52,7 +52,7 @@ private:
 	int _activeTab = -1;		// not set yet
 
 	FalconCalc::WindowSide _snappedToSide = FalconCalc::wsNone;
-	int _snapPixelLimit = 10;	// pixels snap if inside this distance from, main window
+	int _snapPixelLimit = 30;	// pixels snap if inside this distance from, main window
 	int _snapDist = 0;			// when '_snapped' is true: distance from '_snappedToSide'
 	static int _colW[2][4];		// column widths
 

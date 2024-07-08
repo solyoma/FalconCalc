@@ -780,7 +780,7 @@ int LittleEngine::_InfixToPostFix(const SmartString expr)
         }
         if(*it == '\'')
             quoted ^= true;
-        infix.push_back(*it);   //  even quted string don't lowercase anything here
+        infix.push_back(*it);   //  even quoted string don't lowercase anything here
     }
     infix += expr.mid(it - expr.begin());   // add comment and unit
 
