@@ -100,7 +100,9 @@ TfrmHelp::TfrmHelp()
                     L"rf - Earth's radius [m], rg  - molar gas constant (8.31 J/ mol K), rs - Sun's radius\n"
                     L"u - atomic mass unit\n\n"
                     L"Any number of user constants and functions may be defined with any valid arithmetic formula including other constants and variables:\n\n"
-					L"Example:\n"
+                    L"Line format:   name = expression:comment:unit, where name may be a variable name or a function name like 'a(x,y)'\n\n"
+					L"Examples:\n"
+					L"      constR=8.31446261815324:Universal gas constant:J/K/mol\n"
 					L"      solvequad(a, b, c, s) = (-b + s * sqrt(b ^ 2 - 4 * a * c)) / 2 / a:solves the quadratic equation ax² + bx + c = 0\n\n"
                     L"When a variable is modified the value of all dependent variables and functions are automatically changed\n"
                     L"Functions may have any number of arguments with any names that is different from the name of any built-in function or constant.\n";

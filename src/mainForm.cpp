@@ -836,22 +836,6 @@ void TfrmMain::btnFontClick(void *sender, nlib::EventParameters param)
 	}
 }
 
-void TfrmMain::edtInfixKeyDown(void *sender, nlib::KeyParameters param)
-{
-    _watchdog = 0;   // reset counter
-	if(edtInfix->Text().empty())
-        return;
-
-    if(param.keycode == VK_RETURN)
-        _AddToHistory(edtInfix->Text());
-    else if(param.keycode != VK_RIGHT && param.keycode != VK_LEFT && param.keycode != VK_UP && param.keycode != VK_DOWN &&
-            param.keycode != VK_TAB)
-    {
-		//if(param.keycode != 17 || !param.vkeys.contains(vksCtrl))  // 17 - Ctrl-H
-                _added = false;
-    }
-}
-
 void TfrmMain::btnClearInfixClick(void* sender, nlib::EventParameters param)
 {
 	edtInfix->SetText(L"");
@@ -976,6 +960,22 @@ void TfrmMain::edtInfixTextChanged(void *sender, nlib::EventParameters param)
         _ShowMessageOnAllPanels(L"???");
     }
 	--_busy;
+}
+
+void TfrmMain::edtInfixKeyDown(void* sender, nlib::KeyParameters param)
+{
+	_watchdog = 0;   // reset counter
+	if (edtInfix->Text().empty())
+		return;
+
+	if (param.keycode == VK_RETURN)
+		_AddToHistory(edtInfix->Text());
+	else if (param.keycode != VK_RIGHT && param.keycode != VK_LEFT && param.keycode != VK_UP && param.keycode != VK_DOWN &&
+		param.keycode != VK_TAB)
+	{
+		//if(param.keycode != 17 || !param.vkeys.contains(vksCtrl))  // 17 - Ctrl-H
+		_added = false;
+	}
 }
 
 void TfrmMain::rdDegClick(void *sender, nlib::EventParameters param)

@@ -756,7 +756,7 @@ void LittleEngine::_HandleBrace(Token* tok)
   *------------------------------------------------------------*/
 int LittleEngine::_InfixToPostFix(const SmartString expr)
 {
-    //check for (invalid characters up to the comment field
+    //check for invalid characters up to the comment field
 	locale loc = cout.getloc();
     infix.clear();
     //if( infix[  infix.length() -1] == '\n')
@@ -843,7 +843,7 @@ int LittleEngine::_InfixToPostFix(const SmartString expr)
 				case tknFunction:							// If the token is a function name token,
 					if (!_FunctionAssignment(infix, pos, tok))
 					{
-						if (pos >= expr.length() || expr.at(pos) == SCharT(')'))    // eg 'sin(' or 'sin()' w.o. argument
+						if (pos >= expr.length() || infix.at(pos) == SCharT(')'))    // eg 'sin(' or 'sin()' w.o. argument
 							Trigger(Trigger_Type::NO_FUNCTION_ARGUMENT);
 						stack.push(*tok);   // then push it onto the stack.
 					}
@@ -992,6 +992,7 @@ bool LittleEngine::_VariableAssignment(const SmartString &expr, unsigned &pos, T
         return false;       // not an assignment
 
     Variable v;
+
     SmartString lcName = tok->Text().asLowerCase();
     if(constantsMap.count(lcName )) 
         Trigger(Trigger_Type::BUILTIN_VARIABLES_CANNOT_BE_REDEFINED);
@@ -1036,14 +1037,19 @@ bool LittleEngine::_VariableAssignment(const SmartString &expr, unsigned &pos, T
     if(posComment != SmartString::npos)
     {   
         pos = posComment+1;     // ++pos would be enough: we have a single expression in line
+
+        // line format: <variablename> = <definition> [:<comment>[:<unit>]]
+
+        descr = expr.substr(pos, posComment - (posComment!= SmartString::npos? pos : 0) );
+        pos += descr.length();
+
         posComment = expr.find_first_of(schCommentDelimiter,pos); // if there's a unit definition in line too
         if (posComment != SmartString::npos) // yes
         {
-            unit = expr.substr(pos, posComment - pos);
+            descr = expr.substr(pos, posComment - pos);
             pos = posComment + 1;
         }
-        descr = expr.substr(pos);
-        pos += descr.length();
+        unit = expr.substr(pos);
     }
     v.data = Constant(tok->Text(), RealNumber::RN_0, unit, descr);
 #endif
@@ -1583,9 +1589,9 @@ bool LittleEngine::SaveUserData(SmartString filename) // if it wasn't read and n
 				for( ; vit != fit.second.args.end(); ++vit)
 					ofs << ", " << (*vit).ToWideString();
 			}
-			ofs << " = " << fit.second.body.ToWideString();
+			ofs << ") = " << fit.second.body.ToWideString();
 			if(!fit.second.desc.empty() )
-				ofs << schCommentDelimiter << fit.second.desc.ToWideString();
+				ofs << ssCommentDelimiterString.ToWideString() << fit.second.desc.ToWideString();
 			ofs << endl;
 		}
 	}
