@@ -1083,7 +1083,7 @@ bool LittleEngine::_VariableAssignment(const SmartString &expr, unsigned &pos, T
     else // leave it dirty :) ??? it wasn't
         v.data.value = if2pf._CalcPostfix(if2pf.tvPostfix);
 
-    variables[tok->Text().asLowerCase()] = v;
+    variables[lcName] = v;
     // mark variables whose definition contains this variable dirty
     _MarkDirty(tok->Text());    // uses lowercase name
     clean = false;  // table modified

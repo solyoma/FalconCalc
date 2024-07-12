@@ -11,34 +11,34 @@
 
 // wmUserbase is the base address of messages used in the library. If a new message type
 // is needed in a program, it should start from WM_APP. I.e.:
-// #define amDoStuff (WM_APP + 1)
+// constexpr int amDoStuff = (WM_APP + 1);
 
-#define wmUserbase          0x7000
-#define wmCaptureChanged    (wmUserbase +  0)
-#define wmStartSizeMove     (wmUserbase +  1) /* Sent when the user starts sizing or moving the control's window. */
-#define wmSizeMoveEnded     (wmUserbase +  2) /* Sent when the user finished sizing or moving the control's window. */
-#define wmSetBounds         (wmUserbase +  3) /* WPARAM lo-hi: x1, y1, LPARAM lo-hi: width, height (new bounding rectangles). Call the DelayedSetBounds function of controls to send the message with a rectangle. */
-#define wmFocusKilled       (wmUserbase +  4) /* Sent after WM_KILLFOCUS so we can act more freely with events which would otherwise cause problems. */
-#define wmFormActivated     (wmUserbase +  5) /* Sent to all child controls as well as to the form when the form has gained focus. Also sent to the application object when a form is deactivated. */
-#define wmFormDeactivated   (wmUserbase +  6) /* Sent to all child controls as well as to the form when the form has lost focus. */
-#define wmColorChanged      (wmUserbase +  7) /* Sent when a control's color was changed due to a call to SetColor or SetParentColor. lParam is 0 if the control's color changed, 1 if the parent's color changed. */
-#define wmEnableChanged     (wmUserbase +  8) /* Sent when the enabled state changed by calling SetEnabled. The controlstate is updated but the window is not enabled or disabled yet */
-#define wmRequestLayout     (wmUserbase +  9) /* Send a request for the container control to call its LayoutChildren function. WPARAM when set to TRUE specifies whether this should include anchored children as well. */
-#define wmHandleCreated     (wmUserbase + 10) /* Sent as a signal that the handle is created and the derived classes finished initializing their windows.*/
-#define wmControlDestroyed  (wmUserbase + 11) /* Sent to the application window when a control received the WM_DESTROY message to mark it for removal from the control/handle map. WPARAM is a pointer to control, LPARAM is its handle. */
-#define wmDelayedDrag       (wmUserbase + 12) /* Sent to the control when a drag-drop operation is about to start. Sent by StartDelayedDragDrop, i.e. in case drag dropping right in a mouse message would cause problems. WPARAM is a BasicDataObject or derived, LPARAM is an integer representing the value of a DragDropEffectSet. */
-#define wmDelete            (wmUserbase + 13) /* Sent when the control (mainly a form) is to be deleted. Calls the control's Destroy method. After receiving this message, no member of this control can be accessed. */
-#define wmImagelistChanged  (wmUserbase + 14) /* Sent by some controls that need updating in a message when the imagelist changed. */
-#define wmActiveChanged     (wmUserbase + 15) /* Sent by the form to the control that lost its active state and to the control that gained the active state. WPARAM is 0 for leaving and 1 for entering the control. LPARAM is the other control which either gained or lost the active state. */
-#define wmDialogKey         (wmUserbase + 16) /* Sent to the control when the enter or escape keys were pressed. */
-#define wmMenuAccelerator   (wmUserbase + 17) /* Handled by forms that have a main menu. WPARAM is the shortcut that must be activated if present in the menu. */
-#define wmSysColorChanged   (wmUserbase + 18) /* Sent to all controls by the application once it handled the WM_SYSCOLORCHANGED message. */
-#define wmThemeChanged      (wmUserbase + 19) /* The theme used in the system has changed or it was turned on or off. Broadcasted to all controls after a WM_THEMECHANGED message. */
-#define wmChildMessage      (wmUserbase + 20) /* A child control sends this message to its parent if it is not a control object. For example the editor of a Combobox is created by the system. The wParam is unused, lParam is a pointer to a MessageStruct structure. The default handler in Control calls HandleChildMessage() which mainly handles keyboard messages. */
-#define wmAutoResize        (wmUserbase + 21) /* Used by controls that must resize themselves when they change and it cannot be done without handling other messages first. */
+constexpr int wmUserbase          = 0x7000;
+constexpr int wmCaptureChanged    = (wmUserbase +  0);
+constexpr int wmStartSizeMove     = (wmUserbase +  1); /* Sent when the user starts sizing or moving the control's window. */
+constexpr int wmSizeMoveEnded     = (wmUserbase +  2); /* Sent when the user finished sizing or moving the control's window. */
+constexpr int wmSetBounds         = (wmUserbase +  3); /* WPARAM lo-hi: x1, y1, LPARAM lo-hi: width, height (new bounding rectangles). Call the DelayedSetBounds function of controls to send the message with a rectangle. */
+constexpr int wmFocusKilled       = (wmUserbase +  4); /* Sent after WM_KILLFOCUS so we can act more freely with events which would otherwise cause problems. */
+constexpr int wmFormActivated     = (wmUserbase +  5); /* Sent to all child controls as well as to the form when the form has gained focus. Also sent to the application object when a form is deactivated. */
+constexpr int wmFormDeactivated   = (wmUserbase +  6); /* Sent to all child controls as well as to the form when the form has lost focus. */
+constexpr int wmColorChanged      = (wmUserbase +  7); /* Sent when a control's color was changed due to a call to SetColor or SetParentColor. lParam is 0 if the control's color changed, 1 if the parent's color changed. */
+constexpr int wmEnableChanged     = (wmUserbase +  8); /* Sent when the enabled state changed by calling SetEnabled. The controlstate is updated but the window is not enabled or disabled yet */
+constexpr int wmRequestLayout     = (wmUserbase +  9); /* Send a request for the container control to call its LayoutChildren function. WPARAM when set to TRUE specifies whether this should include anchored children as well. */
+constexpr int wmHandleCreated     = (wmUserbase + 10); /* Sent as a signal that the handle is created and the derived classes finished initializing their windows.*/
+constexpr int wmControlDestroyed  = (wmUserbase + 11); /* Sent to the application window when a control received the WM_DESTROY message to mark it for removal from the control/handle map. WPARAM is a pointer to control, LPARAM is its handle. */
+constexpr int wmDelayedDrag       = (wmUserbase + 12); /* Sent to the control when a drag-drop operation is about to start. Sent by StartDelayedDragDrop, i.e. in case drag dropping right in a mouse message would cause problems. WPARAM is a BasicDataObject or derived, LPARAM is an integer representing the value of a DragDropEffectSet. */
+constexpr int wmDelete            = (wmUserbase + 13); /* Sent when the control (mainly a form) is to be deleted. Calls the control's Destroy method. After receiving this message, no member of this control can be accessed. */
+constexpr int wmImagelistChanged  = (wmUserbase + 14); /* Sent by some controls that need updating in a message when the imagelist changed. */
+constexpr int wmActiveChanged     = (wmUserbase + 15); /* Sent by the form to the control that lost its active state and to the control that gained the active state. WPARAM is 0 for leaving and 1 for entering the control. LPARAM is the other control which either gained or lost the active state. */
+constexpr int wmDialogKey         = (wmUserbase + 16); /* Sent to the control when the enter or escape keys were pressed. */
+constexpr int wmMenuAccelerator   = (wmUserbase + 17); /* Handled by forms that have a main menu. WPARAM is the shortcut that must be activated if present in the menu. */
+constexpr int wmSysColorChanged   = (wmUserbase + 18); /* Sent to all controls by the application once it handled the WM_SYSCOLORCHANGED message. */
+constexpr int wmThemeChanged      = (wmUserbase + 19); /* The theme used in the system has changed or it was turned on or off. Broadcasted to all controls after a WM_THEMECHANGED message. */
+constexpr int wmChildMessage      = (wmUserbase + 20); /* A child control sends this message to its parent if it is not a control object. For example the editor of a Combobox is created by the system. The wParam is unused, lParam is a pointer to a MessageStruct structure. The default handler in Control calls HandleChildMessage() which mainly handles keyboard messages. */
+constexpr int wmAutoResize        = (wmUserbase + 21); /* Used by controls that must resize themselves when they change and it cannot be done without handling other messages first. */
 
 #ifdef DESIGNING
-#define wmTabOrderChanged   (wmUserbase + 118) /* Sent after the control's tab order has changed. WPARAM specifies the control, LPARAM is the change in the control's tab order value. Negative values mean the new tab order is lower. */
+constexpr int wmTabOrderChanged = (wmUserbase + 118); /* Sent after the control's tab order has changed. WPARAM specifies the control, LPARAM is the change in the control's tab order value. Negative values mean the new tab order is lower. */
 #endif
 
 
