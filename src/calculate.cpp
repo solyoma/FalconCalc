@@ -756,6 +756,7 @@ void LittleEngine::_HandleBrace(Token* tok)
   *------------------------------------------------------------*/
 int LittleEngine::_InfixToPostFix(const SmartString expr)
 {
+
     //check for invalid characters up to the comment field
 	locale loc = cout.getloc();
     infix.clear();
@@ -768,6 +769,8 @@ int LittleEngine::_InfixToPostFix(const SmartString expr)
     //if ( (poseq = expr.indexOf(L'=')) > 0)
     //    infix = expr.left(poseq);
     // copy string into infix and drop internal spaces
+    // and check for missing or mixed braces
+    int bc = 0;   // brace count
     SmartString::const_iterator it;
     for(it = expr.begin()/* + poseq*/; it != expr.end() && *it != FalconCalc::schCommentDelimiter; ++it)
     {
@@ -777,12 +780,24 @@ int LittleEngine::_InfixToPostFix(const SmartString expr)
                 continue;
             if (!IsAlnum((wchar_t)*it, loc) && pattern.find_first_of(*it) == std::string::npos)
                 Trigger(Trigger_Type::ILLEGAL_CHARACTER);
+            if (*it == u'(')
+                ++bc;
+            else if (*it == u')')
+            {
+                if (--bc < 0)
+                    Trigger(Trigger_Type::SYNTAX_ERROR);
+            }
         }
         if(*it == '\'')
             quoted ^= true;
         infix.push_back(*it);   //  even quoted string don't lowercase anything here
     }
+    if(bc)
+        Trigger(Trigger_Type::SYNTAX_ERROR);
     infix += expr.mid(it - expr.begin());   // add comment and unit
+
+    bool inq = false;       // inside quote
+    
 
     int result = 1;     // not an assignment
     tvPostfix.clear();  // get rid of previous result
@@ -843,14 +858,15 @@ int LittleEngine::_InfixToPostFix(const SmartString expr)
 				case tknFunction:							// If the token is a function name token,
 					if (!_FunctionAssignment(infix, pos, tok))
 					{
-						if (pos >= expr.length() || infix.at(pos) == SCharT(')'))    // eg 'sin(' or 'sin()' w.o. argument
+						if (pos >= infix.length() || infix.at(pos) == SCharT(')'))    // eg 'sin(' or 'sin()' w.o. argument
 							Trigger(Trigger_Type::NO_FUNCTION_ARGUMENT);
+
 						stack.push(*tok);   // then push it onto the stack.
 					}
 					else                     // function asignment
 					{
 						result = 0;
-						pos = expr.length(); // function body processed already
+						pos = infix.length(); // function body processed already
 					}
 					break;
 				case tknUnknown:
@@ -1187,9 +1203,9 @@ bool LittleEngine::_VariableAssignment(const SmartString &expr, unsigned &pos, T
    {
        if2pf._InfixToPostFix(f.body);
        f.definition = if2pf.tvPostfix;
-       functions[ tok->Text()] = f;
+       functions[lcName] = f;
        // mark variables whose definition contains this function dirty
-       _MarkDirty(tok->Text());
+       _MarkDirty(lcName);
        clean = false;  // table modified
    }
    catch(...)
