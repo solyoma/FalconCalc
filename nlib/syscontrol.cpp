@@ -748,7 +748,7 @@ namespace NLIBNS
         base::MouseUp(x, y, button, vkeys);
     }
 
-    unsigned int Edit::MaxLength()
+    unsigned int Edit::MaxLength()  const
     {
         return maxlength;
     }

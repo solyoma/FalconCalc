@@ -43,59 +43,6 @@
             }
         }
 
-        type PopupMenu
-        {
-            Name = "pmCopy"
-            AccessLevel = "alPublic"
-
-            subtype Items : MenuItem
-            {
-                Name = "miCopyDec"
-                AccessLevel = "alPublic"
-                Text = "Copy &Decimal"
-                event OnClick = "miCopyDecClick"
-            }
-
-            subtype Items : MenuItem
-            {
-                Name = "miCopyHex"
-                AccessLevel = "alPublic"
-                Text = "Copy He&xadecimal"
-                event OnClick = "miCopyHexClick"
-            }
-
-            subtype Items : MenuItem
-            {
-                Name = "miCopyOct"
-                AccessLevel = "alPublic"
-                Text = "Copy &Octal"
-                event OnClick = "miCopyOctClick"
-            }
-
-            subtype Items : MenuItem
-            {
-                Name = "miCopyBin"
-                AccessLevel = "alPublic"
-                Text = "Copy &Binary"
-                event OnClick = "miCopyBinClick"
-            }
-
-            subtype Items : MenuItem
-            {
-                Name = "miCopySep"
-                AccessLevel = "alPublic"
-                Text = "-"
-            }
-
-            subtype Items : MenuItem
-            {
-                Name = "miCopyText"
-                AccessLevel = "alPublic"
-                Text = "Copy &Formula"
-                event OnClick = "miCopyClick"
-            }
-        }
-
         type Menubar
         {
             Name = "mnuMain"
@@ -329,6 +276,59 @@
             }
         }
 
+        type PopupMenu
+        {
+            Name = "pmCopy"
+            AccessLevel = "alPublic"
+
+            subtype Items : MenuItem
+            {
+                Name = "miCopyDec"
+                AccessLevel = "alPublic"
+                Text = "Copy &Decimal"
+                event OnClick = "miCopyDecClick"
+            }
+
+            subtype Items : MenuItem
+            {
+                Name = "miCopyHex"
+                AccessLevel = "alPublic"
+                Text = "Copy He&xadecimal"
+                event OnClick = "miCopyHexClick"
+            }
+
+            subtype Items : MenuItem
+            {
+                Name = "miCopyOct"
+                AccessLevel = "alPublic"
+                Text = "Copy &Octal"
+                event OnClick = "miCopyOctClick"
+            }
+
+            subtype Items : MenuItem
+            {
+                Name = "miCopyBin"
+                AccessLevel = "alPublic"
+                Text = "Copy &Binary"
+                event OnClick = "miCopyBinClick"
+            }
+
+            subtype Items : MenuItem
+            {
+                Name = "miCopySep"
+                AccessLevel = "alPublic"
+                Text = "-"
+            }
+
+            subtype Items : MenuItem
+            {
+                Name = "miCopyText"
+                AccessLevel = "alPublic"
+                Text = "Copy &Formula"
+                event OnClick = "miCopyClick"
+            }
+        }
+
         type FlatButton
         {
             Name = "btnOpenHexOptions"
@@ -505,6 +505,7 @@
             }
             ParentFont = "False"
             TabOrder = "0"
+            WantedKeyTypes = "wkArrows, wkEnter, wkOthers"
             event OnKeyDown = "edtInfixKeyDown"
             event OnTextChanged = "edtInfixTextChanged"
         }
@@ -1875,13 +1876,14 @@
         }
         WantedKeyTypes = "wkArrows, wkTab, wkEnter, wkEscape, wkOthers"
         UnitName = "variables"
-        DesignVisible = "False"
+        DesignVisible = "True"
         LastExportedName = "frmVariables"
         LastExportedEvents = "3800310034007C00789CAD94DB6EC2301044E7BBFA58485F10122AA5EF8444216A70502EAD407C3CE3851097D8D82955146C76C67BD6973846038525D6F8468A090AE4D8E00B27C44E45493FC60B9F485445EF82CE8AEF8EFF1BBE15EA5B9609E38AA3538E1C325CEA5F3805235AB7516CDA78C654EAFC74505CEA184E8D0CAF68E92F18CDA5F692FD963EBD23398E12CD467ACD1A4CD73BFB3F576FEAA8E93763CE112DE32956D87B5593DB6B7A4CC3A7A43E8E39957A5590E3BFD9BAA7772FC4616777BA7BEF57E2AB30E3EF81BE8A6D1DA09ABC7BD54F8B9070B45E932E77BF8AA13E5B053EEEE3B3ED773D73AA1B7E9D976FB5C607DB9819B6721B65B2833EDD640F753BF34D566E27B74329B3B3C7CCDC43FD71EE6ED6DD598B982D619B047A4C76BF829A9CCB792FE59EE9679A58EB3903FADF455E"
         CreationOrder = "5"
         Icon = "240053003A005C007600650067007900650073005C00460061006C0063006F006E00430061006C0063005C007300720063005C00700072006F006700720061006D002E00690063006F00FE020000789CB592310EC3200C457FA28AB95367C61E83A10761A858938D95A3711AD43153BBD5B5814821129D92F731C6B66C240430B0B4BE42788DC08DFD9D4DB319B601975C0B233A84BC104271223EC418D94B86F20251712249C97630EAF9D86254725B8C7A5BAC02384ED35CE5FD2CF569A9225ADCDF7EDBF6B39A7ED629FDBE50E36429F3E9D6EBCBD4F8DB60D08C77B6FBB027413B227FB780FA9D0E3099B7BF63CB0F892FD8B7"
         ClientWidth = "528"
         ClientHeight = "569"
+        event OnKeyDown = "VariablesKeyDown"
         event OnEndSizeMove = "FormSizeMoveEnded"
         event OnClose = "FormClose"
 
@@ -1929,7 +1931,7 @@
                     [2] = "129"
                 }
                 array RowHeight = {
-                    [3] = "21"
+                    [3] = "23"
                     [4] = "23"
                 }
                 array DefColWidth = {
@@ -1940,6 +1942,7 @@
                 SmoothHorzScroll = "True"
                 AutoEdit = "True"
                 TabEdited = "True"
+                event OnDblClick = "sgUserDoubleClick"
                 event OnColumnSizing = "sgUserColumnSizing"
                 event OnEditorKeyDown = "sgUserEditorKeyDown"
                 event OnEditorKeyPress = "sgUserKeyPress"
@@ -1981,7 +1984,7 @@
                 array ColWidth = {
                     [0] = "88"
                     [1] = "64"
-                    [2] = "133"
+                    [2] = "134"
                 }
                 array RowHeight = {
                     [2] = "23"
@@ -1993,6 +1996,7 @@
                     [3] = "129"
                 }
                 SmoothHorzScroll = "True"
+                event OnDblClick = "sqBuiltinDoubleClick"
                 event OnColumnSizing = "sgBuiltinColumnSizing"
             }
         }

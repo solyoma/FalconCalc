@@ -221,7 +221,7 @@ namespace NLIBNS
 #endif 
         Edit();
 
-        unsigned int MaxLength();
+        unsigned int MaxLength() const;
         void SetMaxLength(unsigned int newmax);
         bool ReadOnly();
         void SetReadOnly(bool newreadonly);

@@ -962,11 +962,23 @@ void RealNumber::_DisplData::CalculateExponentAndIntegerDigits()
 	}
 	else // fmt.mainFormat == NumberFormat::rnfEng
 	{
-		--exp;	// real 10's exponent
-		// exp is now the real 10's exponent and not our renormalised exponent 
-		nIntegerDigits = (exp < 0 ? (3 - (exp + 1) % 3) : (exp % 3 + 1));		// 1,2, or 3
-		exp = exp - nIntegerDigits + 1; //  (exp < 0 ? (-(exp + 1) / 3 - 1) : (exp / 3)) * 3;
 		nLeadingDecimalZeros = 0;
+		if (numberIsZero)
+		{
+			exp = 0;
+			nIntegerDigits = 1;
+			strExponent = FormatExponent();	// real 10's exponent
+			return;
+		}	
+
+		--exp;	// real 10's exponent
+									 // _exp:		-1, -2, -3, -4
+									 // exp%3:		-1	-2	 0	-1
+									 // int digits:  3,  2,  1,  3
+									 // exp:        -3,	-3,	-3,	-6
+		// exp is now the real 10's exponent and not our renormalised exponent 
+		nIntegerDigits = (exp >= 0) ? (exp % 3 + 1) : (exp % 3 ? (4 + exp % 3) : 1);		// 1,2, or 3
+		exp = exp - nIntegerDigits + 1;		//  (exp < 0 ? (-(exp + 1) / 3 - 1) : (exp / 3)) * 3;
 		++exp;
 	}
 	strExponent = FormatExponent();	// real 10's exponent
@@ -1209,6 +1221,41 @@ SmartString RealNumber::ToString(const DisplayFormat& format)
 	return sres;
 }
 
+void RealNumber::_DisplData::Setup(const DisplayFormat& format, RealNumber& rN)
+{
+	// DEBUG
+	pRn = &rN;
+	// /DEBUG
+
+	numberIsZero = rN._numberString.empty() || rN == RN_0;
+	exp = rN._exponent;			// position of the decimal point. 
+	// Example #1 exp = 0, _numberstring = 123 => number  = .123
+	// Example #2 exp = 1, _numberstring = 123 => number  = 1.23
+	// Example #3 exp = 0, _numberstring = ""  => number  = 0
+
+	fmt = format;		// may change
+	strRounded = rN._numberString;
+
+	// names starting with 'nW' are display data, starting with 'n' are for _numberString
+			 // set/change formats when needed
+	nWSign = fmt.signOption != SignOption::soNormal || rN._sign < 0 ? 1 : 0;
+	nIntegerDigits = exp > 0 ? exp : (rN.IsNull() ? 1 : 0);	// in _numberString ( if > _numberstring.length() logically right extended by '0's when needed)
+	nWIntegerPart = nIntegerDigits ? nIntegerDigits : 1;	// width of whole integer part of formatted string w.o. sign
+	nWDisplayW = fmt.displWidth <= 0 ? size_t(-1) : fmt.displWidth;
+
+	nLeadingDecimalZeros = exp >= 0 ? 0 : -exp;
+	//if (format.base == DisplayBase::rnb10 && !exp && (strRounded.empty() || (strRounded.length() == 1 && strRounded.at(0, chZero) == chZero)))
+	//	nLeadingDecimalZeros = fmt.decDigits > 0 ? fmt.decDigits : 0;
+	// suppose format rnfNormal with sign, integer digits w. delimiters, decimal point, leading zeros and fractional part
+	// so strRounded has 'nIntegerDigits' digits and  (strRounded.length() - 'nIntegerDigits' decimal digits
+	//int nTmp = (int)strRounded.length() - (int)nIntegerDigits;	// dec. digits in strRounded, < 0 => no decimal digits there
+
+	cntThousandSeparators = (fmt.strThousandSeparator.empty() ? 0 :
+		((nWIntegerPart > 3 ? nWIntegerPart / 3 : 0) - 1 + (nWIntegerPart % 3 ? 2 - (nWIntegerPart % 3) : 0)));
+	if (cntThousandSeparators > 0)
+		nWIntegerPart = nWIntegerPart + cntThousandSeparators * fmt.strThousandSeparator.length();
+}
+
 /*=============================================================
  * TASK   :	creates a string representtaion of 'exp'
  * PARAMS : 'fmt': formatting rules
@@ -1223,7 +1270,7 @@ SmartString RealNumber::ToString(const DisplayFormat& format)
  *------------------------------------------------------------*/
 SmartString RealNumber::_DisplData::FormatExponent()
 {
-	SmartString s = SmartString(std::to_string(exp-1));
+	SmartString s = numberIsZero ? "0"_ss : SmartString(std::to_string(exp - 1));
 	expLen = 0;				// no exponent for general or normal format
 	if (fmt.mainFormat == NumberFormat::rnfSci || fmt.mainFormat == NumberFormat::rnfEng)
 	{
@@ -1373,7 +1420,7 @@ bool RealNumber::ConvertToInteger()
 	if (_exponent <= 0)
 	{
 		_numberString.clear();
-		_exponent = 1;
+		_exponent = 0;
 	}
 	else if (_exponent <= (int)_numberString.length())
 	{
@@ -1862,6 +1909,9 @@ void RealNumber::_AddExponents(int otherExp)
  *------------------------------------------------------------*/
 void RealNumber::_FromNumberString()
 {
+	// exponent 
+	_exponent = 0;
+
 	_numberString.Trim();
 	_numberString.toUpper();
 
@@ -1893,8 +1943,6 @@ void RealNumber::_FromNumberString()
 	int posE = _numberString.indexOf(SCharT('E'));	// if a string has an exponent it must be decimal
 	if (_numberString.left(2) == u"0X")				// hexadecimal string may have an E inside
 		posE = -1;
-	// exponent 
-	_exponent = 0;
 
 	if (posE > 0)
 	{
@@ -1926,7 +1974,7 @@ void RealNumber::_FromNumberString()
 	Base base = Base::dec;	// number is decimal, hexadecimal, octal or binary, but decimal is the default
 
 	// get number base here (no sign in string)
-	if (_numberString.at(0) == chZero)			// hex:0x012, oct:067, dec:001.012300, dec:.12300, dec: 0123E-1
+	if (_numberString.at(0) == chZero)			// hex:0x012, oct:067, dec:0, dec:001.012300, dec:.12300, dec: 0123E-1
 	{
 		if (_numberString.at(1) == SCharT('X'))
 		{
@@ -1942,14 +1990,17 @@ void RealNumber::_FromNumberString()
 						// remove leading zeros from integer part, trailing zeros are removed after exponent set
 			_numberString.erase(_numberString.begin(), std::find_if(_numberString.begin(), _numberString.end(), [](SCharT ch) {return ch != chZero; }));
 		}
-		else
+		else	// octal number or decimal number '0'
 		{
-			pattern = SmartString("[^0-7]");				  // otherwise they are octal, so we do not need the leading 0 nor any other 0 char. after it
+			pattern = SmartString("[^0-7]");				// otherwise they are octal, so we do not need the leading 0 nor any other 0 char. after it
 			_numberString.erase(_numberString.begin(), std::find_if(_numberString.begin(), _numberString.end(), [](SCharT ch) {return ch != chZero; }));
-			base = Base::oct;									  // and the starting zero is just a prefix
+			if (_numberString.empty())					// there were only zero digits there
+				base = Base::dec;
+			else
+				base = Base::oct;							// and the starting zero is just a prefix
 		}
 	}
-	else if (_numberString.at(0) == SCharT('#'))					  // binary string
+	else if (_numberString.at(0) == SCharT('#'))			// binary string
 	{
 		pattern = SmartString("[^01]");
 		_numberString.erase(0, 1); // then erase any leading zeros

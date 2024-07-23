@@ -30,16 +30,19 @@ N_PUBLIC: /* Designer generated list of public members. Do not edit by hand. */
 	void btnCancelClick(void *sender, nlib::EventParameters param);
 	void btnClearClick(void *sender, nlib::EventParameters param);
 	void btnDelVarClick(void *sender, nlib::EventParameters param);
-	void sgBuiltinColumnSizing(void *sender, nlib::ColumnRowSizeParameters param);
 	void BuiltinMouseUp(void *sender, nlib::MouseButtonParameters param);
 	void BuiltinMouseDown(void *sender, nlib::MouseButtonParameters param);
 	void BuiltinMouseMove(void *sender, nlib::MouseMoveParameters param);
-	void sgUserKeyPress(void *sender, nlib::KeyPressParameters param);
-	void sgUserEditorKeyDown(void *sender, nlib::KeyParameters param);
-	void sgUserColumnSizing(void *sender, nlib::ColumnRowSizeParameters param);
-	void tcVarsTabChange(void *sender, nlib::TabChangeParameters param);
 	void FormClose(void *sender, nlib::FormCloseParameters param);
 	void FormSizeMoveEnded(void* sender, nlib::SizePositionChangedParameters param);
+	void sgBuiltinColumnSizing(void *sender, nlib::ColumnRowSizeParameters param);
+	void sgUserEditorKeyDown(void *sender, nlib::KeyParameters param);
+	void sgUserKeyPress(void *sender, nlib::KeyPressParameters param);
+	void sgUserDoubleClick(void* sender, nlib::MouseButtonParameters param);
+	void sgBuiltinDoubleClick(void* sender, nlib::MouseButtonParameters param);
+	void sgUserColumnSizing(void *sender, nlib::ColumnRowSizeParameters param);
+	void tcVarsTabChange(void *sender, nlib::TabChangeParameters param);
+	void VariablesKeyDown(void* sender, nlib::KeyParameters param);
 protected:
 	virtual ~TfrmVariables(); /* Don't make public. Call Destroy() to delete the object. */ 
 N_PROTECTED: /* Designer generated list of protected members. Do not edit by hand. */

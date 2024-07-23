@@ -177,7 +177,7 @@ namespace FalconCalc
 
     enum class Trigger_Type
     {
-        NO_PROBLEMS,
+        NO_PROBLEM,
         BUILTIN_FUNCTIONS_CANNOT_BE_REDEFINED,
         BUILTIN_VARIABLES_CANNOT_BE_REDEFINED,
         CLOSING_QUOTE_NOT_FOUND,

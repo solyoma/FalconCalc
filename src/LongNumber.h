@@ -218,20 +218,20 @@ namespace LongNumber {
 	 *	starts with a '0' digit. Otherwise it must be no longer
 	 *  than the non zero digits in the number or '_maxLength'
 	 *
-	 *	Examples ( with _maxlength >= 4):
-	 *	The string is '1234'!
+	 *	Examples ( with _maxlength >= 4 and the stored string is '1234')
 	 *	exponent  sign				 number
 	 * 		 0		 1     		 1.234 E-1 (=0.1234)
+	 * 		 1		 1     		 1.234 E0  (=1.234)
 	 *		99		 1			 1.234 E98
 	 *		-3		-1			-1.234 E-4 (=-0.0001234)
 	 *		-99		-1			-1.234 E-100
 	 *
-	 * RN_2 real numbers may have different _maxLength and _maxExponent
+	 * Rwo real numbers may have different _maxLength and _maxExponent
 	 * values. If there is an operation beteen them the result will have
 	 * the larger of these.
 	 *
 	 * Any arithmetic operations between two REAL_NUMBERs may result in
-	 * a RealNumber with fewer or more significant digits than the
+	 * a RealNumber with fewer or more mpm zero digits than the
 	 * ones in the operation, but the total number of digits may never
 	 * exeed _maxLength (which has a limit of 'MaxAllowedDigits').
 	 *
@@ -248,13 +248,13 @@ namespace LongNumber {
 	private:
 		int _sign = 1;				// number sign: +1 or -1
 		SmartString _numberString;	// normalized (original or calculated) number as string
+		int _exponent = 0;	// ((10's exponent of number) + 1). If positive # of integer digits
 		// for calculations the number is used in normalized form
-		// example: 12345.678E-9 => mantissa: 0.12345678, exponent: -4 (=-9+4+1), stored as: 
-		//			1 string: "12345678" and 
-		//			1 integer for resulting exponent: -4 
-		int _exponent = 0;	// 10's exponent of number+1. If positive # of integer digits
-		// Example: number = 0.123 => _numberString = "123", _exponent = 0
-		// Example: number = 12345.678*10^(-6) => _numberString = 12345678, _exponent=-5
+		// example: 12345.678E-9 => mantissa: 0.12345678, 10's exponent: -5 (=-9+4), stored as: 
+		//							=> _numberString: "12345678", _exponent : -4 
+		//		  : number = 0		=> _numberString = "", _exponent = 0
+		//		  : number = 0.123	=> _numberString = "123", _exponent = 0
+		//		  : number = 12345.678E6 => _numberString = 12345678, _exponent=11
 
 		static size_t _maxExponent; // absolute value of largest possible exponent of 10 in number
 		static size_t _maxLength;	//	# of bytes this number may occupy, now === # of digits+LengthOverFlow
@@ -464,7 +464,7 @@ namespace LongNumber {
 		}
 		inline bool IsInt() const noexcept
 		{
-			return IsValid() && _exponent > 0 && _exponent >= (int)_numberString.length();
+			return IsValid() && (IsNull() || _exponent >= (int)_numberString.length() );
 		}
 		inline bool IsOdd() const noexcept
 		{
@@ -491,11 +491,16 @@ namespace LongNumber {
 
 		struct _DisplData
 		{
+			// DEBUG
+			RealNumber* pRn = nullptr;
+			// /DEBUG
+
 			DisplayFormat fmt;
 
 			int		nLeadingDecimalZeros = 0;
 			int		cntThousandSeparators = 0;
 			int		exp;
+			bool	numberIsZero = false;
 
 			size_t	nWSign = 0;
 			size_t	nIntegerDigits = 0;		// in _numberString ( if > _numberstring.length() logically right extended by '0's when needed)
@@ -511,35 +516,7 @@ namespace LongNumber {
 			SmartString strRounded;			// rounded string of digits
 			int nRoundPos = 0;
 
-			void Setup(const DisplayFormat& format, RealNumber& rN)
-			{
-				exp = rN._exponent;			// position of the decimal point. 
-				// Example #1 exp = 0, _numberstring = 123 => number  = .123
-				// Example #2 exp = 1, _numberstring = 123 => number  = 1.23
-
-				fmt = format;		// may change
-				strRounded = rN._numberString;
-
-				// names starting with 'nW' are display data, starting with 'n' are for _numberString
-						 // set/change formats when needed
-				nWSign = fmt.signOption != SignOption::soNormal || rN._sign < 0 ? 1 : 0;
-				nIntegerDigits = exp > 0 ? exp : 0;	// in _numberString ( if > _numberstring.length() logically right extended by '0's when needed)
-				nWIntegerPart = nIntegerDigits ? nIntegerDigits : 1;	// width of whole integer part of formatted string w.o. sign
-				nWDisplayW = fmt.displWidth <= 0 ? size_t(-1) : fmt.displWidth;
-
-				nLeadingDecimalZeros = exp >= 0 ? 0 : -exp;
-				if (format.base == DisplayBase::rnb10 && !exp && (strRounded.empty() || (strRounded.length() == 1 && strRounded.at(0, chZero) == chZero)))
-					nLeadingDecimalZeros = fmt.decDigits > 0 ? fmt.decDigits : 0;
-				// suppose format rnfNormal with sign, integer digits w. delimiters, decimal point, leading zeros and fractional part
-				// so strRounded has 'nIntegerDigits' digits and  (strRounded.length() - 'nIntegerDigits' decimal digits
-				int nTmp = (int)strRounded.length() - (int)nIntegerDigits;	// dec. digits in strRounded, < 0 => no decimal digits there
-
-				cntThousandSeparators = (fmt.strThousandSeparator.empty() ? 0 :
-					((nWIntegerPart > 3 ? nWIntegerPart / 3 : 0) - 1 + (nWIntegerPart % 3 ? 2 - (nWIntegerPart % 3) : 0)));
-				if (cntThousandSeparators > 0)
-					nWIntegerPart = nWIntegerPart + cntThousandSeparators * fmt.strThousandSeparator.length();
-
-			}
+			void Setup(const DisplayFormat& format, RealNumber& rN);
 			SmartString FormatExponent();
 
 			void CalculateExponentAndIntegerDigits();

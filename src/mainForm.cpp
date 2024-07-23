@@ -195,6 +195,8 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	edtInfix->SetTabOrder(0);
 	edtInfix->SetParent(this);
 
+	edtInfix->SetWantedKeyTypes(wkOthers | wkArrows | wkEnter);
+
 	btnClearInfix = new nlib::FlatButton();
 	btnClearInfix->SetBounds(nlib::Rect(492, 29, 513, 50));
 	btnClearInfix->GetFont().SetFamily(L"Tahoma");

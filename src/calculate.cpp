@@ -785,7 +785,7 @@ int LittleEngine::_InfixToPostFix(const SmartString expr)
             else if (*it == u')')
             {
                 if (--bc < 0)
-                    Trigger(Trigger_Type::SYNTAX_ERROR);
+                    Trigger(Trigger_Type::MISMATCHED_PARENTHESIS);
             }
         }
         if(*it == '\'')
@@ -793,7 +793,7 @@ int LittleEngine::_InfixToPostFix(const SmartString expr)
         infix.push_back(*it);   //  even quoted string don't lowercase anything here
     }
     if(bc)
-        Trigger(Trigger_Type::SYNTAX_ERROR);
+        Trigger(Trigger_Type::MISMATCHED_PARENTHESIS);
     infix += expr.mid(it - expr.begin());   // add comment and unit
 
     bool inq = false;       // inside quote

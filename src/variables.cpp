@@ -128,11 +128,13 @@ void TfrmVariables::InitializeFormAndControls() /* Control initialization functi
 
 	OnClose = CreateEvent(this, &TfrmVariables::FormClose);
 	OnEndSizeMove = CreateEvent(this, &TfrmVariables::FormSizeMoveEnded);
+	OnKeyDown = CreateEvent(this, &TfrmVariables::VariablesKeyDown);
 
 	tcVars->OnTabChange = CreateEvent(this, &TfrmVariables::tcVarsTabChange);
 	sgUser->OnColumnSizing = CreateEvent(this, &TfrmVariables::sgUserColumnSizing);
 	sgUser->OnEditorKeyDown = CreateEvent(this, &TfrmVariables::sgUserEditorKeyDown);
 	sgUser->OnEditorKeyPress = CreateEvent(this, &TfrmVariables::sgUserKeyPress);
+	sgUser->OnDblClick = CreateEvent(this, &TfrmVariables::sgUserDoubleClick);
 	pBuiltin->OnMouseMove = CreateEvent(this, &TfrmVariables::BuiltinMouseMove);
 	pBuiltin->OnMouseDown = CreateEvent(this, &TfrmVariables::BuiltinMouseDown);
 	pBuiltin->OnMouseUp = CreateEvent(this, &TfrmVariables::BuiltinMouseUp);
@@ -446,6 +448,15 @@ void TfrmVariables::tcVarsTabChange(void *sender, nlib::TabChangeParameters para
 	}
 }
 
+void TfrmVariables::VariablesKeyDown(void* sender, nlib::KeyParameters param)
+{
+	if (param.keycode == VK_ESCAPE || (param.keycode== '0' && param.vkeys.contains(vksAlt)) )
+		SetFocus(frmMain->edtInfix->Handle());
+
+	if (param.keycode == VK_ESCAPE)
+		Close();
+}
+
 void TfrmVariables::btnCancelClick(void *sender, nlib::EventParameters param)
 {
     Close();
@@ -513,7 +524,7 @@ void TfrmVariables::FormClose(void *sender, nlib::FormCloseParameters param)
 {
     param.action = caDeleteForm;
 	frmVariables=NULL;
-	SetFocus(frmMain->Handle());
+	SetFocus(frmMain->edtInfix->Handle());
 }
 
 void TfrmVariables::sgUserKeyPress(void *sender, nlib::KeyPressParameters param)
@@ -525,6 +536,16 @@ void TfrmVariables::sgUserKeyPress(void *sender, nlib::KeyPressParameters param)
 		nlib::EventParameters par;
 		frmMain->miShowHistClick(nullptr, par);
 	}
+}
+
+void TfrmVariables::sgUserDoubleClick(void* sender, nlib::MouseButtonParameters param)
+{
+	//int i = sgUser->
+	//frmMain->edtInfix->SetSelText()
+}
+
+void TfrmVariables::sgBuiltinDoubleClick(void* sender, nlib::MouseButtonParameters param)
+{
 }
 
 void TfrmVariables::sgUserEditorKeyDown(void *sender, nlib::KeyParameters param)
