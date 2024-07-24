@@ -109,12 +109,14 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	miShowDecOpts->SetShortcutText(L"Ctrl+D");
 	miShowHexOpts = miView->Add(L"Show Hexadecimal  Options");
 	miShowHexOpts->SetShortcut(L"Ctrl+X");
-	miCharFont = miView->Add(L"&Font For 'As String...' Display");
 	miHistory = mnuMain->Add(L"H&istory");
 	miShowHist = miHistory->Add(L"Edit &History");
 	miShowHist->SetShortcut(L"Alt+3");
 	separator3 = miHistory->Add(L"-");
 	miHistOpts = miHistory->Add(L"Histor&y Options...");
+	mnuOptions = mnuMain->Add(L"&Options");
+	miLocale = mnuOptions->Add(L"Set Locale...");
+	miCharFont = mnuOptions->Add(L"&Font For 'As String...' Display...");
 	miHelp = mnuMain->Add(L"&Help");
 	miAbout = miHelp->Add(L"&About");
 	miGenHelp = miHelp->Add(L"&General Help");
@@ -666,9 +668,10 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	miClearHist->OnClick = CreateEvent(this, &TfrmMain::miClearHistClick);
 	miShowDecOpts->OnClick = CreateEvent(this, &TfrmMain::miShowDecOptsClick);
 	miShowHexOpts->OnClick = CreateEvent(this, &TfrmMain::miShowHexOptsClick);
-	miCharFont->OnClick = CreateEvent(this, &TfrmMain::miCharFontClick);
 	miShowHist->OnClick = CreateEvent(this, &TfrmMain::miShowHistClick);
 	miHistOpts->OnClick = CreateEvent(this, &TfrmMain::miHistOptsClick);
+	miLocale->OnClick = CreateEvent(this, &TfrmMain::miSetLocale);
+	miCharFont->OnClick = CreateEvent(this, &TfrmMain::miCharFontClick);
 	miAbout->OnClick = CreateEvent(this, &TfrmMain::miAboutClick);
 	miGenHelp->OnClick = CreateEvent(this, &TfrmMain::miGenHelpClick);
 	btnOpenHexOptions->OnClick = CreateEvent(this, &TfrmMain::btnOpenHexOptionsClick);
@@ -1269,10 +1272,11 @@ void TfrmMain::miCopyBinClick(void *sender, nlib::EventParameters param)
 {
 	MyClipboard->SetText(pnlBin->Text() );
 }
+
 void TfrmMain::cbThousandSepChanged(void *sender, nlib::EventParameters param)
 {
 	lengine->displayFormat.strThousandSeparator =  SmartString(cbThousandSep->ItemIndex() > 0 ? cbThousandSep->Text()[0] : ' ');
-	if(lengine->displayFormat.strThousandSeparator == SmartString('s') )
+	if(lengine->displayFormat.strThousandSeparator == SmartString('s') )	// 'space'
 		lengine->displayFormat.strThousandSeparator = " ";
 	_ShowResults();
 }
@@ -1867,6 +1871,11 @@ void TfrmMain::btnCopyFormatClick(void *sender, nlib::EventParameters param)
 		case 3: MyClipboard->SetText(pnlBin->Text() ); break;
 	}
 	SetFocus(edtInfix->Handle());
+}
+
+void TfrmMain::miSetLocale(void* sender, nlib::EventParameters param)
+{
+	;
 }
 
 void TfrmMain::StartMove(void *sender, nlib::EventParameters param)

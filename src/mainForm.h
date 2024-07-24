@@ -52,11 +52,13 @@ N_PUBLIC: /* Designer generated list of public members. Do not edit by hand. */
 	nlib::MenuItem* miView;
 	nlib::MenuItem* miShowDecOpts;
 	nlib::MenuItem* miShowHexOpts;
-	nlib::MenuItem* miCharFont;
 	nlib::MenuItem* miHistory;
 	nlib::MenuItem* miShowHist;
 	nlib::MenuItem* separator3;
 	nlib::MenuItem* miHistOpts;
+	nlib::MenuItem* mnuOptions;
+	nlib::MenuItem* miLocale;
+	nlib::MenuItem* miCharFont;
 	nlib::MenuItem* miHelp;
 	nlib::MenuItem* miAbout;
 	nlib::MenuItem* miGenHelp;
@@ -171,6 +173,7 @@ N_PUBLIC: /* Designer generated list of public members. Do not edit by hand. */
 	//void cbInfixKeyPress(void* sender, nlib::KeyPressParameters param);
 	void chkIEEEDoubleClick(void* sender, nlib::EventParameters param);
 	void chkIEEESingleClick(void* sender, nlib::EventParameters param);
+	void miSetLocale(void* sender, nlib::EventParameters param);
 protected:
 	virtual ~TfrmMain(); /* Don't make public. Call Destroy() to delete the object. */
 	virtual LRESULT WindowProc(UINT wMessage, WPARAM w,LPARAM l) override;

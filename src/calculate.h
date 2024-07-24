@@ -426,6 +426,8 @@ namespace FalconCalc
         ResValid resultValid = ResValid::rvOk;
         bool clean; // no changes to variables or functions?
     private:
+        SCharT _argSeparator = ',';
+
         /* ==========
          * internal class
          *-----------*/
@@ -476,7 +478,7 @@ namespace FalconCalc
         void _DoOperator(const Token &tok);
 		int _InfixToPostFix(const SmartString expr); // postfix in 'tvPostfix' and returns 0 for assignment expression
         RealNumber _CalcPostfix(TokenVec& tv); // calculate the value using 'tv'
-        SCharT _argSeparator = ',';
+        void _SetNewLocale(SmartString sLocaleName);
 	public:
 
         LittleEngine();

@@ -1499,6 +1499,14 @@ RealNumber LittleEngine::_CalcPostfix(TokenVec& tvPostfix)
     resultType = ResultType::rtNumber;
     return calcResult = tok.Value().RoundedToDigits(RealNumber::MaxLength()+1);
 }
+
+void LittleEngine::_SetNewLocale(SmartString sLocaleName)
+{
+    locale loc(sLocaleName.toUtf8String().c_str());
+    in.imbue(loc);
+    cout.imbue(loc);
+}
+
 /*==================================================
  * TASK: calculate expression
  * EXPECTS: 'au' (angle units) is the last used.
