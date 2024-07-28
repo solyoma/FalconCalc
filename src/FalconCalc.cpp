@@ -1,9 +1,11 @@
 #include <set>
 #include "stdafx_zoli.h"
-//#include "stdafx_lc.h"
 
 using namespace nlib;
 #undef max
+#include "SmartString.h"
+using namespace SmString;
+
 #include "LongNumber.h"
 using namespace LongNumber;
 

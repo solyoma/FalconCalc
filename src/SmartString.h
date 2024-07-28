@@ -12,16 +12,18 @@
 #include <iterator>
 #include <cstddef>
 
-#pragma message("*** SmartString.h included")
-
+#ifdef QTSA_PROJECT
+	#include <QString>
+#endif
 
 namespace SmString {
 
-typedef std::string UTF8String;
-typedef std::u16string String;
+	typedef std::string UTF8String;
+	typedef std::u16string String;
 
 class SCharT
 {
+	#pragma message("*** SmartString.h included")
 	char16_t _unicode = 0;
 
 	int _Utf8CodeLengthFrom(const UTF8String& u8str, size_t pos);  // -1: error
@@ -30,6 +32,9 @@ class SCharT
 	friend class SmartString;	//unicode string of SChars
 public:
 	SCharT() = default;
+#ifdef QTSA_PROJECT
+	explicit SCharT(QChar ch)	: _unicode(ch.unicode())	{}
+#endif
 	explicit SCharT(char ch)	: _unicode((unsigned char) ch)	{}
 	explicit SCharT(int ch)		: _unicode((unsigned) ch)		{}
 	explicit SCharT(long ch)	: _unicode((char16_t) ch)		{}
@@ -49,6 +54,13 @@ public:
 	{
 		return _unicode;
 	}
+
+#ifdef QTSA_PROJECT
+	operator QChar()
+	{
+		return QChar(_unicode);
+	}
+#endif
 
 	SCharT& operator=(size_t n) { _unicode=(char16_t)n; return *this; }
 	SCharT& operator=(int n) { _unicode=(char16_t)n; return *this; }
@@ -77,7 +89,7 @@ public:
 	constexpr char16_t Unicode() const { return _unicode; }
 	constexpr explicit operator int() { return (int)(unsigned int)_unicode; }
 
-	UTF8String ToUtf8String() const;
+	UTF8String toUtf8String() const;		// because of Q, otherwise it was 'ToUtf8String()';
 
 	SCharT ToUpper() { _unicode = std::toupper(_unicode, std::cout.getloc()); return *this;}
 	SCharT ToLower() { _unicode = std::tolower(_unicode, std::cout.getloc()); return *this;}
@@ -105,7 +117,10 @@ public:
 	using Const_Iterator = String::const_iterator;// std::basic_string<SCharT>::const_iterator;
 public:
 	SmartString() : String() {}
-	explicit SmartString(const UTF8String s);
+#ifdef QTSA_PROJECT
+	explicit SmartString(const QString &qs);
+#endif
+	explicit SmartString(const UTF8String &s);
 	explicit SmartString(const char* pcstr);
 	explicit SmartString(const std::wstring ws);
 	explicit SmartString(const wchar_t* pws) :SmartString(std::wstring(pws)) {}
@@ -149,9 +164,14 @@ public:
 	SmartString asLowerCase() const { SmartString s = *this; s.toLower(); return s; }
 
 	void FromUtf8String(const UTF8String& ws);
-	UTF8String ToUtf8String() const;
+	UTF8String toUtf8String() const;
 	void FromWideString(const std::wstring& ws);
 	std::wstring ToWideString() const;
+#ifdef QTSA_PROJECT
+	void FromQString(const QString& qs);
+	QString toQString() const;
+#endif
+
 
 	void LTrim();
 	void RTrim();

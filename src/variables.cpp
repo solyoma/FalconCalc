@@ -8,9 +8,9 @@ using namespace nlib;
 #undef max
 
 #include "SmartString.h"
+using namespace SmString;
 #include "LongNumber.h"
 
-using namespace SmString;
 using namespace LongNumber;
 
 #include "calculate.h"

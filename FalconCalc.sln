@@ -1,14 +1,16 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25123.0
+# Visual Studio Version 17
+VisualStudioVersion = 17.10.35122.118
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FalconCalc", "src\falconcalc.vcxproj", "{810685D0-560E-4742-AF48-D99B1E5E3680}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "falconcalc", "src\falconcalc.vcxproj", "{810685D0-560E-4742-AF48-D99B1E5E3680}"
 	ProjectSection(ProjectDependencies) = postProject
 		{235B20EE-2DFF-47F9-AB8A-6881461CB1C5} = {235B20EE-2DFF-47F9-AB8A-6881461CB1C5}
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ablakok", "nlib\ablakok.vcxproj", "{235B20EE-2DFF-47F9-AB8A-6881461CB1C5}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FalconCalcQt", "FalconCalcQt\FalconCalcQt.vcxproj", "{6E5D2822-337F-4AE9-90F1-CA9DC436AE26}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -34,8 +36,19 @@ Global
 		{235B20EE-2DFF-47F9-AB8A-6881461CB1C5}.LibraryBuild|Win32.Build.0 = LibraryBuild|Win32
 		{235B20EE-2DFF-47F9-AB8A-6881461CB1C5}.Release|Win32.ActiveCfg = LibraryBuild|Win32
 		{235B20EE-2DFF-47F9-AB8A-6881461CB1C5}.Release|Win32.Build.0 = LibraryBuild|Win32
+		{6E5D2822-337F-4AE9-90F1-CA9DC436AE26}.Debug|Win32.ActiveCfg = Debug|Win32
+		{6E5D2822-337F-4AE9-90F1-CA9DC436AE26}.Debug|Win32.Build.0 = Debug|Win32
+		{6E5D2822-337F-4AE9-90F1-CA9DC436AE26}.DebugLibraryBuild|Win32.ActiveCfg = Debug|Win32
+		{6E5D2822-337F-4AE9-90F1-CA9DC436AE26}.DebugLibraryBuild|Win32.Build.0 = Debug|Win32
+		{6E5D2822-337F-4AE9-90F1-CA9DC436AE26}.LibraryBuild|Win32.ActiveCfg = Debug|Win32
+		{6E5D2822-337F-4AE9-90F1-CA9DC436AE26}.LibraryBuild|Win32.Build.0 = Debug|Win32
+		{6E5D2822-337F-4AE9-90F1-CA9DC436AE26}.Release|Win32.ActiveCfg = Release|Win32
+		{6E5D2822-337F-4AE9-90F1-CA9DC436AE26}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {3DE7412A-10C9-4E98-A292-97B231EDF34F}
 	EndGlobalSection
 EndGlobal

@@ -12,34 +12,22 @@
 
 #pragma message("*** defines.h included")
 
-#ifndef QTSA_PROJECT
-	#include "SmartString.h"
-#endif
+# ifdef QTSA_PROJECT
+	#include <QString> 
 
-
-#if defined  _UNICODE
-		using FSTRING		=	std::wstring		 ;
-		using STRINGSTREAM	=	std::wstringstream	 ;
-		using ISTREAM		=	std::wistream		 ;
-		using IFSTREAM		=	std::wifstream		 ;
-		using OSTREAM		=	std::wostream		 ;
-		using OFSTREAM		=	std::wofstream		 ;
-		#define COUT			std::wcout
-		#define CERR			std::wcerr
-		#define CIN				std::wcin
-		#define PCHAR(a)		L##a
-		#define TO_STRING		to_wstring
+	using SmartString = QString;
+	using SCharT = QChar;
+	typedef std::string UTF8String;
+	typedef std::u16string String;
+#define TO_STRING(a)	QString().setNum(a)
 # else
-		#define FSTRING			std::string
-		#define STRINGSTREAM	std::stringstream
-		#define ISTREAM			std::istream
-		#define IFSTREAM		std::ifstream
-		#define OSTREAM			std::ostream
-		#define OFSTREAM		std::ofstream
-		#define COUT			std::cout
-		#define CERR			std::cerr
-		#define CIN				std::cin
-		#define PCHAR(a)		a
-		#define TO_STRING		to_string
+	#include "SmartString.h"
+#   if defined  _UNICODE
+		#define TO_STRING		std::to_wstring
+#   else
+		#define TO_STRING		std::to_string
+#   endif
+
 #endif
+
 #endif /* _defines_H */

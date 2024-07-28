@@ -22,11 +22,13 @@ using namespace nlib;
 
 #include "graphictext.h"
 
-#include "SmartString.h"
-#include "LongNumber.h"
+#include "defines.h"
 
+#include "SmartString.h"
 using namespace SmString;
+#include "LongNumber.h"
 using namespace LongNumber;
+
 using namespace FalconCalc;
 using namespace std;
 

@@ -8,10 +8,8 @@
 #include <set>
 #include <map>
 
-#include "SmartString.h"
-
 namespace LongNumber {
-	using namespace SmString;				// SmartString.h
+	//using namespace SmString;				// SmartString.h
 	extern const SCharT chZero;				// = (SCharT)'0';
 	extern const SCharT chOne;				// = (SCharT)'1';
 	const size_t MaxAllowedDigits = 65;	// !!! Modify this  - no number string can have more digits than this + LengthOverflow
@@ -413,7 +411,7 @@ namespace LongNumber {
 		SmartString ToDecimalString(const DisplayFormat& format);
 		SmartString ToTextString(const DisplayFormat& format, TextFormat textFormat);
 		SmartString ToSmartString() const;
-		UTF8String  ToUtf8String() const;
+		UTF8String  toUtf8String() const;	   // because Qt uses this type of function names
 		std::wstring ToWideString() const;
 
 		SmartString ToString(const DisplayFormat& format);
@@ -537,12 +535,12 @@ namespace LongNumber {
 		void _FromNumberString();		// from _numberString
 		void _FromLongLong(const int64_t val)
 		{
-			_numberString = ::std::to_string(val);
+			_numberString = std::to_wstring(val);
 			_FromNumberString();
 		}
 		void _FromDouble(const LDouble ld)
 		{
-			_numberString = ::std::to_string(ld);
+			_numberString = std::to_wstring(ld);
 			_FromNumberString();
 		}
 	private:

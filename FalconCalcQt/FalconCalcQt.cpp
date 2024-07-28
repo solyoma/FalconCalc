@@ -1,5 +1,4 @@
 #include "FalconCalcQt.h"
-#include "defines.h"
 
 FalconCalcQt::FalconCalcQt(QWidget *parent)
     : QMainWindow(parent)

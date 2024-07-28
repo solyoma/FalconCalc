@@ -1,16 +1,16 @@
 ﻿#ifndef QTSA_PROJECT
     namespace nlib {}
-    namespace SmString {}
-    namespace LongNumber {}
     using namespace nlib;
-    using namespace SmString;
-    using namespace LongNumber;
 #endif
 
 #include "SmartString.h"
+using namespace SmString;
+
+namespace LongNumber {}
+using namespace LongNumber;
+
 #include "LongNumber.h"
 
-#include "defines.h"
 #include "calculate.h"
 
 using namespace std;
@@ -52,6 +52,7 @@ bool IsAlnum(wchar_t ch, locale loc);    // In ,wcommon.cpp, needed for names in
 
 using namespace SmString;
 using namespace LongNumber;
+using namespace FalconCalc;
                      // static so each engine has the same constants and variables
 VariableTable LittleEngine::variables;
 FunctionTable LittleEngine::functions;
@@ -228,13 +229,9 @@ Class Token
   *----------------------------------------*/
 void Token::_GetOperator(const SmartString &text, unsigned &pos)
 {
-#ifdef QTSA_PROJECT
-	uint c = text[pos++].unicode(),
-		cn = (pos == text.length() ? 0 : text[pos].unicode() );
-#else
 	SCharT c = text[pos++],
 		  cn = SCharT(pos >= text.length() ? 0 : text[pos] );
-#endif
+
 	SmartString s;
 	s = c;
 
@@ -293,11 +290,7 @@ void Token::_GetOperator(const SmartString &text, unsigned &pos)
   *----------------------------------------*/
 void Token::_GetDecDigits(const SmartString &text, unsigned &pos)
 {
-//#ifdef QTSA_PROJECT
-//	#define isdigit(a,b) a.isDigit()
-//#else
 	locale loc = cout.getloc();
-//#endif
 	while(pos < text.length() && isdigit(text[pos], loc) )
 		++pos;
 }
@@ -509,7 +502,7 @@ void Token::FromText(const SmartString &text, unsigned &pos)
 	while(pos < len && isspace((wchar_t)text[pos], loc))
 		++pos;
 	SCharT  c = text[pos++],
-			cn = (pos >= len ? SCharT(0) : text[pos]); // look ahead
+			cn = (pos >= len ? SCharT(0) : SCharT(text[pos])); // look ahead
     --pos;  // go back to start of token
 
     if(c == SCharT('\'') )   // character SmartString
@@ -1180,13 +1173,8 @@ bool LittleEngine::_VariableAssignment(const SmartString &expr, unsigned &pos, T
    while(pos < bpos ) // get arguments
    {        // order of arguments: left to right
         unsigned n = pos;
-//#if defined QTSA_PROJECT
-//        while(n < bpos && (expr[n].isLetterOrNumber() ) || expr[n] == '_')) // get word
-//            ++n;
-//#else
         while(n < bpos && (IsAlnum((wchar_t)expr[n]) || expr[n] == '_')) // get word
             ++n;
-//#endif
         f.args.push_back(expr.substr(pos, n - pos) );   // store argument name
         while( n < bpos && isspace((wchar_t)expr[n], loc))
             ++n;
@@ -1516,7 +1504,7 @@ RealNumber LittleEngine::_CalcPostfix(TokenVec& tvPostfix)
 
 void LittleEngine::_SetNewLocale(SmartString sLocaleName)
 {
-    locale loc(sLocaleName.ToUtf8String().c_str());
+    locale loc(sLocaleName.toUtf8String().c_str());
     cin.imbue(loc);
     cout.imbue(loc);
 }
@@ -1678,7 +1666,7 @@ bool LittleEngine::LoadUserData(SmartString name)
         if (!__GetLine().empty() )
             if(s.indexOf(u'=') > 0 )   // loc=locale
             {
-                locale      loc(s.mid(s.indexOf(u'=')+1).ToUtf8String().c_str());
+                locale      loc(s.mid(s.indexOf(u'=')+1).toUtf8String().c_str());
                 in.imbue(   loc);
                 cout.imbue( loc);
                 __GetLine();

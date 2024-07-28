@@ -2,6 +2,9 @@
 #include <regex>
 #include <cwchar>
 
+#ifdef QTSA_PROJECT
+	#include <QString>
+#endif
 #include "SmartString.h"
 
 
@@ -57,7 +60,7 @@ namespace SmString {
 		return len;
 	}
 
-	UTF8String SCharT::ToUtf8String() const
+	UTF8String SCharT::toUtf8String() const
 	{
 		wchar_t wch = _unicode;
 		if (wch < 0x7F)
@@ -71,12 +74,12 @@ namespace SmString {
 
 	//*************************** SmartString ****************
 
-	UTF8String SmartString::ToUtf8String() const
+	UTF8String SmartString::toUtf8String() const
 	{								
 		UTF8String s;
 		for (size_t i = 0; i < length(); ++i)
 		{
-			s += SCharT((*this)[i]).ToUtf8String();
+			s += SCharT((*this)[i]).toUtf8String();
 		}
 		return s;
 	}
@@ -89,6 +92,22 @@ namespace SmString {
 			ws[i] = SCharT((*this)[i]).Unicode();
 		return ws;
 	}
+
+#ifdef QTSA_PROJECT
+	void SmartString::FromQString(const QString& qs)
+	{
+		*this = SmartString(qs);
+	}
+
+	QString SmartString::toQString() const
+	{
+		std::QString qs;
+		qs.resize(length());
+		for (size_t i = 0; i < size(); ++i)
+			qs[i] = ((*this)[i]).Unicode();
+		return qs;
+	}
+#endif
 
 	void SmartString::FromWideString(const std::wstring& ws)
 	{
@@ -176,7 +195,16 @@ namespace SmString {
 		*this = s;
 	}
 
-	SmartString::SmartString(const UTF8String s)
+#ifdef QTSA_PROJECT
+	SmartString::SmartString(const QString& qs)
+	{
+		resize(qs.length());
+		for (size_t i = 0; i < length(); ++i)
+			(*this)[i] = qs[i].unicode();
+	}
+#endif
+
+	SmartString::SmartString(const UTF8String &s)
 	{
 		SCharT sch;
 		int l = 0;
@@ -411,7 +439,7 @@ namespace SmString {
 // output operator
 std::ostream& operator<<(std::ostream& ofs, SmString::SmartString ss)
 {
-	ofs << ss.ToUtf8String();
+	ofs << ss.toUtf8String();
 	return ofs;
 }
 

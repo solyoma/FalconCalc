@@ -19,7 +19,9 @@
 
 #include <cmath>
 
-#include "stdafx_lc.h"
+#ifndef QTSA_PROJECT
+    #include "stdafx_lc.h"
+#endif
 
 namespace FalconCalc
 {

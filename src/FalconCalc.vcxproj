@@ -128,7 +128,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="calculate.h" />
-    <ClInclude Include="defines.h" />
     <ClInclude Include="LongNumber.h" />
     <ClInclude Include="about.h" />
     <ClInclude Include="clipboard.h" />

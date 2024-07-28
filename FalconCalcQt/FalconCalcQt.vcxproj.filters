@@ -51,9 +51,6 @@
     <ClInclude Include="..\src\calculate.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\defines.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\src\LongNumber.h">
       <Filter>Header Files</Filter>
     </ClInclude>

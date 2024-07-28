@@ -1,5 +1,9 @@
 ﻿#include <cassert>
 #include <regex>
+
+#include "SmartString.h"
+using namespace SmString;
+
 #include "LongNumber.h"
 
 #ifdef _DEBUG		// DEBUG
@@ -330,7 +334,7 @@ RealNumber RealNumber::operator=(double value) // usually will loose accuracy as
 
 	_sign = value > 0 ? 1 : -1;
 	value = std::abs(value);
-	_numberString = std::to_string(value);	// will have a decimal point or equivalent
+	_numberString = std::to_wstring(value);	// will have a decimal point or equivalent
 	//value = qAbs(value);
 	//QString s;
 	//s.setNum(value, 'E', 15);
@@ -675,7 +679,7 @@ SmartString RealNumber::ToBinaryString(const DisplayFormat& format)
 		++len;
 
 	if ((format.displWidth >0  && len > (size_t)format.displWidth) || (bin == u"Inf" && !IsInf()) || (bin == u"NaN" && !IsNaN()))
-		return u"Too long";
+		return "Too long"_ss;
 
 	size_t lenb = bin.length();
 
@@ -741,7 +745,7 @@ SmartString RealNumber::ToOctalString(const DisplayFormat& format)
 	size_t leno = oct.length();
 
 	if ( (oct == u"Inf" && !IsInf()) || (oct == u"NaN" && !IsNaN()))
-		return u"Too long";
+		return "Too long"_ss;
 
 	if (_eFlags.count(EFlag::rnfInvalid))
 		oct = INF_STR;
@@ -820,7 +824,7 @@ SmartString RealNumber::ToHexString(const DisplayFormat &format)
 		hex = _ToBase(16, _maxLength+LengthOverFlow);
 
 	if ( (hex == u"Inf" && !IsInf()) || (hex == u"NaN" && !IsNaN()))
-		return u"Too long";
+		return "Too long"_ss;
 
 	if (hex.length() & 1)	// hex string must always have even number of characters
 		hex = "0"_ss + hex; // the leading 0 will be dropped if the number has
@@ -1190,9 +1194,9 @@ SmartString RealNumber::ToSmartString() const
 	return _AsSmartString();
 }
 
-UTF8String RealNumber::ToUtf8String() const
+UTF8String RealNumber::toUtf8String() const
 {
-	return _AsSmartString().ToUtf8String();
+	return _AsSmartString().toUtf8String();
 }
 
 std::wstring RealNumber::ToWideString() const
@@ -1270,7 +1274,7 @@ void RealNumber::_DisplData::Setup(const DisplayFormat& format, RealNumber& rN)
  *------------------------------------------------------------*/
 SmartString RealNumber::_DisplData::FormatExponent()
 {
-	SmartString s = numberIsZero ? "0"_ss : SmartString(std::to_string(exp - 1));
+	SmartString s = numberIsZero ? "0"_ss : SmartString(std::to_wstring(exp - 1));
 	expLen = 0;				// no exponent for general or normal format
 	if (fmt.mainFormat == NumberFormat::rnfSci || fmt.mainFormat == NumberFormat::rnfEng)
 	{
@@ -1384,7 +1388,7 @@ LDouble RealNumber::ToLongDouble()
 	format.decDigits = 18;
 	format.nFormatSwitchIntLength = 16;
 
-	return strtod(ToDecimalString(format).ToUtf8String().c_str(),nullptr );
+	return strtod(ToDecimalString(format).toUtf8String().c_str(),nullptr );
 }
 
 int64_t RealNumber::ToInt64() const
@@ -1396,7 +1400,7 @@ int64_t RealNumber::ToInt64() const
 		throw("Number can't fit in a 64 bit integer");
 	if (r._exponent > (int)r._numberString.length())
 		r._numberString += SmartString(r._exponent - (int)r._numberString.length(), u'0');
-	return std::strtoll(r._numberString.ToUtf8String().c_str(), nullptr, 10);
+	return std::strtoll(r._numberString.toUtf8String().c_str(), nullptr, 10);
 }
 
 RealNumber RealNumber::Int()	const
@@ -1472,7 +1476,7 @@ RealNumber RealNumber::_PowInt(const RealNumber& power) const // integer powers 
 	// special case:  (10^x)^power = 10^(x*power)
 	if (_numberString == SmartString("1"))	
 	{
-		return TenToThePowerOf((_exponent - 1) * std::stoi(power._numberString.ToUtf8String()));
+		return TenToThePowerOf((_exponent - 1) * std::stoi(power._numberString.toUtf8String()));
 	}
 	/* https://en.wikipedia.org/wiki/Exponentiation_by_squaring
 	* 
@@ -1957,7 +1961,7 @@ void RealNumber::_FromNumberString()
 				_SetNaN();
 				return;
 			}
-			_exponent = std::stoi(sExp.ToUtf8String());
+			_exponent = std::stoi(sExp.toUtf8String());
 	}
 	else if (posE == 0)
 	{
