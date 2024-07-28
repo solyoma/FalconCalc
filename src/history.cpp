@@ -3,6 +3,7 @@
 #include "wcommon.h"
 using namespace nlib;
 #include "mainForm.h"
+#include "SmartString.h"
 #include "TStringList.h"
 #include "history.h"
 #include "clipboard.h"

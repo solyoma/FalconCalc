@@ -2,7 +2,10 @@
 #include "stdafx_lc.h"
 
 using namespace SmString;		
+#include "SmartString.h"
 #include "TStringList.h"
+
+using namespace std;
 
 void TStringList::SetDuplicates(bool par) 
 {

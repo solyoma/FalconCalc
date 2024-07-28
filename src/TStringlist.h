@@ -1,7 +1,4 @@
 #pragma once
-using namespace std;
-
-#include "SmartString.h"
 
 using SmString::SmartString;
 
@@ -27,14 +24,14 @@ public:
 			_sorted = sl._sorted; _special = sl._special;
 			_cntMax = sl._cntMax; _strings = sl._strings;
 	}
-	SmartString &operator=(vector<SmartString> w) { _strings = w;}
+	SmartString &operator=(std::vector<SmartString> w) { _strings = w;}
 
 	bool CaseSensitive() const {return _caseSens;}
 	bool Duplicates()    const {return _allowDuplicates;}
 	bool Sorted()        const { return _sorted; }
 	bool Special()		 const { return _special; }
 	size_t Capacity()		 const { if(_cntMax) return _cntMax; else return (size_t)-1; }
-	const vector<std::wstring> &Lines() {return _strings.AsStringVector(); }
+	const std::vector<std::wstring> &Lines() {return _strings.AsStringVector(); }
 
 	size_t Count() const { return _strings.size(); }
 	int IndexOf(SmartString s);
@@ -51,8 +48,8 @@ public:
 	void SetCapacity(const size_t max=0);
 	void SetSorted(bool par, bool special=false);
 	void Sort();
-	bool LoadFromFile(wstring name);
-	bool SaveToFile  (wstring name);
+	bool LoadFromFile(std::wstring name);
+	bool SaveToFile  (std::wstring name);
 
 	bool Delete(size_t index);
 private:
@@ -75,12 +72,12 @@ private:
 		_Strings(const _Strings&&s) noexcept : _data(s._data) {};
 		_Strings(const SmartString str) { _data.push_back(__S(str)); }
 
-		vector<wstring> wtmp;	// not SmartString
+		std::vector<std::wstring> wtmp;	// not SmartString
 
 		friend struct __S;
-		typedef vector<__S> Svec;
-		typedef vector<__S>::iterator iterator;
-		typedef vector<__S>::const_iterator const_iterator;
+		typedef std::vector<__S> Svec;
+		typedef std::vector<__S>::iterator iterator;
+		typedef std::vector<__S>::const_iterator const_iterator;
 
 		// Object to store a string together with an
 		// arbitrary object
@@ -119,7 +116,7 @@ private:
 			return *this;
 		}
 
-		_Strings &operator=(vector<__S> w) 
+		_Strings &operator=(std::vector<__S> w) 
 		{ 
 			_data.clear();
 			for(auto it = w.begin(); it != w.end(); ++it)
@@ -127,7 +124,7 @@ private:
 			return *this;
 		}
 
-		_Strings &operator=(vector<SmartString> w) 
+		_Strings &operator=(std::vector<SmartString> w)
 		{ 
 			_data.clear();
 			for(auto it = w.begin(); it != w.end(); ++it)
@@ -139,7 +136,7 @@ private:
 		__S &operator[](size_t index) { return _data[index]; }
 		const __S &operator[](size_t index) const { return _data[index]; }
 
-		vector<wstring> &AsStringVector()	// special: not SmartString because of nlib
+		std::vector<std::wstring> &AsStringVector()	// special: not SmartString because of nlib
 		{ 
 			wtmp.clear();
 			for(auto it = _data.begin(); it != _data.end(); ++it)

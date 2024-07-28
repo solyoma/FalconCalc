@@ -7,7 +7,14 @@
 using namespace nlib;
 #undef max
 
+#include "SmartString.h"
+#include "LongNumber.h"
+
+using namespace SmString;
+using namespace LongNumber;
+
 #include "calculate.h"
+
 #include "mainForm.h"
 #include "variables.h"
 

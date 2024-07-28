@@ -1,3 +1,4 @@
+#pragma once
 #ifndef _clipboardH
 	#define _clipboardH
 
@@ -19,7 +20,7 @@ public:
 		hwndNextViewer = SetClipboardViewer(hwnd);
 	}
 
-	bool SetText(wstring text)
+	bool SetText(std::wstring text)
 	{
 		if(!OpenClipboard(hWnd) )
 			return false;
@@ -47,9 +48,9 @@ public:
 		return true;
 	}
 
-	wstring GetText()
+	std::wstring GetText()
 	{
-		wstring res;
+		std::wstring res;
 		BOOL bUnicode = IsClipboardFormatAvailable(CF_UNICODETEXT) ,  
 			 bText = IsClipboardFormatAvailable(CF_TEXT) ;
 		if( (!bUnicode && !bText) || !OpenClipboard(hWnd) )

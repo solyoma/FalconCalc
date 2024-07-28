@@ -129,7 +129,7 @@ TfrmHistOptions::~TfrmHistOptions()
 void TfrmHistOptions::Setup(size_t depth, size_t timeout, bool sorted, int minLength)
 {
     chkDepth->SetChecked( depth > 0);
-	spinDepth->SetText(depth > 0 ? to_wstring(depth) : L"100");
+	spinDepth->SetText(depth > 0 ? std::to_wstring(depth) : L"100");
 
 	spinDepthBtn->SetPosition(depth > 0 ? depth : 100);
     spinDepthBtn->SetEnabled(chkDepth->Checked());
@@ -140,12 +140,12 @@ void TfrmHistOptions::Setup(size_t depth, size_t timeout, bool sorted, int minLe
     int h = timeout/3600,
         m = (timeout/60) % 60,
         s = timeout ? (timeout % 60) : 10;	// for 0 timeout
-	std::wstring ws =  to_wstring(h) + TimeSeparator() + to_wstring(m)  + TimeSeparator() + to_wstring(s);
+	std::wstring ws =  std::to_wstring(h) + TimeSeparator() + std::to_wstring(m)  + TimeSeparator() + std::to_wstring(s);
 	edtInterval->SetText(ws);
 	
 	chkSort->SetChecked(sorted);
 
-	edtMinLength->SetText(to_wstring(minLength));
+	edtMinLength->SetText(std::to_wstring(minLength));
 }
 
 void TfrmHistOptions::btnCancelClick(void *sender, nlib::EventParameters param)

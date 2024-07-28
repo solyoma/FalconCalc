@@ -139,6 +139,7 @@ using std::type_info;
 #include "wexception.h"
 #endif
 
+#include "SmartString.h"
 #include "TStringList.h"
 #include "clipboard.h"
 

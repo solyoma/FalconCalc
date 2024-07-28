@@ -5,14 +5,10 @@
 #error use a c++ compiler
 #endif
 
-#include "SmartString.h"
-#include "LongNumber.h"
-
 #include <stdexcept>
 #include <string>
 #include <sstream>
 #include <vector>
-#include <map>
 #include <iostream>
 #include <fstream>
 
@@ -23,17 +19,7 @@
 
 #include <cmath>
 
-//#include "stdafx_zoli.h"
 #include "stdafx_lc.h"
-
-//#include "defines.h"
-
-//using namespace SmString;
-//using namespace LongNumber;
-
-using namespace std;
-using namespace SmString;
-using namespace LongNumber;
 
 namespace FalconCalc
 {
@@ -89,7 +75,7 @@ namespace FalconCalc
     /*==================*/
 	class MathOperator
 	{
-		static map<SmartString, OP> ops;
+		static std::map<SmartString, OP> ops;
 		static bool bOpsOk;
 
 	public:
@@ -401,8 +387,8 @@ namespace FalconCalc
         LittleEngine *pOwner;
     };
 
-    typedef map<SmartString,Func>       FunctionTable;
-    typedef map<SmartString,Variable>   VariableTable;  // user defined only. For builtins use 'constantsTable'
+    typedef std::map<SmartString,Func>       FunctionTable;
+    typedef std::map<SmartString,Variable>   VariableTable;  // user defined only. For builtins use 'constantsTable'
 
     /*==================*/
 	class LittleEngine

@@ -12,6 +12,9 @@
 #include <iterator>
 #include <cstddef>
 
+#pragma message("*** SmartString.h included")
+
+
 namespace SmString {
 
 typedef std::string UTF8String;

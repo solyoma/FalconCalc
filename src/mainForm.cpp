@@ -2,8 +2,15 @@
 #include "stdafx_zoli.h"
 #include "stdafx_lc.h"
 #undef max
+
+#include <windows.h>
+#include <shlobj.h>
+#include <iostream>
+#include <userenv.h>	// for getting the user directory on windows
+
 #include "wcommon.h"
 using namespace nlib;
+
 #include "application.h"
 #include "about.h"
 #include "help.h"
@@ -15,19 +22,17 @@ using namespace nlib;
 
 #include "graphictext.h"
 
-#include "calculate.h"
-
-#include "resource.h"
-#include "variables.h"
-
-#include <windows.h>
-#include <shlobj.h>
-#include <iostream>
-#include <userenv.h>	// for getting the user directory on windows
+#include "SmartString.h"
+#include "LongNumber.h"
 
 using namespace SmString;
 using namespace LongNumber;
 using namespace FalconCalc;
+using namespace std;
+
+#include "calculate.h"
+#include "resource.h"
+#include "variables.h"
 
 FalconCalc::LittleEngine *lengine = nullptr;
 
@@ -717,7 +722,7 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 }
 
 // for fun
-	vector<MONITORINFOEX> monitors;
+std::vector<MONITORINFOEX> monitors;
 // callback function called by EnumDisplayMonitors for each enabled monitor
 BOOL CALLBACK EnumDispProc(HMONITOR hMon, HDC dcMon, RECT* pRcMon, LPARAM lParam)
 {

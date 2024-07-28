@@ -765,7 +765,7 @@ std::wstring IniFile::FromRect(const Rect& val)
 const std::wstring& IniFile::GetString(int sectionindex, int keyindex)
 {
     CheckSectionKey(sectionindex, keyindex);
-    auto it = sections[sectionindex].second;
+    auto &it = sections[sectionindex].second;
     std::advance(it, keyindex);
     return it->second;
 }

@@ -1,6 +1,20 @@
-﻿#include "calculate.h"
+﻿#ifndef QTSA_PROJECT
+    namespace nlib {}
+    namespace SmString {}
+    namespace LongNumber {}
+    using namespace nlib;
+    using namespace SmString;
+    using namespace LongNumber;
+#endif
 
-using namespace nlib;
+#include "SmartString.h"
+#include "LongNumber.h"
+
+#include "defines.h"
+#include "calculate.h"
+
+using namespace std;
+
 
 constexpr auto VERSION_STRING = L"FalconCalc V1.1";
 
@@ -1502,8 +1516,8 @@ RealNumber LittleEngine::_CalcPostfix(TokenVec& tvPostfix)
 
 void LittleEngine::_SetNewLocale(SmartString sLocaleName)
 {
-    locale loc(sLocaleName.toUtf8String().c_str());
-    in.imbue(loc);
+    locale loc(sLocaleName.ToUtf8String().c_str());
+    cin.imbue(loc);
     cout.imbue(loc);
 }
 
