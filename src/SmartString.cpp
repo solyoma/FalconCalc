@@ -101,10 +101,10 @@ namespace SmString {
 
 	QString SmartString::toQString() const
 	{
-		std::QString qs;
+		QString qs;
 		qs.resize(length());
 		for (size_t i = 0; i < size(); ++i)
-			qs[i] = ((*this)[i]).Unicode();
+			qs[i] = QChar((*this)[i]);
 		return qs;
 	}
 #endif

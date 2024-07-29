@@ -46,12 +46,18 @@
     <ClCompile Include="..\src\LongNumber.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\SmartString.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\calculate.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\src\LongNumber.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\SmartString.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -86,9 +86,6 @@ POINT WinDistance(RECT main, RECT other, FalconCalc::WindowSide side);
 FalconCalc::WindowSide GetSnapSide(RECT& r, int& dist);
 bool SnapTo(RECT& r, FalconCalc::WindowSide side, POINT dist);	// calculates snapped coordinates into input/output 'r'
 
-bool IsAlpha(wchar_t ch, std::locale loc);    // needed for names in one locale when working in another localse
-bool IsAlnum(wchar_t ch, std::locale loc);    // needed for names in one locale when working in another localse
-
 int DebugEnumResources();
 void MyLoadWindowIcon(nlib::Form* f);
 

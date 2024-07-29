@@ -46,8 +46,26 @@ int _matherr (struct _exception *a)
     return 1;
 }
 
-bool IsAlpha(wchar_t ch, locale loc);    // In ,wcommon.cpp, needed for names in one locale when working in another localse
-bool IsAlnum(wchar_t ch, locale loc);    // In ,wcommon.cpp, needed for names in one locale when working in another localse
+
+bool IsAlpha(wchar_t ch, std::locale loc)
+{
+    static  const wchar_t* notCtrl = L"!+-*/_.,^%@#()=<>|\\:'\"~&";
+    if (isalpha(ch, loc))
+        return true;
+    if (std::iscntrl(ch, loc) || wcschr(notCtrl, ch))
+        return false;
+    return true;
+}
+
+bool IsAlnum(wchar_t ch, std::locale loc)
+{
+    static  const wchar_t* notCtrl = L"!+-*/.,^%@#()=<>|\\:'\"~&";
+    if (isalnum(ch, loc) || ch == '_')
+        return true;
+    if (std::iscntrl(ch, loc) || wcschr(notCtrl, ch))
+        return false;
+    return true;
+}
 
 
 using namespace SmString;

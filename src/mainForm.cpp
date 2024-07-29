@@ -22,8 +22,6 @@ using namespace nlib;
 
 #include "graphictext.h"
 
-#include "defines.h"
-
 #include "SmartString.h"
 using namespace SmString;
 #include "LongNumber.h"

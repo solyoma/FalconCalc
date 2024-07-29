@@ -23,8 +23,12 @@
     #include "stdafx_lc.h"
 #endif
 
+bool IsAlpha(wchar_t ch, std::locale loc);    // needed for names in one locale when working in another localse
+bool IsAlnum(wchar_t ch, std::locale loc);    // needed for names in one locale when working in another localse
+
 namespace FalconCalc
 {
+
     extern const SCharT schCommentDelimiter;
     extern const SmartString ssCommentDelimiterString;
 

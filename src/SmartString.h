@@ -23,7 +23,7 @@ namespace SmString {
 
 class SCharT
 {
-	#pragma message("*** SmartString.h included")
+	//#pragma message("*** SmartString.h included")
 	char16_t _unicode = 0;
 
 	int _Utf8CodeLengthFrom(const UTF8String& u8str, size_t pos);  // -1: error

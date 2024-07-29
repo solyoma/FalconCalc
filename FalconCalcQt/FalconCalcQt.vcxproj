@@ -108,12 +108,14 @@
     <QtMoc Include="FalconCalcQt.h" />
     <ClCompile Include="..\src\calculate.cpp" />
     <ClCompile Include="..\src\LongNumber.cpp" />
+    <ClCompile Include="..\src\SmartString.cpp" />
     <ClCompile Include="FalconCalcQt.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\calculate.h" />
     <ClInclude Include="..\src\LongNumber.h" />
+    <ClInclude Include="..\src\SmartString.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">
