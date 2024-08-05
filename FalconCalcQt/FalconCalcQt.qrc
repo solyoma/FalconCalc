@@ -1,4 +1,9 @@
 <RCC>
-    <qresource prefix="FalconCalcQt">
-    </qresource>
+  <qresource prefix="/FalconCalcQt">
+    <file>Resources/trashcan.png</file>
+    <file>Resources/settings.png</file>
+    <file>Resources/btndel.png</file>
+    <file>Resources/program.ico</file>
+    <file>Resources/trash.png</file>
+  </qresource>
 </RCC>

@@ -103,19 +103,36 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="HelpDialog.cpp">
+      <DynamicSource Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">input</DynamicSource>
+      <QtMocFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(Filename).moc</QtMocFileName>
+      <DynamicSource Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">input</DynamicSource>
+      <QtMocFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(Filename).moc</QtMocFileName>
+    </ClCompile>
+    <ClCompile Include="HistoryOptions.cpp" />
+    <ClCompile Include="VariablesFunctionsDialog.cpp" />
     <QtRcc Include="FalconCalcQt.qrc" />
+    <QtUic Include="HelpDialog.ui" />
+    <QtUic Include="HistoryOptions.ui" />
+    <QtUic Include="VariablesFunctionsDialog.ui" />
     <QtUic Include="FalconCalcQt.ui" />
     <QtMoc Include="FalconCalcQt.h" />
     <ClCompile Include="..\src\calculate.cpp" />
     <ClCompile Include="..\src\LongNumber.cpp" />
     <ClCompile Include="..\src\SmartString.cpp" />
     <ClCompile Include="FalconCalcQt.cpp" />
+    <ClCompile Include="HistoryDialog.cpp" />
     <ClCompile Include="main.cpp" />
+    <QtUic Include="HistoryDialog.ui" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\calculate.h" />
     <ClInclude Include="..\src\LongNumber.h" />
     <ClInclude Include="..\src\SmartString.h" />
+    <QtMoc Include="HelpDialog.h" />
+    <QtMoc Include="HistoryOptions.h" />
+    <QtMoc Include="VariablesFunctionsDialog.h" />
+    <QtMoc Include="HistoryDialog.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">

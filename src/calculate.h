@@ -390,7 +390,7 @@ namespace FalconCalc
         SmartString sBuiltinVars;
         SmartString sUserFuncs;
         SmartString sUserVars;
-        LittleEngine *pOwner;
+        LittleEngine *pOwner = nullptr;
     };
 
     typedef std::map<SmartString,Func>       FunctionTable;
