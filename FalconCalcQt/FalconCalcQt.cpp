@@ -332,7 +332,6 @@ void FalconCalcQt::on_btnOpenCloseDecOptions_clicked()
         r.setHeight(h);
         setMinimumSize(QSize(r.width(), h));
         setMaximumSize(QSize(r.width(), h));
-//        setGeometry(r);
     }
     else
     {
@@ -342,9 +341,12 @@ void FalconCalcQt::on_btnOpenCloseDecOptions_clicked()
         r.setHeight(h);
         setMinimumSize(QSize(r.width(), h));
         setMaximumSize(QSize(r.width(), h));
-//        setGeometry(r);
         ui.frmDecimal->show();
     }
+	if (_pHist && _histDialogSnapped)
+	{
+		_pHist->move(geometry().left(),  geometry().top() + geometry().height());
+	}
 }
 
 void FalconCalcQt::on_btnOpenCloseHexOptions_clicked()
@@ -372,6 +374,10 @@ void FalconCalcQt::on_btnOpenCloseHexOptions_clicked()
         setGeometry(r);
         ui.gbHexOptions->show();
     }
+	if (_pHist && _histDialogSnapped)
+	{
+		_pHist->move(geometry().left(), geometry().top() + geometry().height());
+	}
 }
 
 void FalconCalcQt::on_btnStringFont_clicked()
