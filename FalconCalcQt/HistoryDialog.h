@@ -14,6 +14,7 @@ public:
 	void Clear();
 protected:
 	void closeEvent(QCloseEvent* e);
+	void moveEvent(QMoveEvent* e);
 public:
 signals:
 	void SignalSelection(QString s);
@@ -21,6 +22,7 @@ signals:
 	void SignalHistOptions();
 	void SignalRemoveHistLine(int row);
 	void SignalClearHistory();
+	void SignalMoved();
 private slots:
 	void on_lstHistory_doubleClicked(const QModelIndex&);
 	void on_btnCancel_clicked();

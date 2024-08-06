@@ -21,6 +21,11 @@ void HistoryDialog::closeEvent(QCloseEvent* e)
 	emit SignalClose();
 }
 
+void HistoryDialog::moveEvent(QMoveEvent* e)
+{
+	emit SignalMoved();
+}
+
 void HistoryDialog::on_btnCancel_clicked()
 {
 	emit SignalClose();

@@ -163,6 +163,7 @@ private slots:
     void _SlotClearHistory();
     void _SlotHistClosing();
     void _SlotHistOptions();
+    void _SlotHistMoved();
     
     void _SlotVarsFuncsClosing();
     void _SlotVarTabChanged(int newTab);

@@ -145,8 +145,10 @@ void FalconCalcQt::showEvent(QShowEvent * event)
  *------------------------------------------------------------*/
 void FalconCalcQt::moveEvent(QMoveEvent* e)
 {
-	if (_pHist && _histDialogSnapped)
+	if (!_busy && _pHist && _histDialogSnapped)
 	{
+		++_busy;
+
 		int x0 = e->oldPos().x(), y0 = e->oldPos().y(), 
 			x = e->pos().x(), y = e->pos().y(), 
 			l = geometry().left(), t=geometry().top(),
@@ -157,6 +159,7 @@ void FalconCalcQt::moveEvent(QMoveEvent* e)
 		int xh = _pHist->geometry().left(), yh = _pHist->geometry().top();
 		qDebug("    : (%d, %d)", xh0, yh0);
 		//_pHist->move(_pHist->geometry().left() + e->pos().x() - e->oldPos().x(), _pHist->geometry().top() + e->pos().y() - e->oldPos().y());
+		--_busy;
 	}
 }
 
@@ -175,6 +178,7 @@ void FalconCalcQt::_SlotHistClosing()
 	disconnect(_pHist, &HistoryDialog::SignalClearHistory	, this, &FalconCalcQt::_SlotClearHistory);
 	disconnect(_pHist, &HistoryDialog::SignalClose		, this, &FalconCalcQt::_SlotHistClosing);
 	disconnect(_pHist, &HistoryDialog::SignalHistOptions, this, &FalconCalcQt::_SlotHistOptions);
+	disconnect(_pHist, &HistoryDialog::SignalMoved			, this, &FalconCalcQt::_SlotHistMoved);
 	delete _pHist;
 	_pHist = nullptr;		// will be deleted by 
 }
@@ -185,7 +189,7 @@ void FalconCalcQt::on_actionEditHist_triggered()
 	{
 		_SlotHistClosing();
 	}
-	else			// show
+	else			// create and show history dialog
 	{
 		_pHist = new HistoryDialog(_slHistory, this);
 		ui.actionEditHist->setChecked(true);
@@ -194,8 +198,10 @@ void FalconCalcQt::on_actionEditHist_triggered()
 		connect(_pHist, &HistoryDialog::SignalClearHistory	, this, &FalconCalcQt::_SlotClearHistory);
 		connect(_pHist, &HistoryDialog::SignalClose			, this, &FalconCalcQt::_SlotHistClosing);
 		connect(_pHist, &HistoryDialog::SignalHistOptions	, this, &FalconCalcQt::_SlotHistOptions);
+		connect(_pHist, &HistoryDialog::SignalMoved			, this, &FalconCalcQt::_SlotHistMoved);
 		_PlaceWidget(*_pHist, Placement::pmBottom);
 		_pHist->show();
+		_histDialogSnapped = true;
 	}
 	this->activateWindow();		// get the focus back
 	this->raise();
@@ -1081,6 +1087,14 @@ void FalconCalcQt::_SlotClearHistory()
 void FalconCalcQt::_SlotHistOptions()
 {
 	on_actionHistOptions_triggered();
+}
+
+void FalconCalcQt::_SlotHistMoved()
+{
+	if (_busy)
+		return;
+
+	_histDialogSnapped = false;
 }
 
 void FalconCalcQt::_SlotVarTabChanged(int newTab)
