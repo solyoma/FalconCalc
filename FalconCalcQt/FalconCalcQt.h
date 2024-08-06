@@ -49,7 +49,6 @@ public:
     QStringList pslHistory;
 
 protected:
-    void resizeEvent(QResizeEvent* event);
     void moveEvent(QMoveEvent* event);
     void showEvent(QShowEvent* event);
 
@@ -134,7 +133,7 @@ private:
     HistoryOptions* _pHistOpt = nullptr;
     bool _histDialogSnapped=true, _varfuncDialogSnapped=true;
 
-private: // functions
+private: // functions                            r
     QString _SetColoredLabelText(QString text) const
     { 
         return QString("<font color='%1'>%2</font>").arg(_lblTextColor.name()).arg(text); 

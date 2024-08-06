@@ -124,31 +124,13 @@ void FalconCalcQt::showEvent(QShowEvent * event)
 		if (!_decOpen)
 			on_btnOpenCloseDecOptions_clicked();
 		if (!_hexOpen)
-			on_btnOpenCloseDecOptions_clicked();
+			on_btnOpenCloseHexOptions_clicked();
     }
 	if (isVisible())
 	{
 		_bAlreadyShown = true;
 		ui.edtInfix->setFocus();
 	}
-}
-
-void FalconCalcQt::resizeEvent(QResizeEvent* event)
-{
-    if (!isVisible())
-        return;
-
-    static int cnt = 0;
-
-    if (ui.frmDecimal->isVisible())
-        hDecOptionsHeight = ui.frmDecimal->height();
-    if (ui.gbHexOptions->isVisible())
-        hHexOptionsHeight = ui.gbHexOptions->height();
-
-    // DEBUG
-    // QRect geom = geometry();
-	// ui.lblResults->setText(QString("#%5 (%1,%2 %3 x %4) - dec H:%6, hex:%7").arg(geom.left()).arg(geom.top()).arg(geom.width()).arg(geom.height()).arg(++cnt).arg(hDecOptionsHeight).arg(hHexOptionsHeight));
-	// /DEBUG
 }
 
 /*=============================================================
@@ -168,9 +150,12 @@ void FalconCalcQt::moveEvent(QMoveEvent* e)
 		int x0 = e->oldPos().x(), y0 = e->oldPos().y(), 
 			x = e->pos().x(), y = e->pos().y(), 
 			l = geometry().left(), t=geometry().top(),
-			xh = _pHist->geometry().left(), yh = _pHist->geometry().top();
-		qDebug("hist: (%d, %d)->(%d, %d), e-new (%d,%d), e-old (%d, %d), lt:(%d, %d)", xh, yh, xh + x - x0, yh + y - y0, x, y, x0, y0,l,t);
-		_pHist->move(xh + x - x0, yh + y - y0 - QApplication::style()->pixelMetric(QStyle::PM_TitleBarHeight)- QApplication::style()->pixelMetric(QStyle::PM_DefaultFrameWidth));
+			xh0 = _pHist->geometry().left(), yh0 = _pHist->geometry().top();
+
+		qDebug("hist: (%d, %d)->(%d, %d), delta (%d,%d), lt:(%d, %d)", xh0, yh0, xh0 + x - x0, yh0 + y - y0, x-x0, y-y0,l,t);
+		_pHist->move(xh0 + x - x0, yh0 + y - y0 - QApplication::style()->pixelMetric(QStyle::PM_TitleBarHeight)- QApplication::style()->pixelMetric(QStyle::PM_DefaultFrameWidth));
+		int xh = _pHist->geometry().left(), yh = _pHist->geometry().top();
+		qDebug("    : (%d, %d)", xh0, yh0);
 		//_pHist->move(_pHist->geometry().left() + e->pos().x() - e->oldPos().x(), _pHist->geometry().top() + e->pos().y() - e->oldPos().y());
 	}
 }
@@ -370,9 +355,9 @@ void FalconCalcQt::on_btnOpenCloseHexOptions_clicked()
     if (ui.gbHexOptions->isVisible())
     {
         text[0] = QChar(0x25ba);
+        int h = r.height() - hHexOptionsHeight;
         ui.btnOpenCloseHexOptions->setText(text);
         ui.gbHexOptions->hide();      
-        int h = r.height() - hHexOptionsHeight;
         r.setHeight(h);
         setMinimumSize(QSize(r.width(), h));
         setGeometry(r);
@@ -484,6 +469,7 @@ void FalconCalcQt::_LoadHistory()
 		}
 	}
 }
+
 void FalconCalcQt::_SaveHistory()
 {
 	QFile f(FCSettings::homePath + FalconCalcQt_HIST_FILE);
