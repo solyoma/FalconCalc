@@ -1,4 +1,5 @@
 #include "HistoryDialog.h"
+#include <QMoveEvent>
 
 HistoryDialog::HistoryDialog(const QStringList& lstHist, QWidget* parent) : QDialog(parent)
 {
@@ -8,7 +9,7 @@ HistoryDialog::HistoryDialog(const QStringList& lstHist, QWidget* parent) : QDia
 
 HistoryDialog::~HistoryDialog()
 {
-
+	emit SignalHistClose();
 }
 
 void HistoryDialog::Clear()
@@ -18,17 +19,23 @@ void HistoryDialog::Clear()
 
 void HistoryDialog::closeEvent(QCloseEvent* e)
 {
-	emit SignalClose();
+	emit SignalHistClose();
 }
 
 void HistoryDialog::moveEvent(QMoveEvent* e)
 {
-	emit SignalMoved();
+	int x0 = e->oldPos().x(), y0 = e->oldPos().y(),
+		x = e->pos().x(), y = e->pos().y(),
+		xh0 = geometry().left(), yh0 = geometry().top();
+
+	qDebug(" - hist dialog moved: (%d, %d)->(%d, %d), delta (%d,%d), ", xh0, yh0, xh0 + x - x0, yh0 + y - y0, x - x0, y - y0);
+
+	emit SignalHistMoved();
 }
 
 void HistoryDialog::on_btnCancel_clicked()
 {
-	emit SignalClose();
+	emit SignalHistClose();
 }
 
 void HistoryDialog::on_btnHistOptions_clicked()

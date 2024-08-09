@@ -21,6 +21,8 @@
 
 #ifndef QTSA_PROJECT
     #include "stdafx_lc.h"
+    // always use 'using namespace SmString;' and 'using namespace LongNumber;'
+    // before including this
 #endif
 
 bool IsAlpha(wchar_t ch, std::locale loc);    // needed for names in one locale when working in another localse

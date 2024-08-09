@@ -2,31 +2,67 @@
 #include <QtWidgets/QDialog>
 #include "ui_VariablesFunctionsDialog.h"
 
+namespace FalconCalc {
+	class LittleEngine;
+}
+
+struct VarFuncInfoQt
+{
+	unsigned uBuiltinFuncCnt;
+	unsigned uBuiltinVarCnt;
+	unsigned uUserFuncCnt;
+	unsigned uUserVarCnt;
+	QString sBuiltinFuncs;
+	QString sBuiltinVars;
+	QString sUserFuncs;
+	QString sUserVars;
+	FalconCalc::LittleEngine* pOwner = nullptr;
+};
+
+
 class VariablesFunctionsDialog : public QDialog
 {
 	Q_OBJECT
 public:
-	VariablesFunctionsDialog(int which, QWidget* parent = nullptr);
+	VariablesFunctionsDialog(int which, VarFuncInfoQt &vfi, QWidget* parent = nullptr);
 	~VariablesFunctionsDialog();
 
 
-	QTableWidget* pUser = nullptr;
-	QTableWidget* pBuiltin = nullptr;
+	QTableWidget* pUserVars = nullptr;
+	QTableWidget* pUserFuncs = nullptr;
+	QTableWidget* pBuiltinVars = nullptr;
+	QTableWidget* pBuiltinFuncs = nullptr;
 
 	int ActualTab() const { return ui.tabHeader->currentIndex(); }
 signals:
-	void SignalClose();
+	void SignalVarFuncClose();
 	void SignalTabChange(int tab);
+	void SignalVarFuncMoved();
 public slots:
 	void SlotSelectTab(int tab);
 	void SlotSetColWidths(int which, int cw1, int cw2, int cw3, int cw4); //which:) -> user, 1->builtin
 protected:
 	void closeEvent(QCloseEvent* e);
+	void moveEvent(QMoveEvent* e);
+protected slots:
+	void on_tabHeader_currentChanged(int index);
+	void on_btnRemoveAll_clicked();
+	void on_btnRemoveRow_clicked();
+	void on_btnAddRow_clicked();
+private:
+	FalconCalc::LittleEngine* _lengine = nullptr;
+	bool _changed = false;
+	VarFuncInfoQt _vf;
+private:
+	void _ClearUserTables(int whichTab);
+	void _FillBuiltinFuncTable();
+	void _FillUserFuncTable();
+	void _FillFuncTables();
+	void _FillBuiltinVarTable();
+	void _FillUserVarTable();
+	void _FillVarTables();
+	void _SerializeInto(int which, QString& dest, size_t& cnt);    // user functions or variables from actual page
+	void _AddCellText(QTableWidget* ptw, int row, int col, QString text, bool noElide = false);
 private:
 	Ui::VariablesFunctionsDialogClass ui;
-
-protected:
-	void on_tblUser_columnResized(int, int, int);	// column, old width, new width
-	void on_tblBuiltin_columnResized(int, int, int);	// column, old width, new width
-	void on_tabHeader_currentChanged(const QModelIndex& current, const QModelIndex& previous);
 };

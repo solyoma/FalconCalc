@@ -11,13 +11,16 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>FalconCalc - History</string>
   </property>
   <property name="windowIcon">
-   <iconset>
-    <normaloff>:/FalconCalcQt/ResourcesQt/program.ico</normaloff>:/FalconCalcQt/ResourcesQt/program.ico</iconset>
+   <iconset resource="FalconCalcQt.qrc">
+    <normaloff>:/FalconCalcQt/Resources/program.ico</normaloff>:/FalconCalcQt/Resources/program.ico</iconset>
   </property>
   <layout class="QHBoxLayout" name="horizontalLayout">
+   <property name="spacing">
+    <number>2</number>
+   </property>
    <item>
     <widget class="QListWidget" name="lstHistory"/>
    </item>
@@ -39,40 +42,6 @@
       <number>0</number>
      </property>
      <item>
-      <widget class="QToolButton" name="btnRemove">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="text">
-        <string>remove</string>
-       </property>
-       <property name="icon">
-        <iconset resource="FalconCalcQt.qrc">
-         <normaloff>:/FalconCalcQt/Resources/trashcan.png</normaloff>:/FalconCalcQt/Resources/trashcan.png</iconset>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QToolButton" name="btnRemoveAll">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="text">
-        <string>remove all</string>
-       </property>
-       <property name="icon">
-        <iconset resource="FalconCalcQt.qrc">
-         <normaloff>:/FalconCalcQt/Resources/btndel.png</normaloff>:/FalconCalcQt/Resources/btndel.png</iconset>
-       </property>
-      </widget>
-     </item>
-     <item>
       <spacer name="verticalSpacer">
        <property name="orientation">
         <enum>Qt::Vertical</enum>
@@ -86,24 +55,101 @@
       </spacer>
      </item>
      <item>
-      <widget class="QToolButton" name="btnHistOptions">
+      <widget class="QWidget" name="widget" native="true">
+       <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <property name="leftMargin">
+         <number>2</number>
+        </property>
+        <property name="topMargin">
+         <number>2</number>
+        </property>
+        <property name="rightMargin">
+         <number>2</number>
+        </property>
+        <property name="bottomMargin">
+         <number>2</number>
+        </property>
+        <item>
+         <widget class="QToolButton" name="btnRemove">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="text">
+           <string>remove</string>
+          </property>
+          <property name="icon">
+           <iconset resource="FalconCalcQt.qrc">
+            <normaloff>:/FalconCalcQt/Resources/minus.png</normaloff>:/FalconCalcQt/Resources/minus.png</iconset>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QToolButton" name="btnRemoveAll">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="text">
+           <string>remove all</string>
+          </property>
+          <property name="icon">
+           <iconset resource="FalconCalcQt.qrc">
+            <normaloff>:/FalconCalcQt/Resources/trashcan.png</normaloff>:/FalconCalcQt/Resources/trashcan.png</iconset>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item>
+      <spacer name="verticalSpacer_2">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>20</width>
+         <height>40</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QWidget" name="widget_2" native="true">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
-       <property name="text">
-        <string>options</string>
-       </property>
-       <property name="icon">
-        <iconset resource="FalconCalcQt.qrc">
-         <normaloff>:/FalconCalcQt/Resources/settings.png</normaloff>:/FalconCalcQt/Resources/settings.png</iconset>
-       </property>
+       <layout class="QHBoxLayout" name="horizontalLayout_3">
+        <item>
+         <widget class="QToolButton" name="btnHistOptions">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="text">
+           <string>options</string>
+          </property>
+          <property name="icon">
+           <iconset resource="FalconCalcQt.qrc">
+            <normaloff>:/FalconCalcQt/Resources/settings.png</normaloff>:/FalconCalcQt/Resources/settings.png</iconset>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </widget>
      </item>
      <item>
-      <spacer>
+      <spacer name="verticalSpacer_3">
        <property name="orientation">
         <enum>Qt::Vertical</enum>
        </property>

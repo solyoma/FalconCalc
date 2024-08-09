@@ -131,7 +131,11 @@ private:
     HistoryDialog* _pHist = nullptr;
     VariablesFunctionsDialog* _pVF = nullptr;
     HistoryOptions* _pHistOpt = nullptr;
-    bool _histDialogSnapped=true, _varfuncDialogSnapped=true;
+
+    int _titleBarHeight =0,
+        _borderWidth = 0;
+    bool _histDialogSnapped=true, 
+        _varfuncDialogSnapped=true;
 
 private: // functions                            r
     QString _SetColoredLabelText(QString text) const
@@ -166,6 +170,7 @@ private slots:
     void _SlotHistMoved();
     
     void _SlotVarsFuncsClosing();
+    void _SlotVarFuncMoved();
     void _SlotVarTabChanged(int newTab);
 
 private: 

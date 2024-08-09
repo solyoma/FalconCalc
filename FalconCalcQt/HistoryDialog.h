@@ -18,11 +18,11 @@ protected:
 public:
 signals:
 	void SignalSelection(QString s);
-	void SignalClose();
+	void SignalHistClose();
 	void SignalHistOptions();
 	void SignalRemoveHistLine(int row);
 	void SignalClearHistory();
-	void SignalMoved();
+	void SignalHistMoved();
 private slots:
 	void on_lstHistory_doubleClicked(const QModelIndex&);
 	void on_btnCancel_clicked();

@@ -1,5 +1,7 @@
 <RCC>
   <qresource prefix="/FalconCalcQt">
+    <file>Resources/add.png</file>
+    <file>Resources/minus.png</file>
     <file>Resources/trashcan.png</file>
     <file>Resources/settings.png</file>
     <file>Resources/btndel.png</file>

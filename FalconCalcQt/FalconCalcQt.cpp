@@ -125,7 +125,10 @@ void FalconCalcQt::showEvent(QShowEvent * event)
 			on_btnOpenCloseDecOptions_clicked();
 		if (!_hexOpen)
 			on_btnOpenCloseHexOptions_clicked();
-    }
+
+		_borderWidth = geometry().left() - pos().x(),
+		_titleBarHeight = frameGeometry().height() - geometry().height() - 2 * _borderWidth;
+	}
 	if (isVisible())
 	{
 		_bAlreadyShown = true;
@@ -145,20 +148,38 @@ void FalconCalcQt::showEvent(QShowEvent * event)
  *------------------------------------------------------------*/
 void FalconCalcQt::moveEvent(QMoveEvent* e)
 {
-	if (!_busy && _pHist && _histDialogSnapped)
+	if (_busy)
+		return;
+
+	if (_pHist && _histDialogSnapped)
 	{
 		++_busy;
 
 		int x0 = e->oldPos().x(), y0 = e->oldPos().y(), 
 			x = e->pos().x(), y = e->pos().y(), 
-			l = geometry().left(), t=geometry().top(),
-			xh0 = _pHist->geometry().left(), yh0 = _pHist->geometry().top();
+			xh0 = _pHist->frameGeometry().left(), yh0 = _pHist->frameGeometry().top(),
+			dx = x - x0, dy = y - y0;
 
-		qDebug("hist: (%d, %d)->(%d, %d), delta (%d,%d), lt:(%d, %d)", xh0, yh0, xh0 + x - x0, yh0 + y - y0, x-x0, y-y0,l,t);
-		_pHist->move(xh0 + x - x0, yh0 + y - y0 - QApplication::style()->pixelMetric(QStyle::PM_TitleBarHeight)- QApplication::style()->pixelMetric(QStyle::PM_DefaultFrameWidth));
-		int xh = _pHist->geometry().left(), yh = _pHist->geometry().top();
-		qDebug("    : (%d, %d)", xh0, yh0);
+		//qDebug("main: (%d, %d)->(%d, %d), delta (%d,%d)", x0, y0, x, y, dx, dy);
+		//qDebug(" hist: (%d, %d)->(%d, %d), delta (%d,%d)", xh0, yh0, xh0 + dx, yh0 + dy, dx, dy);
+
+		_pHist->move(xh0 + dx, yh0 + dy);
+
+		//int xh = _pHist->frameGeometry().left(), yh = _pHist->frameGeometry().top();
+		//qDebug("    moved hist: (%d, %d)", xh, yh);
 		//_pHist->move(_pHist->geometry().left() + e->pos().x() - e->oldPos().x(), _pHist->geometry().top() + e->pos().y() - e->oldPos().y());
+		--_busy;
+	}
+	if (_pVF && _varfuncDialogSnapped)
+	{
+		++_busy;
+
+		int x0 = e->oldPos().x(), y0 = e->oldPos().y(), 
+			x = e->pos().x(), y = e->pos().y(), 
+			xh0 = _pVF->frameGeometry().left(), yh0 = _pVF->frameGeometry().top(),
+			dx = x - x0, dy = y - y0;
+
+		_pVF->move(xh0 + dx, yh0 + dy);
 		--_busy;
 	}
 }
@@ -173,14 +194,17 @@ void FalconCalcQt::on_actionPasteAfter_triggered()
 void FalconCalcQt::_SlotHistClosing()
 {
 	ui.actionEditHist->setChecked(false);
-	disconnect(_pHist, &HistoryDialog::SignalSelection	, this, &FalconCalcQt::_SlotDataFromHistory);
-	disconnect(_pHist, &HistoryDialog::SignalRemoveHistLine, this, &FalconCalcQt::_SlotRemoveHistLine );
-	disconnect(_pHist, &HistoryDialog::SignalClearHistory	, this, &FalconCalcQt::_SlotClearHistory);
-	disconnect(_pHist, &HistoryDialog::SignalClose		, this, &FalconCalcQt::_SlotHistClosing);
-	disconnect(_pHist, &HistoryDialog::SignalHistOptions, this, &FalconCalcQt::_SlotHistOptions);
-	disconnect(_pHist, &HistoryDialog::SignalMoved			, this, &FalconCalcQt::_SlotHistMoved);
-	delete _pHist;
-	_pHist = nullptr;		// will be deleted by 
+	if (_pHist)
+	{
+		disconnect(_pHist, &HistoryDialog::SignalSelection, this, &FalconCalcQt::_SlotDataFromHistory);
+		disconnect(_pHist, &HistoryDialog::SignalRemoveHistLine, this, &FalconCalcQt::_SlotRemoveHistLine);
+		disconnect(_pHist, &HistoryDialog::SignalClearHistory, this, &FalconCalcQt::_SlotClearHistory);
+		disconnect(_pHist, &HistoryDialog::SignalHistClose, this, &FalconCalcQt::_SlotHistClosing);
+		disconnect(_pHist, &HistoryDialog::SignalHistOptions, this, &FalconCalcQt::_SlotHistOptions);
+		disconnect(_pHist, &HistoryDialog::SignalHistMoved, this, &FalconCalcQt::_SlotHistMoved);
+		delete _pHist;
+		_pHist = nullptr;
+	}
 }
 
 void FalconCalcQt::on_actionEditHist_triggered()
@@ -196,9 +220,9 @@ void FalconCalcQt::on_actionEditHist_triggered()
 		connect(_pHist, &HistoryDialog::SignalSelection		, this, &FalconCalcQt::_SlotDataFromHistory);
 		connect(_pHist, &HistoryDialog::SignalRemoveHistLine, this, &FalconCalcQt::_SlotRemoveHistLine );
 		connect(_pHist, &HistoryDialog::SignalClearHistory	, this, &FalconCalcQt::_SlotClearHistory);
-		connect(_pHist, &HistoryDialog::SignalClose			, this, &FalconCalcQt::_SlotHistClosing);
+		connect(_pHist, &HistoryDialog::SignalHistClose			, this, &FalconCalcQt::_SlotHistClosing);
 		connect(_pHist, &HistoryDialog::SignalHistOptions	, this, &FalconCalcQt::_SlotHistOptions);
-		connect(_pHist, &HistoryDialog::SignalMoved			, this, &FalconCalcQt::_SlotHistMoved);
+		connect(_pHist, &HistoryDialog::SignalHistMoved			, this, &FalconCalcQt::_SlotHistMoved);
 		_PlaceWidget(*_pHist, Placement::pmBottom);
 		_pHist->show();
 		_histDialogSnapped = true;
@@ -210,15 +234,27 @@ void FalconCalcQt::on_actionEditHist_triggered()
 
 void FalconCalcQt::_SlotVarsFuncsClosing()
 {
-	disconnect(_pVF, &VariablesFunctionsDialog::SignalClose, this, &FalconCalcQt::_SlotVarsFuncsClosing);
-	disconnect(_pVF, &VariablesFunctionsDialog::SignalTabChange, this, &FalconCalcQt::_SlotVarTabChanged);
-	disconnect(this, &FalconCalcQt::_SignalSelectTab, _pVF, &VariablesFunctionsDialog::SlotSelectTab);
-	disconnect(this, &FalconCalcQt::_SignalSetColWidths, _pVF, &VariablesFunctionsDialog::SlotSetColWidths);
-	delete _pVF;
-	_pVF = nullptr;
+	if (_pVF)
+	{
+		disconnect(_pVF, &VariablesFunctionsDialog::SignalVarFuncClose, this, &FalconCalcQt::_SlotVarsFuncsClosing);
+		disconnect(_pVF, &VariablesFunctionsDialog::SignalTabChange, this, &FalconCalcQt::_SlotVarTabChanged);
+		disconnect(this, &FalconCalcQt::_SignalSelectTab, _pVF, &VariablesFunctionsDialog::SlotSelectTab);
+		disconnect(this, &FalconCalcQt::_SignalSetColWidths, _pVF, &VariablesFunctionsDialog::SlotSetColWidths);
+		disconnect(_pVF, &VariablesFunctionsDialog::SignalVarFuncMoved, this, &FalconCalcQt::_SlotVarFuncMoved);
+		delete _pVF;
+		_pVF = nullptr;
+	}
 	_actTab = -1;
 	ui.actionEditFunc->setChecked(false);
 	ui.actionEditVars->setChecked(false);
+}
+
+void FalconCalcQt::_SlotVarFuncMoved()
+{
+	if (_busy)
+		return;
+
+	_varfuncDialogSnapped = false;
 }
 
 void FalconCalcQt::_EditVarsCommon(int which)
@@ -237,16 +273,37 @@ void FalconCalcQt::_EditVarsCommon(int which)
 	}
 	else
 	{
-		_pVF = new VariablesFunctionsDialog(which, this);
-		connect(_pVF, &VariablesFunctionsDialog::SignalClose, this, &FalconCalcQt::_SlotVarsFuncsClosing);
+		VarFuncInfo vf;
+		lengine->GetVarFuncInfo(vf);
+		VarFuncInfoQt vfQt;
+
+		{
+			vfQt.pOwner = vf.pOwner;
+			vfQt.uBuiltinVarCnt = vf.uBuiltinVarCnt;
+			vfQt.uBuiltinFuncCnt = vf.uBuiltinFuncCnt;
+			vfQt.uUserVarCnt  = vf.uUserVarCnt;
+			vfQt.uUserFuncCnt = vf.uUserFuncCnt;
+			vfQt.sBuiltinVars = vf.sBuiltinVars.toQString();
+			vfQt.sBuiltinFuncs = vf.sBuiltinFuncs.toQString();
+			vfQt.sUserVars  = vf.sUserVars.toQString();
+			vfQt.sUserFuncs = vf.sUserFuncs.toQString();
+		}
+
+		_pVF = new VariablesFunctionsDialog(which, vfQt, this);
+		connect(_pVF, &VariablesFunctionsDialog::SignalVarFuncClose, this, &FalconCalcQt::_SlotVarsFuncsClosing);
 		connect(_pVF, &VariablesFunctionsDialog::SignalTabChange, this, &FalconCalcQt::_SlotVarTabChanged);
 		connect(this, &FalconCalcQt::_SignalSelectTab, _pVF, &VariablesFunctionsDialog::SlotSelectTab);
 		connect(this, &FalconCalcQt::_SignalSetColWidths, _pVF, &VariablesFunctionsDialog::SlotSetColWidths);
+		connect(_pVF, &VariablesFunctionsDialog::SignalVarFuncMoved, this, &FalconCalcQt::_SlotVarFuncMoved);
 		_actTab = which;
 		ui.actionEditFunc->setChecked(which);
 		ui.actionEditVars->setChecked(!which);
+		++_busy;
 		_PlaceWidget(*_pVF, Placement::pmRight);
+		_varfuncDialogSnapped = true;
+
 		_pVF->show();
+		--_busy;
 	}
 	this->activateWindow();		// get the focus back
 	this->raise();
@@ -350,9 +407,9 @@ void FalconCalcQt::on_btnOpenCloseDecOptions_clicked()
         ui.frmDecimal->show();
     }
 	if (_pHist && _histDialogSnapped)
-	{
-		_pHist->move(geometry().left(),  geometry().top() + geometry().height());
-	}
+		_PlaceWidget(*_pHist, Placement::pmBottom);
+	if (_pVF && _varfuncDialogSnapped)
+		_PlaceWidget(*_pVF, Placement::pmRight);
 }
 
 void FalconCalcQt::on_btnOpenCloseHexOptions_clicked()
@@ -381,9 +438,9 @@ void FalconCalcQt::on_btnOpenCloseHexOptions_clicked()
         ui.gbHexOptions->show();
     }
 	if (_pHist && _histDialogSnapped)
-	{
-		_pHist->move(geometry().left(), geometry().top() + geometry().height());
-	}
+		_PlaceWidget(*_pHist, Placement::pmBottom);
+	if (_pVF && _varfuncDialogSnapped)
+		_PlaceWidget(*_pVF, Placement::pmRight);
 }
 
 void FalconCalcQt::on_btnStringFont_clicked()
@@ -496,26 +553,27 @@ void FalconCalcQt::_SaveHistory()
 
 void FalconCalcQt::_PlaceWidget(QWidget& w, Placement pm)
 {
-	int xw,
-		yw;
+	int xw,		// place window top left here
+		yw;		// includes border and title bar for the dialog widget
 	QScreen *actScreen = screen();
 
 	Placement pm0 = pm;
+	QRect geom = frameGeometry();
 	do
 	{
 		switch (pm)
 		{
 			case Placement::pmTop:
-				xw = x(); yw = y() - w.height();
+				xw = geom.x(); yw = geom.y() - w.frameGeometry().height();
 				break;
 			case Placement::pmRight:
-				xw = x() + width(); yw = y();
+				xw = geom.x() + geom.width(); yw = geom.y();
 				break;
 			case Placement::pmBottom:
-				xw = x(); yw = y() + height() + QApplication::style()->pixelMetric(QStyle::PM_TitleBarHeight);
+				xw = geom.x(); yw = geom.y() + geom.height();
 				break;
 			case Placement::pmLeft:
-				xw = x() - w.width(); yw = y();
+				xw = geom.x() - w.frameGeometry().width(); yw = geom.y();
 				break;
 		}
 		// if(xw +w.width())
