@@ -1476,7 +1476,7 @@ RealNumber RealNumber::_PowInt(const RealNumber& power) const // integer powers 
 	// special case:  (10^x)^power = 10^(x*power)
 	if (_numberString == SmartString("1"))	
 	{
-		return TenToThePowerOf((_exponent - 1) * power.ToInt64());
+		return TenToThePowerOf((_exponent - 1) * (int)power.ToInt64());
 	}
 	/* https://en.wikipedia.org/wiki/Exponentiation_by_squaring
 	* 

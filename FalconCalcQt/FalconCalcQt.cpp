@@ -1210,7 +1210,18 @@ void FalconCalcQt::_ShowResults()
 		_ShowMessageOnAllPanels("Definition");
 	else
 	{
-		ui.lblDec->setText(lengine->ResultAsDecString().toQString());
+		ExpFormat ef = lengine->displayFormat.expFormat;
+		if (ef == ExpFormat::rnsfGraph) // in QT the @normal mode = HTML mode for non QT version
+			lengine->displayFormat.expFormat = ExpFormat::rnsfSciHTML;
+		QString qs = lengine->ResultAsDecString().toQString();	
+		if (ef == ExpFormat::rnsfSciHTML)
+		{
+			qs.replace("<", "&lt;");
+			qs.replace(">", "&gt;");
+		}
+		lengine->displayFormat.expFormat = ef;
+
+		ui.lblDec->setText(qs);
 		ui.lblHex->setText(lengine->ResultAsHexString().toQString());
 		ui.lblOct->setText(lengine->ResultAsOctString().toQString());
 		ui.lblBin->setText(lengine->ResultAsBinString().toQString());

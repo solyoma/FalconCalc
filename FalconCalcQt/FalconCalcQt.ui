@@ -104,6 +104,11 @@ QLabelo::framel {
        </item>
        <item row="0" column="1">
         <widget class="QLabel" name="lblDec">
+         <property name="font">
+          <font>
+           <pointsize>10</pointsize>
+          </font>
+         </property>
          <property name="frameShape">
           <enum>QFrame::StyledPanel</enum>
          </property>
@@ -145,6 +150,11 @@ QLabelo::framel {
        </item>
        <item row="1" column="1">
         <widget class="QLabel" name="lblHex">
+         <property name="font">
+          <font>
+           <pointsize>10</pointsize>
+          </font>
+         </property>
          <property name="frameShape">
           <enum>QFrame::StyledPanel</enum>
          </property>
@@ -186,6 +196,11 @@ QLabelo::framel {
        </item>
        <item row="2" column="1">
         <widget class="QLabel" name="lblOct">
+         <property name="font">
+          <font>
+           <pointsize>10</pointsize>
+          </font>
+         </property>
          <property name="frameShape">
           <enum>QFrame::StyledPanel</enum>
          </property>
@@ -227,6 +242,11 @@ QLabelo::framel {
        </item>
        <item row="3" column="1">
         <widget class="QLabel" name="lblBin">
+         <property name="font">
+          <font>
+           <pointsize>10</pointsize>
+          </font>
+         </property>
          <property name="frameShape">
           <enum>QFrame::StyledPanel</enum>
          </property>
@@ -445,6 +465,11 @@ QLabelo::framel {
     </item>
     <item row="0" column="0" colspan="2">
      <widget class="QLineEdit" name="edtInfix">
+      <property name="font">
+       <font>
+        <pointsize>10</pointsize>
+       </font>
+      </property>
       <property name="placeholderText">
        <string>Enter formula here. Help: F1</string>
       </property>
