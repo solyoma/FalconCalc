@@ -36,12 +36,21 @@
      subcontrol-origin: margin;
      subcontrol-position: top ;
      padding: 0 3px;
-     /*background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                                       stop: 0 #FF0ECE, stop: 1 #FFFFFF);*/
+    *background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                       stop: 0 #FF0ECE, stop: 1 #FFFFFF);
  }
 
 QFrame {
+	border: 1px solid lightgray;
+	border-radius:5px;
+}
+
+QLineEdit {
 	border: 1px solid gray;
+	border-radius:5px;
+}
+
+QLabelo::framel {
 	border-radius:5px;
 }</string>
   </property>
@@ -627,7 +636,7 @@ QFrame {
              <item>
               <widget class="QLabel" name="lblChars">
                <property name="frameShape">
-                <enum>QFrame::Box</enum>
+                <enum>QFrame::NoFrame</enum>
                </property>
                <property name="text">
                 <string/>
@@ -820,8 +829,17 @@ QFrame {
     <property name="title">
      <string>&amp;Options</string>
     </property>
+    <widget class="QMenu" name="menuStyle">
+     <property name="title">
+      <string>S&amp;tyle</string>
+     </property>
+     <addaction name="actionLightMode"/>
+     <addaction name="actionDarkMode"/>
+     <addaction name="actionBlueMode"/>
+    </widget>
     <addaction name="actionSetLocale"/>
     <addaction name="actionSelectFont"/>
+    <addaction name="menuStyle"/>
    </widget>
    <widget class="QMenu" name="mnuHelp">
     <property name="title">
@@ -978,6 +996,21 @@ QFrame {
    </property>
    <property name="shortcut">
     <string>Alt+2</string>
+   </property>
+  </action>
+  <action name="actionLightMode">
+   <property name="text">
+    <string>&amp;Light</string>
+   </property>
+  </action>
+  <action name="actionDarkMode">
+   <property name="text">
+    <string>&amp;Dark</string>
+   </property>
+  </action>
+  <action name="actionBlueMode">
+   <property name="text">
+    <string>&amp;Blue</string>
    </property>
   </action>
  </widget>

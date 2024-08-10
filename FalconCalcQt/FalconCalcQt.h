@@ -130,7 +130,6 @@ private:
 
     HistoryDialog* _pHist = nullptr;
     VariablesFunctionsDialog* _pVF = nullptr;
-    HistoryOptions* _pHistOpt = nullptr;
 
     int _titleBarHeight =0,
         _borderWidth = 0;
@@ -159,6 +158,9 @@ private: // functions                            r
 
     enum class Placement {pmTop,pmRight,pmBottom,pmLeft};
     void _PlaceWidget(QWidget &widget, Placement pm);   // relative to the main window
+
+    enum class DisplayMode {dmNone, dmLight, dmDark, dmBlue};
+    void _SetStyleFor(DisplayMode m);
 
 private slots:
     void _watchdogTimerSlot();

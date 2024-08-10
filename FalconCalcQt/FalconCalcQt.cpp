@@ -104,7 +104,7 @@ FalconCalcQt::FalconCalcQt(QWidget *parent)  : QMainWindow(parent)
 	connect(this, &FalconCalcQt::_StopTimer, &_watchdogTimer, &QTimer::stop);
 	connect(this, SIGNAL(_StartTimer()), &_watchdogTimer, SLOT(start()) );
 	connect(&_watchdogTimer, &QTimer::timeout, this, &FalconCalcQt::_watchdogTimerSlot);
-	_StartTimer();
+	emit _StartTimer();
 }
 
 FalconCalcQt::~FalconCalcQt()     
@@ -322,7 +322,7 @@ void FalconCalcQt::on_actionEditFunc_triggered()
 
 void FalconCalcQt::on_actionClearHistory_triggered()
 {
-	if (QMessageBox::question(this, tr("FalconCalc Question"), tr("This will remove the whole history.\nAre you sure?")) == QMessageBox::Yes)
+	if (QMessageBox::question(this, tr("FalconCalc - Question"), tr("This will remove the whole of history.\nAre you sure?")) == QMessageBox::Yes)
 	{
 		_slHistory.clear();
 		if (_pHist)
@@ -335,15 +335,38 @@ void FalconCalcQt::on_actionHex_triggered()
 }
 void FalconCalcQt::on_actionHistOptions_triggered()
 {
-	if (_pHistOpt)
+	HistOptionData data;
+
+	data.watchTimeout  = _watchTimeout;
+	data.maxHistDepth  = _maxHistDepth;
+	data.historySorted = _historySorted;
+	data.minCharLength = _minCharLength;
+
+	HistoryOptions *pHistOpt = new HistoryOptions(data, this);
+	pHistOpt->setModal(true);
+	if (pHistOpt->exec())	// then data may be changed
 	{
-		delete _pHistOpt;
-		_pHistOpt = nullptr;
+		emit _StopTimer();
+
+		_watchTimeout  = data.watchTimeout;
+		_maxHistDepth  = data.maxHistDepth;
+		_historySorted = data.historySorted;
+		_minCharLength = data.minCharLength;
+
+		if ((int)_maxHistDepth < _slHistory.size())
+		{
+			do
+				_slHistory.pop_back();
+			while ((int)_maxHistDepth < _slHistory.size());
+		}
+		if (_pHist)
+			_pHist->SetList(_slHistory);
+		_watchdogTimer.setInterval(data.watchTimeout*1000);
+		emit _StartTimer();
 	}
-	else
-	{
-	}
+	delete pHistOpt;
 }
+
 void FalconCalcQt::on_actionDec_triggered()
 {
     on_btnOpenCloseDecOptions_clicked();
@@ -581,6 +604,90 @@ void FalconCalcQt::_PlaceWidget(QWidget& w, Placement pm)
 	w.move(xw, yw);
 }
 
+void FalconCalcQt::_SetStyleFor(DisplayMode m)
+{
+	QString qsLight =
+		R"(
+QGroupBox {
+	 background - color: qlineargradient(x1 : 0, y1 : 0, x2 : 0, y2 : 1,
+									   stop : 0 #E0E0E0, stop: 1 #FFFFFF);
+	 border: 2px solid gray;
+	 border - radius: 5px;
+	 margin - top: 1ex;
+}
+
+QGroupBox::title{
+		subcontrol - origin: margin;
+		subcontrol - position: top;
+		padding: 0 3px;
+}
+
+QFrame{
+		border: 1px solid gray;
+		border - radius:5px;
+}
+)",
+qsDark =
+R"(
+QGroupBox {
+	 background - color: qlineargradient(x1 : 0, y1 : 0, x2 : 0, y2 : 1,
+									   stop : 0 #E0E0E0, stop: 1 #FFFFFF);
+	 border: 2px solid gray;
+	 border - radius: 5px;
+	 margin - top: 1ex;
+}
+
+QGroupBox::title{
+		subcontrol - origin: margin;
+		subcontrol - position: top;
+		padding: 0 3px;
+		/*background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+											stop: 0 #FF0ECE, stop: 1 #FFFFFF);*/
+}
+
+QFrame{
+		border: 1px solid gray;
+		border - radius:5px;
+}
+)",
+qsBlue =
+R"(
+QGroupBox {
+	 background - color: qlineargradient(x1 : 0, y1 : 0, x2 : 0, y2 : 1,
+									   stop : 0 #E0E0E0, stop: 1 #FFFFFF);
+	 border: 2px solid gray;
+	 border - radius: 5px;
+	 margin - top: 1ex;
+}
+
+QGroupBox::title{
+		subcontrol - origin: margin;
+		subcontrol - position: top;
+		padding: 0 3px;
+		/*background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+											stop: 0 #FF0ECE, stop: 1 #FFFFFF);*/
+}
+
+QFrame{
+		border: 1px solid gray;
+		border - radius:5px;
+}
+)";
+
+	switch (m)
+	{
+		case DisplayMode::dmNone:
+			setStyleSheet(QString());
+			break;
+		case DisplayMode::dmDark:
+			setStyleSheet(qsDark);
+			break;
+		case DisplayMode::dmBlue:
+			setStyleSheet(qsBlue);
+			break;
+	}
+}
+
 void FalconCalcQt::on_chkMinus_toggled(bool b)
 {
 	__hexFlags.hasMinus = b;
@@ -647,6 +754,7 @@ void FalconCalcQt::on_edtInfix_textChanged(const QString& newText)
 			_ShowMessageOnAllPanels("???");
 		}
 
+		_added = false;
 		emit _StartTimer();		// restart timer
 	}
 //	_ShowMessageOnAllPanels("");
@@ -1061,10 +1169,10 @@ bool FalconCalcQt::_SaveState(QString name)
 void FalconCalcQt::_AddToHistory(QString infix)
 {
 	infix = infix.trimmed();
-	SmartString ssinfix(infix);
-
-	if (_minCharLength >= infix.length())	// do not add too short strings
+	if (infix.isEmpty() || _minCharLength >= infix.length() || lengine->resultType == FalconCalc::LittleEngine::ResultType::rtInvalid)	// do not add too short strings
 		return;
+
+	SmartString ssinfix(infix);
 
 	if (LittleEngine::variables.count(ssinfix) || LongNumber::constantsMap.count(ssinfix))		// single, already defined variable?
 	{
@@ -1078,9 +1186,10 @@ void FalconCalcQt::_AddToHistory(QString infix)
 		if (n == 0)							// already at top
 			return;							// nothing to do
 		_slHistory.removeAt(n);				// not at top delete expression from inside
-		_slHistory.insert(0, infix);		
 	}
 	_slHistory.push_front(infix);			 // new line to the top
+	while ((int)_maxHistDepth >= _slHistory.size())
+		_slHistory.pop_back();
 		
 	if (_historySorted)
 		_slHistory.sort();
@@ -1089,7 +1198,7 @@ void FalconCalcQt::_AddToHistory(QString infix)
 	if (_pHist)
 	{
 		_pHist->Clear();
-		_pHist->pListWidget()->addItems(_slHistory);
+		_pHist->SetList(_slHistory);
 	}
 }
 
@@ -1136,12 +1245,17 @@ void FalconCalcQt::_watchdogTimerSlot()
 
 void FalconCalcQt::_SlotRemoveHistLine(int row)
 {
-
+	if (row >= 0)
+	{
+		_slHistory.removeAt(row);
+		_pHist->SetList(_slHistory);
+	}
 }
 void FalconCalcQt::_SlotClearHistory()
 {
-
+	on_actionClearHistory_triggered();
 }
+
 void FalconCalcQt::_SlotHistOptions()
 {
 	on_actionHistOptions_triggered();

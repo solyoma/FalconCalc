@@ -11,6 +11,7 @@ public:
 	~HistoryDialog();
 
 	QListWidget* pListWidget() const { return ui.lstHistory; }
+	void SetList(const QStringList& lstHist);
 	void Clear();
 protected:
 	void closeEvent(QCloseEvent* e);

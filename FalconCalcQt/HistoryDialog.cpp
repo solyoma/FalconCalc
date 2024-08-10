@@ -12,6 +12,12 @@ HistoryDialog::~HistoryDialog()
 	emit SignalHistClose();
 }
 
+void HistoryDialog::SetList(const QStringList& lstHist)
+{
+	ui.lstHistory->clear();
+	ui.lstHistory->addItems(lstHist);
+}
+
 void HistoryDialog::Clear()
 {
 	ui.lstHistory->clear();
