@@ -109,7 +109,7 @@ private:
     bool _decOpen = true;       // during load state before the window is shown?
     bool _hexOpen = true;       //  -"
 
-    int hHexOptionsHeight = 84, // before display these cannot be determined
+    int hHexOptionsHeight = 78, // before display these cannot be determined
         hDecOptionsHeight = 124;
     bool _bAlreadyShown = false;
     QColor _lblTextColor;

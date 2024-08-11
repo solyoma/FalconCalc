@@ -409,7 +409,7 @@ void FalconCalcQt::on_btnOpenCloseDecOptions_clicked()
     int h = height();
     QString text = ui.btnOpenCloseDecOptions->text();
 
-    if (ui.frmDecimal->isVisible())
+    if (ui.frmDecimal->isVisible())	  // then hide it
     {
         text[0] = QChar(0x25ba);
         ui.btnOpenCloseDecOptions->setText(text);
@@ -418,8 +418,9 @@ void FalconCalcQt::on_btnOpenCloseDecOptions_clicked()
         r.setHeight(h);
         setMinimumSize(QSize(r.width(), h));
         setMaximumSize(QSize(r.width(), h));
+		_decOpen = false;
     }
-    else
+    else							// not visible:show it
     {
         text[0] = QChar(0x25bc);
         ui.btnOpenCloseDecOptions->setText(text);
@@ -428,6 +429,7 @@ void FalconCalcQt::on_btnOpenCloseDecOptions_clicked()
         setMinimumSize(QSize(r.width(), h));
         setMaximumSize(QSize(r.width(), h));
         ui.frmDecimal->show();
+		_decOpen = true;
     }
 	if (_pHist && _histDialogSnapped)
 		_PlaceWidget(*_pHist, Placement::pmBottom);
@@ -440,7 +442,7 @@ void FalconCalcQt::on_btnOpenCloseHexOptions_clicked()
     QRect r = geometry();
     QString text = ui.btnOpenCloseHexOptions->text();
 
-    if (ui.gbHexOptions->isVisible())
+    if (ui.gbHexOptions->isVisible())	// then close it
     {
         text[0] = QChar(0x25ba);
         int h = r.height() - hHexOptionsHeight;
@@ -449,6 +451,7 @@ void FalconCalcQt::on_btnOpenCloseHexOptions_clicked()
         r.setHeight(h);
         setMinimumSize(QSize(r.width(), h));
         setGeometry(r);
+		_hexOpen = false;
     }
     else
     {
@@ -459,6 +462,7 @@ void FalconCalcQt::on_btnOpenCloseHexOptions_clicked()
         setMinimumSize(QSize(r.width(), h));
         setGeometry(r);
         ui.gbHexOptions->show();
+		_hexOpen = true;
     }
 	if (_pHist && _histDialogSnapped)
 		_PlaceWidget(*_pHist, Placement::pmBottom);
@@ -473,32 +477,55 @@ void FalconCalcQt::on_btnStringFont_clicked()
 
 void FalconCalcQt::on_cbThousandSep_currentIndexChanged(int newIndex)
 {
-
+	if (ui.chkSep->isChecked())
+	{
+		lengine->displayFormat.strThousandSeparator = SmartString(newIndex > 0 ? ui.cbThousandSep->currentText()[0].unicode() : ' ');
+		if (lengine->displayFormat.strThousandSeparator == SmartString('s'))	// 'space'
+			lengine->displayFormat.strThousandSeparator = " ";
+		_ShowResults();
+	}
 }
 
 void FalconCalcQt::on_chkDecDelim_toggled(bool b)
 {
-
+	lengine->displayFormat.useFractionSeparator = ui.chkDecDelim->isChecked();
+	_ShowResults();
 }
 void FalconCalcQt::on_chkDecDigits_toggled(bool b)
 {
-
+	lengine->displayFormat.decDigits = b ? ui.spnDecDigits->value() : -1;
+	_ShowResults();
 }
 void FalconCalcQt::on_chkEng_toggled(bool b)
 {
+	if (!b && ui.chkSci->isChecked())
+		return;
+	lengine->displayFormat.mainFormat = b ? NumberFormat::rnfEng : NumberFormat::rnfGeneral;
+	_ShowResults();
+}
+void FalconCalcQt::on_chkSci_toggled(bool b)
+{
+	if (!b && ui.chkEng->isChecked())
+		return;
+	lengine->displayFormat.mainFormat = b ? NumberFormat::rnfSci : NumberFormat::rnfGeneral;
+	_ShowResults();
 
 }
 void FalconCalcQt::on_chkSep_toggled(bool b)
 {
-
+	if (b)
+		on_cbThousandSep_currentIndexChanged(ui.cbThousandSep->currentIndex());
+	else
+	{
+		lengine->displayFormat.strThousandSeparator.clear();
+		_ShowResults();
+	}
 }
-void FalconCalcQt::on_chkSci_toggled(bool b)
-{
 
-}
 void FalconCalcQt::on_chkHexPrefix_toggled(bool b)
 {
-
+	lengine->displayFormat.useNumberPrefix = ui.chkHexPrefix->isChecked();
+	_ShowResults();
 }
 
 union __HexFlags {
@@ -537,6 +564,7 @@ void FalconCalcQt::_SetDisplayFlags()
 		lengine->displayFormat.bSignedBinOrHex = __hexFlags.hasMinus;
 		lengine->displayFormat.useNumberPrefix = __hexFlags.hasPrefix;
 	}
+	_ShowResults();
 }
 
 void FalconCalcQt::_LoadHistory()
@@ -1147,7 +1175,7 @@ bool FalconCalcQt::_SaveState(QString name)
 
 	ofs << FONTNAME << "=" << ui.lblChars->font().family() << "\n";
 	ofs << FONTDATA << "=" << (int)ui.lblChars->font().pointSize() << "|" << (int)ui.lblChars->font().style() << "|" << _lblTextColor.name() << "\n";
-	ofs << OPTIONS << "=" << ui.frmDecimal->isVisible() << "|" << ui.gbHexOptions->isVisible() << "\n";
+	ofs << OPTIONS << "=" << _decOpen << "|" << _hexOpen << "\n";
 	ofs << HISTOPTIONS << "=" << _watchTimeout << "|" << _maxHistDepth << "|" << _historySorted << "|" << _minCharLength << "\n";
 	ofs << VARCOLS << "=";
 		for (int col = 0; col < 4; ++col)
@@ -1214,6 +1242,9 @@ void FalconCalcQt::_ShowResults()
 		if (ef == ExpFormat::rnsfGraph) // in QT the @normal mode = HTML mode for non QT version
 			lengine->displayFormat.expFormat = ExpFormat::rnsfSciHTML;
 		QString qs = lengine->ResultAsDecString().toQString();	
+		if (ef == ExpFormat::rnsfGraph) // in QT the @normal mode = HTML mode for non QT version
+			qs.replace('x',183 );
+
 		if (ef == ExpFormat::rnsfSciHTML)
 		{
 			qs.replace("<", "&lt;");
