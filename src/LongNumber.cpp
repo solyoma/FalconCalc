@@ -1085,12 +1085,12 @@ bool RealNumber::_DisplData::Round()
 	}
 
 	SCharT
-		one = SCharT('1'),
-		zero = SCharT('0'),
-		five = SCharT('5'),
-		nine = SCharT('9');
+		sOne = SCharT('1'),
+		sZero = SCharT('0'),
+		sFive = SCharT('5'),
+		sNine = SCharT('9');
 
-	int carry = strRounded.at(nRoundPos, zero) >= five ? 1 : 0;
+	int carry = strRounded.at(nRoundPos, sZero) >= sFive ? 1 : 0;
 	SmartString res = strRounded.left(nRoundPos);
 	if (nLeadingDecimalZeros < nRoundPos && nRoundPos < nLeadingDecimalZeros + (int)res.length())
 		res.erase(nRoundPos);
@@ -1100,11 +1100,11 @@ bool RealNumber::_DisplData::Round()
 		strRounded = res;
 		return false;	// exponent doesn't change
 	}
-	SCharT ch = zero;
+	SCharT ch = sZero;
 	while (nRoundPos-- && carry)
 	{
 		ch = strRounded.at(nRoundPos, chZero).Unicode() + carry;
-		if (ch > nine)
+		if (ch > sNine)
 			res.pop_back();
 		else
 		{
@@ -1116,7 +1116,7 @@ bool RealNumber::_DisplData::Round()
 	bool bExpChanged = false;
 	if (carry) // then 'res' is empty, and we have an overflow of '1'
 	{		   // example: 0.999991 rounded to 3 decimal places: 1.000
-		res = SmartString(one);
+		res = SmartString(sOne);
 		++exp;
 		bExpChanged = true;
 	}
@@ -2696,12 +2696,12 @@ RealNumber fact(const RealNumber n)
 	return res;
 }
 
-RealNumber RadToAu(RealNumber r, AngularUnit au)
+RealNumber RadToAu(RealNumber r, AngularUnit angu)
 {
 	if(r.IsNaN() || r. IsInf())
 		return r;
 	static RealNumber RN_360("360"), RN_400("400");
-	switch (au)
+	switch (angu)
 	{
 			case AngularUnit::auRad:
 				return r;
@@ -2884,7 +2884,7 @@ static RealNumber _sin(RealNumber r)		// sine	(RAD)	0<= r <= 2*pi =>  0 <= _sin 
 
 	RealNumber::SetMaxLength( (int)(1.1 * z) + 2);
 
-	RealNumber b, e, i, n, s, v;
+	RealNumber b, ee, i, n, s, v;
 
 	  /* precondition r. */
 #if 1
@@ -2906,26 +2906,26 @@ static RealNumber _sin(RealNumber r)		// sine	(RAD)	0<= r <= 2*pi =>  0 <= _sin 
 	RealNumber 	epsilon(SmartString("1"), 1, -(z + 2));
 
 	RealNumber::SetMaxLength(z + 2);
-	v = e = r;					  // v == sin(r) = r, e_{1} = r (actual power of r, n = 1) / i!
+	v = ee = r;					  // v == sin(r) = r, e_{1} = r (actual power of r, n = 1) / i!
 	s = -r * r;					  // for integer powers of r get -r^2
 	i = RealNumber::RN_3;		  // i will be n!, first non linear term is x^3/3!
 	while(true)
 	{
-		e *= s / (i * (i - RealNumber::RN_1));	  // e_{n+1} = e_{n} * (-r^2) / ( (i *(i-1)) * (i-2)! ) 
-		if (e.Abs() <= epsilon)// x^(2n+1)/(2n+1)! < accuracy
+		ee *= s / (i * (i - RealNumber::RN_1));	  // e_{n+1} = e_{n} * (-r^2) / ( (i *(i-1)) * (i-2)! ) 
+		if (ee.Abs() <= epsilon)// x^(2n+1)/(2n+1)! < accuracy
 		{
 			RealNumber::SetMaxLength(z);
 			if (v.Abs() < RealNumber("1e-40"))		// max accuracy for sine
 				v = rnNull;
 			return v;
 		}
-		v += e;					  // sum
+		v += ee;				  // sum
 		i += RealNumber::RN_2;	  // for (i+2)!
 	}
 			   // never comes here
 	return RealNumber();
 }
-RealNumber sin (RealNumber r, AngularUnit au)		// sine
+RealNumber sin (RealNumber r, AngularUnit angu)		// sine
 {
 
 	int sign = r.Sign();	
@@ -2934,7 +2934,7 @@ RealNumber sin (RealNumber r, AngularUnit au)		// sine
 	RealNumber rn360 = RealNumber("360"),
 				epsilon = RealNumber("1e-40");
 
-	switch (au)
+	switch (angu)
 	{
 		case AngularUnit::auDeg:
 		{
@@ -3033,19 +3033,19 @@ RealNumber sin (RealNumber r, AngularUnit au)		// sine
 	return RealNumber();
 }
 
-RealNumber csc(RealNumber r, AngularUnit au)		// cosecant = 1/sine
+RealNumber csc(RealNumber r, AngularUnit angu)		// cosecant = 1/sine
 {
-	return RealNumber::RN_1 / sin(r,au);
+	return RealNumber::RN_1 / sin(r,angu);
 }
 
-RealNumber cos(RealNumber r, AngularUnit au)		// cosine
+RealNumber cos(RealNumber r, AngularUnit angu)		// cosine
 {
 	RealNumber rn360 = RealNumber("360"),
 				epsilon = RealNumber("1e-40");
 	// cos (- alpha) = cos(alpha) : argument always positive
 	r.ToAbs();				
 
-	switch (au)
+	switch (angu)
 	{
 		case AngularUnit::auDeg:
 		{
@@ -3080,27 +3080,27 @@ RealNumber cos(RealNumber r, AngularUnit au)		// cosine
 	return RealNumber();
 }
 
-RealNumber sec(RealNumber r, AngularUnit au)		// secant = 1/cosine
+RealNumber sec(RealNumber r, AngularUnit angu)		// secant = 1/cosine
 {
-	return RealNumber::RN_1 / cos(r,au);
+	return RealNumber::RN_1 / cos(r,angu);
 }
 
-RealNumber tan(RealNumber r, AngularUnit au)		// tangent
+RealNumber tan(RealNumber r, AngularUnit angu)		// tangent
 {
-	RealNumber rsin = sin(r, au);
+	RealNumber rsin = sin(r, angu);
 
-	return rsin/cos(r, au);
+	return rsin/cos(r, angu);
 }
 
-RealNumber cot(RealNumber r, AngularUnit au)		// cotangent
+RealNumber cot(RealNumber r, AngularUnit angu)		// cotangent
 {
-	RealNumber rcos = cos(r,au);
+	RealNumber rcos = cos(r,angu);
 
-	return rcos/sin(r,au);
+	return rcos/sin(r,angu);
 }
 
 // inverse trigonometric functions
-RealNumber asin(RealNumber r, AngularUnit au)		// sine
+RealNumber asin(RealNumber r, AngularUnit angu)		// sine
 {
 	// fast answers
 	if (r.Abs() > RealNumber::RN_1)
@@ -3111,18 +3111,18 @@ RealNumber asin(RealNumber r, AngularUnit au)		// sine
 	{
 		int sign = r.Sign();
 		r = piP2.value;
-		return RadToAu(r.SetSign(sign), au);
+		return RadToAu(r.SetSign(sign), angu);
 	}
 	// slow answer
-	return atan(r/sqrt(RealNumber::RN_1 - r*r), au );
+	return atan(r/sqrt(RealNumber::RN_1 - r*r), angu );
 }
 
-RealNumber acos(RealNumber r, AngularUnit au)		// cosine
+RealNumber acos(RealNumber r, AngularUnit angu)		// cosine
 {
-	return RadToAu(piP2.value - asin(r, AngularUnit::auRad), au);
+	return RadToAu(piP2.value - asin(r, AngularUnit::auRad), angu);
 }
 
-RealNumber atan(RealNumber r, AngularUnit au)		// arcus tangent
+RealNumber atan(RealNumber r, AngularUnit angu)		// arcus tangent
 {
 	// From: https://github.com/nlitsme/gnubc/blob/master/bc/libmath.b
 	// Using the formula:
@@ -3149,7 +3149,7 @@ RealNumber atan(RealNumber r, AngularUnit au)		// arcus tangent
 		// trivial results
 	if (r.IsInf())		// multiple of 90 degrees
 	{
-		switch(au)
+		switch(angu)
 		{
 			case AngularUnit::auRad:
 				return piP2.value.Rounded((int)(RealNumber::MaxLength() + LengthOverFlow)).SetSign(sign);
@@ -3163,7 +3163,7 @@ RealNumber atan(RealNumber r, AngularUnit au)		// arcus tangent
 	}
 	if (r == RealNumber::RN_1)
 	{
-		switch(au) 
+		switch(angu)
 		{
 			case AngularUnit::auRad:
 				return (piP2.value * half).RoundedToDigits((int)(RealNumber::MaxLength() + LengthOverFlow)).SetSign(sign);
@@ -3180,7 +3180,7 @@ RealNumber atan(RealNumber r, AngularUnit au)		// arcus tangent
 	RealNumber aOfDot2 = atanOfDot2.RoundedToDigits( (int)(RealNumber::MaxLength() + LengthOverFlow));
 	RealNumber dot2 = RealNumber(".2");
 	if (r == dot2)
-		return RadToAu(r, au);
+		return RadToAu(r, angu);
 
 	r.SetSign(1);	// make it positive always
 
@@ -3214,7 +3214,7 @@ RealNumber atan(RealNumber r, AngularUnit au)		// arcus tangent
 		{
 			RealNumber::SetMaxLength(z);
 			r = (f * a + v);
-			return RadToAu(r, au).SetSign(sign);
+			return RadToAu(r, angu).SetSign(sign);
 		}
 		e.SetSign(esign);
 		v += e;
@@ -3222,10 +3222,10 @@ RealNumber atan(RealNumber r, AngularUnit au)		// arcus tangent
 	return RealNumber();
 }
 
-RealNumber acot(RealNumber r, AngularUnit au)		// cotangent
+RealNumber acot(RealNumber r, AngularUnit angu)		// cotangent
 {
 	r = piP2.value - r;
-	return atan(r, au);
+	return atan(r, angu);
 }
 
 // hyperbolic functions

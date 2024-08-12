@@ -367,7 +367,7 @@ namespace LongNumber {
 		}
 		RealNumber operator|(const RealNumber& other) const { return _LogOpWith(other, LogicalOperator::lopOr); }
 	public:
-		const bool Errors(EFlagSet* oflags = nullptr)  const
+		bool Errors(EFlagSet* oflags = nullptr)  const
 		{
 			if (oflags)
 				*oflags = _eFlags;
@@ -712,7 +712,7 @@ namespace LongNumber {
 		explicit Constant(const String name, const RealNumber value, const String unit, const String desc) :
 			name(name), value(value), unit(unit), desc(desc) {}
 		// for both
-		Constant(const Constant& c) : name(c.name), value(c.value), unit(unit), desc(c.desc), _pBaseValue(c._pBaseValue), _builtin(c._builtin), _set(c._set) {}
+		Constant(const Constant& co) : name(co.name), value(co.value), unit(unit), desc(co.desc), _pBaseValue(co._pBaseValue), _builtin(co._builtin), _set(co._set) {}
 
 		void SetAsBuiltIn()
 		{

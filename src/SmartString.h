@@ -125,7 +125,7 @@ public:
 	explicit SmartString(const std::wstring ws);
 	explicit SmartString(const wchar_t* pws) :SmartString(std::wstring(pws)) {}
 	SmartString(const SmartString& o) :String(o) {}
-	SmartString(const SmartString& o, size_t pos, size_t len) { *this = mid(pos, len); }
+	SmartString(const SmartString& o, size_t pos, size_t len) { *this = o.mid(pos, len); }
 	SmartString(const String &s) : String(s){}
 	SmartString(SCharT ch) : SmartString(1, ch){}
 	SmartString(const SCharT* ps) : String((char16_t*)ps) {}

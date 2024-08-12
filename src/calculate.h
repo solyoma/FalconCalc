@@ -236,10 +236,10 @@ namespace FalconCalc
                 return funct2i(r,i); 
             return NaN; 
         }
-        RealNumber operator() (RealNumber r, AngularUnit au) 
+        RealNumber operator() (RealNumber r, AngularUnit angu)
         { 
             if (funct2a) 
-                return funct2a(r,au); 
+                return funct2a(r,angu);
             return NaN; 
         }
         ArgTyp SecondArgumentType() const 
@@ -279,7 +279,7 @@ namespace FalconCalc
         bool being_processed=false;     // under calculation (prevent recursion)
 
         Variable(){}
-        Variable(Constant &c) : data(c) {}
+        Variable(Constant &co) : data(co) {}
         Variable(SmartString line) 
         {
             int pos = line.indexOf(SCharT('='));

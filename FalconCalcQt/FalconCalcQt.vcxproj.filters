@@ -61,6 +61,12 @@
     <ClCompile Include="HelpDialog.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="FCSettings.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="schemes.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\calculate.h">
@@ -70,6 +76,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\src\SmartString.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FCSettings.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="schemes.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

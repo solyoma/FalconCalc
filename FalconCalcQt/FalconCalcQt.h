@@ -5,22 +5,8 @@
 
 #include <QSettings>
 #include <QTimer>
-/*=============================================================
- * TASK:    centralized settings handler
- *      static members are initialized in FalconBoard.cpp!
- *------------------------------------------------------------*/
-struct FCSettings
-{
-    static QString homePath;       // path for user's home directory
-    static void Init();            // set home path for falconBoard
-    static inline QString Name();
-    static QSettings *Open();
-    static void Close() { delete _ps; }
 
-private:
-    static QSettings* _ps;
-    static QString _name;
-};
+#include "schemes.h"
 
 struct SEMAPHORE {
     int b = 0;
@@ -65,6 +51,11 @@ private slots:
     void on_actionPasteAfter_triggered();
     void on_actionSelectFont_triggered();
     void on_actionSetLocale_triggered();
+    void on_actionSystemMode_triggered();
+    void on_actionLightMode_triggered();
+    void on_actionDarkMode_triggered();
+    void on_actionBlackMode_triggered();
+    void on_actionBlueMode_triggered();
 
     void on_btnBinary_clicked();
     void on_btnDecimal_clicked();
@@ -108,6 +99,8 @@ private:
     SEMAPHORE _busy;
     bool _decOpen = true;       // during load state before the window is shown?
     bool _hexOpen = true;       //  -"
+    FSchemeVector *_schemeVector = nullptr;
+    Scheme _actScheme = Scheme::schSystem;
 
     int hHexOptionsHeight = 78, // before display these cannot be determined
         hDecOptionsHeight = 124;
@@ -136,7 +129,7 @@ private:
     bool _histDialogSnapped=true, 
         _varfuncDialogSnapped=true;
 
-private: // functions                            r
+private: // functions
     QString _SetColoredLabelText(QString text) const
     { 
         return QString("<font color='%1'>%2</font>").arg(_lblTextColor.name()).arg(text); 
@@ -158,9 +151,6 @@ private: // functions                            r
 
     enum class Placement {pmTop,pmRight,pmBottom,pmLeft};
     void _PlaceWidget(QWidget &widget, Placement pm);   // relative to the main window
-
-    enum class DisplayMode {dmNone, dmLight, dmDark, dmBlue};
-    void _SetStyleFor(DisplayMode m);
 
 private slots:
     void _watchdogTimerSlot();

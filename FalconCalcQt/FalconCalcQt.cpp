@@ -25,43 +25,12 @@ using namespace FalconCalc;
 #include "HistoryDialog.h"
 #include "HistoryOptions.h"
 #include "HelpDialog.h"
-
+#include "FCSettings.h"
+#include "schemes.h"
 
 FalconCalc::LittleEngine* lengine = nullptr;
 
 QString STATE_VER_STRING = QStringLiteral("FalconCalc State File V1.0");
-
-
-//----------------------------- FCSettings -------------------
-/*=============================================================
- * TASK:    centralized settings handler
- *      static members are initialized in FalconBoard.cpp!
- *------------------------------------------------------------*/
-QSettings* FCSettings::_ps = nullptr;
-QString FCSettings::homePath;
-QString FCSettings::_name = "FalconCalcQt.dat";   // default ini file
-
-void FCSettings::Init()             // set home path for falconBoard
-{
-    homePath = QDir::homePath() +
-#if defined (Q_OS_Linux)   || defined (Q_OS_Darwin) || defined(__linux__)
-        "/.falconCalc/";
-#elif defined(Q_OS_WIN)
-        "/Appdata/Local/FalconCalc/";
-#endif
-}
-
-QString FCSettings::Name()
-{
-    return homePath + _name;
-}
-
-QSettings* FCSettings::Open()
-{
-    _ps = new QSettings(Name(), QSettings::IniFormat);
-    _ps->setIniCodec("UTF-8");
-    return _ps;
-}
 
 //------------------------ FalconCalcQt --------------
 
@@ -72,6 +41,19 @@ const QString FalconCalcQt_CFG_FILE = "FalconCalc.cfg";
 FalconCalcQt::FalconCalcQt(QWidget *parent)  : QMainWindow(parent)
 {
     ui.setupUi(this);
+	// make mode selection actions exclusive
+	QActionGroup* actionGroup = new QActionGroup(this);
+	actionGroup->setExclusive(true);
+	actionGroup->addAction(ui.actionSystemMode);
+	actionGroup->addAction(ui.actionLightMode);
+	actionGroup->addAction(ui.actionDarkMode);
+	actionGroup->addAction(ui.actionBlackMode);
+	actionGroup->addAction(ui.actionBlueMode);
+		// same for variable
+	actionGroup = new QActionGroup(this);
+	actionGroup->setExclusive(true);
+	actionGroup->addAction(ui.actionEditVars);
+	actionGroup->addAction(ui.actionEditFunc);
 
 	FCSettings::Init();
 
@@ -80,8 +62,11 @@ FalconCalcQt::FalconCalcQt(QWidget *parent)  : QMainWindow(parent)
 	lengine->displayFormat.strThousandSeparator = " "_ss;
 	lengine->displayFormat.displWidth = 59;
 
+	_schemeVector = new FSchemeVector();	// with color schemes light, dark, black and blue
 	_LoadState(FCSettings::homePath + FalconCalcQt_CFG_FILE);
+
 	_LoadHistory();
+
 
 	lengine->ssNameOfDatFile = SmartString(FCSettings::homePath +  FalconCalcQt_DAT_FILE);
 	try
@@ -113,6 +98,7 @@ FalconCalcQt::~FalconCalcQt()
 	_SaveState(FCSettings::homePath + FalconCalcQt_CFG_FILE);
 	_SaveHistory();
 	delete lengine;
+	delete _schemeVector;
 }
 
 void FalconCalcQt::showEvent(QShowEvent * event)
@@ -335,23 +321,23 @@ void FalconCalcQt::on_actionHex_triggered()
 }
 void FalconCalcQt::on_actionHistOptions_triggered()
 {
-	HistOptionData data;
+	HistOptionData hoData;
 
-	data.watchTimeout  = _watchTimeout;
-	data.maxHistDepth  = _maxHistDepth;
-	data.historySorted = _historySorted;
-	data.minCharLength = _minCharLength;
+	hoData.watchTimeout  = _watchTimeout;
+	hoData.maxHistDepth  = _maxHistDepth;
+	hoData.historySorted = _historySorted;
+	hoData.minCharLength = _minCharLength;
 
-	HistoryOptions *pHistOpt = new HistoryOptions(data, this);
+	HistoryOptions *pHistOpt = new HistoryOptions(hoData, this);
 	pHistOpt->setModal(true);
-	if (pHistOpt->exec())	// then data may be changed
+	if (pHistOpt->exec())	// then hoData may be changed
 	{
 		emit _StopTimer();
 
-		_watchTimeout  = data.watchTimeout;
-		_maxHistDepth  = data.maxHistDepth;
-		_historySorted = data.historySorted;
-		_minCharLength = data.minCharLength;
+		_watchTimeout  = hoData.watchTimeout;
+		_maxHistDepth  = hoData.maxHistDepth;
+		_historySorted = hoData.historySorted;
+		_minCharLength = hoData.minCharLength;
 
 		if ((int)_maxHistDepth < _slHistory.size())
 		{
@@ -361,7 +347,7 @@ void FalconCalcQt::on_actionHistOptions_triggered()
 		}
 		if (_pHist)
 			_pHist->SetList(_slHistory);
-		_watchdogTimer.setInterval(data.watchTimeout*1000);
+		_watchdogTimer.setInterval(hoData.watchTimeout*1000);
 		emit _StartTimer();
 	}
 	delete pHistOpt;
@@ -374,6 +360,36 @@ void FalconCalcQt::on_actionDec_triggered()
 void FalconCalcQt::on_actionSetLocale_triggered()
 {
 
+}
+void FalconCalcQt::on_actionSystemMode_triggered()
+{
+	_actScheme = Scheme::schSystem;
+	_schemeVector->PrepStyle(_actScheme);
+	ui.actionSystemMode->setChecked(true);
+}
+void FalconCalcQt::on_actionLightMode_triggered()
+{
+	_actScheme = Scheme::schLight;
+	_schemeVector->PrepStyle(_actScheme);
+	ui.actionLightMode->setChecked(true);
+}
+void FalconCalcQt::on_actionDarkMode_triggered()
+{
+	_actScheme = Scheme::schDark;
+	_schemeVector->PrepStyle(_actScheme);
+	ui.actionDarkMode->setChecked(true);
+}
+void FalconCalcQt::on_actionBlackMode_triggered()
+{
+	_actScheme = Scheme::schBlack;
+	_schemeVector->PrepStyle(_actScheme);
+	ui.actionBlackMode->setChecked(true);
+}
+void FalconCalcQt::on_actionBlueMode_triggered()
+{
+	_actScheme = Scheme::schBlue;
+	_schemeVector->PrepStyle(_actScheme);
+	ui.actionBlueMode->setChecked(true);
 }
 void FalconCalcQt::on_actionSelectFont_triggered()
 {
@@ -623,6 +639,7 @@ void FalconCalcQt::_PlaceWidget(QWidget& w, Placement pm)
 			case Placement::pmBottom:
 				xw = geom.x(); yw = geom.y() + geom.height();
 				break;
+			default:
 			case Placement::pmLeft:
 				xw = geom.x() - w.frameGeometry().width(); yw = geom.y();
 				break;
@@ -630,90 +647,6 @@ void FalconCalcQt::_PlaceWidget(QWidget& w, Placement pm)
 		// if(xw +w.width())
 	} while (0);	// Should see if it fits screen not yet
 	w.move(xw, yw);
-}
-
-void FalconCalcQt::_SetStyleFor(DisplayMode m)
-{
-	QString qsLight =
-		R"(
-QGroupBox {
-	 background - color: qlineargradient(x1 : 0, y1 : 0, x2 : 0, y2 : 1,
-									   stop : 0 #E0E0E0, stop: 1 #FFFFFF);
-	 border: 2px solid gray;
-	 border - radius: 5px;
-	 margin - top: 1ex;
-}
-
-QGroupBox::title{
-		subcontrol - origin: margin;
-		subcontrol - position: top;
-		padding: 0 3px;
-}
-
-QFrame{
-		border: 1px solid gray;
-		border - radius:5px;
-}
-)",
-qsDark =
-R"(
-QGroupBox {
-	 background - color: qlineargradient(x1 : 0, y1 : 0, x2 : 0, y2 : 1,
-									   stop : 0 #E0E0E0, stop: 1 #FFFFFF);
-	 border: 2px solid gray;
-	 border - radius: 5px;
-	 margin - top: 1ex;
-}
-
-QGroupBox::title{
-		subcontrol - origin: margin;
-		subcontrol - position: top;
-		padding: 0 3px;
-		/*background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-											stop: 0 #FF0ECE, stop: 1 #FFFFFF);*/
-}
-
-QFrame{
-		border: 1px solid gray;
-		border - radius:5px;
-}
-)",
-qsBlue =
-R"(
-QGroupBox {
-	 background - color: qlineargradient(x1 : 0, y1 : 0, x2 : 0, y2 : 1,
-									   stop : 0 #E0E0E0, stop: 1 #FFFFFF);
-	 border: 2px solid gray;
-	 border - radius: 5px;
-	 margin - top: 1ex;
-}
-
-QGroupBox::title{
-		subcontrol - origin: margin;
-		subcontrol - position: top;
-		padding: 0 3px;
-		/*background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-											stop: 0 #FF0ECE, stop: 1 #FFFFFF);*/
-}
-
-QFrame{
-		border: 1px solid gray;
-		border - radius:5px;
-}
-)";
-
-	switch (m)
-	{
-		case DisplayMode::dmNone:
-			setStyleSheet(QString());
-			break;
-		case DisplayMode::dmDark:
-			setStyleSheet(qsDark);
-			break;
-		case DisplayMode::dmBlue:
-			setStyleSheet(qsBlue);
-			break;
-	}
 }
 
 void FalconCalcQt::on_chkMinus_toggled(bool b)
@@ -1081,12 +1014,14 @@ bool FalconCalcQt::_LoadState(QString name)
 		};
 	auto options = [&]()					  // 3 fields
 		{
-			if (n == 3 && data[0] == OPTIONS)
+			if ( (n == 3 || n == 4) && data[0] == OPTIONS)
 			{
 				if(data[1].toInt() == 0)
 					_decOpen = false;		 // default: true - it was open on creation
 				if(data[2].toInt() == 0)
 					_hexOpen = false;
+				if (n == 4)
+					_actScheme = (Scheme)data[3].toInt();
 				return true;
 			}
 			return false;
@@ -1147,6 +1082,25 @@ bool FalconCalcQt::_LoadState(QString name)
 										last(wsLlastInfix);
 	}
 
+	switch (_actScheme)
+	{
+		case Scheme::schSystem:
+			on_actionSystemMode_triggered();
+			break;
+		case Scheme::schLight:
+			on_actionLightMode_triggered();
+			break;
+		case Scheme::schDark:
+			on_actionDarkMode_triggered();
+			break;
+		case Scheme::schBlack:
+			on_actionBlackMode_triggered();
+			break;
+		case Scheme::schBlue:
+			on_actionBlueMode_triggered();
+			break;
+	}
+
 	_EnableMyTimer(_watchTimeout > 0);
 	--_busy;
 	return true;
@@ -1175,7 +1129,7 @@ bool FalconCalcQt::_SaveState(QString name)
 
 	ofs << FONTNAME << "=" << ui.lblChars->font().family() << "\n";
 	ofs << FONTDATA << "=" << (int)ui.lblChars->font().pointSize() << "|" << (int)ui.lblChars->font().style() << "|" << _lblTextColor.name() << "\n";
-	ofs << OPTIONS << "=" << _decOpen << "|" << _hexOpen << "\n";
+	ofs << OPTIONS << "=" << _decOpen << "|" << _hexOpen << "|" << (int)_actScheme << "\n";
 	ofs << HISTOPTIONS << "=" << _watchTimeout << "|" << _maxHistDepth << "|" << _historySorted << "|" << _minCharLength << "\n";
 	ofs << VARCOLS << "=";
 		for (int col = 0; col < 4; ++col)

@@ -1290,9 +1290,9 @@ void LittleEngine::_DoVariable(const Token &tok)
  *          and marked as clean
  *          non existing functions trigger an error
  *-------------------------------------*/
-void LittleEngine::_DoFunction(const Token &tok)
+void LittleEngine::_DoFunction(const Token &token)
 {
-    SmartString name = tok.Text().asLowerCase();
+    SmartString name = token.Text().asLowerCase();
     if(!functions.count(name) ) // non existing function
         Trigger(Trigger_Type::UNKNOWN_FUNCTION_IN_EXPRESSION);
 
@@ -1300,11 +1300,10 @@ void LittleEngine::_DoFunction(const Token &tok)
     if(f.being_processed) // then recursive call
         Trigger(Trigger_Type::RECURSIVE_FUNCTIONS_ARE_NOT_ALLOWED);
     RealNumber v,r;
-    int i;
     if(f.builtin) // arguments on stack, except for 
     {
         BuiltInFunction::ArgTyp argTyp = f.function.SecondArgumentType();
-        switch(argTyp)
+        switch (argTyp)
         {
             case BuiltInFunction::atyNone:
                 v = stack.peek(1).Value();
@@ -1323,8 +1322,10 @@ void LittleEngine::_DoFunction(const Token &tok)
                 stack.pop(1);
                 v = stack.peek(1).Value();
                 stack.pop(1);
-                i = int(r.Int().ToInt64());
-                v = f.function(v, i);
+                {
+                    int i = int(r.Int().ToInt64());
+                    v = f.function(v, i);
+                }
                 break;
             case BuiltInFunction::atyA:     // second argument is not on stack
                 break;

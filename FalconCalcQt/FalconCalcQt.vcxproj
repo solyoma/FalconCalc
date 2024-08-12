@@ -23,6 +23,7 @@
     <PlatformToolset>v143</PlatformToolset>
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
+    <EnableASAN>true</EnableASAN>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
@@ -104,6 +105,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="FCSettings.cpp" />
     <ClCompile Include="HelpDialog.cpp">
       <DynamicSource Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">input</DynamicSource>
       <QtMocFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(Filename).moc</QtMocFileName>
@@ -111,6 +113,7 @@
       <QtMocFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(Filename).moc</QtMocFileName>
     </ClCompile>
     <ClCompile Include="HistoryOptions.cpp" />
+    <ClCompile Include="schemes.cpp" />
     <ClCompile Include="VariablesFunctionsDialog.cpp" />
     <QtRcc Include="FalconCalcQt.qrc" />
     <QtUic Include="HelpDialog.ui" />
@@ -130,6 +133,8 @@
     <ClInclude Include="..\src\calculate.h" />
     <ClInclude Include="..\src\LongNumber.h" />
     <ClInclude Include="..\src\SmartString.h" />
+    <ClInclude Include="FCSettings.h" />
+    <ClInclude Include="schemes.h" />
     <QtMoc Include="HelpDialog.h" />
     <QtMoc Include="HistoryOptions.h" />
     <QtMoc Include="VariablesFunctionsDialog.h" />
