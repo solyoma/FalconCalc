@@ -44,6 +44,19 @@ FalconCalcQt::FalconCalcQt(QWidget *parent)  : QMainWindow(parent)
     ui.setupUi(this);
 	FCSettings::Init();
 
+// make mode selection actions exclusive
+	QActionGroup* actionGroup = new QActionGroup(this);
+	actionGroup->setExclusive(true);
+	actionGroup->addAction(ui.actionSystemMode);
+	actionGroup->addAction(ui.actionLightMode);
+	actionGroup->addAction(ui.actionDarkMode);
+	actionGroup->addAction(ui.actionBlackMode);
+	actionGroup->addAction(ui.actionBlueMode);
+		// same for variable
+	actionGroup = new QActionGroup(this);
+	actionGroup->setExclusive(true);
+	actionGroup->addAction(ui.actionEditVars);
+	actionGroup->addAction(ui.actionEditFunc);
 	lengine = new LittleEngine;
 	lengine->displayFormat.useNumberPrefix = ui.chkHexPrefix->isChecked();
 	lengine->displayFormat.strThousandSeparator = " "_ss;

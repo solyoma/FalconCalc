@@ -31,7 +31,8 @@ struct FalconCalcScheme
 		sProgressBarChunk,
 		sWarningColor,
 		sBoldTitleColor,
-		sSpacerColor;		// for drag & drop in tnvImages
+		sSpacerColor,		// for drag & drop in tnvImages
+		sDialogBackground;
 
 	QString MenuTitleForLanguage(int lang);
 	QString& operator[](int index);
@@ -39,7 +40,7 @@ struct FalconCalcScheme
 	FalconCalcScheme();
 
 	FalconCalcScheme(const char* t,	 // menu title
-		const char* c0,	 // sBacground
+		const char* c0,	 // sBackground
 		const char* c1,	 // sTextColor	-	foreground
 		const char* c2,	 // sBorderColor
 		const char* c3,	 // sFocusedInput
@@ -56,8 +57,9 @@ struct FalconCalcScheme
 		const char* c14, // sProgressBarChunk
 		const char* c15, // sWarningColor
 		const char* c16, // sBoldTitleColor - GroupBox title
-		const char* c17	 // sSpacerColor - spacer for drop operations
-	);
+		const char* c17, // sSpacerColor - spacer for drop operations
+		const char* c18	 // sDialogBackground
+	);					 
 };
 
 
