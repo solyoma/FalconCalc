@@ -146,7 +146,7 @@ private: // functions
     void _ShowMessageOnAllPanels(QString s);
     void _EditVarsCommon(int which);
 
-    void _SetDisplayFlags();
+    void _SetHexDisplFomatForFlags();
 
     void _LoadHistory();
     void _SaveHistory();

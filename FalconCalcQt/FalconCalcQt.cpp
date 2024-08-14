@@ -9,6 +9,7 @@
 #include <QClipboard>
 #include <QtGui>
 #include <QMessageBox>
+#include <QFontDialog>
 
 #include <vector>
 
@@ -41,20 +42,6 @@ const QString FalconCalcQt_CFG_FILE = "FalconCalc.cfg";
 FalconCalcQt::FalconCalcQt(QWidget *parent)  : QMainWindow(parent)
 {
     ui.setupUi(this);
-	// make mode selection actions exclusive
-	QActionGroup* actionGroup = new QActionGroup(this);
-	actionGroup->setExclusive(true);
-	actionGroup->addAction(ui.actionSystemMode);
-	actionGroup->addAction(ui.actionLightMode);
-	actionGroup->addAction(ui.actionDarkMode);
-	actionGroup->addAction(ui.actionBlackMode);
-	actionGroup->addAction(ui.actionBlueMode);
-		// same for variable
-	actionGroup = new QActionGroup(this);
-	actionGroup->setExclusive(true);
-	actionGroup->addAction(ui.actionEditVars);
-	actionGroup->addAction(ui.actionEditFunc);
-
 	FCSettings::Init();
 
 	lengine = new LittleEngine;
@@ -506,7 +493,7 @@ void FalconCalcQt::on_btnOpenCloseHexOptions_clicked()
 
 void FalconCalcQt::on_btnStringFont_clicked()
 {
-
+	ui.lblChars->setFont(QFontDialog::getFont(0, ui.lblChars->font(), this));
 }
 
 void FalconCalcQt::on_cbThousandSep_currentIndexChanged(int newIndex)
@@ -556,12 +543,6 @@ void FalconCalcQt::on_chkSep_toggled(bool b)
 	}
 }
 
-void FalconCalcQt::on_chkHexPrefix_toggled(bool b)
-{
-	lengine->displayFormat.useNumberPrefix = ui.chkHexPrefix->isChecked();
-	_ShowResults();
-}
-
 union __HexFlags {
 	struct {
 		bool hasMinus : 1,
@@ -575,31 +556,6 @@ union __HexFlags {
 	};
 	int val;
 } __hexFlags;
-
-void FalconCalcQt::_SetDisplayFlags()
-{
-	if (!__hexFlags.val)
-	{
-		lengine->displayFormat.hexFormat = HexFormat::rnHexNormal;
-		lengine->displayFormat.trippleE = IEEEFormat::rntHexNotIEEE;
-		lengine->displayFormat.littleEndian = false;
-		lengine->displayFormat.bSignedBinOrHex = false;
-		lengine->displayFormat.useNumberPrefix = false;
-	}
-	else
-	{
-		if(__hexFlags.asBytes)
-			lengine->displayFormat.hexFormat = HexFormat::rnHexByte;
-		if(__hexFlags.asWords)
-			lengine->displayFormat.hexFormat = HexFormat::rnHexWord;
-		if(__hexFlags.asDWords)
-			lengine->displayFormat.hexFormat = HexFormat::rnHexDWord;
-		lengine->displayFormat.trippleE = __hexFlags.asIEEES ? IEEEFormat::rntHexIEEE754Single : IEEEFormat::rntHexIEEE754Double;
-		lengine->displayFormat.bSignedBinOrHex = __hexFlags.hasMinus;
-		lengine->displayFormat.useNumberPrefix = __hexFlags.hasPrefix;
-	}
-	_ShowResults();
-}
 
 void FalconCalcQt::_LoadHistory()
 {
@@ -667,40 +623,107 @@ void FalconCalcQt::_PlaceWidget(QWidget& w, Placement pm)
 	w.move(xw, yw);
 }
 
+void FalconCalcQt::_SetHexDisplFomatForFlags()
+{
+	// defaults:
+	lengine->displayFormat.hexFormat = HexFormat::rnHexNormal;
+	lengine->displayFormat.trippleE = IEEEFormat::rntHexNotIEEE;
+	lengine->displayFormat.littleEndian = false;
+	lengine->displayFormat.bSignedBinOrHex = false;
+	lengine->displayFormat.useNumberPrefix = false;
+
+	if (__hexFlags.val)
+	{
+		if(__hexFlags.asBytes)
+			lengine->displayFormat.hexFormat = HexFormat::rnHexByte;
+		else if(__hexFlags.asWords)
+			lengine->displayFormat.hexFormat = HexFormat::rnHexWord;
+		if(__hexFlags.asDWords)
+			lengine->displayFormat.hexFormat = HexFormat::rnHexDWord;
+		if (__hexFlags.littleEndian)
+			lengine->displayFormat.littleEndian = true;
+		lengine->displayFormat.trippleE = __hexFlags.asIEEES ? IEEEFormat::rntHexIEEE754Single : (__hexFlags.asIEEED ? IEEEFormat::rntHexIEEE754Double:IEEEFormat::rntHexNotIEEE);
+		lengine->displayFormat.bSignedBinOrHex = __hexFlags.hasMinus;
+		lengine->displayFormat.useNumberPrefix = __hexFlags.hasPrefix;
+	}
+	++_busy;
+	ui.chkBytes->setChecked(__hexFlags.asBytes);
+	ui.chkWords->setChecked(__hexFlags.asWords);
+	ui.chkDWords->setChecked(__hexFlags.asDWords);
+	ui.chkIEEESingle->setChecked(__hexFlags.asIEEES);
+	ui.chkIEEEDouble->setChecked(__hexFlags.asIEEED);
+	--_busy;
+	_ShowResults();
+}
+
+void FalconCalcQt::on_chkHexPrefix_toggled(bool b)
+{
+	if (_busy)
+		return;
+	__hexFlags.hasPrefix= b;
+	_SetHexDisplFomatForFlags();
+}
+
 void FalconCalcQt::on_chkMinus_toggled(bool b)
 {
+	if (_busy)
+		return;
 	__hexFlags.hasMinus = b;
-	_SetDisplayFlags();
+	_SetHexDisplFomatForFlags();
 }
 void FalconCalcQt::on_chkBytes_toggled(bool b)
 {
+	if (_busy)
+		return;
 	__hexFlags.asBytes = b;
-	_SetDisplayFlags();
+	if(b)
+		__hexFlags.asWords = __hexFlags.asDWords = false;
+	_SetHexDisplFomatForFlags();
 }
 void FalconCalcQt::on_chkWords_toggled(bool b)
 {
+	if (_busy)
+		return;
 	__hexFlags.asWords = b;
-	_SetDisplayFlags();
+	if (b)
+		__hexFlags.asBytes = __hexFlags.asDWords = false;
+	_SetHexDisplFomatForFlags();
 }
 void FalconCalcQt::on_chkDWords_toggled(bool b)
 {
+	if (_busy)
+		return;
 	__hexFlags.asDWords = b;
-	_SetDisplayFlags();
+	if (b)
+		__hexFlags.asBytes = __hexFlags.asWords = false;
+	_SetHexDisplFomatForFlags();
 }
 void FalconCalcQt::on_chkIEEESingle_toggled(bool b)
 {
+	if (_busy)
+		return;
 	__hexFlags.asIEEES = b;
-	_SetDisplayFlags();
+	if(b)
+		__hexFlags.asIEEED = false;
+
+	_SetHexDisplFomatForFlags();
 }
 void FalconCalcQt::on_chkIEEEDouble_toggled(bool b)
 {
+	if (_busy)
+		return;
 	__hexFlags.asIEEED = b;
-	_SetDisplayFlags();
+	if(b)
+		__hexFlags.asIEEES = false;
+	_SetHexDisplFomatForFlags();
 
 }
 void FalconCalcQt::on_chkLittleEndian_toggled(bool b)
 {
+	if (_busy)
+		return;
 	__hexFlags.littleEndian = b;
+	_SetHexDisplFomatForFlags();
 }
 
 void FalconCalcQt::on_edtInfix_textChanged(const QString& newText)

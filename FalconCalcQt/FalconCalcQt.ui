@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>524</width>
-    <height>523</height>
+    <height>538</height>
    </rect>
   </property>
   <property name="font">
@@ -78,6 +78,7 @@
         <widget class="QLabel" name="lblDec">
          <property name="font">
           <font>
+           <family>Tahoma</family>
            <pointsize>10</pointsize>
           </font>
          </property>
@@ -124,6 +125,7 @@
         <widget class="QLabel" name="lblHex">
          <property name="font">
           <font>
+           <family>Tahoma</family>
            <pointsize>10</pointsize>
           </font>
          </property>
@@ -170,6 +172,7 @@
         <widget class="QLabel" name="lblOct">
          <property name="font">
           <font>
+           <family>Tahoma</family>
            <pointsize>10</pointsize>
           </font>
          </property>
@@ -216,6 +219,7 @@
         <widget class="QLabel" name="lblBin">
          <property name="font">
           <font>
+           <family>Tahoma</family>
            <pointsize>10</pointsize>
           </font>
          </property>
@@ -585,7 +589,7 @@
       <property name="title">
        <string/>
       </property>
-      <layout class="QGridLayout" name="gridLayout_4">
+      <layout class="QGridLayout" name="gridLayout_4" columnstretch="10,10,15,10">
        <property name="leftMargin">
         <number>2</number>
        </property>
@@ -601,13 +605,6 @@
        <property name="horizontalSpacing">
         <number>2</number>
        </property>
-       <item row="0" column="0">
-        <widget class="QCheckBox" name="chkMinus">
-         <property name="text">
-          <string>Minus sign</string>
-         </property>
-        </widget>
-       </item>
        <item row="0" column="1" rowspan="2">
         <widget class="QWidget" name="widget_2" native="true">
          <property name="styleSheet">
@@ -632,7 +629,7 @@
              <string>As B&amp;ytes</string>
             </property>
             <property name="autoExclusive">
-             <bool>true</bool>
+             <bool>false</bool>
             </property>
            </widget>
           </item>
@@ -642,7 +639,7 @@
              <string>As &amp;Words</string>
             </property>
             <property name="autoExclusive">
-             <bool>true</bool>
+             <bool>false</bool>
             </property>
            </widget>
           </item>
@@ -652,11 +649,35 @@
              <string>As D&amp;words</string>
             </property>
             <property name="autoExclusive">
-             <bool>true</bool>
+             <bool>false</bool>
             </property>
            </widget>
           </item>
          </layout>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QCheckBox" name="chkHexPrefix">
+         <property name="text">
+          <string>0x prefix</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="0">
+        <widget class="QCheckBox" name="chkMinus">
+         <property name="text">
+          <string>Minus sign</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="3">
+        <widget class="QCheckBox" name="chkLittleEndian">
+         <property name="text">
+          <string>&amp;Little endian</string>
+         </property>
         </widget>
        </item>
        <item row="0" column="2" rowspan="2">
@@ -669,7 +690,7 @@
            <rect>
             <x>5</x>
             <y>28</y>
-            <width>118</width>
+            <width>148</width>
             <height>19</height>
            </rect>
           </property>
@@ -677,7 +698,7 @@
            <string>As IEEE &amp;754 double</string>
           </property>
           <property name="autoExclusive">
-           <bool>true</bool>
+           <bool>false</bool>
           </property>
          </widget>
          <widget class="QCheckBox" name="chkIEEESingle">
@@ -685,7 +706,7 @@
            <rect>
             <x>5</x>
             <y>7</y>
-            <width>113</width>
+            <width>143</width>
             <height>19</height>
            </rect>
           </property>
@@ -693,26 +714,9 @@
            <string>As IEEE &amp;754 single</string>
           </property>
           <property name="autoExclusive">
-           <bool>true</bool>
+           <bool>false</bool>
           </property>
          </widget>
-        </widget>
-       </item>
-       <item row="0" column="3">
-        <widget class="QCheckBox" name="chkLittleEndian">
-         <property name="text">
-          <string>&amp;Little endian</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="0">
-        <widget class="QCheckBox" name="chkHexPrefix">
-         <property name="text">
-          <string>0x prefix</string>
-         </property>
-         <property name="checked">
-          <bool>true</bool>
-         </property>
         </widget>
        </item>
       </layout>
@@ -751,6 +755,7 @@
      <widget class="QLineEdit" name="edtInfix">
       <property name="font">
        <font>
+        <family>Tahoma</family>
         <pointsize>10</pointsize>
        </font>
       </property>
@@ -786,7 +791,7 @@
      <x>0</x>
      <y>0</y>
      <width>524</width>
-     <height>20</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="mnuFile">
