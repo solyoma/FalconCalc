@@ -356,8 +356,8 @@ void TfrmVariables::tcVarsTabChange(void *sender, nlib::TabChangeParameters para
             cntBuiltin	= _vf.uBuiltinFuncCnt;
             psUser		= &_vf.sUserFuncs;
             psBuiltin	= &_vf.sBuiltinFuncs;
-
             break;
+		default:
 		case VARIABLES:
 			// collect info from previously active Tab
 			_SerializeInto(_vf.sUserFuncs,_vf.uUserFuncCnt);	// collect functions

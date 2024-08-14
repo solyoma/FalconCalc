@@ -8,10 +8,10 @@ namespace FalconCalc {
 
 struct VarFuncInfoQt
 {
-	unsigned uBuiltinFuncCnt;
-	unsigned uBuiltinVarCnt;
-	unsigned uUserFuncCnt;
-	unsigned uUserVarCnt;
+	unsigned uBuiltinFuncCnt= 0;
+	unsigned uBuiltinVarCnt= 0;
+	unsigned uUserFuncCnt= 0;
+	unsigned uUserVarCnt= 0;
 	QString sBuiltinFuncs;
 	QString sBuiltinVars;
 	QString sUserFuncs;

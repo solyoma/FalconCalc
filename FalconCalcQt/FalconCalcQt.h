@@ -117,6 +117,8 @@ private:
     QTimer _watchdogTimer;
     QStringList _slHistory;     // history list
 
+    QClipboard *_clipBoard = QGuiApplication::clipboard();
+
         // user variables/functions are stored in little engine
     int _actTab = -1;           // 0: variables, 1: functions, actual TAB selected on dialog
     int _varColWidths[2][4];    // 0: user, 1: builtins, followed by column wit=dths

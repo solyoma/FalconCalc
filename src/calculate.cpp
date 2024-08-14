@@ -21,7 +21,7 @@ constexpr auto VERSION_STRING = L"FalconCalc V1.1";
 
 #include <math.h>
 
-int _matherr (struct _exception *a)
+int __CRTDECL  _matherr (_Inout_ struct _exception *a)
 {
     if (a->type == OVERFLOW)
     {

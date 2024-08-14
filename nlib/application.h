@@ -58,13 +58,13 @@ namespace NLIBNS
 
         static void InitValues();
 
-        Form *mainform; // When this form closes, the application quits.
-        Form *activeform; // The form which is active when the application is.
-        bool active; // The application is the active one.
+        Form *mainform = nullptr; // When this form closes, the application quits.
+        Form *activeform = nullptr; // The form which is active when the application is.
+        bool active = true; // The application is the active one.
 
-        bool terminated; // PostQuitMessage has been sent.
+        bool terminated = false; // PostQuitMessage has been sent.
     
-        bool dwmcomp; // The current result of DwmIsCompositionEnabled.
+        bool dwmcomp = false; // The current result of DwmIsCompositionEnabled.
 
         NONCLIENTMETRICS ncmetrics;
         Font uifont;
@@ -72,7 +72,7 @@ namespace NLIBNS
         LOGFONT uilogfont; // The logfont used to create uifont.
         LOGFONT menulogfont; // The logfont used to create menufont.
 
-        Canvas *stockcanvas;
+        Canvas *stockcanvas = nullptr;
     
         DialogModes dlgmode;
 
@@ -84,7 +84,7 @@ namespace NLIBNS
 
         LRESULT MessageProc(UINT uMsg, WPARAM wParam, LPARAM lParam);
 
-        Tooltip *tooltip;
+        Tooltip *tooltip = nullptr;
 
         inline void MessageRound(MSG *msg);
         bool AcceleratorKeyMessage(const MSG &msg); // Handles accelerator keys (Alt+Key). Returns true if the message was handled and false if it should go through DispatchMessage().

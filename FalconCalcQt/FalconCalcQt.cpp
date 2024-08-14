@@ -405,19 +405,37 @@ void FalconCalcQt::on_actionAbout_triggered()
 }
 void FalconCalcQt::on_btnBinary_clicked()
 {
-
+	_clipBoard->setText(ui.lblBin->text());
+	ui.edtInfix->setFocus();
 }
-void FalconCalcQt::on_btnDecimal_clicked()
+void FalconCalcQt::on_btnDecimal_clicked()	   // decimal display chaged
 {
-
+	QString text = ui.lblDec->text();
+	int pos = text.indexOf(QChar(183));
+	if (pos > 0)							   // sci or eng with display mode "normal"
+	{
+		text.replace(pos, 8, "E"); // replace "·10<sup>" with E
+		pos = text.indexOf('<', pos);
+		text.remove(pos, 6); // "</sup>"
+	}
+	else if ((pos = text.indexOf('x')) > 0)			// sci or eng with display mode Html
+	{
+		text.replace(pos, 14, "E"); // replace "·10<sup>" with E
+		pos = text.indexOf('&', pos);
+		text.remove(pos, 12); // "</sup>"
+	}
+	_clipBoard->setText(text);
+	ui.edtInfix->setFocus();
 }
 void FalconCalcQt::on_btnHexaDecimal_clicked()
 {
-
+	_clipBoard->setText(ui.lblHex->text());
+	ui.edtInfix->setFocus();
 }
 void FalconCalcQt::on_btnOctal_clicked()
 {
-
+	_clipBoard->setText(ui.lblOct->text());
+	ui.edtInfix->setFocus();
 }
 void FalconCalcQt::on_btnOpenCloseDecOptions_clicked()
 {

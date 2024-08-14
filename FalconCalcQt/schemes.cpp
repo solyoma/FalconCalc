@@ -8,7 +8,7 @@
 FalconCalcScheme FSchemeVector::light("Light:Világos",
 	"qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop:0 #E0E0E0, stop:1 #FFFFFF)",			// sBackground
 	"#cccccc",			// sTextColor	-	foreground
-	"#808080",			// sBorderColor
+	"#A0A0A0",			// sBorderColor
 	"#ffffff",			// sFocusedInput
 	"#888888",			// sHoverColor
 	"#9B9B9B",			// sTabBorder
@@ -213,6 +213,7 @@ QListView {
 
 /* ------------------ colors --------------------*/
 QGroupBox::title {
+	border-radius: 5px;
 	color:%17				/* %17 bold title color */
 }
 
@@ -497,7 +498,7 @@ int FSchemeVector::IndexOf(FalconCalcScheme& fgst)
 	return IndexOf(fgst.MenuTitle);
 }
 
-int FSchemeVector::IndexOf(const QString& title) // title: mybe full name including  all languages, like "Blue:Kék"
+int FSchemeVector::IndexOf(const QString& title) // title: maybe full name including  all languages, like "Blue:Kék"
 {
 	QStringList sl, slf; // for schemes on many languages
 	QString sfull;

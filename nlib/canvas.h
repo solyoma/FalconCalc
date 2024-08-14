@@ -361,42 +361,42 @@ enum CanvasTextAlignments {
 
         bool usedefaultmatrix;
         ColorMatrix defaultmatrix;
-        ColorMatrixFlags defaultmatrixflag;
+        ColorMatrixFlags defaultmatrixflag = cmfDefault;
 
-        bool usebitmapmatrix;
+        bool usebitmapmatrix = true;
         ColorMatrix bitmapmatrix;
-        ColorMatrixFlags bitmapmatrixflag;
+        ColorMatrixFlags bitmapmatrixflag = cmfDefault;
 
-        bool usebrushmatrix;
+        bool usebrushmatrix = true;
         ColorMatrix brushmatrix;
-        ColorMatrixFlags brushmatrixflag;
+        ColorMatrixFlags brushmatrixflag = cmfDefault;
 
-        bool usepenmatrix;
+        bool usepenmatrix = true;
         ColorMatrix penmatrix;
-        ColorMatrixFlags penmatrixflag;
+        ColorMatrixFlags penmatrixflag = cmfDefault;
 
-        bool usedefaultcolorkey;
+        bool usedefaultcolorkey = true;
         Color defaultlokey;
         Color defaulthikey;
 
-        bool usebitmapcolorkey;
+        bool usebitmapcolorkey = true;
         Color bitmaplokey;
         Color bitmaphikey;
 
-        bool usebrushcolorkey;
+        bool usebrushcolorkey = true;
         Color brushlokey;
         Color brushhikey;
 
-        bool usepencolorkey;
+        bool usepencolorkey = true;
         Color penlokey;
         Color penhikey;
 
         CanvasTextAlignmentSet textalign;
         InterpolationModes intmode;
         PixelOffsetModes pommode;
-        bool antialias;
+        bool antialias = true;
 
-        bool usetransf;
+        bool usetransf = false;
         Matrix transf;
 
         friend class Canvas;
@@ -444,7 +444,7 @@ enum CanvasTextAlignments {
 
         // The font doesn't use the Ggdiplus so it must be saved as well in states. CanvasStateSet contains the font plus the gdiplus state.
         CanvasStateSet canvasstate;
-        int graphicsstatepos; // The id number of the previously returned state, which is used to identify them when the user returns one state.
+        int graphicsstatepos=-1; // The id number of the previously returned state, which is used to identify them when the user returns one state.
         std::vector<CanvasGraphicsState> savedstates; // A vector containing all out states that were handed in the order they were created. Once a state is returned, all states that were created after that are also removed.
 
         void FillStock();
@@ -454,24 +454,24 @@ enum CanvasTextAlignments {
         static std::map<std::wstring, Pen*> pens;
         static std::map<std::wstring, Font*> fonts;
 
-        Brush *brush;
-        bool outerbrush; // The brush is not owned by the canvas, so it shouldn't delete it.
+        Brush *brush=nullptr;
+        bool outerbrush=true; // The brush is not owned by the canvas, so it shouldn't delete it.
 
-        Pen *pen;
-        bool outerpen; // The pen is not owned by the canvas, so it shouldn't delete it.
+        Pen *pen=nullptr;
+        bool outerpen=true; // The pen is not owned by the canvas, so it shouldn't delete it.
 
-        Font *font;
-        bool outerfont; // The font is not owned by the canvas, so it shouldn't delete it.
+        Font *font = nullptr;
+        bool outerfont = true; // The font is not owned by the canvas, so it shouldn't delete it.
 
-        bool advanced; // Graphics mode is advanced or not. Internally SetGraphicsMode is called to set this, but it only works with functions that use the GDI's DC and not with GDI+.
+        bool advanced=false; // Graphics mode is advanced or not. Internally SetGraphicsMode is called to set this, but it only works with functions that use the GDI's DC and not with GDI+.
 
         // These values are saved on GetDC and restored on ReturnDC.
-        HDC saveddc; // DC got when GetDC is called.
-        HRGN savedrgn; // Clipping region for DC saved in GetDC and restored in ReturnDC.
-        bool hasrgn; // True if savedrgn contains a valid clipping region after GetDC.
-        HFONT savedfont; // Font saved when selecting a font to the DC of the canvas.
-        bool savedadvanced; // The advanced mode saved when getting a dc.
-        int savedbkmode; // The text background mode.
+        HDC saveddc = 0; // DC got when GetDC is called.
+        HRGN savedrgn = 0; // Clipping region for DC saved in GetDC and restored in ReturnDC.
+        bool hasrgn = false; // True if savedrgn contains a valid clipping region after GetDC.
+        HFONT savedfont = 0; // Font saved when selecting a font to the DC of the canvas.
+        bool savedadvanced=false; // The advanced mode saved when getting a dc.
+        int savedbkmode=0; // The text background mode.
         Color savedtextcolor; // Font color.
         CanvasTextAlignmentSet savedtextalign; // Text alignment got with the GetTextAlign windows function.
 
@@ -479,30 +479,30 @@ enum CanvasTextAlignments {
 
         ColorMatrix defaultmatrix;
         ColorMatrixFlags defaultmatrixflag;
-        bool usedefaultmatrix;
+        bool usedefaultmatrix=true;
         ColorMatrix bitmapmatrix;
         ColorMatrixFlags bitmapmatrixflag;
-        bool usebitmapmatrix;
+        bool usebitmapmatrix=true;
         ColorMatrix brushmatrix;
         ColorMatrixFlags brushmatrixflag;
-        bool usebrushmatrix;
+        bool usebrushmatrix=true;
         ColorMatrix penmatrix;
         ColorMatrixFlags penmatrixflag;
-        bool usepenmatrix;
-        bool usedefaultcolorkey;
+        bool usepenmatrix=true;
+        bool usedefaultcolorkey = true;
         Color defaultlokey;
         Color defaulthikey;
-        bool usebitmapcolorkey;
+        bool usebitmapcolorkey = true;
         Color bitmaplokey;
         Color bitmaphikey;
-        bool usebrushcolorkey;
+        bool usebrushcolorkey = true;
         Color brushlokey;
         Color brushhikey;
-        bool usepencolorkey;
+        bool usepencolorkey = true;
         Color penlokey;
         Color penhikey;
 
-        bool usetransf;
+        bool usetransf = false;
         Matrix transf;
 
         bool UseImageAttributes();
@@ -510,9 +510,9 @@ enum CanvasTextAlignments {
         void SetupTransformations();
 
         CanvasTextAlignmentSet textalign;
-        InterpolationModes intmode;
-        PixelOffsetModes pommode;
-        bool antialias;
+        InterpolationModes intmode = imDefault;
+        PixelOffsetModes pommode = pomDefault;
+        bool antialias = true;
 
         // Set everything to default values
         void ResetBrush();
@@ -807,13 +807,13 @@ enum CanvasTextAlignments {
     private:
         typedef Canvas base;
 
-        Control *owner;
+        Control *owner = nullptr;
 
-        HDC dc;
-        HANDLE device; // For printing.
+        HDC dc = 0;
+        HANDLE device = 0; // For printing.
 
-        HDC gotdc; // DC got by GetDC call, in case it is different from the original.
-        Gdiplus::Graphics *graphics;
+        HDC gotdc = 0; // DC got by GetDC call, in case it is different from the original.
+        Gdiplus::Graphics *graphics = nullptr;
 
         //HPAINTBUFFER hdblbuff; // Vista double buffer context.
         //int dblcnt; // Number of times StartDoubleBuffering has been called. Only the first call is effective, the others just increase this value. It is -1 if DisableDoubleBuffering was called first, and ignores all start or end calls.
@@ -852,10 +852,10 @@ enum CanvasTextAlignments {
     private:
         typedef Canvas base;
 
-        Gdiplus::Bitmap *bmp;
-        Gdiplus::Graphics *graphics;
+        Gdiplus::Bitmap *bmp = nullptr;
+        Gdiplus::Graphics *graphics = nullptr;
 
-        Gdiplus::BitmapData *lockedbits;
+        Gdiplus::BitmapData *lockedbits = nullptr;
         HDC gotdc; // dc got by GetDC call
 
         BitmapStateSet bitmapstate;
@@ -983,9 +983,9 @@ enum CanvasTextAlignments {
     class Icon
     {
     private:
-        HICON handle; // Handle of the icon. It is destroyed with the Icon object, so no shared handles are allowed.
-        BYTE width; // Width of icon in pixels. 0 means 256 pixels.
-        BYTE height; // Height of icon in pixels. 0 means 256 pixels.
+        HICON handle = 0; // Handle of the icon. It is destroyed with the Icon object, so no shared handles are allowed.
+        BYTE width   = 0; // Width of icon in pixels. 0 means 256 pixels.
+        BYTE height  = 0; // Height of icon in pixels. 0 means 256 pixels.
 
         // Prevent copying.
 #ifdef _MSC_VER

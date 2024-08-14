@@ -384,10 +384,10 @@ namespace FalconCalc
 
     struct VarFuncInfo
     {
-        unsigned uBuiltinFuncCnt;
-        unsigned uBuiltinVarCnt;
-        unsigned uUserFuncCnt;
-        unsigned uUserVarCnt;
+        unsigned uBuiltinFuncCnt= 0;
+        unsigned uBuiltinVarCnt= 0;
+        unsigned uUserFuncCnt= 0;
+        unsigned uUserVarCnt= 0;
         SmartString sBuiltinFuncs;
         SmartString sBuiltinVars;
         SmartString sUserFuncs;

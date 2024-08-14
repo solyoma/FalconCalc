@@ -497,7 +497,7 @@ namespace LongNumber {
 
 			int		nLeadingDecimalZeros = 0;
 			int		cntThousandSeparators = 0;
-			int		exp;
+			int		exp=0;
 			bool	numberIsZero = false;
 
 			size_t	nWSign = 0;

@@ -35,8 +35,8 @@ class EOutOfRange : public Exception
 {
 private:
     typedef Exception base;
-    bool rangeset;
-    int valrange;
+    bool rangeset = false;
+    int valrange = 0;
 public:
     EOutOfRange(const std::wstring &text) : base(text), rangeset(false) {}
     EOutOfRange(const wchar_t* ctext) : base(ctext), rangeset(false) {}
