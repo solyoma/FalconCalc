@@ -8,13 +8,13 @@
 FalconCalcScheme FSchemeVector::light("Light:Világos",
 	"#E0E0E0",	// sBackground
 	"#101010",		// sTextColor	-	foreground
-	"#A0A0A0",		// sBorderColor
+	"#808080",		// sBorderColor
 	"#000000",		// sFocusedInput
 	"#888888",		// sHoverColor
 	"#9B9B9B",		// sTabBorder
 	"#ffffff",		// sInputBackground - editor backgrounds
 	"#3b584a",		// sSelectedInputBgr
-	"#c0c0c0",		// sFocusedBorder
+	"#a0a0a0",		// sFocusedBorder
 	"#999999",		// sDisabledFg
 	"#555555",		// sDisabledBg
 	"#111111",		// sImageBackground
@@ -231,10 +231,6 @@ QSpinBox:focus {
     color:%4;				/* %4 focused input */
 }
 
-QMenu::item {
-	background-color:%1;
-	color:%2;
-}
 QTabBar::tab:selected, 
 QTabBar::tab:hover,
 QPushButton:hover,
@@ -278,6 +274,18 @@ QSpinBox:disabled,
 QMenu:disabled {
 	color:%10;			/* %10 - disabled foreground */
 	background:%11;		/* %11 - disabled background */
+}
+
+QMenu::item {
+	background:red;
+}
+
+QMenu::item:hover {
+	background:blue;
+}
+
+QMenu::item:selected {
+	background:green;
 }
 
 QLineEdit.disabled {

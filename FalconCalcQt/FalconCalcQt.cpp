@@ -397,7 +397,12 @@ void FalconCalcQt::on_actionSelectFont_triggered()
 }
 void FalconCalcQt::on_actionHelp_triggered()
 {
-
+	if (!HelpDialog::helpVisible)
+	{
+		HelpDialog* ph = new HelpDialog(this);
+		ph->setAttribute(Qt::WA_DeleteOnClose);
+		ph->show();
+	}
 }
 void FalconCalcQt::on_actionAbout_triggered()
 {

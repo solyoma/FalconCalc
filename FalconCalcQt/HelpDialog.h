@@ -11,6 +11,7 @@ public:
 	HelpDialog(QWidget* parent = nullptr);
 	~HelpDialog();
 
+	static int helpVisible;
 private:
 	Ui::HelpDialogClass ui;
 };

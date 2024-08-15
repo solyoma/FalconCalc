@@ -7,6 +7,7 @@
 #include <QTimer>
 
 #include "schemes.h"
+#include "HelpDialog.h"
 
 struct SEMAPHORE {
     int b = 0;
