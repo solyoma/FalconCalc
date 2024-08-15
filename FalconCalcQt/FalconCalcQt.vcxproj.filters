@@ -98,6 +98,9 @@
     <QtUic Include="HelpDialog.ui">
       <Filter>Form Files</Filter>
     </QtUic>
+    <QtUic Include="AboutDialog.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="HistoryDialog.h">
@@ -110,6 +113,9 @@
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="HelpDialog.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="AboutDialog.h">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>

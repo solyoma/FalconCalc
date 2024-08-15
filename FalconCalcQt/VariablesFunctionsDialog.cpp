@@ -8,7 +8,7 @@ using namespace LongNumber;
 
 const QString qsCommentDelimiterString = ":";
 
-VariablesFunctionsDialog::VariablesFunctionsDialog(int which, VarFuncInfoQt &vfi, QWidget* parent) : _vf(vfi), QDialog(parent)
+VariablesFunctionsDialog::VariablesFunctionsDialog(int which, VarFuncInfoQt &vfi, QWidget* parent) : _vf(vfi), QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint)
 {
 	ui.setupUi(this);
 	pUserVars = ui.tblUserVars;
@@ -73,6 +73,12 @@ void VariablesFunctionsDialog::on_btnRemoveRow_clicked()
 void VariablesFunctionsDialog::on_btnAddRow_clicked()
 {
 	qDebug("on_btnAddRow_clicked");
+}
+
+void VariablesFunctionsDialog::on_tblUserVars_itemClicked(QTableWidgetItem*piw)
+{
+	ui.btnRemoveRow->setEnabled(piw);
+	qDebug("on_tblUserVars_itemClicked");
 }
 
 void VariablesFunctionsDialog::_ClearUserTables(int whichTab)

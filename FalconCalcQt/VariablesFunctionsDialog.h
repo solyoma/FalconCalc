@@ -49,6 +49,7 @@ protected slots:
 	void on_btnRemoveAll_clicked();
 	void on_btnRemoveRow_clicked();
 	void on_btnAddRow_clicked();
+	void on_tblUserVars_itemClicked(QTableWidgetItem*);
 private:
 	FalconCalc::LittleEngine* _lengine = nullptr;
 	bool _changed = false;

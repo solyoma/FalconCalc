@@ -904,7 +904,7 @@
    </widget>
    <widget class="QMenu" name="mnuHistory">
     <property name="title">
-     <string>&amp;History</string>
+     <string>Histor&amp;y</string>
     </property>
     <addaction name="actionEditHist"/>
     <addaction name="actionHistOptions"/>

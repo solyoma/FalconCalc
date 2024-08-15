@@ -1,6 +1,6 @@
 #pragma once
-#ifndef _HELPDIALOG
-	#define _HELPDIALOG
+#ifndef _HELPDIALOG_H
+	#define _HELPDIALOG_H
 	#include <QtWidgets/QDialog>
 	#include "ui_HelpDialog.h"
 

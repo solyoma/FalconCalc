@@ -1,7 +1,7 @@
 #include "HistoryDialog.h"
 #include <QMoveEvent>
 
-HistoryDialog::HistoryDialog(const QStringList& lstHist, QWidget* parent) : QDialog(parent)
+HistoryDialog::HistoryDialog(const QStringList& lstHist, QWidget* parent) : QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint)
 {
 	ui.setupUi(this);
 	ui.lstHistory->addItems(lstHist);
@@ -34,7 +34,7 @@ void HistoryDialog::moveEvent(QMoveEvent* e)
 		x = e->pos().x(), y = e->pos().y(),
 		xh0 = geometry().left(), yh0 = geometry().top();
 
-	qDebug(" - hist dialog moved: (%d, %d)->(%d, %d), delta (%d,%d), ", xh0, yh0, xh0 + x - x0, yh0 + y - y0, x - x0, y - y0);
+	// qDebug(" - hist dialog moved: (%d, %d)->(%d, %d), delta (%d,%d), ", xh0, yh0, xh0 + x - x0, yh0 + y - y0, x - x0, y - y0);
 
 	emit SignalHistMoved();
 }

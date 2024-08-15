@@ -116,6 +116,7 @@
     <ClCompile Include="schemes.cpp" />
     <ClCompile Include="VariablesFunctionsDialog.cpp" />
     <QtRcc Include="FalconCalcQt.qrc" />
+    <QtUic Include="AboutDialog.ui" />
     <QtUic Include="HelpDialog.ui" />
     <QtUic Include="HistoryOptions.ui" />
     <QtUic Include="VariablesFunctionsDialog.ui" />
@@ -133,6 +134,7 @@
     <ClInclude Include="..\src\calculate.h" />
     <ClInclude Include="..\src\LongNumber.h" />
     <ClInclude Include="..\src\SmartString.h" />
+    <QtMoc Include="AboutDialog.h" />
     <ClInclude Include="FCSettings.h" />
     <ClInclude Include="schemes.h" />
     <QtMoc Include="HelpDialog.h" />

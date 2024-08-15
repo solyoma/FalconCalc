@@ -3,7 +3,7 @@
  <class>HelpDialogClass</class>
  <widget class="QDialog" name="HelpDialogClass">
   <property name="windowModality">
-   <enum>Qt::ApplicationModal</enum>
+   <enum>Qt::NonModal</enum>
   </property>
   <property name="geometry">
    <rect>
@@ -21,7 +21,7 @@
     <normaloff>../src/program.ico</normaloff>../src/program.ico</iconset>
   </property>
   <property name="modal">
-   <bool>true</bool>
+   <bool>false</bool>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_3">
    <item>

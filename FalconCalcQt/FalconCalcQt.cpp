@@ -22,6 +22,7 @@ using namespace LongNumber;
 #include "calculate.h"
 using namespace FalconCalc;
 
+#include "AboutDialog.h"
 #include "VariablesFunctionsDialog.h"
 #include "HistoryDialog.h"
 #include "HistoryOptions.h"
@@ -406,7 +407,9 @@ void FalconCalcQt::on_actionHelp_triggered()
 }
 void FalconCalcQt::on_actionAbout_triggered()
 {
-
+	AboutDialog* pAbD = new AboutDialog(this);
+	pAbD->setAttribute(Qt::WA_DeleteOnClose);
+	pAbD->show();
 }
 void FalconCalcQt::on_btnBinary_clicked()
 {

@@ -9,7 +9,7 @@ static const QString sHelpText = QObject::tr(u8"Every Windows has a desktop calc
     "<br>"
     "Results are displayed simultaneously as <i>decimal</i>, <i>hexadecimal</i>, <i>octal</i> and <i>binary</i> numbers and as a string of characters.<br>"
     "both in normal notation or one which can be put in an <i>HTML</i>, or a T<span style=\"vertical-align: -5px;\">E</span>X file<br>"
-    "By pressing the corresponding button the result can be copied to the clipboard in any of theses formats.<br>"
+    "By pressing the corresponding button the result can be copied to the clipboard in any of these formats.<br>"
     "<b>Arithmetic formulas</b> may contain the following operators:<br>"
     "<i>+, -, *, /, ^</i> (power), <i>| </i>(or <i>'or'</i>), & (or <i>'and'</i>), <i>xor</i>, <i> << </i>(or <i>'shl'</i> =shift left), <i> << </i>(or <i>'shr'</i> =shift right),<br>"
     " % </i>(or <i>mod</i> - remainder), <i>'~'</i> bit negation<br>"
@@ -63,7 +63,7 @@ static const QString sHelpText = QObject::tr(u8"Every Windows has a desktop calc
 
 int HelpDialog::helpVisible = false;
 
-HelpDialog::HelpDialog(QWidget* parent) :QDialog(parent)
+HelpDialog::HelpDialog(QWidget* parent) :QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint)
 {
 	ui.setupUi(this);
     ui.lblHelptext->setText(sHelpText);
