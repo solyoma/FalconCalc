@@ -8,7 +8,7 @@ using namespace LongNumber;
 
 const QString qsCommentDelimiterString = ":";
 
-VariablesFunctionsDialog::VariablesFunctionsDialog(int which, VarFuncInfoQt &vfi, QWidget* parent) : _vf(vfi), QDialog(parent)
+VariablesFunctionsDialog::VariablesFunctionsDialog(int which, VarFuncInfoQt &vfi, QWidget* parent) : _vf(vfi), QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint)
 {
 	ui.setupUi(this);
 	pUserVars = ui.tblUserVars;

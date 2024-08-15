@@ -63,7 +63,7 @@ static const QString sHelpText = QObject::tr(u8"Every Windows has a desktop calc
 
 int HelpDialog::helpVisible = false;
 
-HelpDialog::HelpDialog(QWidget* parent) :QDialog(parent)
+HelpDialog::HelpDialog(QWidget* parent) :QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint)
 {
 	ui.setupUi(this);
     ui.lblHelptext->setText(sHelpText);
