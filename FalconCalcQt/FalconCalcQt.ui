@@ -66,7 +66,10 @@
       <property name="title">
        <string/>
       </property>
-      <layout class="QGridLayout" name="gridLayout_2">
+      <layout class="QFormLayout" name="formLayout">
+       <property name="verticalSpacing">
+        <number>2</number>
+       </property>
        <property name="leftMargin">
         <number>2</number>
        </property>
@@ -77,9 +80,6 @@
         <number>2</number>
        </property>
        <property name="bottomMargin">
-        <number>2</number>
-       </property>
-       <property name="verticalSpacing">
         <number>2</number>
        </property>
        <item row="0" column="0">
@@ -230,6 +230,12 @@
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>80</width>
+           <height>0</height>
+          </size>
          </property>
          <property name="font">
           <font>
@@ -451,6 +457,9 @@
             <property name="title">
              <string>As string</string>
             </property>
+            <property name="alignment">
+             <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+            </property>
             <layout class="QHBoxLayout" name="horizontalLayout">
              <property name="spacing">
               <number>2</number>
@@ -497,6 +506,9 @@
            <widget class="QGroupBox" name="gbAngleUnit">
             <property name="title">
              <string>Angles in</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignHCenter|Qt::AlignTop</set>
             </property>
             <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="10,10,10,15">
              <property name="spacing">
@@ -552,6 +564,9 @@
            <widget class="QGroupBox" name="gbDisplayFormat">
             <property name="title">
              <string>Display</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignHCenter|Qt::AlignTop</set>
             </property>
             <property name="flat">
              <bool>true</bool>

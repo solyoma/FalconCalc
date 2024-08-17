@@ -5,129 +5,45 @@
 #include "FCSettings.h"
 #include "schemes.h"
 
-FalconCalcScheme FSchemeVector::light("Light:Világos",
-	"#E0E0E0",	// sBackground
-	"#101010",		// sTextColor	-	foreground
-	"#808080",		// sBorderColor
-	"#000000",		// sFocusedInput
-	"#888888",		// sHoverColor
-	"#9B9B9B",		// sTabBorder
-	"#ffffff",		// sInputBackground - editor backgrounds
-	"#3b584a",		// sSelectedInputBgr
-	"#a0a0a0",		// sFocusedBorder
-	"#999999",		// sDisabledFg
-	"#555555",		// sDisabledBg
-	"#111111",		// sImageBackground
-	"#555555",		// sPressedBg	-	button pressed
-	"#555555",		// sDefaultBg
-	"#feb60e",		// sProgressBarChunk
-	"#f0a91f",		// sWarningColor
-	"#e28308",		// sBoldTitleColor - GroupBox title
-	"#aaaaaa",		// sSpacerColor - spacer for drop operations
-	"qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop:0 #E0E0E0, stop:1 #FFFFFF)"			// sDialogBackground
-),
-FSchemeVector::blue("Blue:Kék",
-	"#3b5876",		// sBackground
-	"#cccccc",		// sTextColor	-	foreground
-	"#747474",		// sBorderColor
-	"#f0f0f0",		// sFocusedInput
-	"#8faed2",		// sHoverColor
-	"#3b589b",		// sTabBorder
-	"#1c3a55",		// sInputBackground - editor backgrounds
-	"#3b584a",		// sSelectedInputBgr
-	"#92b1d5",		// sFocusedBorder
-	"#999999",		// sDisabledFg
-	"#697a8e",		// sDisabledBg
-	"#12273f",		// sImageBackground
-	"#555555",		// sPressedBg	-	button pressed
-	"#555555",		// sDefaultBg
-	"#feb60e",		// sProgressBarChunk
-	"#f0a91f",		// sWarningColor
-	"#e28308",		// sBoldTitleColor - GroupBox title
-	"#aaaaaa",		// sSpacerColor - spacer for drop operations
-	"#3b5876"		// sDialogBackground
-),
-FSchemeVector::dark("Dark:Sötét",
-	"#282828",			// sBacground
-	"#cccccc",			// sTextColor	-	foreground
-	"#4d4d4d",			// sBorderColor
-	"#f0f0f0",			// sFocusedInput
-	"#383838",			// sHoverColor
-	"#9B9B9B",			// sTabBorder
-	"#454545",			// sInputBackground - editor backgrounds
-	"#666666",			// sSelectedInputBgr
-	"#c0c0c0",			// sFocusedBorder
-	"#999999",			// sDisabledFg
-	"#555555",			// sDisabledBg
-	"#111111",			// sImageBackground
-	"#555555",			// sPressedBg	-	button pressed
-	"#555555",			// sDefaultBg
-	"#feb60e",			// sProgressBarChunk
-	"#f0a91f",			// sWarningColor
-	"#e28308",			// sBoldTitleColor - GroupBox title
-	"#aaaaaa",			// sSpacerColor - spacer for drop operations
-	"#282828"			// sDialogBackground
-),
-FSchemeVector::black("Black:Fekete",
-	"#191919",			// sBacground
-	"#e1e1e1",			// sTextColor	-	foreground
-	"#323232",			// sBorderColor
-	"#f0f0f0",			// sFocusedInput
-	"#282828",			// sHoverColor
-	"#9b9b9b",			// sTabBorder
-	"#323232",			// sInputBackground - editor backgrounds
-	"#4a4a4a",			// sSelectedInputBgr
-	"#a8a8a8",			// sFocusedBorder
-	"#999999",			// sDisabledFg
-	"#191919",			// sDisabledBg
-	"#000000",			// sImageBackground
-	"#323232",			// sPressedBg	-	button pressed
-	"#323232",			// sDefaultBg
-	"#feb60e",			// sProgressBarChunk
-	"#f0a91f",			// sWarningColor
-	"#e28308",			// sBoldTitleColor - GroupBox title
-	"#aaaaaa",			// sSpacerColor - spacer for drop operations
-	"#191919"			// sDialogBacground
-);
+#ifdef _DEBUG
+#include <QFile>
+#include <QTextStream>
+static void __SaveValues(QString valName, std::vector<QString> names, std::vector<std::pair<int, QString>> &values)
+{
+	QFile of(valName + ".val");
+	of.open(QIODevice::WriteOnly);
+	QTextStream ofs(&of);
+	for(size_t i =0; i < values.size(); ++i)
+		ofs << i + 1 << "  "  << values[i].second << " =====> " << names[i] << "\n";
+}
+static void __SaveString(QString name, QString s)
+{
+	QFile of(name);
+	of.open(QIODevice::WriteOnly);
+	QTextStream ofs(&of);
+	ofs << s << "\n";
+}
+#else
+#define __SaveValues(a,b,c) 
+#define __SaveString(a) 
+#endif
 
-FSchemeVector schemes;		// default styles: default, system, blue, dark, black
-
-static 	QString
-		MenuTitle,			// this will appear in the menu bar	it may contain a series of titles for all languages separated by commas
-		sDialogBackground,
-		sBackground,
-		sTextColor,
-		sBorderColor,
-		sFocusedInput,
-		sHoverColor,
-		sTabBorder,				 
-		sInputBackground,
-		sSelectedInputBgr,
-		sFocusedBorder,
-		sDisabledFg,
-		sDisabledBg,
-		sImageBackground,
-		sPressedBg,
-		sDefaultBg,
-		sProgressBarChunk,
-		sWarningColor,
-		sBoldTitleColor,
-		sSpacerColor;		// for drag & drop in tnvImages
 
 static QString fcStyles = {
 R"END(
 * {
-	background-color:%1;       /* %1 background */
-	color:%2;                  /* %2 color */
+	background-color:%1;       /* :1 background */
+	color:%2;                  /* :2 color */
 }
         
-QDialog {
-	background-color:%18;       /* %1 background */
+QMainWindow,QDialog {
+	background-color:%17;       /* :17 background */
 }
 
 QTabWidget::tab-bar {
     left: 5px;
 }
+
 QTabBar::tab {
     border-top-left-radius: 4px;
     border-top-right-radius: 4px;
@@ -142,14 +58,8 @@ QToolTip {
     border-radius: 4px;
 }
 
-QProgressBar,
 QPushButton:flat {
-	border:0;
-}
-
-QProgressBar::chunk{
-	width: 10px;
-	background-color:%15;	   /* %15 progressbar chunk */
+	border:1px solid %3;
 }
 
 QToolButton {
@@ -168,6 +78,7 @@ QSpinBox {
     height:20px;
 	padding: 0 8px;
 }
+
 QPushButton {
 	padding:2px 4px;
 }
@@ -184,20 +95,15 @@ QRadioButton, QCheckBox {
 }
 
 QTextEdit, 
-QLineEdit,
 QSpinBox,
 QPushButton,
 QTreeView, 
 QListView {
     border-radius: 10px;
 }
-						/* these 2 do not work */
-QTreeView::branch:open:has-children {
-	color %2;
-
-}
-QTreeView::branch:closed:has-children {
-	color:%2;
+						
+QLabel#lblChars {
+	background-color: rgba(255,255,255,0);
 }
         
 /* ------------------ borders ----------------------*/   
@@ -205,13 +111,28 @@ QTabWidget:pane,
 QTabBar::tab, 
 QToolTip,
 QTextEdit, 
-QLineEdit,
 QGroupBox,
 QSpinBox,
-QPushButton,
-QTreeView, 
-QListView {
-    border: 2px solid %3;	  /* %3   border color */
+QPushButton {
+    border: 2px solid %3;	  /* :3   border color */
+	border-radius:5px;
+}
+
+QLineEdit {
+    border: 2px solid %3;	  /* :3   border color */
+	border-radius:10px;
+}
+
+QListView,
+QListWidget {
+    border: 2px solid %3;	  /* :3   border color */
+	border-radius:5px;
+}
+
+QListView,
+QListWidget::item:alternate {
+	background-color:%26;
+	color:%27;
 }
 
 #btnImage {
@@ -221,47 +142,47 @@ QListView {
 /* ------------------ colors --------------------*/
 QGroupBox::title {
 	border-radius: 5px;
-	color:%17				/* %17 bold title color */
+	color:%16				/* :16 bold title color */
 }
 
 QTabBar::tab,
 QTextEdit:focus, 
 QLineEdit:focus,
 QSpinBox:focus {
-    color:%4;				/* %4 focused input */
+    color:%4;				/* :4 focused input */
 }
 
 QTabBar::tab:selected, 
 QTabBar::tab:hover,
 QPushButton:hover,
 QToolButton:hover {
-	background-color:%5;	/* %5 - hover */
+	background-color:%5;	/* :5 - hover */
 }
 QTabBar::tab:selected {
-	border-color:%6;		/* %6 - tab border */
-    border-bottom-color:%1; /* %1 - background */
+	border-color:%6;		/* :6 - tab border */
+    border-bottom-color:%1; /* :1 - background */
 }
 
 #pnlColorScheme {
-	background-color:%1; /* %1 - background */
+	background-color:%1; /* :1 - background */
 }
 
 QToolButton,
 QTextEdit, 
 QLineEdit,
 QSpinBox {
-	background-color:%7;	/* %7 - input background */
+	background-color:%7;	/* :7 - input background */
 }
 QTextEdit, 
 QLineEdit,
 QSpinBox {
-	selection-background-color:%8;	/* %8 */
+	selection-background-color:%8;	/* :8 */
 }
 
 QTextEdit:focus, 
 QLineEdit:focus,
 QSpinBox:focus {
-	border-color:%9;		/* %9 - focused border */
+	border-color:%9;		/* :9 - focused border */
 }
 
 QTextEdit:read-only, 
@@ -272,134 +193,262 @@ QRadioVutton:disabled,
 QCheckBox:disabled,
 QSpinBox:disabled,
 QMenu:disabled {
-	color:%10;			/* %10 - disabled foreground */
-	background:%11;		/* %11 - disabled background */
+	color:%10;			/* :10 - disabled foreground */
+	background:%11;		/* :11 - disabled background */
 }
 
-QMenu::item {
-	background:red;
+QMenu {
+	border:0;
+}
+
+QMenu::item {			
+	background:%18;		/* :18 - menu item background*/
+	color:%19;		    /* :19 - menu item foreground*/
 }
 
 QMenu::item:hover {
-	background:blue;
+	background:%18;		/* :18 - menu item hover background*/
+	color:%19;			/* :19 - menu item hover foreground*/
 }
 
 QMenu::item:selected {
-	background:green;
+	background:%22;		/* :22 - menu item selected background*/
+	color:%23			/* :23 - menu item selected foreground*/
 }
 
 QLineEdit.disabled {
 	color:%10;
-	background:%11;	   /* %11 - disabled background */
+	background:%11;	   /* :11 - disabled background */
 }
 
 #lblBckImage,
 #groupBox_6 {
-	background-color:%12; /* %12 -image background */
+	background-color:%12; /* :12 -image background */
 }
 QPushButton:pressed,
 QToolButton:pressed {
-	background-color:%13; /* %13 - pressed button background */
+	background-color:%13; /* :13 - pressed button background */
 }
 
 QPusButton:default {
-    background-color:%14; /* %14 - default background */
+    background-color:%14; /* :14 - default background */
 }
 
 #lblActualElem {
-	color:%16;			/* %16 - warning color */
+	color:%15;			/* :15 - warning color */
 }
 #btnDeleteColorScheme {
-	background-color:%9;	/* %9 focused border */
+	background-color:%9;	/* :9 focused border */
 }
 )END"
 };		// styles
 
-// ================================ FSchemeVector ============================
-QString FalconCalcScheme::MenuTitleForLanguage(int lang)
+
+static std::vector<QString> __schemeNames = {
+	"Background",				// %1
+	"TextColor",				// %2
+	"BorderColor",				// %3
+	"FocusedInput",				// %4
+	"HoverColor",				// %5
+	"TabBorder",				// %6
+	"InputBackground",			// %7
+	"SelectedInputBgr",			// %8
+	"FocusedBorder",			// %9
+	"DisabledFg",				// %10
+	"DisabledBg",				// %11
+	"ImageBackground",			// %12
+	"PressedBg",				// %13
+	"DefaultBg",				// %14
+	"WarningColor",				// %15
+	"BoldTitleColor",			// %16
+	"DialogBackground",			// %17
+	"MenuBackground",			// %18
+	"MenuColor",				// %19
+	"MenuHighlightBackground",	// %20
+	"MenuHighlightColor",		// %21
+	"MenuSelectedBackground",	// %22
+	"MenuSelectedColor",		// %23
+	"MenuSeparatorColor",		// %24
+	"MenuDisabled",				// %25
+	"ListAlternateBackground",	// %26
+	"ListAlternateColor",		// %27
+	"ListSelectionBackground",	// %28
+	"ListSelectionColor",		// %29
+};
+
+static std::vector<QString> 
+	__lightV = 
+	{
+		"#E0E0E0",		// %1	Background
+		"#101010",		// %2	TextColor		
+		"#808080",		// %3	BorderColor		
+		"#000000",		// %4	FocusedInput		
+		"#888888",		// %5	HoverColor		
+		"#9B9B9B",		// %6	TabBorder		
+		"#ffffff",		// %7	InputBackground
+		"#3b584a",		// %8	SelectedInputBgr 
+		"#a0a0a0",		// %9	FocusedBorder	
+		"#999999",		// %10	DisabledFg		
+		"#555555",		// %11	DisabledBg		
+		"#111111",		// %12	ImageBackground
+		"#555555",		// %13	PressedBg		
+		"#555555",		// %14	DefaultBg		
+		"#f0a91f",		// %15	WarningColor		
+		"#e28308",		// %16	BoldTitleColor
+		"qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop:0 #E0E0E0, stop:1 #FFFFFF)",			// %17 DialogBackground
+		"#e0e0e0",		// %18  MenuBackground
+		"#191010",		// %19  MenuColor
+		"#90c8f6",		// %20	MenuHighlightBackground
+		"#ffffff",		// %21	MenuHighlightColor
+		"#90c8f6",		// %22	MenuSelectedBackground
+		"#101010",		// %23	MenuSelectedColor
+		"#101010",		// %24	MenuSeparatorColor
+		"#aaaaaa",		// %25	MenuDisabledBackground
+		"#a0a0a0",		// %26	ListAlternateBackground
+		"#000000",		// %27	ListAlternateColor
+		"#aaaaaa",		// %28	ListSelectionBackground
+		"#aaaaaa",		// %29	ListSelectionColor
+	},						
+	__darkV = 				
+	{ 						
+		"#282828",		// %1	Background
+		"#cccccc",		// %2	TextColor		
+		"#4d4d4d",		// %3	BorderColor		
+		"#f0f0f0",		// %4	FocusedInput		
+		"#383838",		// %5	HoverColor		
+		"#9B9B9B",		// %6	TabBorder		
+		"#454545",		// %7	InputBackground
+		"#666666",		// %8	SelectedInputBgr 
+		"#c0c0c0",		// %9	FocusedBorder	
+		"#999999",		// %10	DisabledFg		
+		"#555555",		// %11	DisabledBg		
+		"#111111",		// %12	ImageBackground
+		"#555555",		// %13	PressedBg		
+		"#555555",		// %14	DefaultBg		
+		"#e28308",		// %15	WarningColor		
+		"#282828",		// %16	BoldTitleColor
+		"#000000",		// %17	sDialogBackground
+		"#202020",		// %18  MenuBackground
+		"#ffffff",		// %19  MenuColor
+		"#a0a0aa",		// %20	MenuHighlightBackground
+		"#ffffff",		// %21	MenuHighlightColor
+		"#aaaaaa",		// %22	MenuSelectedBackground
+		"#aaaaaa",		// %23	MenuSelectedColor
+		"#aaaaaa",		// %24	MenuSeparatorColor
+		"#aaaaaa",		// %25	MenuDisabledBackground
+		"#aaaaaa",		// %26	ListAlternateBackground
+		"#aaaaaa",		// %27	ListAlternateColor
+		"#aaaaaa",		// %28	ListSelectionBackground
+		"#aaaaaa",		// %29	ListSelectionColor
+},
+	__blackV =
+	{ 
+		"#191919",		// %1	Background
+		"#e1e1e1",		// %2	TextColor		
+		"#323232",		// %3	BorderColor		
+		"#f0f0f0",		// %4	FocusedInput		
+		"#282828",		// %5	HoverColor		
+		"#9b9b9b",		// %6	TabBorder		
+		"#323232",		// %7	InputBackground
+		"#4a4a4a",		// %8	SelectedInputBgr 
+		"#a8a8a8",		// %9	FocusedBorder	
+		"#999999",		// %10	DisabledFg		
+		"#191919",		// %11	DisabledBg		
+		"#000000",		// %12	ImageBackground
+		"#323232",		// %13	PressedBg		
+		"#323232",		// %14	DefaultBg		
+		"#f0a91f",		// %15	WarningColor		
+		"#e28308",		// %16	BoldTitleColor
+		"#191919",		// %17	DialogBackground
+		"#e0e0e0",		// %18  MenuBackground
+		"#000000",		// %19  MenuColor
+		"#0000aa",		// %20	MenuHighlightBackground
+		"#ffffff",		// %21	MenuHighlightColor
+		"#0000aa",		// %22	MenuSelectedBackground
+		"#ffffff",		// %23	MenuSelectedColor
+		"#aaaaaa",		// %24	MenuSeparatorColor
+		"#aaaaaa",		// %25	MenuDisabledBackground
+		"#aaaaaa",		// %26	ListAlternateBackground
+		"#aaaaaa",		// %27	ListAlternateColor
+		"#aaaaaa",		// %28	ListSelectionBackground
+		"#aaaaaa",		// %29	ListSelectionColor
+},
+	__blueV = 
+	{
+		"#3b5876",		// %1	Background
+		"#cccccc",		// %2	TextColor		
+		"#747474",		// %3	BorderColor		
+		"#f0f0f0",		// %4	FocusedInput		
+		"#8faed2",		// %5	HoverColor		
+		"#3b589b",		// %6	TabBorder		
+		"#1c3a55",		// %7	InputBackground
+		"#3b584a",		// %8	SelectedInputBgr 
+		"#92b1d5",		// %9	FocusedBorder	
+		"#999999",		// %10	DisabledFg		
+		"#697a8e",		// %11	DisabledBg		
+		"#12273f",		// %12	ImageBackground
+		"#555555",		// %13	PressedBg		
+		"#555555",		// %14	DefaultBg		
+		"#f0a91f",		// %15	WarningColor		
+		"#e28308",		// %16	BoldTitleColor
+		"#3b5876", 		// %17	DialogBackground
+		"#e0e0e0",		// %18  MenuBackground
+		"#000000",		// %19  MenuColor
+		"#0000aa",		// %20	MenuHighlightBackground
+		"#ffffff",		// %21	MenuHighlightColor
+		"#0000aa",		// %22	MenuSelectedBackground
+		"#ffffff",		// %23	MenuSelectedColor
+		"#aaaaaa",		// %24	MenuSeparatorColor
+		"#aaaaaa",		// %25	MenuDisabledBackground
+		"#aaaaaa",		// %26	ListAlternateBackground
+		"#aaaaaa",		// %27	ListAlternateColor
+		"#aaaaaa",		// %28	ListSelectionBackground
+		"#aaaaaa",		// %29	ListSelectionColor
+	};
+
+FalconCalcScheme FSchemeVector::light("Light:Világos",  __schemeNames, __lightV);
+FalconCalcScheme FSchemeVector::dark("Dark:Sötét",		__schemeNames, __darkV);
+FalconCalcScheme FSchemeVector::black("Black:Fekete",	__schemeNames, __blackV);
+FalconCalcScheme FSchemeVector::blue("Blue:Kék",		__schemeNames, __blueV);
+
+FSchemeVector schemes;		// default styles: default, system, blue, dark, black
+
+// ================================ FalconCalcSchemes ============================
+
+FalconCalcScheme::FalconCalcScheme(const QString sMenuTitle, std::vector<QString> names)
 {
-	if (MenuTitle.isEmpty())	// system colors
-		MenuTitle = QString("Default:Alapértelmezett");		// modify when new user interface language added!
-	QStringList sl = MenuTitle.split(':');
-	if (lang < 0 || lang >= sl.size())
-		lang = 0;
-	return sl[lang];
+	_values.resize(_names.size());
+	for (int i =0; i < (int)_names.size(); ++i )
+		_values[i] = std::make_pair(i, "");
 }
-QString& FalconCalcScheme::operator[](int index)
+
+FalconCalcScheme::FalconCalcScheme(const QString sMenuTitle,  std::vector<QString> names,  std::vector<QString> values) : _sMenuTitle(sMenuTitle), _names(names)
 {
-	switch (index)
-	{				
-		case 0:		return sBackground;
-		case 1:		return sTextColor;
-		case 2:		return sBorderColor;
-		case 3:		return sFocusedInput;
-		case 4:		return sHoverColor;
-		case 5:		return sTabBorder;
-		case 6:		return sInputBackground;
-		case 7:		return sSelectedInputBgr;
-		case 8:		return sFocusedBorder;
-		case 9:		return sDisabledFg;
-		case 10:	return sDisabledBg;
-		case 11:	return sImageBackground;
-		case 12:	return sPressedBg;
-		case 13:	return sDefaultBg;
-		case 14:	return sProgressBarChunk;
-		case 15:	return sWarningColor;
-		case 16:	return sBoldTitleColor;
-		case 17:	return sSpacerColor;
-		default:	
-		case 18:	return sDialogBackground;
-	}
+	_values.resize(_names.size());
+	for (int i =0; i < (int)_names.size(); ++i )
+		_values[i] = std::make_pair(i, values[i]);
+	// DEBUG
+	__SaveValues(sMenuTitle.left(4), _names, _values);
+	__SaveString("styeStr.val", fcStyles);
 }
 
 FalconCalcScheme::FalconCalcScheme()
 {
 }
 
-FalconCalcScheme::FalconCalcScheme(const char* t,	 // menu title
-	const char* c0,	 // sBackground
-	const char* c1,	 // sTextColor	-	foreground
-	const char* c2,	 // sBorderColor
-	const char* c3,	 // sFocusedInput
-	const char* c4,	 // sHoverColor
-	const char* c5,	 // sTabBorder
-	const char* c6,	 // sInputBackground - editor backgrounds
-	const char* c7,	 // sSelectedInputBgr
-	const char* c8,	 // sFocusedBorder
-	const char* c9,	 // sDisabledFg
-	const char* c10, // sDisabledBg
-	const char* c11, // sImageBackground
-	const char* c12, // sPressedBg	-	button pressed
-	const char* c13, // sDefaultBg
-	const char* c14, // sProgressBarChunk
-	const char* c15, // sWarningColor
-	const char* c16, // sBoldTitleColor - GroupBox title
-	const char* c17, // sSpacerColor - spacer for drop operations
-	const char* c18	 // sDialogBackground
-)					 
+QString FalconCalcScheme::MenuTitleForLanguage(int lang)
 {
-	MenuTitle = t;			// this will appear in the menu bar
-	sBackground = c0;
-	sTextColor = c1;
-	sBorderColor = c2;
-	sFocusedInput = c3;
-	sHoverColor = c4;
-	sTabBorder = c5;
-	sInputBackground = c6;
-	sSelectedInputBgr = c7;
-	sFocusedBorder = c8;
-	sDisabledFg = c9;
-	sDisabledBg = c10;
-	sImageBackground = c11;
-	sPressedBg = c12;
-	sDefaultBg = c13;
-	sProgressBarChunk = c14;
-	sWarningColor = c15;
-	sBoldTitleColor = c16;
-	sSpacerColor = c17;
-	sDialogBackground = c18;
+	if (_sMenuTitle.isEmpty())	// system colors
+		_sMenuTitle = QString("Default:Alapértelmezett");		// modify when new user interface language added!
+	QStringList sl = _sMenuTitle.split(':');
+	if (lang < 0 || lang >= sl.size())
+		lang = 0;
+	return sl[lang];
 }
-
+QString& FalconCalcScheme::operator[](int index)
+{
+	return _values[index].second;
+}
 
 // ================================ FSchemeVector ============================
 static const QString __def = "Default:Alapértelmezett";
@@ -412,7 +461,7 @@ FSchemeVector::FSchemeVector()
 {
 //	reserve(6);		// for default, system, light, dark, black, blue 
 	FalconCalcScheme schSystem;
-	schSystem.MenuTitle = QMainWindow::tr("System");
+	schSystem._sMenuTitle = QMainWindow::tr("System");
 	push_back(schSystem);		
 	push_back(light);
 	push_back(dark);
@@ -443,31 +492,15 @@ void FSchemeVector::ReadAndSetupSchemes()
 		s.setIniCodec("UTF-8");
 		QStringList keys = s.childGroups();	// get all top level keys with subkeys
 		FalconCalcScheme fgst;
-		for (auto k : keys)
+		for (auto &k : keys)
 		{
 			s.beginGroup(k);
-			fgst.MenuTitle = s.value("Title", "").toString();			// this will appear in the menu bar
-			fgst.sBackground = s.value("Background", "").toString();
-			fgst.sTextColor = s.value("TextColor", "").toString();
-			fgst.sBorderColor = s.value("BorderColor", "").toString();
-			fgst.sFocusedInput = s.value("FocusedInput", "").toString();
-			fgst.sHoverColor = s.value("HoverColor", "").toString();
-			fgst.sTabBorder = s.value("TabBorder", "").toString();
-			fgst.sInputBackground = s.value("InputBackground", "").toString();
-			fgst.sSelectedInputBgr = s.value("SelectedInputBgr", "").toString();
-			fgst.sFocusedBorder = s.value("FocusedBorder", "").toString();
-			fgst.sDisabledFg = s.value("DisabledFg", "").toString();
-			fgst.sDisabledBg = s.value("DisabledBg", "").toString();
-			fgst.sImageBackground = s.value("ImageBackground", "").toString();
-			fgst.sPressedBg = s.value("PressedBg", "").toString();
-			fgst.sDefaultBg = s.value("DefaultBg", "").toString();
-			fgst.sProgressBarChunk = s.value("ProgressBarChunk", "").toString();
-			fgst.sWarningColor = s.value("WarningColor", "").toString();
-			fgst.sBoldTitleColor = s.value("BoldTitleColor", "").toString();
-			fgst.sSpacerColor = s.value("SpacerColor", "").toString();
-			s.endGroup();
-			if( (fgst.MenuTitle == __light ) ||(fgst.MenuTitle == __blue)||(fgst.MenuTitle == __dark)||(fgst.MenuTitle == __blck))
+			fgst._sMenuTitle = s.value("Title", "").toString();			// this will appear in the menu bar
+			if( (fgst._sMenuTitle == __light ) ||(fgst._sMenuTitle == __blue)||(fgst._sMenuTitle == __dark)||(fgst._sMenuTitle == __blck))
 				continue;	// already added
+			for (auto& d : fgst._values)
+				d.second = s.value(fgst._names[d.first], "").toString();
+			s.endGroup();
 
 			push_back(fgst);
 		}
@@ -483,30 +516,14 @@ void FSchemeVector::Save()
 		QFile::remove(schemeFile);
 
 	QSettings s(schemeFile, QSettings::IniFormat);	// in program directory;
-	for (int i = 2; i < size(); ++i)	// do not save default and system
+	for (int i = 4; i < size(); ++i)	// do not save builtins
 	{
 		char st[] = "0"; st[0] += i - 1;
 		FalconCalcScheme& fgst = operator[](i);
 		s.beginGroup(st);
-		s.setValue("Title", fgst.MenuTitle);			// this will appear in the menu bar
-		s.setValue("Background", fgst.sBackground);
-		s.setValue("TextColor", fgst.sTextColor);
-		s.setValue("BorderColor", fgst.sBorderColor);
-		s.setValue("FocusedInput", fgst.sFocusedInput);
-		s.setValue("HoverColor", fgst.sHoverColor);
-		s.setValue("TabBorder", fgst.sTabBorder);
-		s.setValue("InputBackground", fgst.sInputBackground);
-		s.setValue("SelectedInputBgr", fgst.sSelectedInputBgr);
-		s.setValue("FocusedBorder", fgst.sFocusedBorder);
-		s.setValue("DisabledFg", fgst.sDisabledFg);
-		s.setValue("DisabledBg", fgst.sDisabledBg);
-		s.setValue("ImageBackground", fgst.sImageBackground);
-		s.setValue("PressedBg", fgst.sPressedBg);
-		s.setValue("DefaultBg", fgst.sDefaultBg);
-		s.setValue("ProgressBarChunk", fgst.sProgressBarChunk);
-		s.setValue("WarningColor", fgst.sWarningColor);
-		s.setValue("BoldTitleColor", fgst.sBoldTitleColor);
-		s.setValue("SpacerColor", fgst.sSpacerColor);
+		s.setValue("Title", fgst._sMenuTitle);			// this will appear in the menu bar
+		for (int i = 0; i < (int)fgst._names.size(); ++i)
+			s.setValue(fgst._names[i], fgst._values[i].second);
 		s.endGroup();
 	}
 	wasSaved = true;
@@ -514,7 +531,7 @@ void FSchemeVector::Save()
 
 int FSchemeVector::IndexOf(FalconCalcScheme& fgst)
 {
-	return IndexOf(fgst.MenuTitle);
+	return IndexOf(fgst._sMenuTitle);
 }
 
 int FSchemeVector::IndexOf(const QString& title) // title: maybe full name including  all languages, like "Blue:Kék"
@@ -523,7 +540,7 @@ int FSchemeVector::IndexOf(const QString& title) // title: maybe full name inclu
 	QString sfull;
 	for (int i = 2; i < size(); ++i)
 	{
-		sfull = operator[](i).MenuTitle;
+		sfull = operator[](i)._sMenuTitle;
 		if (sfull == title)	// full title matched
 			return i;
 		sl = title.split(':');	// check for name collision
@@ -544,36 +561,39 @@ Scheme FSchemeVector::PrepStyle(Scheme m)
 		FalconCalcScheme sch( SchemeFor(m) );
 		QString ss =
 			QString(fcStyles)
-			.arg(sch.sBackground)		// %1 
-			.arg(sch.sTextColor)			// %2 
-			.arg(sch.sBorderColor)		// %3 
-			.arg(sch.sFocusedInput)		// %4 
-			.arg(sch.sHoverColor)		// %5 
-			.arg(sch.sTabBorder)			// %6 
-			.arg(sch.sInputBackground)	// %7
-			.arg(sch.sSelectedInputBgr)	// %8 
-			.arg(sch.sFocusedBorder)		// %9 
-			.arg(sch.sDisabledFg)		// %10
-			.arg(sch.sDisabledBg)		// %11
-			.arg(sch.sImageBackground)	// %12
-			.arg(sch.sPressedBg)			// %13
-			.arg(sch.sDefaultBg)			// %14
-			.arg(sch.sProgressBarChunk)	// %15
-			.arg(sch.sWarningColor)		// %16
-			.arg(sch.sBoldTitleColor)	// %17
-			//			.arg(schemes[which].sSpacerColor)		// %18
-			;
-/*
-		if (m == Scheme::schBlue)		// blue
-			ss += QString(R"(QCheckBox::indicator:checked {
-		image: url(":/icons/Resources/blue-checked.png");
-	}
+			.arg(sch._values[ 0].second)	// %1	sBackground
+			.arg(sch._values[ 1].second)	// %2	sTextColor		
+			.arg(sch._values[ 2].second)	// %3	sBorderColor		
+			.arg(sch._values[ 3].second)	// %4	sFocusedInput		
+			.arg(sch._values[ 4].second)	// %5	sHoverColor		
+			.arg(sch._values[ 5].second)	// %6	sTabBorder		
+			.arg(sch._values[ 6].second)	// %7	sInputBackground
+			.arg(sch._values[ 7].second)	// %8	sSelectedInputBgr 
+			.arg(sch._values[ 8].second)	// %9	sFocusedBorder	
+			.arg(sch._values[ 9].second)	// %10	sDisabledFg		
+			.arg(sch._values[10].second)	// %11	sDisabledBg		
+			.arg(sch._values[11].second)	// %12	sImageBackground
+			.arg(sch._values[12].second)	// %13	sPressedBg		
+			.arg(sch._values[13].second)	// %14	sDefaultBg		
+			.arg(sch._values[14].second)	// %16	sWarningColor		
+			.arg(sch._values[15].second)	// %17	sBoldTitleColor
+			.arg(sch._values[16].second)	// %19	sDialogBackground
+			.arg(sch._values[17].second)	// %20  MenuBackground
+			.arg(sch._values[18].second)	// %21  MenuColor
+			.arg(sch._values[19].second)	// %22	MenuHighlightBackground
+			.arg(sch._values[20].second)	// %23	MenuHighlightColor
+			.arg(sch._values[21].second)	// %24	MenuSelectedBackground
+			.arg(sch._values[22].second)	// %25	MenuSelectedColor
+			.arg(sch._values[23].second)	// %26	MenuSeparatorColor
+			.arg(sch._values[24].second)	// %27	MenuDisabledBackground
+			.arg(sch._values[25].second)	// %28	ListAlternateBackground
+			.arg(sch._values[26].second)	// %29	ListAlternateColor
+			.arg(sch._values[27].second)	// %30	ListSelectionBackground
+			.arg(sch._values[28].second);	// %31	ListSelectionColor
 
-QCheckBox::indicator:unchecked {
-	image: url(":/icons/Resources/blue-unchecked.png");
-}
-)");
-*/
+		// DEBUG 1 line
+			__SaveString("rawStyeStr.val", ss);
+
 		((QApplication*)(QApplication::instance()))->setStyleSheet(ss);
 	}
 	currentScheme = m;

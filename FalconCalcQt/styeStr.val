@@ -1,0 +1,211 @@
+
+* {
+	background-color:%1;       /* :1 background */
+	color:%2;                  /* :2 color */
+}
+        
+QMainWindow,QDialog {
+	background-color:%17;       /* :17 background */
+}
+
+QTabWidget::tab-bar {
+    left: 5px;
+}
+
+QTabBar::tab {
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+	min-width: 20ex;
+	padding: 2px;
+}        
+QTabBar::tab:!selected {
+    margin-top: 2px; 
+}
+
+QToolTip {
+    border-radius: 4px;
+}
+
+QPushButton:flat {
+	border:1px solid %3;
+}
+
+QToolButton {
+	border:0;
+	border-radius:12px;
+	height:24px;
+	width:24px;
+}
+#btnSelectUplinkIcon {
+	width:32em;
+}
+
+QTextEdit, 
+QLineEdit,
+QSpinBox {
+    height:20px;
+	padding: 0 8px;
+}
+
+QPushButton {
+	padding:2px 4px;
+}
+QRadioButton::indicator,   
+QCheckBox::indicator {
+	width: 13px;
+	height: 13px;
+	position: absolute;
+	top:-4px;
+}
+
+QRadioButton, QCheckBox {
+	spacing: 5px;
+}
+
+QTextEdit, 
+QSpinBox,
+QPushButton,
+QTreeView, 
+QListView {
+    border-radius: 10px;
+}
+						
+QLabel#lblChars {
+	background-color: rgba(255,255,255,0);
+}
+        
+/* ------------------ borders ----------------------*/   
+QTabWidget:pane,     
+QTabBar::tab, 
+QToolTip,
+QTextEdit, 
+QGroupBox,
+QSpinBox,
+QPushButton {
+    border: 2px solid %3;	  /* :3   border color */
+	border-radius:5px;
+}
+
+QLineEdit {
+    border: 2px solid %3;	  /* :3   border color */
+	border-radius:10px;
+}
+
+QListView,
+QListWidget {
+    border: 2px solid %3;	  /* :3   border color */
+	border-radius:5px;
+}
+
+QListView,
+QListWidget::item:alternate {
+	background-color:%26;
+	color:%27;
+}
+
+#btnImage {
+	border-radius:0px;
+}
+
+/* ------------------ colors --------------------*/
+QGroupBox::title {
+	border-radius: 5px;
+	color:%16				/* :16 bold title color */
+}
+
+QTabBar::tab,
+QTextEdit:focus, 
+QLineEdit:focus,
+QSpinBox:focus {
+    color:%4;				/* :4 focused input */
+}
+
+QTabBar::tab:selected, 
+QTabBar::tab:hover,
+QPushButton:hover,
+QToolButton:hover {
+	background-color:%5;	/* :5 - hover */
+}
+QTabBar::tab:selected {
+	border-color:%6;		/* :6 - tab border */
+    border-bottom-color:%1; /* :1 - background */
+}
+
+#pnlColorScheme {
+	background-color:%1; /* :1 - background */
+}
+
+QToolButton,
+QTextEdit, 
+QLineEdit,
+QSpinBox {
+	background-color:%7;	/* :7 - input background */
+}
+QTextEdit, 
+QLineEdit,
+QSpinBox {
+	selection-background-color:%8;	/* :8 */
+}
+
+QTextEdit:focus, 
+QLineEdit:focus,
+QSpinBox:focus {
+	border-color:%9;		/* :9 - focused border */
+}
+
+QTextEdit:read-only, 
+QLineEdit:read-only, 
+QPushButton:disabled,
+QToolButton:disabled,
+QRadioVutton:disabled,
+QCheckBox:disabled,
+QSpinBox:disabled,
+QMenu:disabled {
+	color:%10;			/* :10 - disabled foreground */
+	background:%11;		/* :11 - disabled background */
+}
+
+QMenu {
+	border:0;
+}
+
+QMenu::item {			
+	background:%18;		/* :18 - menu item background*/
+	color:%19;		    /* :19 - menu item foreground*/
+}
+
+QMenu::item:hover {
+	background:%18;		/* :18 - menu item hover background*/
+	color:%19;			/* :19 - menu item hover foreground*/
+}
+
+QMenu::item:selected {
+	background:%22;		/* :22 - menu item selected background*/
+	color:%23			/* :23 - menu item selected foreground*/
+}
+
+QLineEdit.disabled {
+	color:%10;
+	background:%11;	   /* :11 - disabled background */
+}
+
+#lblBckImage,
+#groupBox_6 {
+	background-color:%12; /* :12 -image background */
+}
+QPushButton:pressed,
+QToolButton:pressed {
+	background-color:%13; /* :13 - pressed button background */
+}
+
+QPusButton:default {
+    background-color:%14; /* :14 - default background */
+}
+
+#lblActualElem {
+	color:%15;			/* :15 - warning color */
+}
+#btnDeleteColorScheme {
+	background-color:%9;	/* :9 focused border */
+}
+

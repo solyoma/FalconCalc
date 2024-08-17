@@ -2,6 +2,10 @@
 #ifndef _SCHEMES_H
 #define _SCHEMES_H
 
+#include <tuple>
+
+#include <QMap>
+
 #include <QObject>
 #include <QMainWindow>
 #include <QVector>
@@ -12,54 +16,18 @@ enum class Scheme { schSystem, schLight, schDark, schBlack, schBlue };
 
 struct FalconCalcScheme
 {
-	QString
-		MenuTitle,			// this will appear in the menu bar	if at least one user scheme is set it may contain a series of titles for all languages separated by colons
-		sBackground,
-		sTextColor,
-		sBorderColor,
-		sFocusedInput,
-		sHoverColor,
-		sTabBorder,
-		sInputBackground,
-		sSelectedInputBgr,
-		sFocusedBorder,
-		sDisabledFg,
-		sDisabledBg,
-		sImageBackground,
-		sPressedBg,
-		sDefaultBg,
-		sProgressBarChunk,
-		sWarningColor,
-		sBoldTitleColor,
-		sSpacerColor,		// for drag & drop in tnvImages
-		sDialogBackground;
-
+	friend class FSchemeVector;
 	QString MenuTitleForLanguage(int lang);
 	QString& operator[](int index);
 
 	FalconCalcScheme();
 
-	FalconCalcScheme(const char* t,	 // menu title
-		const char* c0,	 // sBackground
-		const char* c1,	 // sTextColor	-	foreground
-		const char* c2,	 // sBorderColor
-		const char* c3,	 // sFocusedInput
-		const char* c4,	 // sHoverColor
-		const char* c5,	 // sTabBorder
-		const char* c6,	 // sInputBackground - editor backgrounds
-		const char* c7,	 // sSelectedInputBgr
-		const char* c8,	 // sFocusedBorder
-		const char* c9,	 // sDisabledFg
-		const char* c10, // sDisabledBg
-		const char* c11, // sImageBackground
-		const char* c12, // sPressedBg	-	button pressed
-		const char* c13, // sDefaultBg
-		const char* c14, // sProgressBarChunk
-		const char* c15, // sWarningColor
-		const char* c16, // sBoldTitleColor - GroupBox title
-		const char* c17, // sSpacerColor - spacer for drop operations
-		const char* c18	 // sDialogBackground
-	);					 
+	FalconCalcScheme(const QString sMenuTitle, std::vector<QString> names);
+	FalconCalcScheme(const QString sMenuTitle, std::vector<QString> names, std::vector<QString> values);
+private:
+	QString _sMenuTitle;
+	std::vector<std::pair<int, QString> > _values;
+	std::vector<QString> _names;
 };
 
 
