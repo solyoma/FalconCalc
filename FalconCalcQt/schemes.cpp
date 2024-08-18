@@ -13,6 +13,7 @@ static void __SaveValues(QString valName, std::vector<QString> names, std::vecto
 	QFile of(valName + ".val");
 	of.open(QIODevice::WriteOnly);
 	QTextStream ofs(&of);
+	ofs << "/* -- " << valName << ".val -- */\n\n";
 	for(size_t i =0; i < values.size(); ++i)
 		ofs << i + 1 << "  "  << values[i].second << " =====> " << names[i] << "\n";
 }
@@ -21,6 +22,7 @@ static void __SaveString(QString name, QString s)
 	QFile of(name);
 	of.open(QIODevice::WriteOnly);
 	QTextStream ofs(&of);
+	ofs << "/* -- " << name << " -- */\n\n";
 	ofs << s << "\n";
 }
 #else
@@ -31,15 +33,21 @@ static void __SaveString(QString name, QString s)
 
 static QString fcStyles = {
 R"END(
+/* If not all values are used then the arg() can skip
+   e.g. QString("%1 - %3").arg(1).arg(2).arg(3) will result in the string "1 - 2" and not "1 - 3"
+   %1 %2 %3 %4 %5 %6 %7 %8 %9 %10 
+   %11 %12 %13 %14 %15 %16 %17 %18 %19 %20
+   %21 %22 %23 %24 %25 %26 %27 %28 %29
+*/
 * {
-	background-color:%1;       /* :1 background */
-	color:%2;                  /* :2 color */
+	background-color:%1;		/* :%2 (1) background */
+	color:%3;					/* :%4 (2) color */
 }
         
 QMainWindow,QDialog {
-	background-color:%17;       /* :17 background */
+	background-color:%35;		/* :%36 (17) background */
 }
-
+/*---------------------------*/
 QTabWidget::tab-bar {
     left: 5px;
 }
@@ -53,7 +61,7 @@ QTabBar::tab {
 QTabBar::tab:!selected {
     margin-top: 2px; 
 }
-
+/*---------------------------*/
 QToolTip {
     border-radius: 4px;
 }
@@ -62,25 +70,19 @@ QPushButton:flat {
 	border:1px solid %3;
 }
 
+QPushButton {
+	padding:2px 4px;
+}
+
 QToolButton {
 	border:0;
 	border-radius:12px;
 	height:24px;
 	width:24px;
 }
-#btnSelectUplinkIcon {
-	width:32em;
-}
 
-QTextEdit, 
-QLineEdit,
-QSpinBox {
-    height:20px;
-	padding: 0 8px;
-}
-
-QPushButton {
-	padding:2px 4px;
+QRadioButton, QCheckBox {
+	spacing: 5px;
 }
 QRadioButton::indicator,   
 QCheckBox::indicator {
@@ -90,8 +92,11 @@ QCheckBox::indicator {
 	top:-4px;
 }
 
-QRadioButton, QCheckBox {
-	spacing: 5px;
+QTextEdit, 
+QLineEdit,
+QSpinBox {
+    height:20px;
+	padding: 0 8px;
 }
 
 QTextEdit, 
@@ -107,6 +112,11 @@ QLabel#lblChars {
 }
         
 /* ------------------ borders ----------------------*/   
+QGroupBox::title {
+	border-radius: 5px;
+	color:%33;					/* :%34 (16) bold title color */
+}
+
 QTabWidget:pane,     
 QTabBar::tab, 
 QToolTip,
@@ -114,25 +124,25 @@ QTextEdit,
 QGroupBox,
 QSpinBox,
 QPushButton {
-    border: 2px solid %3;	  /* :3   border color */
+    border: 2px solid %7;		/* :%8  (3)  border color */
 	border-radius:5px;
 }
 
 QLineEdit {
-    border: 2px solid %3;	  /* :3   border color */
+    border: 2px solid %7;		/* :%8  (3)  border color */
 	border-radius:10px;
 }
 
 QListView,
 QListWidget {
-    border: 2px solid %3;	  /* :3   border color */
+    border: 2px solid %7;		/* :%8  (3)  border color */
 	border-radius:5px;
 }
 
 QListView,
 QListWidget::item:alternate {
-	background-color:%26;
-	color:%27;
+	background-color:%53;		/* :%54  (26) alternate background */
+	color:%55;					/* :%56  (27) alternate color */
 }
 
 #btnImage {
@@ -140,105 +150,94 @@ QListWidget::item:alternate {
 }
 
 /* ------------------ colors --------------------*/
-QGroupBox::title {
-	border-radius: 5px;
-	color:%16				/* :16 bold title color */
-}
-
 QTabBar::tab,
 QTextEdit:focus, 
 QLineEdit:focus,
 QSpinBox:focus {
-    color:%4;				/* :4 focused input */
+    color:%9;					/* :%10 (4) focused input */
 }
 
 QTabBar::tab:selected, 
 QTabBar::tab:hover,
 QPushButton:hover,
 QToolButton:hover {
-	background-color:%5;	/* :5 - hover */
+	background-color:%11;		/* :%12 (5) hover */
 }
 QTabBar::tab:selected {
-	border-color:%6;		/* :6 - tab border */
-    border-bottom-color:%1; /* :1 - background */
+	border-color:%13;			/* :%14 (6)  tab border */
+    border-bottom-color:%1;		/* :%2  (1)  background */
 }
 
 #pnlColorScheme {
-	background-color:%1; /* :1 - background */
+	background-color:%1;		/* :%2  (1)  background */
 }
 
 QToolButton,
 QTextEdit, 
 QLineEdit,
 QSpinBox {
-	background-color:%7;	/* :7 - input background */
+	background-color:%15;		/* :%16  (7)  input background */
 }
 QTextEdit, 
 QLineEdit,
 QSpinBox {
-	selection-background-color:%8;	/* :8 */
+	selection-background-color:%17;	/* :%18 (8)  selection background*/
 }
 
 QTextEdit:focus, 
 QLineEdit:focus,
 QSpinBox:focus {
-	border-color:%9;		/* :9 - focused border */
+	border-color:%19;			/* :%20 (9)  focused border */
 }
 
 QTextEdit:read-only, 
 QLineEdit:read-only, 
 QPushButton:disabled,
 QToolButton:disabled,
-QRadioVutton:disabled,
+QRadioButton:disabled,
 QCheckBox:disabled,
-QSpinBox:disabled,
-QMenu:disabled {
-	color:%10;			/* :10 - disabled foreground */
-	background:%11;		/* :11 - disabled background */
+QSpinBox:disabled {
+	color:%21;					/* :%22 (10) disabled foreground */
+	background:%23;				/* :%24 (11) disabled background */
 }
-
+/* ----------- QMenu, QMenuBar, QmenuItem ------*/
 QMenu {
 	border:0;
 }
-
-QMenu::item {			
-	background:%18;		/* :18 - menu item background*/
-	color:%19;		    /* :19 - menu item foreground*/
+QMenu:disabled {
+	color:%21;					/* :%22 (10) disabled foreground */
+	background:%23;				/* :%24 (11) disabled background */
 }
 
-QMenu::item:hover {
-	background:%18;		/* :18 - menu item hover background*/
-	color:%19;			/* :19 - menu item hover foreground*/
-}
-
-QMenu::item:selected {
-	background:%22;		/* :22 - menu item selected background*/
-	color:%23			/* :23 - menu item selected foreground*/
+QMenu::item:selected,
+QMenuBar::item:selected {			
+	background:%45;				/* :%46 - (22) menu selected background*/
+	color:%47;					/* :%48 - (23) menu selected foreground*/
 }
 
 QLineEdit.disabled {
 	color:%10;
-	background:%11;	   /* :11 - disabled background */
-}
+	background:%23;				/* :%24 - (11) disabled background */
+}										  
 
 #lblBckImage,
 #groupBox_6 {
-	background-color:%12; /* :12 -image background */
-}
+	background-color:%25;		/* :%26 (12) image background */
+}										
 QPushButton:pressed,
 QToolButton:pressed {
-	background-color:%13; /* :13 - pressed button background */
+	background-color:%27;		/* :%28 (13) pressed button background */
 }
 
 QPusButton:default {
-    background-color:%14; /* :14 - default background */
+    background-color:%29;		/* :%30 (14)  default background */
 }
 
 #lblActualElem {
-	color:%15;			/* :15 - warning color */
+	color:%31;					/* :%32 (15)  warning color */
 }
 #btnDeleteColorScheme {
-	background-color:%9;	/* :9 focused border */
+	background-color:%19;		/* :%20 (9) focused border */
 }
 )END"
 };		// styles
@@ -289,18 +288,18 @@ static std::vector<QString>
 		"#3b584a",		// %8	SelectedInputBgr 
 		"#a0a0a0",		// %9	FocusedBorder	
 		"#999999",		// %10	DisabledFg		
-		"#555555",		// %11	DisabledBg		
+		"#909090",		// %11	DisabledBg		
 		"#111111",		// %12	ImageBackground
 		"#555555",		// %13	PressedBg		
-		"#555555",		// %14	DefaultBg		
+		"#e0e0e0",		// %14	DefaultBg		
 		"#f0a91f",		// %15	WarningColor		
 		"#e28308",		// %16	BoldTitleColor
 		"qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop:0 #E0E0E0, stop:1 #FFFFFF)",			// %17 DialogBackground
 		"#e0e0e0",		// %18  MenuBackground
-		"#191010",		// %19  MenuColor
-		"#90c8f6",		// %20	MenuHighlightBackground
-		"#ffffff",		// %21	MenuHighlightColor
-		"#90c8f6",		// %22	MenuSelectedBackground
+		"#101010",		// %19  MenuColor
+		"#a0a0a0",		// %20	MenuHighlightBackground
+		"#101010",		// %21	MenuHighlightColor
+		"#a0a0a0",		// %22	MenuSelectedBackground
 		"#101010",		// %23	MenuSelectedColor
 		"#101010",		// %24	MenuSeparatorColor
 		"#aaaaaa",		// %25	MenuDisabledBackground
@@ -393,11 +392,12 @@ static std::vector<QString>
 		"#e28308",		// %16	BoldTitleColor
 		"#3b5876", 		// %17	DialogBackground
 		"#e0e0e0",		// %18  MenuBackground
-		"#000000",		// %19  MenuColor
-		"#0000aa",		// %20	MenuHighlightBackground
-		"#ffffff",		// %21	MenuHighlightColor
-		"#0000aa",		// %22	MenuSelectedBackground
-		"#ffffff",		// %23	MenuSelectedColor
+		"#cce8ff",		// %18  MenuBackground
+		"#101010",		// %19  MenuColor
+		"#90c8f6",		// %20	MenuHighlightBackground
+		"#101010",		// %21	MenuHighlightColor
+		"#90c8f6",		// %22	MenuSelectedBackground
+		"#101010",		// %23	MenuSelectedColor
 		"#aaaaaa",		// %24	MenuSeparatorColor
 		"#aaaaaa",		// %25	MenuDisabledBackground
 		"#aaaaaa",		// %26	ListAlternateBackground
@@ -419,14 +419,14 @@ FalconCalcScheme::FalconCalcScheme(const QString sMenuTitle, std::vector<QString
 {
 	_values.resize(_names.size());
 	for (int i =0; i < (int)_names.size(); ++i )
-		_values[i] = std::make_pair(i, "");
+		_values[i] = std::make_pair(i+1, "");
 }
 
 FalconCalcScheme::FalconCalcScheme(const QString sMenuTitle,  std::vector<QString> names,  std::vector<QString> values) : _sMenuTitle(sMenuTitle), _names(names)
 {
 	_values.resize(_names.size());
 	for (int i =0; i < (int)_names.size(); ++i )
-		_values[i] = std::make_pair(i, values[i]);
+		_values[i] = std::make_pair(i+1, values[i]);
 	// DEBUG
 	__SaveValues(sMenuTitle.left(4), _names, _values);
 	__SaveString("styeStr.val", fcStyles);
@@ -559,40 +559,82 @@ Scheme FSchemeVector::PrepStyle(Scheme m)
 	else
 	{
 		FalconCalcScheme sch( SchemeFor(m) );
-		QString ss =
-			QString(fcStyles)
-			.arg(sch._values[ 0].second)	// %1	sBackground
-			.arg(sch._values[ 1].second)	// %2	sTextColor		
-			.arg(sch._values[ 2].second)	// %3	sBorderColor		
-			.arg(sch._values[ 3].second)	// %4	sFocusedInput		
-			.arg(sch._values[ 4].second)	// %5	sHoverColor		
-			.arg(sch._values[ 5].second)	// %6	sTabBorder		
-			.arg(sch._values[ 6].second)	// %7	sInputBackground
-			.arg(sch._values[ 7].second)	// %8	sSelectedInputBgr 
-			.arg(sch._values[ 8].second)	// %9	sFocusedBorder	
-			.arg(sch._values[ 9].second)	// %10	sDisabledFg		
-			.arg(sch._values[10].second)	// %11	sDisabledBg		
-			.arg(sch._values[11].second)	// %12	sImageBackground
-			.arg(sch._values[12].second)	// %13	sPressedBg		
-			.arg(sch._values[13].second)	// %14	sDefaultBg		
-			.arg(sch._values[14].second)	// %16	sWarningColor		
-			.arg(sch._values[15].second)	// %17	sBoldTitleColor
-			.arg(sch._values[16].second)	// %19	sDialogBackground
-			.arg(sch._values[17].second)	// %20  MenuBackground
-			.arg(sch._values[18].second)	// %21  MenuColor
-			.arg(sch._values[19].second)	// %22	MenuHighlightBackground
-			.arg(sch._values[20].second)	// %23	MenuHighlightColor
-			.arg(sch._values[21].second)	// %24	MenuSelectedBackground
-			.arg(sch._values[22].second)	// %25	MenuSelectedColor
-			.arg(sch._values[23].second)	// %26	MenuSeparatorColor
-			.arg(sch._values[24].second)	// %27	MenuDisabledBackground
-			.arg(sch._values[25].second)	// %28	ListAlternateBackground
-			.arg(sch._values[26].second)	// %29	ListAlternateColor
-			.arg(sch._values[27].second)	// %30	ListSelectionBackground
-			.arg(sch._values[28].second);	// %31	ListSelectionColor
 
-		// DEBUG 1 line
-			__SaveString("rawStyeStr.val", ss);
+		__SaveString("fcStyles.str", fcStyles);
+		QString sz = "%1-%3-%2";
+		sz = sz.arg(1).arg(2).arg(3);
+
+		QString ss =											//		variable				index in 
+			QString(fcStyles)									//   index    name				style sheet
+			.arg(sch._values[ 0].second).arg(sch._values[ 0].first)	// %1	sBackground				    1
+			.arg(sch._values[ 1].second).arg(sch._values[ 1].first)	// %2	sTextColor				    3
+			.arg(sch._values[ 2].second).arg(sch._values[ 2].first)	// %3	sBorderColor			    5
+			.arg(sch._values[ 3].second).arg(sch._values[ 3].first)	// %4	sFocusedInput			    7
+			.arg(sch._values[ 4].second).arg(sch._values[ 4].first)	// %5	sHoverColor				    9
+			.arg(sch._values[ 5].second).arg(sch._values[ 5].first)	// %6	sTabBorder				   11
+			.arg(sch._values[ 6].second).arg(sch._values[ 6].first)	// %7	sInputBackground		   13
+			.arg(sch._values[ 7].second).arg(sch._values[ 7].first)	// %8	sSelectedInputBgr 		   15
+			.arg(sch._values[ 8].second).arg(sch._values[ 8].first)	// %9	sFocusedBorder			   17
+			.arg(sch._values[ 9].second).arg(sch._values[ 9].first)	// %10	sDisabledFg				   19
+			.arg(sch._values[10].second).arg(sch._values[10].first)	// %11	sDisabledBg				   21
+			.arg(sch._values[11].second).arg(sch._values[11].first)	// %12	sImageBackground		   23
+			.arg(sch._values[12].second).arg(sch._values[12].first)	// %13	sPressedBg				   25
+			.arg(sch._values[13].second).arg(sch._values[13].first)	// %14	sDefaultBg				   27
+			.arg(sch._values[14].second).arg(sch._values[14].first)	// %15	sWarningColor			   29
+			.arg(sch._values[15].second).arg(sch._values[15].first)	// %16	sBoldTitleColor			   31
+			.arg(sch._values[16].second).arg(sch._values[16].first)	// %17	sDialogBackground		   33
+			.arg(sch._values[17].second).arg(sch._values[17].first)	// %18  MenuBackground			   35
+			.arg(sch._values[18].second).arg(sch._values[18].first)	// %19  MenuColor				   37
+			.arg(sch._values[19].second).arg(sch._values[19].first)	// %20	MenuHighlightBackground	   39
+			.arg(sch._values[20].second).arg(sch._values[20].first)	// %21	MenuHighlightColor		   41
+			.arg(sch._values[21].second).arg(sch._values[21].first)	// %22	MenuSelectedBackground	   43
+			.arg(sch._values[22].second).arg(sch._values[22].first)	// %23	MenuSelectedColor		   45
+			.arg(sch._values[23].second).arg(sch._values[23].first)	// %24	MenuSeparatorColor		   47
+			.arg(sch._values[24].second).arg(sch._values[24].first)	// %25	MenuDisabledBackground	   49
+			.arg(sch._values[25].second).arg(sch._values[25].first)	// %26	ListAlternateBackground	   51
+			.arg(sch._values[26].second).arg(sch._values[26].first)	// %27	ListAlternateColor		   53
+			.arg(sch._values[27].second).arg(sch._values[27].first)	// %28	ListSelectionBackground	   55
+			.arg(sch._values[28].second).arg(sch._values[28].first);// %29	ListSelectionColor		   57
+
+		// DEBUG
+		QString qsDbg;
+		for (size_t i = 0; i < sch._values.size(); i++)
+			qsDbg += QString("\x25%1 -> \x25%2\n").arg(2*i+1).arg(2*i + 2);
+
+		QString qsRes = qsDbg
+			.arg(sch._values[ 0].first).arg(sch._values[ 0].second)		//  1		  // %1
+			.arg(sch._values[ 1].first).arg(sch._values[ 1].second)		//  3		  // %2
+			.arg(sch._values[ 2].first).arg(sch._values[ 2].second)		//  5		  // %3
+			.arg(sch._values[ 3].first).arg(sch._values[ 3].second)		//  7		  // %4
+			.arg(sch._values[ 4].first).arg(sch._values[ 4].second)		//  9		  // %5
+			.arg(sch._values[ 5].first).arg(sch._values[ 5].second)		// 11		  // %6
+			.arg(sch._values[ 6].first).arg(sch._values[ 6].second)		// 13		  // %7
+			.arg(sch._values[ 7].first).arg(sch._values[ 7].second)		// 15		  // %8
+			.arg(sch._values[ 8].first).arg(sch._values[ 8].second)		// 17		  // %9
+			.arg(sch._values[ 9].first).arg(sch._values[ 9].second)		// 19		  // %10
+			.arg(sch._values[10].first).arg(sch._values[10].second)		// 21		  // %11
+			.arg(sch._values[11].first).arg(sch._values[11].second)		// 23		  // %12
+			.arg(sch._values[12].first).arg(sch._values[12].second)		// 25		  // %13
+			.arg(sch._values[13].first).arg(sch._values[13].second)		// 27		  // %14
+			.arg(sch._values[14].first).arg(sch._values[14].second)		// 29		  // %15
+			.arg(sch._values[15].first).arg(sch._values[15].second)		// 31		  // %16
+			.arg(sch._values[16].first).arg(sch._values[16].second)		// 33		  // %17
+			.arg(sch._values[17].first).arg(sch._values[17].second)		// 35		  // %18
+			.arg(sch._values[18].first).arg(sch._values[18].second)		// 37		  // %19
+			.arg(sch._values[19].first).arg(sch._values[19].second)		// 39		  // %20
+			.arg(sch._values[20].first).arg(sch._values[20].second)		// 41		  // %21
+			.arg(sch._values[21].first).arg(sch._values[21].second)		// 43		  // %22
+			.arg(sch._values[22].first).arg(sch._values[22].second)		// 45		  // %23
+			.arg(sch._values[23].first).arg(sch._values[23].second)		// 47		  // %24
+			.arg(sch._values[24].first).arg(sch._values[24].second)		// 49		  // %25
+			.arg(sch._values[25].first).arg(sch._values[25].second)		// 51		  // %26
+			.arg(sch._values[26].first).arg(sch._values[26].second)		// 53		  // %27
+			.arg(sch._values[27].first).arg(sch._values[27].second)		// 55		  // %28
+			.arg(sch._values[28].first).arg(sch._values[28].second);	// 57		  // %29
+			__SaveString("piecemal.val", qsRes);
+
+		__SaveString("oriStyeStr.val", ss);
+		// /DEBUG
 
 		((QApplication*)(QApplication::instance()))->setStyleSheet(ss);
 	}
