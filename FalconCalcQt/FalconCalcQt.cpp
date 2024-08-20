@@ -30,7 +30,7 @@ using namespace FalconCalc;
 #include "FCSettings.h"
 #include "schemes.h"
 
-#ifdef NothingImportant
+//#ifdef NothingImportant
 #ifdef _DEBUG
 #include <QFile>
 #include <QTextStream>
@@ -44,7 +44,7 @@ static void __SaveStyle(QString styleName)
 #else
 	#define __SaveStyle(a) 
 #endif
-#endif
+//#endif
 
 FalconCalc::LittleEngine* lengine = nullptr;
 
@@ -389,28 +389,28 @@ void FalconCalcQt::on_actionLightMode_triggered()
 	_actScheme = Scheme::schLight;
 	_schemeVector->PrepStyle(_actScheme);
 	ui.actionLightMode->setChecked(true);
-//	__SaveStyle("light");
+	//__SaveStyle("light");
 }
 void FalconCalcQt::on_actionDarkMode_triggered()
 {
 	_actScheme = Scheme::schDark;
 	_schemeVector->PrepStyle(_actScheme);
 	ui.actionDarkMode->setChecked(true);
-//	__SaveStyle("dark");
+	//__SaveStyle("dark");
 }
 void FalconCalcQt::on_actionBlackMode_triggered()
 {
 	_actScheme = Scheme::schBlack;
 	_schemeVector->PrepStyle(_actScheme);
 	ui.actionBlackMode->setChecked(true);
-//	__SaveStyle("black");
+	//__SaveStyle("black");
 }
 void FalconCalcQt::on_actionBlueMode_triggered()
 {
 	_actScheme = Scheme::schBlue;
 	_schemeVector->PrepStyle(_actScheme);
 	ui.actionBlueMode->setChecked(true);
-//	__SaveStyle("blue");
+	//__SaveStyle("blue");
 }
 void FalconCalcQt::on_actionSelectFont_triggered()
 {

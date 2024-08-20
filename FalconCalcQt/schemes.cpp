@@ -37,6 +37,7 @@ static QString fcStyles = {
 R"END(
 /* If not all values are used then the arg() can skip
    e.g. QString("%1 - %3").arg(1).arg(2).arg(3) will result in the string "1 - 2" and not "1 - 3"
+	therefore to keep the order all arguments (colors) are enumerated here 
    %1 %2 %3 %4 %5 %6 %7 %8 %9 %10 
    %11 %12 %13 %14 %15 %16 %17 %18 %19 %20
    %21 %22 %23 %24 %25 %26 %27 %28 %29
@@ -141,17 +142,14 @@ QListWidget {
 	border-radius:5px;
 }
 
-QListView,
-QListWidget::item:alternate {
-	background-color:%26;		/* (26) alternate background */
-	color:%27;					/* (27) alternate color */
-}
-
 #btnImage {
 	border-radius:0px;
 }
 
 /* ------------------ colors --------------------*/
+QLineEdit {
+	background:%7;				/* (7)	InputBackground */ 
+}
 QTabBar::tab,
 QTextEdit:focus, 
 QLineEdit:focus,
@@ -166,7 +164,7 @@ QToolButton:hover {
 	background-color:%5;		/* :(5) hover */
 }
 QTabBar::tab:selected {
-	border-color:%13;			/* :(6)  tab border */
+	border-color:%13;			/* :(13)  tab border */
     border-bottom-color:%1;		/* :(1)  background */
 }
 
@@ -176,7 +174,6 @@ QTabBar::tab:selected {
 
 QToolButton,
 QTextEdit, 
-QLineEdit,
 QSpinBox {
 	background-color:%7;		/* :(7)  input background */
 }
@@ -203,6 +200,11 @@ QSpinBox:disabled {
 	background:%11;				/* (11) disabled background */
 }
 /* ----------- QMenu, QMenuBar, QmenuItem ------*/
+QMenuBar::item:selected {			
+	background:%18;				/* (18) menu selected background*/
+	color:%19;					/* (19) menu selected foreground*/
+}
+
 QMenu {
 	border:0;
 }
@@ -211,8 +213,11 @@ QMenu:disabled {
 	background:%11;				/* (11) disabled background */
 }
 
-QMenu::item:selected,
-QMenuBar::item:selected {			
+QMenu::item {
+  background-color:%1;			/* (1) Background color */
+}
+
+QMenu::item:selected {			
 	background:%22;				/* (22) menu selected background*/
 	color:%23;					/* (23) menu selected foreground*/
 }
@@ -233,6 +238,18 @@ QToolButton:pressed {
 
 QPusButton:default {
     background-color:%14;		/* (14)  default background */
+}
+
+
+QTableWidget {
+	background:%26;				/* (26) TableWidgetBackground*/
+	color:%27;					/* (27) color */
+	alternate-background-color:%28;	/* (28) alternate background */
+}
+
+QHeaderView::section {
+	background:%26;
+	color:%27;
 }
 
 #lblActualElem {
@@ -257,24 +274,25 @@ static std::vector<QString> __schemeNames = {
 	"FocusedBorder",			// %9
 	"DisabledFg",				// %10
 	"DisabledBg",				// %11
-	"ImageBackground",			// %12
 	"PressedBg",				// %13
 	"DefaultBg",				// %14
 	"WarningColor",				// %15
 	"BoldTitleColor",			// %16
 	"DialogBackground",			// %17
-	"MenuBackground",			// %18
-	"MenuColor",				// %19
+	"MenuBarBackground",		// %18
+	"MenuBarColor",				// %19
 	"MenuHighlightBackground",	// %20
 	"MenuHighlightColor",		// %21
 	"MenuSelectedBackground",	// %22
 	"MenuSelectedColor",		// %23
 	"MenuSeparatorColor",		// %24
 	"MenuDisabled",				// %25
-	"ListAlternateBackground",	// %26
-	"ListAlternateColor",		// %27
-	"ListSelectionBackground",	// %28
-	"ListSelectionColor",		// %29
+	"TableWidgetBackground",	// %26
+	"TableWidgetColor",			// %27
+	"TableWidgetAlternateBackground",// %28
+	"TableWidgetAlternateColor",// %29
+
+	"ImageBackground",			// %12
 };
 
 static std::vector<QString> 
@@ -297,18 +315,18 @@ static std::vector<QString>
 		"#f0a91f",		// %15	WarningColor		
 		"#e28308",		// %16	BoldTitleColor
 		"qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop:0 #E0E0E0, stop:1 #FFFFFF)",			// %17 DialogBackground
-		"#e0e0e0",		// %18  MenuBackground
-		"#101010",		// %19  MenuColor
+		"#cce8ff",		// %18  MenuBarBackground
+		"#101010",		// %19  MenuBarColor
 		"#a0a0a0",		// %20	MenuHighlightBackground
 		"#101010",		// %21	MenuHighlightColor
-		"#a0a0a0",		// %22	MenuSelectedBackground
+		"#90c8f6",		// %22	MenuSelectedBackground
 		"#101010",		// %23	MenuSelectedColor
 		"#101010",		// %24	MenuSeparatorColor
 		"#aaaaaa",		// %25	MenuDisabledBackground
-		"#a0a0a0",		// %26	ListAlternateBackground
-		"#000000",		// %27	ListAlternateColor
-		"#aaaaaa",		// %28	ListSelectionBackground
-		"#aaaaaa",		// %29	ListSelectionColor
+		"#e0e0e0",		// %26	TableWidgetBackground
+		"#000000",		// %27	TableWidgetColor
+		"#d0d0d0",		// %28	TableWidgetAlternateBackground
+		"#aaaaaa",		// %29	TableWidgetAlternateColor
 	},						
 	__darkV = 				
 	{ 						
@@ -327,20 +345,20 @@ static std::vector<QString>
 		"#555555",		// %13	PressedBg		
 		"#555555",		// %14	DefaultBg		
 		"#e28308",		// %15	WarningColor		
-		"#282828",		// %16	BoldTitleColor
+		"#e28308",		// %16	BoldTitleColor
 		"#000000",		// %17	sDialogBackground
 		"#202020",		// %18  MenuBackground
 		"#ffffff",		// %19  MenuColor
 		"#a0a0aa",		// %20	MenuHighlightBackground
-		"#ffffff",		// %21	MenuHighlightColor
-		"#aaaaaa",		// %22	MenuSelectedBackground
-		"#aaaaaa",		// %23	MenuSelectedColor
+		"#000000",		// %21	MenuHighlightColor
+		"#a0a0a0",		// %22	MenuSelectedBackground
+		"#000000",		// %23	MenuSelectedColor
 		"#aaaaaa",		// %24	MenuSeparatorColor
 		"#aaaaaa",		// %25	MenuDisabledBackground
-		"#aaaaaa",		// %26	ListAlternateBackground
-		"#aaaaaa",		// %27	ListAlternateColor
-		"#aaaaaa",		// %28	ListSelectionBackground
-		"#aaaaaa",		// %29	ListSelectionColor
+		"#303030",		// %26	TableWidgetBackground
+		"#aaaaaa",		// %27	TableWidgetColor
+		"#505050",		// %28	TableWidgetAlternateBackground
+		"#aaaaaa",		// %29	TableWidgetAlternateColor
 },
 	__blackV =
 	{ 
@@ -365,14 +383,14 @@ static std::vector<QString>
 		"#000000",		// %19  MenuColor
 		"#0000aa",		// %20	MenuHighlightBackground
 		"#ffffff",		// %21	MenuHighlightColor
-		"#0000aa",		// %22	MenuSelectedBackground
-		"#ffffff",		// %23	MenuSelectedColor
+		"#a0a0a0",		// %22	MenuSelectedBackground
+		"#000000",		// %23	MenuSelectedColor
 		"#aaaaaa",		// %24	MenuSeparatorColor
 		"#aaaaaa",		// %25	MenuDisabledBackground
-		"#aaaaaa",		// %26	ListAlternateBackground
-		"#aaaaaa",		// %27	ListAlternateColor
-		"#aaaaaa",		// %28	ListSelectionBackground
-		"#aaaaaa",		// %29	ListSelectionColor
+		"#191919",		// %26	TableWidgetBackground
+		"#aaaaaa",		// %27	TableWidgetColor
+		"#303030",		// %28	TableWidgetAlternateBackground
+		"#aaaaaa",		// %29	TableWidgetAlternateColor
 },
 	__blueV = 
 	{
@@ -393,7 +411,6 @@ static std::vector<QString>
 		"#f0a91f",		// %15	WarningColor		
 		"#e28308",		// %16	BoldTitleColor
 		"#3b5876", 		// %17	DialogBackground
-		"#e0e0e0",		// %18  MenuBackground
 		"#cce8ff",		// %18  MenuBackground
 		"#101010",		// %19  MenuColor
 		"#90c8f6",		// %20	MenuHighlightBackground
@@ -402,10 +419,10 @@ static std::vector<QString>
 		"#101010",		// %23	MenuSelectedColor
 		"#aaaaaa",		// %24	MenuSeparatorColor
 		"#aaaaaa",		// %25	MenuDisabledBackground
-		"#aaaaaa",		// %26	ListAlternateBackground
-		"#aaaaaa",		// %27	ListAlternateColor
-		"#aaaaaa",		// %28	ListSelectionBackground
-		"#aaaaaa",		// %29	ListSelectionColor
+		"#3b5876",		// %26	TableWidgetBackground
+		"#cccccc",		// %27	TableWidgetColor
+		"#476a8d",		// %28	TableWidgetAlternateBackground
+		"#aaaaaa",		// %29	TableWidgetAlternateColor
 	};
 
 FalconCalcScheme FSchemeVector::light("Light:Világos",  __schemeNames, __lightV);

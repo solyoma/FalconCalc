@@ -19,7 +19,7 @@ VariablesFunctionsDialog::VariablesFunctionsDialog(int which, VarFuncInfoQt &vfi
 	_FillVarTables();
 	_FillFuncTables();
 	ui.tabHeader->setCurrentIndex(which);
-
+	ui.btnRemoveAll->setEnabled(which ? _vf.uBuiltinFuncCnt : _vf.uBuiltinVarCnt);
 }
 
 VariablesFunctionsDialog::~VariablesFunctionsDialog()
@@ -57,6 +57,7 @@ void VariablesFunctionsDialog::moveEvent(QMoveEvent* e)
 
 void VariablesFunctionsDialog::on_tabHeader_currentChanged(int index)
 {
+	ui.btnRemoveAll->setEnabled(index? _vf.uBuiltinFuncCnt : _vf.uBuiltinVarCnt);
 	qDebug("on_tabHeader_currentChanged");
 }
 
@@ -166,34 +167,6 @@ void VariablesFunctionsDialog::_FillFuncTables()
 	_ClearUserTables(1);
 	_FillUserFuncTable();
 	_FillBuiltinFuncTable();
-
-	//int rowU = 0, rowB = 0;
-	//for (auto& f : FalconCalc::LittleEngine::functions)
-	//{
-	//	ptw = new QTableWidgetItem(f.second.name.toQString());
-	//	if (f.second.builtin)
-	//	{
-	//		ui.tblBuiltinFuncs->setItem(rowB, 0, ptw);
-	//		ptw = new QTableWidgetItem("-");
-	//		ui.tblBuiltinFuncs->setItem(rowB, 1, ptw);
-	//		ptw = new QTableWidgetItem("-");
-	//		ui.tblBuiltinFuncs->setItem(rowB, 2, ptw);
-	//		ptw = new QTableWidgetItem(f.second.desc.toQString());
-	//		ui.tblBuiltinFuncs->setItem(rowB, 3, ptw);
-	//		++rowB;
-	//	}
-	//	else		// user
-	//	{
-	//		ui.tblUserFuncs->setItem(rowU, 0, ptw);
-	//		ptw = new QTableWidgetItem(f.second.body.toQString());
-	//		ui.tblBuiltinFuncs->setItem(rowU, 1, ptw);
-	//		ptw = new QTableWidgetItem(f.second.unit.toQString());
-	//		ui.tblBuiltinFuncs->setItem(rowU, 2, ptw);
-	//		ptw = new QTableWidgetItem(f.second.desc.toQString());
-	//		ui.tblBuiltinFuncs->setItem(rowU, 3, ptw);
-	//		++rowU;
-	//	}
-	//}
 }
 
 void VariablesFunctionsDialog::_FillBuiltinVarTable()
