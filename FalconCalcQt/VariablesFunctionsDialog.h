@@ -1,5 +1,9 @@
 #pragma once
 #include <QtWidgets/QDialog>
+
+#include <QStack>			// for undo
+#include <QPair>
+
 #include "ui_VariablesFunctionsDialog.h"
 
 namespace FalconCalc {
@@ -27,7 +31,6 @@ public:
 	VariablesFunctionsDialog(int which, VarFuncInfoQt &vfi, QWidget* parent = nullptr);
 	~VariablesFunctionsDialog();
 
-
 	QTableWidget* pUserVars = nullptr;
 	QTableWidget* pUserFuncs = nullptr;
 	QTableWidget* pBuiltinVars = nullptr;
@@ -48,12 +51,17 @@ protected slots:
 	void on_tabHeader_currentChanged(int index);
 	void on_btnRemoveAll_clicked();
 	void on_btnRemoveRow_clicked();
+	void on_btnUndo_clicked();
 	void on_btnAddRow_clicked();
-	void on_tblUserVars_itemClicked(QTableWidgetItem*);
+	void on_tblUserVars_currentItemChanged(QTableWidgetItem* current, QTableWidgetItem* previous);
+	void on_tblUserFuncs_currentItemChanged(QTableWidgetItem* current, QTableWidgetItem* previous);
 private:
 	FalconCalc::LittleEngine* _lengine = nullptr;
 	bool _changed = false;
 	VarFuncInfoQt _vf;
+
+	QStack<QPair<int, QVector<QTableWidgetItem*>>> _removedVarRows, _removedFuncRows;
+	QStack<QPair<int, QVector<QTableWidgetItem*>>>* _pActStack;
 private:
 	void _ClearUserTables(int whichTab);
 	void _FillBuiltinFuncTable();
@@ -66,4 +74,6 @@ private:
 	void _AddCellText(QTableWidget* ptw, int row, int col, QString text, bool noElide = false);
 private:
 	Ui::VariablesFunctionsDialogClass ui;
+
+	QTableWidget* _pActUserTable;
 };

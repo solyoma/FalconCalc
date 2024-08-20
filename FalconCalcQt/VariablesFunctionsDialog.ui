@@ -45,7 +45,7 @@
          </sizepolicy>
         </property>
         <property name="currentIndex">
-         <number>0</number>
+         <number>1</number>
         </property>
         <widget class="QWidget" name="tabVar">
          <attribute name="title">
@@ -404,26 +404,46 @@
          <number>0</number>
         </property>
         <item>
-         <widget class="QToolButton" name="btnRemoveAll">
-          <property name="enabled">
-           <bool>false</bool>
+         <widget class="QWidget" name="widget_3" native="true">
+          <property name="styleSheet">
+           <string notr="true"/>
           </property>
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="toolTip">
-           <string>Remove all user defineditems</string>
-          </property>
-          <property name="text">
-           <string>remove all</string>
-          </property>
-          <property name="icon">
-           <iconset resource="FalconCalcQt.qrc">
-            <normaloff>:/FalconCalcQt/Resources/trashcan.png</normaloff>:/FalconCalcQt/Resources/trashcan.png</iconset>
-          </property>
+          <layout class="QHBoxLayout" name="horizontalLayout_4">
+           <item>
+            <widget class="QToolButton" name="btnRemoveAll">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="toolTip">
+              <string>Remove all user defineditems</string>
+             </property>
+             <property name="text">
+              <string>remove all</string>
+             </property>
+             <property name="icon">
+              <iconset resource="FalconCalcQt.qrc">
+               <normaloff>:/FalconCalcQt/Resources/trashcan.png</normaloff>:/FalconCalcQt/Resources/trashcan.png</iconset>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QToolButton" name="btnUndo">
+             <property name="text">
+              <string>...</string>
+             </property>
+             <property name="icon">
+              <iconset resource="FalconCalcQt.qrc">
+               <normaloff>:/FalconCalcQt/Resources/undo-small.png</normaloff>:/FalconCalcQt/Resources/undo-small.png</iconset>
+             </property>
+            </widget>
+           </item>
+          </layout>
          </widget>
         </item>
         <item>
@@ -438,14 +458,6 @@
            </size>
           </property>
          </spacer>
-        </item>
-        <item>
-         <widget class="QWidget" name="widget_3" native="true">
-          <property name="styleSheet">
-           <string notr="true"/>
-          </property>
-          <layout class="QHBoxLayout" name="horizontalLayout_4"/>
-         </widget>
         </item>
         <item>
          <widget class="QWidget" name="widget_2" native="true">

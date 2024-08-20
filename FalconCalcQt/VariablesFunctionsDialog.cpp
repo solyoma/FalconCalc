@@ -1,5 +1,8 @@
 #include "VariablesFunctionsDialog.h"
 
+#include <QStack>
+#include <QPair>
+
 #include "SmartString.h"
 using namespace SmString;
 #include "LongNumber.h"
@@ -20,6 +23,25 @@ VariablesFunctionsDialog::VariablesFunctionsDialog(int which, VarFuncInfoQt &vfi
 	_FillFuncTables();
 	ui.tabHeader->setCurrentIndex(which);
 	ui.btnRemoveAll->setEnabled(which ? _vf.uBuiltinFuncCnt : _vf.uBuiltinVarCnt);
+	// Enable the button if any rows are selected button->setEnabled(!tableWidget->selectedItems().isEmpty()); })
+	QToolButton* pbtn = ui.btnRemoveRow;
+	connect(pUserVars->selectionModel(), &QItemSelectionModel::selectionChanged, this, [this, pbtn]() {
+		pbtn->setEnabled(!pUserVars->selectedItems().isEmpty());
+		});
+	connect(pUserFuncs->selectionModel(), &QItemSelectionModel::selectionChanged, this, [this, pbtn]() {
+		pbtn->setEnabled(!pUserFuncs->selectedItems().isEmpty());
+		});
+
+	if (which)
+	{
+		_pActUserTable = pUserFuncs;
+		_pActStack = &_removedFuncRows;
+	}
+	else
+	{
+		_pActUserTable = pUserVars;
+		_pActStack = &_removedVarRows;
+	}
 }
 
 VariablesFunctionsDialog::~VariablesFunctionsDialog()
@@ -57,7 +79,19 @@ void VariablesFunctionsDialog::moveEvent(QMoveEvent* e)
 
 void VariablesFunctionsDialog::on_tabHeader_currentChanged(int index)
 {
+	if (index)
+	{
+		_pActUserTable = pUserFuncs;
+		_pActStack = &_removedFuncRows;
+	}
+	else
+	{
+		_pActUserTable = pUserVars;
+		_pActStack = &_removedVarRows;
+	}
 	ui.btnRemoveAll->setEnabled(index? _vf.uBuiltinFuncCnt : _vf.uBuiltinVarCnt);
+	ui.btnRemoveRow->setEnabled(!_pActUserTable->selectedItems().isEmpty());
+	ui.btnUndo->setEnabled(index ? _removedFuncRows.size() : _removedVarRows.size());
 	qDebug("on_tabHeader_currentChanged");
 }
 
@@ -68,7 +102,33 @@ void VariablesFunctionsDialog::on_btnRemoveAll_clicked()
 
 void VariablesFunctionsDialog::on_btnRemoveRow_clicked()
 {
-	qDebug("on_btnRemoveRow_clicked");
+	int r = _pActUserTable->currentRow();	// _pActStack is set in constructor and TAB selection
+
+	qDebug("on_btnRemoveRow_clicked to remove row #%d", r);
+	if (r >= 0)
+	{
+		QVector<QTableWidgetItem*> rowItems;
+		for (int col = 0; col < _pActUserTable->columnCount(); ++col) {
+			rowItems.append(_pActUserTable->takeItem(r, col));
+		}
+		_pActStack->push({ r, rowItems });
+		_pActUserTable->removeRow(r);
+		ui.btnUndo->setEnabled(true);
+	}
+}
+
+void VariablesFunctionsDialog::on_btnUndo_clicked()
+{
+	auto lastRemoved = _pActStack->pop();
+	int rowIndex = lastRemoved.first;
+	QVector<QTableWidgetItem*> rowItems = lastRemoved.second;
+
+	// Insert the row back at its original position
+	_pActUserTable->insertRow(rowIndex);
+	for (int col = 0; col < rowItems.size(); ++col) {
+		_pActUserTable->setItem(rowIndex, col, rowItems[col]);
+	}
+	ui.btnUndo->setEnabled(_pActStack->size());
 }
 
 void VariablesFunctionsDialog::on_btnAddRow_clicked()
@@ -76,10 +136,14 @@ void VariablesFunctionsDialog::on_btnAddRow_clicked()
 	qDebug("on_btnAddRow_clicked");
 }
 
-void VariablesFunctionsDialog::on_tblUserVars_itemClicked(QTableWidgetItem*piw)
+void VariablesFunctionsDialog::on_tblUserVars_currentItemChanged(QTableWidgetItem* current, QTableWidgetItem* previous)
 {
-	ui.btnRemoveRow->setEnabled(piw);
 	qDebug("on_tblUserVars_itemClicked");
+}
+
+void VariablesFunctionsDialog::on_tblUserFuncs_currentItemChanged(QTableWidgetItem* current, QTableWidgetItem* previous)
+{
+	qDebug("on_tblUserFuncs_itemClicked");
 }
 
 void VariablesFunctionsDialog::_ClearUserTables(int whichTab)

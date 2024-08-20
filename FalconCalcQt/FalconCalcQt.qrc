@@ -1,5 +1,6 @@
 <RCC>
   <qresource prefix="/FalconCalcQt">
+    <file>Resources/undo-small.png</file>
     <file>Resources/blue-checked.png</file>
     <file>Resources/blue-unchecked.png</file>
     <file>Resources/add.png</file>
