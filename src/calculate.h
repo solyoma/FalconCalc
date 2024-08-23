@@ -490,6 +490,7 @@ namespace FalconCalc
 
 
         bool LoadUserData(SmartString name=SmartString()); // no name: uses FalconCal_DAT_FILE in user directorr
+        bool SaveUserData(const VarFuncInfo& vf);
         bool SaveUserData(SmartString name=SmartString()); // if it wasn't read and no name is given it wont be saved
         bool ResultOk() const { return calcResult.IsValid(); }
 

@@ -1573,30 +1573,11 @@ SmartString LittleEngine::Postfix() const
 // valamiert "bad file descriptor" van ha a RAD_STUDIO_XE-vel forditom
      #include <stdio.h>
 #endif
-/*========================================================
- * TASK: Write modified user functions and variables table to file
- * EXPECTS: 'name' is either the name of the file or empty
- *          When it is NULL the same name is used as in 'ReadTables'
- *          if that was called before, otherwise no write occurs
- *          'clean' when true the tables are modified
- * RETURNS: true: if there was no need to save the data or the save was
- *          successful, false otherwise
- *-----------------------------------------------------------*/
-bool LittleEngine::SaveUserData(SmartString filename) // if it wasn't read and no name is given it won't be saved
+
+bool LittleEngine::SaveUserData(const VarFuncInfo& vf)
 {
-    if(clean && (filename.empty() || ssNameOfDatFile == filename))                    // 
-        return true;       // don't save if it was saved already into this file
-    if(!filename.empty() && ssNameOfDatFile.empty()) // or when no save requested
-        return true;
-
-    if (filename.empty())
-        filename = ssNameOfDatFile;
-
-    VarFuncInfo vf;
-    GetVarFuncInfo(vf, true, false);  // only user functions and variables, first delimiter is an equal sign
-
     std::wofstream ofs;
-	ofs.open(SmartString(filename).ToWideString(), ios_base::out);
+	ofs.open(ssNameOfDatFile.ToWideString(), ios_base::out);
 	if( ofs.fail() )
 			return false;
     locale loc = cout.getloc();
@@ -1614,6 +1595,29 @@ bool LittleEngine::SaveUserData(SmartString filename) // if it wasn't read and n
 
     clean = true;
     return true;
+}
+/*========================================================
+ * TASK: Write modified user functions and variables table to file
+ * EXPECTS: 'name' is either the name of the file or empty
+ *          When it is NULL the same name is used as in 'ReadTables'
+ *          if that was called before, otherwise no write occurs
+ *          'clean' when true the tables are modified
+ * RETURNS: true: if there was no need to save the data or the save was
+ *          successful, false otherwise
+ *-----------------------------------------------------------*/
+bool LittleEngine::SaveUserData(SmartString filename) // if it wasn't read and no name is given it won't be saved
+{
+    if(clean && (filename.empty() || ssNameOfDatFile == filename))                    // 
+        return true;       // don't save if it was saved already into this file
+    if(!filename.empty() && ssNameOfDatFile.empty()) // or when no save requested
+        return true;
+
+    //if (filename.empty())
+    //    filename = ssNameOfDatFile;
+
+    VarFuncInfo vf;
+    GetVarFuncInfo(vf, true, false);  // only user functions and variables, first delimiter is an equal sign
+    return SaveUserData(vf);
 }
 /*========================================================
  * TASK: Read user functions and variables from a file
