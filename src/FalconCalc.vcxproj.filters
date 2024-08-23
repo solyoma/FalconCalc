@@ -57,6 +57,9 @@
     <ClCompile Include="wcommon.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="frmLocale.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h">
@@ -102,6 +105,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="wcommon.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="frmLocale.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

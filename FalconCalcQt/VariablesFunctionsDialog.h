@@ -8,10 +8,12 @@
 
 namespace FalconCalc {
 	class LittleEngine;
+	struct VarFuncInfo;
 }
 
 struct VarFuncInfoQt
 {
+	int which = 0;	// varFunc
 	unsigned uBuiltinFuncCnt= 0;
 	unsigned uBuiltinVarCnt= 0;
 	unsigned uUserFuncCnt= 0;
@@ -21,6 +23,20 @@ struct VarFuncInfoQt
 	QString sUserFuncs;
 	QString sUserVars;
 	FalconCalc::LittleEngine* pOwner = nullptr;
+
+	VarFuncInfoQt() {}
+	VarFuncInfoQt(const FalconCalc::VarFuncInfo&);
+
+	const void ToVarFuncInfo(FalconCalc::VarFuncInfo & vf);
+
+	constexpr unsigned UserCount() const { return which ? uUserFuncCnt : uUserVarCnt; }
+	void SetUserCount(unsigned count) 
+	{ 
+		if (which) 
+			uUserFuncCnt = count; 
+		else 
+			uUserVarCnt = count; 
+	}
 };
 
 
@@ -28,7 +44,7 @@ class VariablesFunctionsDialog : public QDialog
 {
 	Q_OBJECT
 public:
-	VariablesFunctionsDialog(int which, VarFuncInfoQt &vfi, QWidget* parent = nullptr);
+	VariablesFunctionsDialog(VarFuncInfoQt &vfi, QWidget* parent = nullptr);
 	~VariablesFunctionsDialog();
 
 	QTableWidget* pUserVars = nullptr;
@@ -41,6 +57,7 @@ signals:
 	void SignalVarFuncClose();
 	void SignalTabChange(int tab);
 	void SignalVarFuncMoved();
+	void SignalVarFuncSaved(VarFuncInfoQt&vf);
 public slots:
 	void SlotSelectTab(int tab);
 	void SlotSetColWidths(int which, int cw1, int cw2, int cw3, int cw4); //which:) -> user, 1->builtin
@@ -52,6 +69,7 @@ protected slots:
 	void on_btnRemoveAll_clicked();
 	void on_btnRemoveRow_clicked();
 	void on_btnUndo_clicked();
+	void on_btnSave_clicked();
 	void on_btnAddRow_clicked();
 	void on_tblUserVars_currentItemChanged(QTableWidgetItem* current, QTableWidgetItem* previous);
 	void on_tblUserFuncs_currentItemChanged(QTableWidgetItem* current, QTableWidgetItem* previous);
@@ -70,7 +88,7 @@ private:
 	void _FillBuiltinVarTable();
 	void _FillUserVarTable();
 	void _FillVarTables();
-	void _SerializeInto(int which, QString& dest, size_t& cnt);    // user functions or variables from actual page
+	void _Serialize();    // user functions and variables into _vf
 	void _AddCellText(QTableWidget* ptw, int row, int col, QString text, bool noElide = false);
 private:
 	Ui::VariablesFunctionsDialogClass ui;

@@ -25,6 +25,8 @@ class VariablesFunctionsDialog;
 class HistoryDialog;
 class HistoryOptions;
 
+struct VarFuncInfoQt;
+
 class FalconCalcQt : public QMainWindow
 {
     Q_OBJECT
@@ -155,6 +157,8 @@ private: // functions
     enum class Placement {pmTop,pmRight,pmBottom,pmLeft};
     void _PlaceWidget(QWidget &widget, Placement pm);   // relative to the main window
 
+    bool _SaveUserData(QString fileName, VarFuncInfoQt &vf);
+
 private slots:
     void _watchdogTimerSlot();
     void _SlotDataFromHistory(QString qs);
@@ -167,6 +171,7 @@ private slots:
     void _SlotVarsFuncsClosing();
     void _SlotVarFuncMoved();
     void _SlotVarTabChanged(int newTab);
+    void _SlotVarFuncSaved(VarFuncInfoQt& vf);
 
 private: 
     signals:

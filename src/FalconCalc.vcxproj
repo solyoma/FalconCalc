@@ -110,6 +110,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="calculate.cpp" />
+    <ClCompile Include="frmLocale.cpp" />
     <ClCompile Include="LongNumber.cpp" />
     <ClCompile Include="about.cpp" />
     <ClCompile Include="graphictext.cpp" />
@@ -129,6 +130,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="calculate.h" />
+    <ClInclude Include="frmLocale.h" />
     <ClInclude Include="LongNumber.h" />
     <ClInclude Include="about.h" />
     <ClInclude Include="clipboard.h" />

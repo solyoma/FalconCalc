@@ -16,7 +16,7 @@ using namespace LongNumber;
 using namespace std;
 
 
-constexpr auto VERSION_STRING = L"FalconCalc V1.1";
+ auto VERSION_STRING = L"FalconCalc V1.1";
 
 
 #include <math.h>
@@ -1592,6 +1592,9 @@ bool LittleEngine::SaveUserData(SmartString filename) // if it wasn't read and n
     if (filename.empty())
         filename = ssNameOfDatFile;
 
+    VarFuncInfo vf;
+    GetVarFuncInfo(vf, true, false);  // only user functions and variables, first delimiter is an equal sign
+
     std::wofstream ofs;
 	ofs.open(SmartString(filename).ToWideString(), ios_base::out);
 	if( ofs.fail() )
@@ -1601,45 +1604,14 @@ bool LittleEngine::SaveUserData(SmartString filename) // if it wasn't read and n
 
 	ofs << VERSION_STRING << "\n[Locale]\nloc=" <<  sLocale.ToWideString()
         << L"\n\n[Variables]\n";
-    std::wstring sDelim = ssCommentDelimiterString.ToWideString();
-	if(variables.size() )                       // these are the user defined variables only
-	{
-		for(auto &vit : variables)
-        {
-			ofs << vit.second.data.name.ToWideString() << L"=" << vit.second.body.ToWideString();
-            if (!vit.second.data.desc.empty())
-                ofs << sDelim << vit.second.data.desc.ToWideString();
-            else if (!vit.second.data.unit.empty())
-                ofs << sDelim;
-            if(!vit.second.data.unit.empty())
-				ofs << sDelim << vit.second.data.unit.ToWideString();
 
-			ofs << endl;
-		}
-	}
-	ofs << ("\n[Functions]\n"_ss).ToWideString();
-	if(functions.size() )
-	{
-		for(auto &fit : functions)
-		{
-			if(fit.second.builtin)
-				continue;
-			ofs << fit.second.name.ToWideString() << ("("_ss).ToWideString();
-			if(!fit.second.args.empty())
-			{
-				vector<SmartString>::const_iterator vit;
-				vit = fit.second.args.begin();
-				ofs << (*vit).ToWideString();
-				++vit;
-				for( ; vit != fit.second.args.end(); ++vit)
-					ofs << ", " << (*vit).ToWideString();
-			}
-			ofs << ") = " << fit.second.body.ToWideString();
-			if(!fit.second.desc.empty() )
-				ofs << ssCommentDelimiterString.ToWideString() << fit.second.desc.ToWideString();
-			ofs << endl;
-		}
-	}
+    if (!vf.sUserVars.empty())
+        ofs << vf.sUserVars.ToWideString();
+
+    ofs << ("\n[Functions]\n"_ss).ToWideString();
+    if (!vf.sUserFuncs.empty())
+        ofs << vf.sUserFuncs.ToWideString();
+
     clean = true;
     return true;
 }
@@ -1776,17 +1748,20 @@ SmartString LittleEngine::ResultAsCharString()
  * EXPECTS:
  * RETURNS:
  *-----------------------------------------------------------*/
-void LittleEngine::GetVarFuncInfo(VarFuncInfo &vf)
+void LittleEngine::GetVarFuncInfo(VarFuncInfo &vf, bool firstDleimIsEqual, bool bBuiltinsToo)
 {
-    vf.uBuiltinFuncCnt = numBuiltinFuncs;
-    vf.sBuiltinFuncs   = SerializeFunctions(true);
-    vf.uBuiltinVarCnt  = numBuiltinVars;
-    vf.sBuiltinVars    = SerializeVariables(true);
+    if (bBuiltinsToo)
+    {
+        vf.uBuiltinFuncCnt = numBuiltinFuncs;
+        vf.sBuiltinFuncs = SerializeFunctions(true);
+        vf.uBuiltinVarCnt = numBuiltinVars;
+        vf.sBuiltinVars = SerializeVariables(true);
+    }
 
     vf.uUserFuncCnt    = functions.size() - numBuiltinFuncs;
-    vf.sUserFuncs      = SerializeFunctions(false);
+    vf.sUserFuncs      = SerializeFunctions(false, firstDleimIsEqual);
     vf.uUserVarCnt     = variables.size();// -numBuiltinVars;
-    vf.sUserVars       = SerializeVariables(false);
+    vf.sUserVars       = SerializeVariables(false,firstDleimIsEqual);
 
     vf.pOwner          = this;
 }
@@ -1802,7 +1777,7 @@ void LittleEngine::GetVarFuncInfo(VarFuncInfo &vf)
  *              name:value:comment:unit\n - for builins
  *              name:body:comment:unit\n - for user variables
  *-----------------------------------------------------------*/
-SmartString LittleEngine::SerializeVariables(bool builtin) const
+SmartString LittleEngine::SerializeVariables(bool builtin, bool firstDelimIsEqual) const
 {
     SmartString sres;
 
@@ -1817,7 +1792,7 @@ SmartString LittleEngine::SerializeVariables(bool builtin) const
                 fmt.mainFormat = NumberFormat::rnfSci;
             if (value.Precision() > 32)
                 fmt.decDigits = 32;
-            sres += it.first + ssCommentDelimiterString + value.ToString(fmt)
+            sres += it.first + (firstDelimIsEqual ? SmartString('=') : ssCommentDelimiterString) + value.ToString(fmt)
                     + SmartString(schCommentDelimiter) + it.second->unit + ssCommentDelimiterString  
                     + it.second->desc + "\n"_ss;
         }
@@ -1826,7 +1801,7 @@ SmartString LittleEngine::SerializeVariables(bool builtin) const
     {
         for (auto& it : variables)
         {
-            sres += it.second.data.name + ssCommentDelimiterString + it.second.body + 
+            sres += it.second.data.name + (firstDelimIsEqual ? SmartString('=') : ssCommentDelimiterString) + it.second.body +
                             ssCommentDelimiterString + it.second.data.desc + 
                             ssCommentDelimiterString + it.second.data.unit + "\n"_ss;
         }
@@ -1844,7 +1819,7 @@ SmartString LittleEngine::SerializeVariables(bool builtin) const
  *            line format:
  *              name(arguments):body:description\n
  *-----------------------------------------------------------*/
-SmartString LittleEngine::SerializeFunctions(bool whatToShow) const
+SmartString LittleEngine::SerializeFunctions(bool whatToShow, bool firstDelimIsEqual) const
 {
     SmartString sres;
     constexpr const int BUILTIN = 1;
@@ -1862,7 +1837,7 @@ SmartString LittleEngine::SerializeFunctions(bool whatToShow) const
                         sres += SmartString(_argSeparator) + SmartString(" "_ss);
                     sres += it.second.args[j];
                 }
-            sres += ")"_ss + ssCommentDelimiterString + it.second.body + SmartString(schCommentDelimiter) + it.second.desc + "\n"_ss;
+            sres += ")"_ss + (firstDelimIsEqual ? SmartString('=') : ssCommentDelimiterString) + it.second.body + SmartString(schCommentDelimiter) + it.second.desc + "\n"_ss;
         }
     return sres;
 }
@@ -1906,9 +1881,9 @@ bool LittleEngine::AddUserVariablesAndFunctions(SmartString def, int what) //wha
                 if(what == 1) // for 0: fall through
                     break;
 				// erase existing user functions
-        case 2: for(auto &f:functions)
-                    if(!f.second.builtin)
-                        functions.erase(f.first);
+        case 2: for(auto it = functions.rbegin(); it != functions.rend(); ++it)
+                    if(!it->second.builtin)
+                        functions.erase(it->second.name);
         default:
                 break;
     }

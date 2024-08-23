@@ -140,6 +140,9 @@ public:
 	SmartString& operator=(const std::wstring ws);
 	SmartString& operator=(const char *pcs);
 	SmartString& operator=(const wchar_t *pwcs);
+#ifdef QTSA_PROJECT
+	SmartString& operator=(const QString qs);
+#endif
 
 	SmartString& operator +=(const SmartString s);
 	SmartString& operator +=(const UTF8String s);

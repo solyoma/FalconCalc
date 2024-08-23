@@ -43,6 +43,59 @@
             }
         }
 
+        type PopupMenu
+        {
+            Name = "pmCopy"
+            AccessLevel = "alPublic"
+
+            subtype Items : MenuItem
+            {
+                Name = "miCopyDec"
+                AccessLevel = "alPublic"
+                Text = "Copy &Decimal"
+                event OnClick = "miCopyDecClick"
+            }
+
+            subtype Items : MenuItem
+            {
+                Name = "miCopyHex"
+                AccessLevel = "alPublic"
+                Text = "Copy He&xadecimal"
+                event OnClick = "miCopyHexClick"
+            }
+
+            subtype Items : MenuItem
+            {
+                Name = "miCopyOct"
+                AccessLevel = "alPublic"
+                Text = "Copy &Octal"
+                event OnClick = "miCopyOctClick"
+            }
+
+            subtype Items : MenuItem
+            {
+                Name = "miCopyBin"
+                AccessLevel = "alPublic"
+                Text = "Copy &Binary"
+                event OnClick = "miCopyBinClick"
+            }
+
+            subtype Items : MenuItem
+            {
+                Name = "miCopySep"
+                AccessLevel = "alPublic"
+                Text = "-"
+            }
+
+            subtype Items : MenuItem
+            {
+                Name = "miCopyText"
+                AccessLevel = "alPublic"
+                Text = "Copy &Formula"
+                event OnClick = "miCopyClick"
+            }
+        }
+
         type Menubar
         {
             Name = "mnuMain"
@@ -288,59 +341,6 @@
                     Shortcut = "F1"
                     event OnClick = "miGenHelpClick"
                 }
-            }
-        }
-
-        type PopupMenu
-        {
-            Name = "pmCopy"
-            AccessLevel = "alPublic"
-
-            subtype Items : MenuItem
-            {
-                Name = "miCopyDec"
-                AccessLevel = "alPublic"
-                Text = "Copy &Decimal"
-                event OnClick = "miCopyDecClick"
-            }
-
-            subtype Items : MenuItem
-            {
-                Name = "miCopyHex"
-                AccessLevel = "alPublic"
-                Text = "Copy He&xadecimal"
-                event OnClick = "miCopyHexClick"
-            }
-
-            subtype Items : MenuItem
-            {
-                Name = "miCopyOct"
-                AccessLevel = "alPublic"
-                Text = "Copy &Octal"
-                event OnClick = "miCopyOctClick"
-            }
-
-            subtype Items : MenuItem
-            {
-                Name = "miCopyBin"
-                AccessLevel = "alPublic"
-                Text = "Copy &Binary"
-                event OnClick = "miCopyBinClick"
-            }
-
-            subtype Items : MenuItem
-            {
-                Name = "miCopySep"
-                AccessLevel = "alPublic"
-                Text = "-"
-            }
-
-            subtype Items : MenuItem
-            {
-                Name = "miCopyText"
-                AccessLevel = "alPublic"
-                Text = "Copy &Formula"
-                event OnClick = "miCopyClick"
             }
         }
 
@@ -1891,7 +1891,7 @@
         }
         WantedKeyTypes = "wkArrows, wkTab, wkEnter, wkEscape, wkOthers"
         UnitName = "variables"
-        DesignVisible = "False"
+        DesignVisible = "True"
         LastExportedName = "frmVariables"
         LastExportedEvents = "31003000300032007C00789CAD545D4F8430109CDFE5A307BE1813A39EEFD78320912BCA87C68B3FDEE99E4885F65AD01068D999EE6CBBBB55E8A0718F1DDE9063830A25F678C6279417D13257B8E0930AAAC9BD25B3E17BE07FC7B741FBE36543BBE6EA9C2BE71A3E748D4E458BC15D2A2E6CB94622713E7A547CE8129D16052ED1935FD15A4AEC35E73D792623258E622D1672ED186CD61DE7EFDFDCDC13D36F8D1BAEE869CFB1C54B10B57547CCACE9F8D4C497692612AF8E62FCB7B69999ECC530DCDA03EECFFD56780DAEF9FD20AFE1D846A0B6DE140DABA5C8B8DA9CC9E07B3CC5589E2B8290EEF9DA0EB3FE52D51DBBF3D4AB2D1E382A7A7892DBA8900C86705B7B8EBB35AFE4E40E723BD4B23BB7CDF63DC7CFFB1E763DD45A4A6F19C72C92636B8F2768944BA9F75AEE9971A79937CFAF933E49A40F94DCC5F6FD18CF5CDBD17635F9A30873D6EA9FEAA8942AA9A42BA7DD1366C4F5D71792959094"
         CreationOrder = "5"
@@ -2053,34 +2053,6 @@
             ImagePosition = "bipCenter"
             Flat = "False"
             event OnClick = "btnClearClick"
-        }
-
-        type Button
-        {
-            Name = "btnCancel"
-            AccessLevel = "alPublic"
-            Left = "445"
-            Top = "529"
-            Width = "75"
-            Height = "23"
-            Text = "&Cancel"
-            Anchors = "caRight, caBottom"
-            TabOrder = "3"
-            event OnClick = "btnCancelClick"
-        }
-
-        type Button
-        {
-            Name = "btnSave"
-            AccessLevel = "alPublic"
-            Left = "445"
-            Top = "500"
-            Width = "75"
-            Height = "23"
-            Text = "&Save"
-            Anchors = "caRight, caBottom"
-            TabOrder = "4"
-            event OnClick = "btnSaveClick"
         }
     }
     type Form
@@ -2478,6 +2450,139 @@
             Height = "23"
             Text = "Cancel"
             TabOrder = "3"
+        }
+    }
+    type Form
+    {
+        Name = "frmLocale"
+        Left = "597"
+        Top = "607"
+        Text = "FalconCalc Locale"
+        WantedKeyTypes = "wkArrows, wkTab, wkEnter, wkEscape, wkOthers"
+        BorderStyle = "fbsDialog"
+        BorderButtons = "fbbSystemMenu"
+        UnitName = "frmLocale"
+        DesignVisible = "True"
+        LastExportedName = "frmLocale"
+        LastExportedEvents = "3100360030007C00789C958DD10A40501044CF777995271E942F70D907E11252CAC79B2829146D53BBF7CCDC714C783272668C90868A829A15F74AFCBE3B024DB4532F6F2AE720B5BA2769603C7F09F5EE953625EF1D6FF44F8F51EA4AE894CD95336269A1173739BE7AAE9D074D4FFAD4BC01E8DB3FBA"
+        CreationOrder = "7"
+        Icon = "240053003A005C007600650067007900650073005C00460061006C0063006F006E00430061006C0063005C007300720063005C00700072006F006700720061006D002E00690063006F00FE020000789CB592310EC3200C457FA28AB95367C61E83A10761A858938D95A3711AD43153BBD5B5814821129D92F731C6B66C240430B0B4BE42788DC08DFD9D4DB319B601975C0B233A84BC104271223EC418D94B86F20251712249C97630EAF9D86254725B8C7A5BAC02384ED35CE5FD2CF569A9225ADCDF7EDBF6B39A7ED629FDBE50E36429F3E9D6EBCBD4F8DB60D08C77B6FBB027413B227FB780FA9D0E3099B7BF63CB0F892FD8B7"
+        ClientWidth = "434"
+        ClientHeight = "223"
+
+        type Button
+        {
+            Name = "btnSave"
+            AccessLevel = "alPublic"
+            Left = "346"
+            Top = "160"
+            Width = "75"
+            Height = "23"
+            Text = "&Save"
+            Enabled = "False"
+            Anchors = "caRight, caBottom"
+            TabOrder = "2"
+            event OnClick = "btnSaveClick"
+        }
+
+        type Button
+        {
+            Name = "btnCancel"
+            AccessLevel = "alPublic"
+            Left = "346"
+            Top = "190"
+            Width = "75"
+            Height = "23"
+            Text = "&Cancel"
+            Anchors = "caRight, caBottom"
+            TabOrder = "0"
+            event OnClick = "btnCancelClick"
+        }
+
+        type Label
+        {
+            Name = "lblText"
+            AccessLevel = "alPublic"
+            Left = "14"
+            Top = "149"
+            Width = "124"
+            Height = "15"
+            Text = "Name of current locale:"
+        }
+
+        type Label
+        {
+            Name = "lblInput"
+            AccessLevel = "alPublic"
+            Left = "14"
+            Top = "173"
+            Width = "108"
+            Height = "15"
+            Text = "Name of new locale:"
+        }
+
+        type Edit
+        {
+            Name = "edtLocale"
+            AccessLevel = "alPublic"
+            Left = "145"
+            Top = "172"
+            Width = "80"
+            Height = "23"
+            Text = "C"
+            TabOrder = "1"
+            event OnKeyPress = "edtLocaleKeypress"
+        }
+
+        type Label
+        {
+            Name = "lblOldLocale"
+            AccessLevel = "alPublic"
+            Left = "153"
+            Top = "149"
+            Width = "8"
+            Height = "15"
+            Text = "C"
+        }
+
+        type Panel
+        {
+            Name = "Panel1"
+            AccessLevel = "alPublic"
+            Left = "5"
+            Top = "7"
+            Width = "424"
+            Height = "135"
+            Text = "Panel1"
+            Anchors = "caLeft, caTop, caRight"
+            TabOrder = "3"
+            InnerBorderStyle = "pbsRaisedSunken"
+
+            type Label
+            {
+                Name = "Label1"
+                AccessLevel = "alPublic"
+                Left = "14"
+                Top = "13"
+                Width = "392"
+                Height = "60"
+                Text = "The locale determines the character used for a decimal point, the ordering of the characters and the correspondance bewtween upper and lowercase letters.  Variable and function names may contain  accented or special letters in your locale that are not present in other locales and viceversa."
+                Anchors = "caLeft, caTop, caRight, caBottom"
+                WordWrap = "True"
+            }
+
+            type Label
+            {
+                Name = "Label2"
+                AccessLevel = "alPublic"
+                Left = "14"
+                Top = "77"
+                Width = "391"
+                Height = "45"
+                Text = "Locale names usually consist of two lowercase and two uppercase letters separated by an underline character. Examples: en_US and en_GB are both English locale names."
+                Anchors = "caLeft, caTop, caRight, caBottom"
+                WordWrap = "True"
+            }
         }
     }
 }

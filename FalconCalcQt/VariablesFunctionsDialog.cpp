@@ -9,9 +9,40 @@ using namespace SmString;
 using namespace LongNumber;
 #include "calculate.h"
 
+
+
+VarFuncInfoQt::VarFuncInfoQt(const FalconCalc::VarFuncInfo& vf)
+{
+//	vfQt.which = which;				must be set from outside, 
+	pOwner = vf.pOwner;
+	uBuiltinVarCnt = vf.uBuiltinVarCnt;
+	uBuiltinFuncCnt = vf.uBuiltinFuncCnt;
+	uUserVarCnt = vf.uUserVarCnt;
+	uUserFuncCnt = vf.uUserFuncCnt;
+	sBuiltinVars = vf.sBuiltinVars.toQString();
+	sBuiltinFuncs = vf.sBuiltinFuncs.toQString();
+	sUserVars = vf.sUserVars.toQString();
+	sUserFuncs = vf.sUserFuncs.toQString();
+}
+
+const void VarFuncInfoQt::ToVarFuncInfo(FalconCalc::VarFuncInfo& vf)
+{
+	vf.pOwner = vf.pOwner;
+	vf.uBuiltinVarCnt	= uBuiltinVarCnt;
+	vf.uBuiltinFuncCnt	= uBuiltinFuncCnt;
+	vf.uUserVarCnt		= uUserVarCnt;
+	vf.uUserFuncCnt		= uUserFuncCnt;
+	vf.sBuiltinVars		= sBuiltinVars;
+	vf.sBuiltinFuncs	= sBuiltinFuncs;
+	vf.sUserVars		= sUserVars;
+	vf.sUserFuncs		= sUserFuncs;
+}
+
+
+
 const QString qsCommentDelimiterString = ":";
 
-VariablesFunctionsDialog::VariablesFunctionsDialog(int which, VarFuncInfoQt &vfi, QWidget* parent) : _vf(vfi), QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint)
+VariablesFunctionsDialog::VariablesFunctionsDialog(VarFuncInfoQt &vfi, QWidget* parent) : _vf(vfi), QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint)
 {
 	ui.setupUi(this);
 	pUserVars = ui.tblUserVars;
@@ -21,8 +52,8 @@ VariablesFunctionsDialog::VariablesFunctionsDialog(int which, VarFuncInfoQt &vfi
 
 	_FillVarTables();
 	_FillFuncTables();
-	ui.tabHeader->setCurrentIndex(which);
-	ui.btnRemoveAll->setEnabled(which ? _vf.uBuiltinFuncCnt : _vf.uBuiltinVarCnt);
+	ui.tabHeader->setCurrentIndex(_vf.which);
+	ui.btnRemoveAll->setEnabled(_vf.which ? _vf.uBuiltinFuncCnt : _vf.uBuiltinVarCnt);
 	// Enable the button if any rows are selected button->setEnabled(!tableWidget->selectedItems().isEmpty()); })
 	QToolButton* pbtn = ui.btnRemoveRow;
 	connect(pUserVars->selectionModel(), &QItemSelectionModel::selectionChanged, this, [this, pbtn]() {
@@ -32,7 +63,7 @@ VariablesFunctionsDialog::VariablesFunctionsDialog(int which, VarFuncInfoQt &vfi
 		pbtn->setEnabled(!pUserFuncs->selectedItems().isEmpty());
 		});
 
-	if (which)
+	if (_vf.which)
 	{
 		_pActUserTable = pUserFuncs;
 		_pActStack = &_removedFuncRows;
@@ -83,13 +114,15 @@ void VariablesFunctionsDialog::on_tabHeader_currentChanged(int index)
 	{
 		_pActUserTable = pUserFuncs;
 		_pActStack = &_removedFuncRows;
+		_vf.which = 1;
 	}
 	else
 	{
 		_pActUserTable = pUserVars;
 		_pActStack = &_removedVarRows;
+		_vf.which = 0;
 	}
-	ui.btnRemoveAll->setEnabled(index? _vf.uBuiltinFuncCnt : _vf.uBuiltinVarCnt);
+	ui.btnRemoveAll->setEnabled(_vf.UserCount());
 	ui.btnRemoveRow->setEnabled(!_pActUserTable->selectedItems().isEmpty());
 	ui.btnUndo->setEnabled(index ? _removedFuncRows.size() : _removedVarRows.size());
 	qDebug("on_tabHeader_currentChanged");
@@ -97,6 +130,18 @@ void VariablesFunctionsDialog::on_tabHeader_currentChanged(int index)
 
 void VariablesFunctionsDialog::on_btnRemoveAll_clicked()
 {
+	ui.btnUndo->setEnabled(_pActUserTable->rowCount());
+
+	for(int r = 0; r < _pActUserTable->rowCount(); ++r)
+	{
+		QVector<QTableWidgetItem*> rowItems;
+		for (int col = 0; col < _pActUserTable->columnCount(); ++col) {
+			rowItems.append(_pActUserTable->takeItem(r, col));
+		}
+		_pActStack->push({ r, rowItems });
+		_pActUserTable->removeRow(r);
+	}
+	_vf.SetUserCount(0);
 	qDebug("on_btnRemoveAll_clicked");
 }
 
@@ -104,7 +149,7 @@ void VariablesFunctionsDialog::on_btnRemoveRow_clicked()
 {
 	int r = _pActUserTable->currentRow();	// _pActStack is set in constructor and TAB selection
 
-	qDebug("on_btnRemoveRow_clicked to remove row #%d", r);
+	// qDebug("on_btnRemoveRow_clicked to remove row #%d", r);
 	if (r >= 0)
 	{
 		QVector<QTableWidgetItem*> rowItems;
@@ -114,6 +159,7 @@ void VariablesFunctionsDialog::on_btnRemoveRow_clicked()
 		_pActStack->push({ r, rowItems });
 		_pActUserTable->removeRow(r);
 		ui.btnUndo->setEnabled(true);
+		_vf.SetUserCount(_pActUserTable->rowCount());
 	}
 }
 
@@ -129,6 +175,13 @@ void VariablesFunctionsDialog::on_btnUndo_clicked()
 		_pActUserTable->setItem(rowIndex, col, rowItems[col]);
 	}
 	ui.btnUndo->setEnabled(_pActStack->size());
+	ui.btnRemoveAll->setEnabled(_vf.UserCount());
+	_vf.SetUserCount(_pActUserTable->rowCount());
+}
+
+void VariablesFunctionsDialog::on_btnSave_clicked()
+{
+	_Serialize();
 }
 
 void VariablesFunctionsDialog::on_btnAddRow_clicked()
@@ -224,9 +277,10 @@ void VariablesFunctionsDialog::_FillUserFuncTable()
 		_AddCellText(ui.tblUserFuncs, row, 2, qs);
 		_AddCellText(ui.tblUserFuncs, row, 3, sl[n], true);
 	}
+	assert(_vf.uUserFuncCnt == pUserFuncs->rowCount());	 // _vf should contain valid data
 }
 
-void VariablesFunctionsDialog::_FillFuncTables()
+void VariablesFunctionsDialog::_FillFuncTables()   
 {
 	_ClearUserTables(1);
 	_FillUserFuncTable();
@@ -286,6 +340,7 @@ void VariablesFunctionsDialog::_FillUserVarTable()
 				break;
 		}
 	}
+	assert(_vf.uUserVarCnt == pUserVarss->rowCount());	 // _vf should contain valid data
 }
 
 void VariablesFunctionsDialog::_FillVarTables()
@@ -324,26 +379,33 @@ void VariablesFunctionsDialog::_FillVarTables()
 	//}
 }
 
-void VariablesFunctionsDialog::_SerializeInto(int which, QString& us, size_t& cnt)
+void VariablesFunctionsDialog::_Serialize()
 {
 	if (!_changed)    // 'changed' must be modified in caller when necessary
 		return;
-	QTableWidget* pw = which ? ui.tblUserFuncs : ui.tblUserVars;
-	int n = 0; // count of user variables/functions
-	us.clear();
-	for (int i = 1; i < pw->rowCount(); ++i)
-	{
-		if (!pw->item(0, i)->text().isEmpty() && !pw->item(1, i)->text().isEmpty())
+	auto _serialize = [this](int which)
 		{
-			us += pw->item(0, i)->text() + qsCommentDelimiterString + pw->item(1, i)->text();
-			// unit (even when empty)
-			us += qsCommentDelimiterString + pw->item(3, i)->text();
-			// description / body
-			us += qsCommentDelimiterString + pw->item(2, i)->text() + "\n";
-			++n;
-		}
-	}
-	cnt = n;
+			QTableWidget* pw = which ? ui.tblUserFuncs : ui.tblUserVars;
+			QString& qs = which ? _vf.sUserFuncs : _vf.sUserVars;
+			unsigned& cnt = (which ? _vf.uUserFuncCnt : _vf.uUserVarCnt);
+			int n = 0; // count of user variables/functions
+			qs.clear();
+			for (int i = 1; i < pw->rowCount(); ++i)
+			{
+				if (!pw->item(0, i)->text().isEmpty() && !pw->item(1, i)->text().isEmpty())
+				{
+					qs += pw->item(0, i)->text() + qsCommentDelimiterString + pw->item(1, i)->text();
+					// unit (even when empty)
+					qs += qsCommentDelimiterString + pw->item(3, i)->text();
+					// description / body
+					qs += qsCommentDelimiterString + pw->item(2, i)->text() + "\n";
+					++n;
+				}
+			}
+			cnt = n;
+		};
+	_serialize(0);
+	_serialize(1);
 }
 
 void VariablesFunctionsDialog::_AddCellText(QTableWidget* ptw, int row, int col, QString text, bool noElide)

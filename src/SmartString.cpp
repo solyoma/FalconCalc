@@ -241,6 +241,12 @@ namespace SmString {
 		FromWideString(ws);
 		return *this;
 	}
+#ifdef QTSA_PROJECT
+	SmartString& SmartString::operator=(const QString qs)
+	{
+		return *this = qs.toStdU16String();
+	}
+#endif
 	SmartString& SmartString::operator=(const SmartString s)
 	{
 		if(this != &s)

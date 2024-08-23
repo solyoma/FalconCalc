@@ -25,6 +25,8 @@
     // before including this
 #endif
 
+//extern wchar_t *VERSION_STRING;
+
 bool IsAlpha(wchar_t ch, std::locale loc);    // needed for names in one locale when working in another localse
 bool IsAlnum(wchar_t ch, std::locale loc);    // needed for names in one locale when working in another localse
 
@@ -479,10 +481,9 @@ namespace FalconCalc
         LittleEngine &operator=(const LittleEngine &src);
         RealNumber Calculate();                                 // using infix and angleUnit
 		SmartString Postfix() const;                            // get converted data as SmartString
-        void GetVarFuncInfo(VarFuncInfo &vf);                  // how many and what are they
-        SmartString SerializeVariables(bool builtin=false) const;     // in a single SmartString
+        SmartString SerializeVariables(bool builtin=false, bool firstDelimIsEqual = false) const;     // in a single SmartString
                                                                 // <name>:<body>:<comment>:<unit>
-        SmartString SerializeFunctions(bool builtin=false) const;     // each line contains one var/func
+        SmartString SerializeFunctions(bool builtin=false, bool firstDelimIsEqual = false) const;     // each line contains one var/func
                                                                 // <name(arg1,...)>:<body>:<comment>
 
         bool AddUserVariablesAndFunctions(SmartString definition, int what); //0: any, 1: vars, 2: functions
@@ -491,6 +492,9 @@ namespace FalconCalc
         bool LoadUserData(SmartString name=SmartString()); // no name: uses FalconCal_DAT_FILE in user directorr
         bool SaveUserData(SmartString name=SmartString()); // if it wasn't read and no name is given it wont be saved
         bool ResultOk() const { return calcResult.IsValid(); }
+
+        void GetVarFuncInfo(VarFuncInfo &vf, bool firstDelimIsEqual = false, bool bBuiltinsToo = true);       // how many and what are they
+
         RealNumber Result() const { return calcResult; }
         SmartString ResultAsDecString();
         SmartString ResultAsHexString();

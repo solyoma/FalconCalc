@@ -244,6 +244,7 @@ void FalconCalcQt::_SlotVarsFuncsClosing()
 		disconnect(this, &FalconCalcQt::_SignalSelectTab, _pVF, &VariablesFunctionsDialog::SlotSelectTab);
 		disconnect(this, &FalconCalcQt::_SignalSetColWidths, _pVF, &VariablesFunctionsDialog::SlotSetColWidths);
 		disconnect(_pVF, &VariablesFunctionsDialog::SignalVarFuncMoved, this, &FalconCalcQt::_SlotVarFuncMoved);
+		disconnect(_pVF, &VariablesFunctionsDialog::SignalVarFuncSaved, this, &FalconCalcQt::_SlotVarFuncSaved);
 		delete _pVF;
 		_pVF = nullptr;
 	}
@@ -278,26 +279,15 @@ void FalconCalcQt::_EditVarsCommon(int which)
 	{
 		VarFuncInfo vf;
 		lengine->GetVarFuncInfo(vf);
-		VarFuncInfoQt vfQt;
+		VarFuncInfoQt vfQt(vf);
 
-		{
-			vfQt.pOwner = vf.pOwner;
-			vfQt.uBuiltinVarCnt = vf.uBuiltinVarCnt;
-			vfQt.uBuiltinFuncCnt = vf.uBuiltinFuncCnt;
-			vfQt.uUserVarCnt  = vf.uUserVarCnt;
-			vfQt.uUserFuncCnt = vf.uUserFuncCnt;
-			vfQt.sBuiltinVars = vf.sBuiltinVars.toQString();
-			vfQt.sBuiltinFuncs = vf.sBuiltinFuncs.toQString();
-			vfQt.sUserVars  = vf.sUserVars.toQString();
-			vfQt.sUserFuncs = vf.sUserFuncs.toQString();
-		}
-
-		_pVF = new VariablesFunctionsDialog(which, vfQt, this);
+		_pVF = new VariablesFunctionsDialog(vfQt, this);
 		connect(_pVF, &VariablesFunctionsDialog::SignalVarFuncClose, this, &FalconCalcQt::_SlotVarsFuncsClosing);
 		connect(_pVF, &VariablesFunctionsDialog::SignalTabChange, this, &FalconCalcQt::_SlotVarTabChanged);
 		connect(this, &FalconCalcQt::_SignalSelectTab, _pVF, &VariablesFunctionsDialog::SlotSelectTab);
 		connect(this, &FalconCalcQt::_SignalSetColWidths, _pVF, &VariablesFunctionsDialog::SlotSetColWidths);
 		connect(_pVF, &VariablesFunctionsDialog::SignalVarFuncMoved, this, &FalconCalcQt::_SlotVarFuncMoved);
+		connect(_pVF, &VariablesFunctionsDialog::SignalVarFuncSaved, this, &FalconCalcQt::_SlotVarFuncSaved);
 		_actTab = which;
 		ui.actionEditFunc->setChecked(which);
 		ui.actionEditVars->setChecked(!which);
@@ -662,6 +652,26 @@ void FalconCalcQt::_PlaceWidget(QWidget& w, Placement pm)
 		// if(xw +w.width())
 	} while (0);	// Should see if it fits screen not yet
 	w.move(xw, yw);
+}
+
+bool FalconCalcQt::_SaveUserData(QString fileName, VarFuncInfoQt& vf)		// from 
+{
+	if (fileName.isEmpty())
+		fileName = lengine->ssNameOfDatFile.toQString();
+
+	QFile of(fileName);
+	if (!of.open(QIODevice::WriteOnly))
+	{
+		QMessageBox::critical(this, tr("FalconCalcQt - error"), tr("Can't save user data\n%1\n").arg(fileName));
+		return false;
+	}
+	QTextStream ofs(&of);
+
+	ofs << VERSION_STRING << "\n[Locale]\nloc=" << std::cout.getloc().name().c_str()
+		<< L"\n\n[Variables]\n";
+	std::wstring sDelim = ssCommentDelimiterString.ToWideString();
+
+
 }
 
 void FalconCalcQt::_SetHexDisplFomatForFlags()
@@ -1350,5 +1360,21 @@ void FalconCalcQt::_SlotHistMoved()
 void FalconCalcQt::_SlotVarTabChanged(int newTab)
 {
 	_actTab = newTab;
+}
+
+void FalconCalcQt::_SlotVarFuncSaved(VarFuncInfoQt& vfQt)
+{
+	VarFuncInfo vf;
+	vf.pOwner			= vfQt.pOwner;
+	vf.uBuiltinVarCnt	= vfQt.uBuiltinVarCnt;
+	vf.uBuiltinFuncCnt	= vfQt.uBuiltinFuncCnt;
+	vf.uUserVarCnt		= vfQt.uUserVarCnt;
+	vf.uUserFuncCnt		= vfQt.uUserFuncCnt;
+	vf.sBuiltinVars		= vfQt.sBuiltinVars;
+	vf.sBuiltinFuncs	= vfQt.sBuiltinFuncs;
+	vf.sUserVars		= vfQt.sUserVars;
+	vf.sUserFuncs		= vfQt.sUserFuncs;
+
+	lengine->LoadUserData();
 }
 

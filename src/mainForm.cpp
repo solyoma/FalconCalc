@@ -16,6 +16,7 @@ using namespace nlib;
 #include "help.h"
 
 #include "mainForm.h"
+#include "frmLocale.h"
 
 #include "history.h"
 #include "histopt.h"
@@ -61,7 +62,7 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 
 	// DEBUG 
 	#ifdef _DEBUG
-	DebugEnumResources();
+	//DebugEnumResources();
 	#endif
 	// /DEBUG
 	MyLoadWindowIcon(this);
@@ -1880,7 +1881,22 @@ void TfrmMain::btnCopyFormatClick(void *sender, nlib::EventParameters param)
 
 void TfrmMain::miSetLocale(void* sender, nlib::EventParameters param)
 {
-	;
+	TfrmLocale *frmLocale = new TfrmLocale();
+	SmartString sOldLocName(frmLocale->LocaleName());
+
+	nlib::ModalResults mr = frmLocale->ShowModal();
+	if (mr == nlib::mrOk)	// 'Save'
+	{
+		SmartString sLocName(frmLocale->LocaleName());
+		if (sLocName != sOldLocName)
+		{
+			lengine->clean = false;
+			locale loc(sLocName.toUtf8String().c_str());
+			cin.imbue(loc);
+			cout.imbue(loc);
+		}
+	}
+
 }
 
 void TfrmMain::StartMove(void *sender, nlib::EventParameters param)
