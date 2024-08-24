@@ -27,7 +27,10 @@ struct VarFuncInfoQt
 	VarFuncInfoQt() {}
 	VarFuncInfoQt(const FalconCalc::VarFuncInfo&);
 
-	const void ToVarFuncInfo(FalconCalc::VarFuncInfo & vf);
+	bool operator==(const VarFuncInfoQt& vf) const;
+	bool operator!=(const VarFuncInfoQt& vf) const { return !operator==(vf); }
+
+	FalconCalc::VarFuncInfo ToVarFuncInfo();
 
 	constexpr unsigned UserCount() const { return which ? uUserFuncCnt : uUserVarCnt; }
 	void SetUserCount(unsigned count) 
@@ -72,10 +75,16 @@ protected slots:
 	void on_btnSave_clicked();
 	void on_btnAddRow_clicked();
 	void on_tblUserVars_currentItemChanged(QTableWidgetItem* current, QTableWidgetItem* previous);
+	void on_tblUserVars_cellDoubleClicked(int row, int col);
+	void on_tblUserVars_cellChanged(int row, int col);
 	void on_tblUserFuncs_currentItemChanged(QTableWidgetItem* current, QTableWidgetItem* previous);
+	void on_tblUserFuncs_cellChanged(int row, int col);
+	void on_tblUserFuncs_cellDoubleClicked(int row, int col);
 private:
 	FalconCalc::LittleEngine* _lengine = nullptr;
 	bool _changed = false;
+	bool _busy = false;
+	QString _sTmp;	// for table cell change
 	VarFuncInfoQt _vf;
 
 	QStack<QPair<int, QVector<QTableWidgetItem*>>> _removedVarRows, _removedFuncRows;
@@ -88,7 +97,7 @@ private:
 	void _FillBuiltinVarTable();
 	void _FillUserVarTable();
 	void _FillVarTables();
-	void _Serialize();    // user functions and variables into _vf
+	void _Serialize(VarFuncInfoQt *pvf=nullptr);    // user functions and variables into _vf
 	void _AddCellText(QTableWidget* ptw, int row, int col, QString text, bool noElide = false);
 private:
 	Ui::VariablesFunctionsDialogClass ui;

@@ -16,7 +16,7 @@ using namespace LongNumber;
 using namespace std;
 
 
- auto VERSION_STRING = L"FalconCalc V1.1";
+ auto VERSION_STRING = "FalconCalc V1.1";
 
 
 #include <math.h>
@@ -1576,23 +1576,27 @@ SmartString LittleEngine::Postfix() const
 
 bool LittleEngine::SaveUserData(const VarFuncInfo& vf)
 {
-    std::wofstream ofs;
-	ofs.open(ssNameOfDatFile.ToWideString(), ios_base::out);
+    std::ofstream ofs;
+	ofs.open(ssNameOfDatFile.toUtf8String(), ios_base::out);
 	if( ofs.fail() )
 			return false;
+    std::locale locutf8(std::locale(), new std::codecvt_utf8<char16_t>);
+    ofs.imbue(locutf8);
+
     locale loc = cout.getloc();
     SmartString sLocale(loc.name());
 
-	ofs << VERSION_STRING << "\n[Locale]\nloc=" <<  sLocale.ToWideString()
-        << L"\n\n[Variables]\n";
+	ofs << VERSION_STRING << "\n[Locale]\nloc=" <<  sLocale.toUtf8String()
+        << "\n\n[Variables]\n";
 
     if (!vf.sUserVars.empty())
-        ofs << vf.sUserVars.ToWideString();
+        ofs << vf.sUserVars.toUtf8String();
 
-    ofs << ("\n[Functions]\n"_ss).ToWideString();
+    ofs << ("\n[Functions]\n"_ss).toUtf8String();
     if (!vf.sUserFuncs.empty())
-        ofs << vf.sUserFuncs.ToWideString();
+        ofs << vf.sUserFuncs.toUtf8String();
 
+    ofs.close();
     clean = true;
     return true;
 }
@@ -1628,7 +1632,65 @@ bool LittleEngine::LoadUserData(SmartString name)
 {
     if(name.empty())
         name = ssNameOfDatFile;
+#if 1
+    std::ifstream in(name.toUtf8String(), ios_base::in);
+	if(in.fail() )
+		return false;
 
+    std::locale locutf8(std::locale(), new std::codecvt_utf8<char16_t>);
+    in.imbue(locutf8);
+
+	std::string line;
+	std::getline(in, line);
+    
+	if(line.substr(0, 12) != "FalconCalc V" )
+		return false;
+
+    SmartString s;
+    auto __GetLine = [&]()
+        {
+            int i = -1;
+            while (std::getline(in, line))
+            {
+                s = line;
+                if ((i = s.indexOf('#')) >= 0)
+                    s.erase(s.begin() + i, s.end());
+                s.Trim();
+                if (!s.empty())
+                    return s;
+            }
+            s.clear();
+            return s;
+        };
+
+    if (!__GetLine().empty() && s == SmartString("[Locale]") )   // get locale name
+    {
+        if (!__GetLine().empty() )
+            if(s.indexOf(u'=') > 0 )   // loc=locale
+            {
+                locale      loc(s.mid(s.indexOf(u'=')+1).toUtf8String().c_str());
+                in.imbue(   loc);
+                cout.imbue( loc);
+                __GetLine();
+            }
+    }
+
+    while (!s.empty())
+    {
+        if (s != SmartString("[Variables]") && s != SmartString("[Functions]"))
+        {
+            try
+            {
+                _InfixToPostFix(s);    // handles assignements and function definitions as well
+            }
+            catch (...) // and puts them into 'variables' or 'functions'
+            {
+                throw;
+            }
+        }
+        __GetLine();
+    }
+#else
     std::wifstream in(SmartString(name).ToWideString(), ios_base::in);
 	if(in.fail() )
 		return false;
@@ -1683,7 +1745,7 @@ bool LittleEngine::LoadUserData(SmartString name)
         }
         __GetLine();
     }
-
+#endif
     return clean = true;
 }
 /*========================================================

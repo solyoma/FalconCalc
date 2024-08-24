@@ -45,7 +45,7 @@
          </sizepolicy>
         </property>
         <property name="currentIndex">
-         <number>1</number>
+         <number>0</number>
         </property>
         <widget class="QWidget" name="tabVar">
          <attribute name="title">
@@ -156,6 +156,9 @@
           </item>
           <item>
            <widget class="QTableWidget" name="tblBuiltinVars">
+            <property name="editTriggers">
+             <set>QAbstractItemView::NoEditTriggers</set>
+            </property>
             <property name="alternatingRowColors">
              <bool>true</bool>
             </property>
@@ -314,6 +317,9 @@
           </item>
           <item>
            <widget class="QTableWidget" name="tblBuiltinFuncs">
+            <property name="editTriggers">
+             <set>QAbstractItemView::NoEditTriggers</set>
+            </property>
             <property name="alternatingRowColors">
              <bool>true</bool>
             </property>
@@ -532,6 +538,9 @@
         </item>
         <item>
          <widget class="QPushButton" name="btnSave">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
           <property name="sizePolicy">
            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
             <horstretch>0</horstretch>

@@ -25,9 +25,20 @@ VarFuncInfoQt::VarFuncInfoQt(const FalconCalc::VarFuncInfo& vf)
 	sUserFuncs = vf.sUserFuncs.toQString();
 }
 
-const void VarFuncInfoQt::ToVarFuncInfo(FalconCalc::VarFuncInfo& vf)
+bool VarFuncInfoQt::operator==(const VarFuncInfoQt& vf) const // builtins do not change
 {
-	vf.pOwner = vf.pOwner;
+	return 
+		uUserFuncCnt	== vf.uUserFuncCnt	  &&
+		uUserVarCnt 	== vf.uUserVarCnt 	  &&
+		sUserFuncs		== vf.sUserFuncs	  &&
+		sUserVars		== vf.sUserVars;
+}
+
+FalconCalc::VarFuncInfo VarFuncInfoQt::ToVarFuncInfo()
+{
+	FalconCalc::VarFuncInfo vf;
+
+	vf.pOwner			= pOwner;
 	vf.uBuiltinVarCnt	= uBuiltinVarCnt;
 	vf.uBuiltinFuncCnt	= uBuiltinFuncCnt;
 	vf.uUserVarCnt		= uUserVarCnt;
@@ -36,15 +47,15 @@ const void VarFuncInfoQt::ToVarFuncInfo(FalconCalc::VarFuncInfo& vf)
 	vf.sBuiltinFuncs	= sBuiltinFuncs;
 	vf.sUserVars		= sUserVars;
 	vf.sUserFuncs		= sUserFuncs;
+	return vf;
 }
-
-
 
 const QString qsCommentDelimiterString = ":";
 
 VariablesFunctionsDialog::VariablesFunctionsDialog(VarFuncInfoQt &vfi, QWidget* parent) : _vf(vfi), QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint)
 {
 	ui.setupUi(this);
+	_busy = true;
 	pUserVars = ui.tblUserVars;
 	pBuiltinVars = ui.tblBuiltinVars;
 	pUserFuncs = ui.tblUserFuncs;
@@ -73,6 +84,7 @@ VariablesFunctionsDialog::VariablesFunctionsDialog(VarFuncInfoQt &vfi, QWidget* 
 		_pActUserTable = pUserVars;
 		_pActStack = &_removedVarRows;
 	}
+	_busy = false;
 }
 
 VariablesFunctionsDialog::~VariablesFunctionsDialog()
@@ -181,7 +193,9 @@ void VariablesFunctionsDialog::on_btnUndo_clicked()
 
 void VariablesFunctionsDialog::on_btnSave_clicked()
 {
-	_Serialize();
+	_Serialize();	// into _vf
+	FalconCalc::VarFuncInfo vf = _vf.ToVarFuncInfo();
+	emit SignalVarFuncSaved(_vf);
 }
 
 void VariablesFunctionsDialog::on_btnAddRow_clicked()
@@ -191,12 +205,53 @@ void VariablesFunctionsDialog::on_btnAddRow_clicked()
 
 void VariablesFunctionsDialog::on_tblUserVars_currentItemChanged(QTableWidgetItem* current, QTableWidgetItem* previous)
 {
-	qDebug("on_tblUserVars_itemClicked");
+	// DEBUG
+	int rowp = previous ? previous->row() : -1,
+		colp = previous ? previous->column() : -1,
+		rowc = current ? current->row() : -1,
+		colc = current ? current->column() : -1;
+	qDebug("on_tblUserVars_currentItemChanged from (%d,%d) to (%d,%d)", rowp, colp, rowc, colc);
+	// /DEBUG
+	_sTmp = ui.tblUserVars->item(rowc, colc)->text();
+}
+
+void VariablesFunctionsDialog::on_tblUserVars_cellDoubleClicked(int row, int col)
+{
+	_sTmp = ui.tblUserVars->item(row, col)->text();
 }
 
 void VariablesFunctionsDialog::on_tblUserFuncs_currentItemChanged(QTableWidgetItem* current, QTableWidgetItem* previous)
 {
-	qDebug("on_tblUserFuncs_itemClicked");
+	// DEBUG
+	int rowp = previous ? previous->row() : -1,
+		colp = previous ? previous->column() : -1,
+		rowc = current ? current->row() : -1,
+		colc = current ? current->column() : -1;
+	qDebug("on_tblUserFuncs_currentItemChanged from (%d,%d) to (%d,%d)", rowp, colp, rowc, colc);
+	// /DEBUG
+}
+
+void VariablesFunctionsDialog::on_tblUserVars_cellChanged(int row, int col)
+{
+	if (_busy)
+		return;
+	QString qsCellData = ui.tblUserVars->item(row, col)->text();
+	_changed = _changed || _sTmp != qsCellData;
+	qDebug("on_tblUserVars_cellChanged at (%d,%d) _changed: %s", row, col,_changed ? "yes" :"no");
+	ui.btnSave->setEnabled(_changed);
+}
+
+void VariablesFunctionsDialog::on_tblUserFuncs_cellChanged(int row, int col)
+{
+	if (_busy)
+		return;
+	QString qsCellData = ui.tblUserVars->item(row, col)->text();
+	_changed = _changed || _sTmp != qsCellData;
+	ui.btnSave->setEnabled(_changed);
+}
+
+void VariablesFunctionsDialog::on_tblUserFuncs_cellDoubleClicked(int row, int col)
+{
 }
 
 void VariablesFunctionsDialog::_ClearUserTables(int whichTab)
@@ -340,72 +395,47 @@ void VariablesFunctionsDialog::_FillUserVarTable()
 				break;
 		}
 	}
-	assert(_vf.uUserVarCnt == pUserVarss->rowCount());	 // _vf should contain valid data
+	assert(_vf.uUserVarCnt == pUserVars->rowCount());	 // _vf should contain valid data
 }
 
 void VariablesFunctionsDialog::_FillVarTables()
 {
+	_busy = true;
 	_ClearUserTables(0);
 	_FillUserVarTable();
 	_FillBuiltinVarTable();
-
-	//QTableWidgetItem* ptw;
-	//int rowU = 0, rowB = 0;
-	//for (auto& f : FalconCalc::LittleEngine::variables)
-	//{
-	//	ptw = new QTableWidgetItem(f.second.data.name.toQString());
-	//	if (f.second.body.empty())
-	//	{
-	//		ui.tblBuiltinVars->setItem(rowB, 0, ptw);
-	//		ptw = new QTableWidgetItem("-");
-	//		ui.tblBuiltinVars->setItem(rowB, 1, ptw);
-	//		ptw = new QTableWidgetItem(f.second.data.unit.toQString());
-	//		ui.tblBuiltinVars->setItem(rowB, 2, ptw);
-	//		ptw = new QTableWidgetItem(f.second.data.desc.toQString());
-	//		ui.tblBuiltinVars->setItem(rowB, 3, ptw);
-	//		++rowB;
-	//	}
-	//	else		// user
-	//	{
-	//		ui.tblUserVars->setItem(rowU, 0, ptw);
-	//		ptw = new QTableWidgetItem(f.second.body.toQString());
-	//		ui.tblBuiltinVars->setItem(rowU, 1, ptw);
-	//		ptw = new QTableWidgetItem(f.second.data.unit.toQString());
-	//		ui.tblBuiltinVars->setItem(rowU, 2, ptw);
-	//		ptw = new QTableWidgetItem(f.second.data.desc.toQString());
-	//		ui.tblBuiltinVars->setItem(rowU, 3, ptw);
-	//		++rowU;
-	//	}
-	//}
+	_busy = false;
 }
 
-void VariablesFunctionsDialog::_Serialize()
+void VariablesFunctionsDialog::_Serialize(VarFuncInfoQt* pvf)
 {
-	if (!_changed)    // 'changed' must be modified in caller when necessary
+	if (_busy || (!pvf && !_changed) )    // 'changed' must be modified in caller when necessary
 		return;
-	auto _serialize = [this](int which)
+	if (!pvf)
+		pvf = &_vf;
+	auto _serialize = [this](int which, VarFuncInfoQt * pvf)
 		{
 			QTableWidget* pw = which ? ui.tblUserFuncs : ui.tblUserVars;
 			QString& qs = which ? _vf.sUserFuncs : _vf.sUserVars;
-			unsigned& cnt = (which ? _vf.uUserFuncCnt : _vf.uUserVarCnt);
+			unsigned& cnt = (which ? pvf->uUserFuncCnt : pvf->uUserVarCnt);
 			int n = 0; // count of user variables/functions
 			qs.clear();
-			for (int i = 1; i < pw->rowCount(); ++i)
+			for (int i = 0; i < pw->rowCount(); ++i)
 			{
-				if (!pw->item(0, i)->text().isEmpty() && !pw->item(1, i)->text().isEmpty())
+				if (!pw->item(i, 0)->text().isEmpty() && !pw->item(i, 1)->text().isEmpty())
 				{
-					qs += pw->item(0, i)->text() + qsCommentDelimiterString + pw->item(1, i)->text();
+					qs += pw->item(i, 0)->text() + qsCommentDelimiterString + pw->item(i, 1)->text();
 					// unit (even when empty)
-					qs += qsCommentDelimiterString + pw->item(3, i)->text();
+					qs += qsCommentDelimiterString + pw->item(i, 3)->text();
 					// description / body
-					qs += qsCommentDelimiterString + pw->item(2, i)->text() + "\n";
+					qs += qsCommentDelimiterString + pw->item(i, 2)->text() + "\n";
 					++n;
 				}
 			}
 			cnt = n;
 		};
-	_serialize(0);
-	_serialize(1);
+	_serialize(0, pvf);
+	_serialize(1, pvf);
 }
 
 void VariablesFunctionsDialog::_AddCellText(QTableWidget* ptw, int row, int col, QString text, bool noElide)
@@ -416,7 +446,9 @@ void VariablesFunctionsDialog::_AddCellText(QTableWidget* ptw, int row, int col,
 		text = text.left(14) + QChar(0x2026);
 	ptwi = new QTableWidgetItem(text);
 	ptwi->setToolTip(qsHint);
+	_busy = true;
 	ptw->setItem(row, col, ptwi);
+	_busy = false;
 }
 
 void VariablesFunctionsDialog::SlotSelectTab(int tab)

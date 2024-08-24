@@ -654,24 +654,12 @@ void FalconCalcQt::_PlaceWidget(QWidget& w, Placement pm)
 	w.move(xw, yw);
 }
 
-bool FalconCalcQt::_SaveUserData(QString fileName, VarFuncInfoQt& vf)		// from 
+bool FalconCalcQt::_SaveUserData(QString fileName, VarFuncInfoQt& vfQt)		// from 
 {
-	if (fileName.isEmpty())
-		fileName = lengine->ssNameOfDatFile.toQString();
-
-	QFile of(fileName);
-	if (!of.open(QIODevice::WriteOnly))
-	{
-		QMessageBox::critical(this, tr("FalconCalcQt - error"), tr("Can't save user data\n%1\n").arg(fileName));
-		return false;
-	}
-	QTextStream ofs(&of);
-
-	ofs << VERSION_STRING << "\n[Locale]\nloc=" << std::cout.getloc().name().c_str()
-		<< L"\n\n[Variables]\n";
-	std::wstring sDelim = ssCommentDelimiterString.ToWideString();
-
-
+	VarFuncInfo vf = vfQt.ToVarFuncInfo();
+	if(lengine->SaveUserData(vf))
+		return lengine->LoadUserData();
+	return false;
 }
 
 void FalconCalcQt::_SetHexDisplFomatForFlags()
@@ -1364,17 +1352,7 @@ void FalconCalcQt::_SlotVarTabChanged(int newTab)
 
 void FalconCalcQt::_SlotVarFuncSaved(VarFuncInfoQt& vfQt)
 {
-	VarFuncInfo vf;
-	vf.pOwner			= vfQt.pOwner;
-	vf.uBuiltinVarCnt	= vfQt.uBuiltinVarCnt;
-	vf.uBuiltinFuncCnt	= vfQt.uBuiltinFuncCnt;
-	vf.uUserVarCnt		= vfQt.uUserVarCnt;
-	vf.uUserFuncCnt		= vfQt.uUserFuncCnt;
-	vf.sBuiltinVars		= vfQt.sBuiltinVars;
-	vf.sBuiltinFuncs	= vfQt.sBuiltinFuncs;
-	vf.sUserVars		= vfQt.sUserVars;
-	vf.sUserFuncs		= vfQt.sUserFuncs;
-
-	lengine->LoadUserData();
+	if(lengine->SaveUserData(vfQt.ToVarFuncInfo()) )
+		lengine->LoadUserData();
 }
 
