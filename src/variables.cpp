@@ -114,20 +114,20 @@ void TfrmVariables::InitializeFormAndControls() /* Control initialization functi
 	btnClear->SetFlat(false);
 	btnClear->SetParent(this);
 
-	btnCancel = new nlib::Button();
-	btnCancel->SetBounds(nlib::Rect(445, 497, 520, 520));
-	btnCancel->SetText(L"&Cancel");
-	btnCancel->SetAnchors(nlib::caRight | nlib::caBottom);
-	btnCancel->SetTabOrder(3);
-	btnCancel->SetParent(this);
-
 	btnSave = new nlib::Button();
-	btnSave->SetBounds(nlib::Rect(445, 524, 520, 547));
+	btnSave->SetBounds(nlib::Rect(445, 497, 520, 520));
 	btnSave->SetText(L"&Save");
 	btnSave->SetAnchors(nlib::caRight | nlib::caBottom);
 	btnSave->SetTabOrder(4);
 	btnSave->SetEnabled(false);
 	btnSave->SetParent(this);
+
+	btnCancel = new nlib::Button();
+	btnCancel->SetBounds(nlib::Rect(445, 524, 520, 547));
+	btnCancel->SetText(L"&Cancel");
+	btnCancel->SetAnchors(nlib::caRight | nlib::caBottom);
+	btnCancel->SetTabOrder(3);
+	btnCancel->SetParent(this);
 
 	btnDelVar->Image()->SetBitmap(new nlib::Bitmap(NULL, MAKEINTRESOURCE(28683)));
 	btnDelVar->Image()->SetStateCount(2);
