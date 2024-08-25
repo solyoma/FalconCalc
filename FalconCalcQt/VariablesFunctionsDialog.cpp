@@ -34,7 +34,7 @@ bool VarFuncInfoQt::operator==(const VarFuncInfoQt& vf) const // builtins do not
 		sUserVars		== vf.sUserVars;
 }
 
-FalconCalc::VarFuncInfo VarFuncInfoQt::ToVarFuncInfo()
+FalconCalc::VarFuncInfo VarFuncInfoQt::ToVarFuncInfo() const
 {
 	FalconCalc::VarFuncInfo vf;
 
@@ -52,6 +52,8 @@ FalconCalc::VarFuncInfo VarFuncInfoQt::ToVarFuncInfo()
 
 const QString qsCommentDelimiterString = ":";
 
+/* ============================ VariablesFunctionsDialog =================*/
+
 VariablesFunctionsDialog::VariablesFunctionsDialog(VarFuncInfoQt &vfi, QWidget* parent) : _vf(vfi), QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint)
 {
 	ui.setupUi(this);
@@ -63,6 +65,7 @@ VariablesFunctionsDialog::VariablesFunctionsDialog(VarFuncInfoQt &vfi, QWidget* 
 
 	_FillVarTables();
 	_FillFuncTables();
+
 	ui.tabHeader->setCurrentIndex(_vf.which);
 	ui.btnRemoveAll->setEnabled(_vf.which ? _vf.uBuiltinFuncCnt : _vf.uBuiltinVarCnt);
 	// Enable the button if any rows are selected button->setEnabled(!tableWidget->selectedItems().isEmpty()); })
@@ -73,6 +76,41 @@ VariablesFunctionsDialog::VariablesFunctionsDialog(VarFuncInfoQt &vfi, QWidget* 
 	connect(pUserFuncs->selectionModel(), &QItemSelectionModel::selectionChanged, this, [this, pbtn]() {
 		pbtn->setEnabled(!pUserFuncs->selectedItems().isEmpty());
 		});
+	/*----------------------------------------------------------*/
+	// connect sectionResized signal to update the item when the column is resized
+	//auto resFunc = [this](int index, int, int newSize)
+	//	{
+	//		for (int row = 0; row < tableWidget().rowCount(); ++row) {
+	//			auto item = table.item(row, index);
+	//			if (item) {
+	//				table.update(item->row(), item->column());  // Trigger a repaint to update the elided text
+	//			}
+	//		}
+	//	};
+
+	connect(pUserVars->horizontalHeader(),		&QHeaderView::sectionResized, [this](int index, int, int newSize)
+		{
+			for (int row = 0; row < pUserVars->rowCount(); ++row) {
+				auto item = pUserVars->item(row, index);
+				if (item) {
+					pUserVars->update();  // Trigger a repaint to update the elided text
+				}
+			}
+		}
+	);
+//	connect(pUserFuncs->horizontalHeader(),		&QHeaderView::sectionResized, resFunc);
+	connect(pBuiltinVars->horizontalHeader(), &QHeaderView::sectionResized, [this](int index, int, int newSize)
+		{
+			for (int row = 0; row < pBuiltinVars->rowCount(); ++row) {
+				auto item = pBuiltinVars->item(row, index);
+				if (item) {
+					pBuiltinVars->update();  // Trigger a repaint to update the elided text
+				}
+			}
+		}
+	);
+//	connect(pBuiltinFuncs->horizontalHeader(),	&QHeaderView::sectionResized, resFunc);
+	/*----------------------------------------------------------*/
 
 	if (_vf.which)
 	{
@@ -146,9 +184,9 @@ void VariablesFunctionsDialog::on_btnRemoveAll_clicked()
 
 	for(int r = 0; r < _pActUserTable->rowCount(); ++r)
 	{
-		QVector<QTableWidgetItem*> rowItems;
+		QVector<ElidingTableWidgetItem*> rowItems;
 		for (int col = 0; col < _pActUserTable->columnCount(); ++col) {
-			rowItems.append(_pActUserTable->takeItem(r, col));
+			rowItems.append(reinterpret_cast<ElidingTableWidgetItem*>(_pActUserTable->takeItem(r, col)) );
 		}
 		_pActStack->push({ r, rowItems });
 		_pActUserTable->removeRow(r);
@@ -164,9 +202,9 @@ void VariablesFunctionsDialog::on_btnRemoveRow_clicked()
 	// qDebug("on_btnRemoveRow_clicked to remove row #%d", r);
 	if (r >= 0)
 	{
-		QVector<QTableWidgetItem*> rowItems;
+		QVector<ElidingTableWidgetItem*> rowItems;
 		for (int col = 0; col < _pActUserTable->columnCount(); ++col) {
-			rowItems.append(_pActUserTable->takeItem(r, col));
+			rowItems.append(reinterpret_cast<ElidingTableWidgetItem*>(_pActUserTable->takeItem(r, col)) );
 		}
 		_pActStack->push({ r, rowItems });
 		_pActUserTable->removeRow(r);
@@ -179,7 +217,7 @@ void VariablesFunctionsDialog::on_btnUndo_clicked()
 {
 	auto lastRemoved = _pActStack->pop();
 	int rowIndex = lastRemoved.first;
-	QVector<QTableWidgetItem*> rowItems = lastRemoved.second;
+	QVector<ElidingTableWidgetItem*> rowItems = lastRemoved.second;
 
 	// Insert the row back at its original position
 	_pActUserTable->insertRow(rowIndex);
@@ -200,7 +238,8 @@ void VariablesFunctionsDialog::on_btnSave_clicked()
 
 void VariablesFunctionsDialog::on_btnAddRow_clicked()
 {
-	qDebug("on_btnAddRow_clicked");
+	_pActUserTable->setRowCount(_pActUserTable->rowCount() + 1);
+	qDebug("on_btnAddRow_clicked - row added");
 }
 
 void VariablesFunctionsDialog::on_tblUserVars_currentItemChanged(QTableWidgetItem* current, QTableWidgetItem* previous)
@@ -274,7 +313,7 @@ void VariablesFunctionsDialog::_ClearUserTables(int whichTab)
 	ptU->setRowCount(rowc);
 	for (int i = 0; i < rowc; ++i)
 	{
-		QTableWidgetItem* pwi = ptU->item(i, 0);
+		QTableWidgetItem* pwi = ptU->item(i, 0);	// no need to cast, text() is common
 		if (pwi)
 		{
 			pwi->text().clear();
@@ -288,7 +327,7 @@ void VariablesFunctionsDialog::_ClearUserTables(int whichTab)
 void VariablesFunctionsDialog::_FillBuiltinFuncTable()
 {
 	QStringList sl;
-	QTableWidgetItem* ptw;
+	ElidingTableWidgetItem* ptw;
 	size_t pos = 0, pos1;
 	QString qs;
 	ui.tblBuiltinFuncs->setRowCount(_vf.uBuiltinFuncCnt);
@@ -299,13 +338,13 @@ void VariablesFunctionsDialog::_FillBuiltinFuncTable()
 		sl = _vf.sBuiltinFuncs.mid(pos, pos1 - pos).split(qsCommentDelimiterString,Qt::SkipEmptyParts);
 		pos = pos1+1;
 
-		ptw = new QTableWidgetItem(sl[0]);	
+		ptw = new ElidingTableWidgetItem(sl[0]);	
 		ui.tblBuiltinFuncs->setItem(row, 0, ptw);
-		ptw = new QTableWidgetItem("-");
+		ptw = new ElidingTableWidgetItem("-");
 		ui.tblBuiltinFuncs->setItem(row, 1, ptw);
-		ptw = new QTableWidgetItem("-");
+		ptw = new ElidingTableWidgetItem("-");
 		ui.tblBuiltinFuncs->setItem(row, 2, ptw);
-		ptw = new QTableWidgetItem(sl[1]);	
+		ptw = new ElidingTableWidgetItem(sl[1]);	
 		ui.tblBuiltinFuncs->setItem(row, 3, ptw);
 	}
 }
@@ -330,7 +369,7 @@ void VariablesFunctionsDialog::_FillUserFuncTable()
 		else
 			qs = sl[2], n = 3;
 		_AddCellText(ui.tblUserFuncs, row, 2, qs);
-		_AddCellText(ui.tblUserFuncs, row, 3, sl[n], true);
+		_AddCellText(ui.tblUserFuncs, row, 3, sl[n]);
 	}
 	assert(_vf.uUserFuncCnt == pUserFuncs->rowCount());	 // _vf should contain valid data
 }
@@ -358,7 +397,7 @@ void VariablesFunctionsDialog::_FillBuiltinVarTable()
 		_AddCellText(ui.tblBuiltinVars, row, 0, sl[0]);
 		_AddCellText(ui.tblBuiltinVars, row, 1, sl[1]);
 		_AddCellText(ui.tblBuiltinVars, row, 2, sl[2]);
-		_AddCellText(ui.tblBuiltinVars, row, 3, sl[3],true);
+		_AddCellText(ui.tblBuiltinVars, row, 3, sl[3]);
 	}
 }
 
@@ -391,7 +430,7 @@ void VariablesFunctionsDialog::_FillUserVarTable()
 				_AddCellText(ui.tblUserVars, row, 2, sl[3]);   // unit
 				if (!sl[2].isEmpty())
 					qs = sl[2];
-				_AddCellText(ui.tblUserVars, row, 3, sl[2],true);   // description
+				_AddCellText(ui.tblUserVars, row, 3, sl[2]);   // description
 				break;
 		}
 	}
@@ -438,13 +477,11 @@ void VariablesFunctionsDialog::_Serialize(VarFuncInfoQt* pvf)
 	_serialize(1, pvf);
 }
 
-void VariablesFunctionsDialog::_AddCellText(QTableWidget* ptw, int row, int col, QString text, bool noElide)
+void VariablesFunctionsDialog::_AddCellText(QTableWidget* ptw, int row, int col, QString text)
 {
-	QTableWidgetItem* ptwi;
+	ElidingTableWidgetItem* ptwi;
 	QString qsHint = text;
-	if (!noElide && text.length() > 16)
-		text = text.left(14) + QChar(0x2026);
-	ptwi = new QTableWidgetItem(text);
+	ptwi = new ElidingTableWidgetItem(text);
 	ptwi->setToolTip(qsHint);
 	_busy = true;
 	ptw->setItem(row, col, ptwi);
