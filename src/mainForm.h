@@ -18,7 +18,7 @@ public:
 	virtual void Destroy();
 
 	TStringList *pslHistory;
-	FalconCalc::LittleEngine *pEngine();
+	//FalconCalc::LittleEngine *pEngine();
 
 	bool InMoving() { return (bool)_inMoving; }
 

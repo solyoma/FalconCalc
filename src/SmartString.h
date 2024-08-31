@@ -33,13 +33,13 @@ class SCharT
 public:
 	SCharT() = default;
 #ifdef QTSA_PROJECT
-	explicit SCharT(QChar ch)	: _unicode(ch.unicode())	{}
+	explicit constexpr SCharT(QChar ch)	: _unicode(ch.unicode())	{}
 #endif
-	explicit SCharT(char ch)	: _unicode((unsigned char) ch)	{}
-	explicit SCharT(int ch)		: _unicode((unsigned) ch)		{}
-	explicit SCharT(long ch)	: _unicode((char16_t) ch)		{}
+	explicit constexpr SCharT(char ch)	: _unicode((unsigned char) ch)	{}
+	explicit constexpr SCharT(int ch)	: _unicode((unsigned) ch)		{}
+	explicit constexpr SCharT(long ch)	: _unicode((char16_t) ch)		{}
 	SCharT(char16_t sch): _unicode(sch)				{}
-	explicit SCharT(wchar_t wch) : _unicode((char16_t)wch)		{}
+	explicit constexpr SCharT(wchar_t wch) : _unicode((char16_t)wch)		{}
 	explicit SCharT(UTF8String& s, int pos = 0)	 // unicode character from utf8 encoded std::string
 	{
 		_FromString(s, pos);

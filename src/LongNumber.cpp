@@ -81,7 +81,8 @@ size_t RealNumber::_maxLength = 100;	// maximum length of string
 
 const RealNumber RealNumber::RN_0("0"), RealNumber::RN_1("1"), RealNumber::RN_2("2"), RealNumber::RN_3("3"), RealNumber::RN_4("4"), 
 				RealNumber::RN_5("5"), RealNumber::RN_6("6"), RealNumber::RN_7("7"), RealNumber::RN_8("8"), RealNumber::RN_9("9"), RealNumber::RN_10("10"),
-				RealNumber::RN_11("11"), RealNumber::RN_12("12"), RealNumber::RN_13("13"), RealNumber::RN_14("14"), RealNumber::RN_15("15"), RealNumber::RN_16("16");
+				RealNumber::RN_11("11"), RealNumber::RN_12("12"), RealNumber::RN_13("13"), RealNumber::RN_14("14"), RealNumber::RN_15("15"), RealNumber::RN_16("16"),
+				RealNumber::RN_30("30"), RealNumber::RN_60("60"), RealNumber::RN_90("90"), RealNumber::RN_180("180"), RealNumber::RN_270("270"), RealNumber::RN_360("360") ;
 
 // constants and Functions that can be used with REAL_NUMBERs
 static const RealNumber rnNull("0"),
@@ -2931,8 +2932,13 @@ RealNumber sin (RealNumber r, AngularUnit angu)		// sine
 	int sign = r.Sign();	
 	r.ToAbs();				// calculate sign of |r|
 
-	RealNumber rn360 = RealNumber("360"),
-				epsilon = RealNumber("1e-40");
+	RealNumber epsilon = RealNumber("1e-40");
+	const RealNumber &rn30 = RealNumber::RN_30,
+					 &rn60 = RealNumber::RN_60,	
+					 &rn90 = RealNumber::RN_90,	
+					 &rn180 = RealNumber::RN_180,	
+					 &rn270 = RealNumber::RN_270,	
+					 &rn360 = RealNumber::RN_360;
 
 	switch (angu)
 	{
@@ -2941,18 +2947,25 @@ RealNumber sin (RealNumber r, AngularUnit angu)		// sine
 			RealNumber rn180 = RealNumber("180");
 			RealNumber rn90  = RealNumber("90");
 
-			r.Div(rn360, r);			 // |r| is < 360
+			r = fmod(r, rn360);			 // |r| is < 360
 			// sine: 		+  | +
 			//			 ------|------
 			//				-  | -
-			if (r >= rn180)
+			if (r > rn90)
 			{
-				sign = -sign;
-				r -= rn180;
+				if (r < rn180-epsilon)
+					r = rn180 - r;
+				else if (r < rn270 - epsilon)
+				{
+					sign = -sign;
+					r = rn270 - r;
+				}
+				else
+				{
+					r = rn360 - r;
+					sign = -sign;
+				}
 			}
-			if (r > rn90)					// sin(90+alpha)=cos(alpha)=sin(90-alpha), if alpha < 180
-				r = r - rn90;
-
 			// now r is in 0<= r <= 90
 			if (r < epsilon)
 				return RealNumber::RN_0;
@@ -3040,8 +3053,14 @@ RealNumber csc(RealNumber r, AngularUnit angu)		// cosecant = 1/sine
 
 RealNumber cos(RealNumber r, AngularUnit angu)		// cosine
 {
-	RealNumber rn360 = RealNumber("360"),
-				epsilon = RealNumber("1e-40");
+	RealNumber epsilon = RealNumber("1e-40");
+	const RealNumber &rn30 = RealNumber::RN_30,
+					 &rn60 = RealNumber::RN_60,	
+					 &rn90 = RealNumber::RN_90,	
+					 &rn180 = RealNumber::RN_180,	
+					 &rn270 = RealNumber::RN_270,	
+					 &rn360 = RealNumber::RN_360;
+
 	// cos (- alpha) = cos(alpha) : argument always positive
 	r.ToAbs();				
 
@@ -3053,17 +3072,17 @@ RealNumber cos(RealNumber r, AngularUnit angu)		// cosine
 			RealNumber rn180 = RealNumber("180");
 			RealNumber rn90 = RealNumber("90");
 
-			(void)r.Div(rn360, r);	 // |r| is < 360
-			// sine: 		-  | +
-			//			 ------|------
-			//				-  | +
+			r = fmod(r, rn360);	 // |r| is < 360
+			// sine: 		+  | +	   	cos.:	-  | +
+			//			 ------|------		 ------|------
+			//				-  | -	  			-  | +
 			if (r <= rn90+epsilon)
-				return sin(rn90 - r).SetSign(1);
+				return sin(rn90 - r);
 			if (r <= rn180+epsilon)
 				return sin(r - rn90).SetSign(-1);
 			if (r <= rn270+epsilon)
 				return sin(r - rn180).SetSign(-1);
-			return sin(rn270 - r).SetSign(1);		// > 270
+			return sin(r - rn270).SetSign(1);		//  270 <= x < 360
 		}
 
 		case AngularUnit::auRad:
@@ -3087,9 +3106,10 @@ RealNumber sec(RealNumber r, AngularUnit angu)		// secant = 1/cosine
 
 RealNumber tan(RealNumber r, AngularUnit angu)		// tangent
 {
-	RealNumber rsin = sin(r, angu);
+	RealNumber rsin = sin(r, angu),
+		       rcos = cos(r, angu);
 
-	return rsin/cos(r, angu);
+	return rsin/rcos;
 }
 
 RealNumber cot(RealNumber r, AngularUnit angu)		// cotangent

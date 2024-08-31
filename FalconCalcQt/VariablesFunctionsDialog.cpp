@@ -238,8 +238,18 @@ void VariablesFunctionsDialog::on_btnSave_clicked()
 
 void VariablesFunctionsDialog::on_btnAddRow_clicked()
 {
-	_pActUserTable->setRowCount(_pActUserTable->rowCount() + 1);
-	qDebug("on_btnAddRow_clicked - row added");
+	int row = _pActUserTable->rowCount();
+	_pActUserTable->setRowCount(row + 1);
+	for (int col = 0; col < _pActUserTable->columnCount(); ++col)
+	{
+		ElidingTableWidgetItem* pwi = new ElidingTableWidgetItem("");
+		_pActUserTable->setItem(row, col, pwi);
+		if (_vf.which)
+			++_vf.uUserFuncCnt;
+		else
+			++_vf.uUserVarCnt;
+	}
+	qDebug("on_btnAddRow_clicked - row #%d added", row);
 }
 
 void VariablesFunctionsDialog::on_tblUserVars_currentItemChanged(QTableWidgetItem* current, QTableWidgetItem* previous)

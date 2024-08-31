@@ -82,8 +82,8 @@ public:
 			QString fullText = QTableWidgetItem::data(Qt::DisplayRole).toString();
 			QString elidedText = metrics.elidedText(fullText, col == 1 ? Qt::ElideMiddle : Qt::ElideRight, columnWidth);
 			// DEBUG
-			if(fullText != elidedText)
-				qDebug("Eliding  row: %d, col:%d, full:%s, elided:%s", row(), column(), fullText.toStdString().c_str(),elidedText.toStdString().c_str());
+			//if(fullText != elidedText)
+			//	qDebug("Eliding  row: %d, col:%d, full:%s, elided:%s", row(), column(), fullText.toStdString().c_str(),elidedText.toStdString().c_str());
 			// /DEBUG
 			return elidedText;
 		}
@@ -133,7 +133,7 @@ private:
 	bool _changed = false;
 	bool _busy = false;
 	QString _sTmp;	// for table cell change
-	VarFuncInfoQt _vf;
+	FalconCalc::VarFuncInfo<QString, QStringList> _vf;
 
 	QStack<QPair<int, QVector<ElidingTableWidgetItem*>>> _removedVarRows, _removedFuncRows;
 	QStack<QPair<int, QVector<ElidingTableWidgetItem*>>>* _pActStack;
@@ -147,6 +147,7 @@ private:
 	void _FillVarTables();
 	void _Serialize(VarFuncInfoQt *pvf=nullptr);    // user functions and variables into _vf
 	void _AddCellText(QTableWidget* ptw, int row, int col, QString text);
+	void convert(const FalconCalc::VarFuncInfo<QString,QStringList>& vfQt, FalconCalc::VarFuncInfo<SmartString, StringVector>&vf)
 private:
 	Ui::VariablesFunctionsDialogClass ui;
 

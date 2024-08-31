@@ -25,16 +25,18 @@
     // before including this
 #endif
 
-//extern wchar_t *VERSION_STRING;
-
 bool IsAlpha(wchar_t ch, std::locale loc);    // needed for names in one locale when working in another localse
 bool IsAlnum(wchar_t ch, std::locale loc);    // needed for names in one locale when working in another localse
+
 
 namespace FalconCalc
 {
 
+    extern SCharT argSeparator;
+
     extern const SCharT schCommentDelimiter;
     extern const SmartString ssCommentDelimiterString;
+    extern const SmartString ssEqString;
 
 	enum TokenType {tknEOL,		    // end of line
 					tknUnknown,		// e.g. ','
@@ -206,19 +208,27 @@ namespace FalconCalc
     extern std::map<Trigger_Type, SmartString> triggerMap;
 	void Trigger(Trigger_Type tt);
 
-    /*==================*/
-    // variable or function does not know its name (see FunctionTable below)
+    /*============= built-in function types ============*/
     typedef RealNumber (*FUNCT1)(RealNumber val);
     typedef RealNumber (*FUNCT2R)(RealNumber x, RealNumber y);
     typedef RealNumber (*FUNCT2I)(RealNumber x, int y);
     typedef RealNumber (*FUNCT2A)(RealNumber x, AngularUnit au);
-    struct BuiltInFunction
+    struct BuiltinFunc
     {
         enum ArgTyp {atyNone, atyR, atyI, atyA}; // RealNumber, integer or AngularUnit
-        FUNCT1 funct1 = nullptr;        // arguments RealNumber
-        FUNCT2R funct2r = nullptr;        // arguments RealNumber RealNumber
-        FUNCT2I funct2i = nullptr;        // arguments RealNumber integer
-        FUNCT2A funct2a = nullptr;        // arguments RealNumber Angular Units
+
+        SmartString name;               // w.o. parathesis and arguments
+        SmartString desc;
+
+                // only one of the 'func...' pointers isn't nullptr
+        FUNCT1 funct1 = nullptr;        // argument: RealNumber
+        FUNCT2R funct2r = nullptr;      // arguments: RealNumber RealNumber
+        FUNCT2I funct2i = nullptr;      // arguments: RealNumber integer
+        FUNCT2A funct2a = nullptr;      // arguments: RealNumber Angular Units
+
+        bool useAngleUnit = false,      // for builtin trigonometric functions only (default: false)
+             useAngleUnitAsResult=false;// for built in inverse trigonometric functions only
+
         void clear() { funct1 = nullptr;  funct2r = nullptr; funct2i = nullptr; funct2a = nullptr; }
         RealNumber operator() (RealNumber r) 
         { 
@@ -252,9 +262,25 @@ namespace FalconCalc
             if (funct2a) return atyA;
             return atyNone;
         }
+        BuiltinFunc & operator=(const BuiltinFunc & ofunc)
+        {
+            name = ofunc.name;
+            desc = ofunc.desc;
+            funct1  = ofunc.funct1;
+            funct2r = ofunc.funct2r;
+            funct2i = ofunc.funct2i;
+            funct2a = ofunc.funct2a;
+            useAngleUnit = ofunc.useAngleUnit;
+            useAngleUnitAsResult = ofunc.useAngleUnitAsResult;
+            return *this;
+        }
+        int RequireddArgumentCount() const 
+        {
+            if (funct1) 
+                return 1;
+            return 2;   // funct2r, funct2i, funct2a
+        }
     };
-
-
 
     /*=============================================================
      * User defined variables
@@ -268,26 +294,25 @@ namespace FalconCalc
      * If the colon is not given both the unit and the comment will be empty
      * If no unit is given 'unit' will be empty
      *------------------------------------------------------------*/
-    struct Variable
+    struct Variable : public Constant
     {        
-        Constant data;          // the value of a user defined variable
-        bool dirty=false;
-                                // 'dirty:' must re-calculate 'value', 
-                                // because any variable/function in 'definition' is redefined: 
-
-        SmartString body;       // text from the right hand side of the equal sign, empty for builtins
-        TokenVec definition;    // processed body in postfix, empty for builtins
+	                            // builtins are not stored in 'VariableTable'
+                                // they are constants in LongNumber
+		SmartString body;       // text from the right hand side of the equal sign
+		TokenVec tokenVec;      // processed body in postfix
+		bool dirty = false;     // 'dirty = true => must re-calculate 'value', 
+                                // because any variable/function in its 'tokenVec' is redefined: 
 
         bool being_processed=false;     // under calculation (prevent recursion)
 
         Variable(){}
-        Variable(Constant &co) : data(co) {}
+        Variable(Constant &co) : Constant(co) {}
         Variable(SmartString line) 
         {
             int pos = line.indexOf(SCharT('='));
             if (pos < 0)
                 return;
-            data.name = line.left(pos++);         // to definition
+            name = line.left(pos++);         // to definition
             pos = line.indexOf(schCommentDelimiter, pos);
             if (pos < 0)    // only variable body
                 body = line.mid(pos);
@@ -299,47 +324,54 @@ namespace FalconCalc
                     int pos1 = line.indexOf("]"_ss, pos + 1);
                     if (pos1 > 0)    // else no unit
                     {
-                        data.unit = line.mid(pos + 1, pos1 - pos);
+                        unit = line.mid(pos + 1, pos1 - pos);
                         ++pos1;
                     }
                     else 
                         pos1 = pos;
-                    data.desc = line.mid(pos1);
+                    desc = line.mid(pos1);
                 }
             }
         }
-        explicit Variable(const wchar_t* cname, const wchar_t* cunit, const wchar_t* cdesc, const RealNumber cvalue = RealNumber()) :
-            data(cname, cvalue, cunit, cdesc) {}
         explicit Variable(const String name, const RealNumber value, const String unit, const String desc) : 
-            data(name, value, unit, desc, nullptr)  {}
+            Constant(name, value, unit, desc, nullptr) , dirty(true) {}
         virtual ~Variable()
         {
         }
+        SmartString Serialize() const
+        {
+            SmartString s = SmartString(name) + ssEqString + body + ssCommentDelimiterString;
+            if (!desc.empty() || !unit.empty())
+                s += ssCommentDelimiterString + desc;
+            if(!unit.empty())
+                s += ssCommentDelimiterString + unit;
+
+            return s;
+        }
+        inline UTF8String  SerializeUtf8() const
+        {
+            return Serialize().toUtf8String();
+        }
+
     };
 
     /*=============================================================
-     * Common structure for built-in (BI) and user defined (UD) functions
+     * User defined (UD) functions
+     *  they may have any number of arguments
      *------------------------------------------------------------*/
     struct Func
     {
-        SmartString name;
-        SmartString unit;           // for physical constants or functions
+        SmartString name;           // w.o. the arguments and the braces
+        SmartString body;           // text from the right hand side of the equal sign
         SmartString desc;           // optional description
-        RealNumber value;           // defined or calculated value
-            // for BI functions:
-        bool builtin = true;            // builtin function (builtin variables are constants)
+        SmartString unit;           // for physical constants or functions
+        
+        StringVector args;          // arguments: empty for functions w.o. arguments
 
-        BuiltInFunction function;              // for builtin functions only, at most 2 arguments
-        bool useAngleUnit = false,      // for builtin trigonometric functions only (default: false)
-             useAngleUnitAsResult=false;// for built in inverse trigonometric functions only
-                                        // if true number is converted to deg or grad
-        //    // for BI variables
-        //bool isnumber=false;          // variable is a number: never can get dirty
+        RealNumber value;           // defined or calculated value
 
            // for UD functions
-        StringVector args;              // arguments: empty for functions w.o. arguments
-        SmartString body;               // text from the right hand side of the equal sign
-        TokenVec definition;            // processed body in postfix, none for builtins
+        TokenVec tokenVec;            // processed body in postfix, none for builtins
                //  for variables
         bool dirty = false;             // any variable/function in 'definition' is
                                         // redefined: must re-calculate 'value'
@@ -353,52 +385,118 @@ namespace FalconCalc
         // This operator is intended to be used only by 'FuncTable'
         // Were it used outside all other variable definitions should be checked
         // and marked dirty when needed
-        Func & operator=(const Func & var)
+        inline SmartString FullNameWithArgs() const
         {
-            name = var.name;
-            args = var.args;
-            body = var.body;
-            desc = var.desc;
-            definition = var.definition;
-            builtin = var.builtin;
-            function    = var.function;
-            useAngleUnit = var.useAngleUnit;
-            useAngleUnitAsResult = var.useAngleUnitAsResult;
-            //isnumber = var.isnumber;
-            value = var.value;
-            dirty = var.dirty;
-            being_processed = var.being_processed;
-            return *this;
+            SmartString s = name + "("_ss;
+            if (args.size())
+                s += args[0];
+            for (size_t j = 1; j < args.size(); ++j)
+                s += SmartString(argSeparator) + args[j];
+            return s + ")"_ss;
         }
-        int RequireddArgumentCount() const 
+        SmartString Serialize() const
         {
-            if (builtin)
-            {
-                if (function.funct1) return 1;
-                return 2;   // funct2r, funct2i, funct2a
-            }
-            else
-                return args.size();
+            SmartString s = FullNameWithArgs() + ssEqString + body;
+            if (!desc.empty() || !unit.empty())
+                s += ssCommentDelimiterString + desc;
+            if(!unit.empty())
+                s += ssCommentDelimiterString + unit;
+
+            return s;
+        }
+        inline UTF8String  SerializeUtf8() const
+        {
+            return Serialize().toUtf8String();
         }
     };
 
     class LittleEngine;
-
-    struct VarFuncInfo
-    {
-        unsigned uBuiltinFuncCnt= 0;
-        unsigned uBuiltinVarCnt= 0;
-        unsigned uUserFuncCnt= 0;
-        unsigned uUserVarCnt= 0;
-        SmartString sBuiltinFuncs;
-        SmartString sBuiltinVars;
-        SmartString sUserFuncs;
-        SmartString sUserVars;
-        LittleEngine *pOwner = nullptr;
-    };
-
+#if 0
     typedef std::map<SmartString,Func>       FunctionTable;
     typedef std::map<SmartString,Variable>   VariableTable;  // user defined only. For builtins use 'constantsTable'
+
+#else
+    // for user variables and functions we need a fast lookup by string container
+    // in which the order of the items remains the same as the
+    // added order
+
+    using IntMap = std::map<SmartString, int>;
+
+    template<class T>
+    struct VarFuncData
+    {
+        IntMap index;
+        std::vector<T> vec;
+    };
+
+    //---------------------------------
+    template <class T>
+    class DataMap : private VarFuncData<T>
+    {
+    public:
+        DataMap() : VarFuncData<T>() {}
+        virtual ~DataMap() {};
+
+        bool changed = false;
+
+        T& operator[](int ix)
+        {
+            return this->vec[ix];
+        }
+
+        T& operator[](const SmartString key)
+        {
+            int ix = -1;
+            if (this->index.count(key))                   // !!! w.o. this-> it won't find index
+                ix = this->index[key];
+            else
+            {
+                ix = this->vec.size();
+                this->index[key] = ix;
+                T t=T();
+                this->vec.push_back(t);
+            }
+            return this->vec[ix];
+        }
+
+        const SmartString &Name(int ix) const   // name of index-th item
+        {
+            T& t = (*this)[ix];
+            return t.Name();
+        }
+
+        int size() const 
+        { 
+            return this->index.size(); 
+        }
+
+        int count(const SmartString &s) const
+        { 
+            return this->index.count(s);
+        }
+
+        void clear()
+        {
+            this->index.clear();
+            this->vec.clear();
+        }
+
+        void erase(int i)
+        {
+            SmartString name = (*this)[i].Name();
+            this->index.erase(name);
+            this->vec.erase(this->vec.begin() + i);
+            for (auto& e : this->index)
+                if (e.second > i)
+                    --e.second;
+        }
+    };
+
+    typedef DataMap<BuiltinFunc> BuiltinFuncTable;
+    typedef DataMap<Func> FunctionTable;
+    typedef DataMap<Variable> VariableTable;
+
+#endif
 
     /*==================*/
 	class LittleEngine
@@ -407,8 +505,7 @@ namespace FalconCalc
         enum class ResultType { rtNumber, rtDefinition, rtInvalid};
         enum class ResValid { rvOk, rvInvalid, rvDef };            // validity of result: OK, invalid, function, etc definition
 
-        static bool builtinsOk; // built in functions are set up
-        static unsigned numBuiltinVars,numBuiltinFuncs;
+        static size_t builtInFuncCount; // built in functions are set up
 
         DisplayFormat displayFormat;
 
@@ -416,13 +513,15 @@ namespace FalconCalc
         TokenVec tvPostfix;
         RealNumber calcResult; // store result of calculation
         ResultType resultType = ResultType::rtNumber;
+
         static VariableTable variables;
+        static BuiltinFuncTable builtinFunctions;
         static FunctionTable functions;
+
         SmartString ssNameOfDatFile;
         ResValid resultValid = ResValid::rvOk;
-        bool clean; // no changes to variables or functions?
+        bool clean;                             // no changes to variables or functions?
     private:
-        SCharT _argSeparator = ',';
 
         /* ==========
          * internal class
@@ -466,7 +565,7 @@ namespace FalconCalc
         bool _FunctionAssignment(const SmartString &expr, unsigned &pos, Token *tok);
         void _HandleOperator(Token* tok);
         void _HandleBrace(Token* tok);
-        void _MarkDirty(const SmartString name); // all variables containing this 'name'
+        void _MarkDependentVariablesDirty(const SmartString name); // all variables containing this 'name'
                                            // in their definition
 
         void _DoVariable(const Token &tok);
@@ -481,32 +580,31 @@ namespace FalconCalc
         LittleEngine &operator=(const LittleEngine &src);
         RealNumber Calculate();                                 // using infix and angleUnit
 		SmartString Postfix() const;                            // get converted data as SmartString
-        SmartString SerializeVariables(bool builtin=false, bool firstDelimIsEqual = false) const;     // in a single SmartString
-                                                                // <name>:<body>:<comment>:<unit>
-        SmartString SerializeFunctions(bool builtin=false, bool firstDelimIsEqual = false) const;     // each line contains one var/func
-                                                                // <name(arg1,...)>:<body>:<comment>
 
-        bool AddUserVariablesAndFunctions(SmartString definition, int what); //0: any, 1: vars, 2: functions
-
+        void AddUserVariables(const StringVector &from); // from vf 0: any, 1: vars, 2: functions
+        void AddUserFunctions(const StringVector &from); // from vf 0: any, 1: vars, 2: functions
 
         bool LoadUserData(SmartString name=SmartString()); // no name: uses FalconCal_DAT_FILE in user directorr
-        bool SaveUserData(const VarFuncInfo& vf);
-        bool SaveUserData(SmartString name=SmartString()); // if it wasn't read and no name is given it wont be saved
+        bool SaveUserData();
+        bool SaveUserData(SmartString name);                // if it wasn't read and no name is given it wont be saved
         bool ResultOk() const { return calcResult.IsValid(); }
 
-        void GetVarFuncInfo(VarFuncInfo &vf, bool firstDelimIsEqual = false, bool bBuiltinsToo = true);       // how many and what are they
+        // void GetVarFuncInfo(VarFuncInfo<SmartString, StringVector>& vf);       // how many and what are they
 
         RealNumber Result() const { return calcResult; }
         SmartString ResultAsDecString();
         SmartString ResultAsHexString();
         SmartString ResultAsOctString();
         SmartString ResultAsBinString();
-        SmartString ResultAsCharString();
+        SmartString ResultAsCharString(); 
         AngularUnit AngleUnit() const { return displayFormat.angUnit; }
 	};
 
 // end of namespace FalconCalc
 }
+// global base engine
+extern FalconCalc::LittleEngine *lengine;    // contains builtin functions and constants common to all instances of LittleEngine
+
 
 // calculateH
 #endif

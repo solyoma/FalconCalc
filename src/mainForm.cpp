@@ -35,8 +35,6 @@ using namespace std;
 #include "resource.h"
 #include "variables.h"
 
-FalconCalc::LittleEngine *lengine = nullptr;
-
 Clipboard *MyClipboard;
 
 TfrmMain *frmMain;
@@ -745,7 +743,8 @@ TfrmMain::TfrmMain()
 	_bAutoSave = false;
 
 	RealNumber::SetMaxLength(65);	// but only display 59
-    lengine = new FalconCalc::LittleEngine;
+
+	lengine = new FalconCalc::LittleEngine;			// this remain valid when the program is running
 	lengine->displayFormat.useNumberPrefix = true;
 	lengine->displayFormat.strThousandSeparator = " "_ss;
 	lengine->displayFormat.displWidth = 59;
@@ -834,7 +833,7 @@ void TfrmMain::Destroy()
     _SaveState(AppendToPath(_wsUserDir, FalconCalc_CFG_FILE).c_str());
     pslHistory->SaveToFile(AppendToPath(_wsUserDir, FalconCalc_HIST_FILE).c_str());
     delete pslHistory;
-    delete lengine;
+	delete lengine;
 	Form::Destroy();
 }
 
@@ -1341,8 +1340,6 @@ void TfrmMain::ShowHexOptions(bool show)
 
 void TfrmMain::OpenVarsOrFunctions(void* sender, int which, nlib::EventParameters param)
 {
-	VarFuncInfo vf;
-	lengine->GetVarFuncInfo(vf);
 	Rect wrect = wiMain.BareVisibleWindowRect();
 
 	if (!frmVariables)
@@ -1352,7 +1349,6 @@ void TfrmMain::OpenVarsOrFunctions(void* sender, int which, nlib::EventParameter
 		frmVariables->SetLeft(wrect.right+1);
 		frmVariables->SetTop(WindowRect().top);
 
-		frmVariables->Setup(vf);
 		wiVars.InitInfo(frmVariables, L"frmVariables");
 	}
 	else
@@ -1400,11 +1396,6 @@ void TfrmMain::_EnableMyTimer(bool enable)
 	else
 		KillTimer(Handle(),(UINT_PTR)0x12);
 	_bAutoSave = enable;
-}
-
-FalconCalc::LittleEngine* TfrmMain::pEngine()
-{
-	return lengine;
 }
 
 /*

@@ -164,21 +164,23 @@ TfrmVariables::TfrmVariables()
 {
 	InitializeFormAndControls();
 
-	_changed = false;
 	_underResize = false;
+	for (int i = 0; i < LittleEngine::variables.size(); ++i)
+	{
+		Variable& v = LittleEngine::variables[i];
+		_slUserVars.push_back(v.name + ssCommentDelimiterString + v.body + ssCommentDelimiterString + v.unit + ssCommentDelimiterString + v.desc);
+	}
+	for (int i = 0; i < LittleEngine::functions.size(); ++i)
+	{
+		Func& f = LittleEngine::functions[i];
+		_slUserFuncs.push_back(f.FullNameWithArgs() + ssCommentDelimiterString + f.body + ssCommentDelimiterString + f.unit + ssCommentDelimiterString + f.desc);
+	}
 }
 
 TfrmVariables::~TfrmVariables()
 {
 	/* Don't 'delete' the form. Call Destroy() instead which has access to the protected destructor. */
 }
-
-void TfrmVariables::Setup(const FalconCalc::VarFuncInfo &vfInfo)
-{
-    _vf = vfInfo;
-//	tcVarsTabChange(tcVars, TabChangeParameters(tcVars->SelectedTab()));
-}
-
 
 void TfrmVariables::FormSizeMoveEnded(void* sender, nlib::SizePositionChangedParameters param)
 {
@@ -253,40 +255,38 @@ void TfrmVariables::BuiltinMouseUp(void *sender, nlib::MouseButtonParameters par
 
  /*=============================================================
   * TASK   : store user data (from all rows of sgUser) for
-  *				both user variables and user function in a single 
-  *				string
-  * PARAMS : us (O) : reference to string for all user data	
-  *			 cnt (I): reference to # of columns
+  *				both user variables and user function in the  
+  *				string vector _svUserFunc or _svUserVars
+  * PARAMS : table: which type of data
+  *			 firstIsEqSign: if true the first field delimiter is an eq sign
   * EXPECTS:
   * GLOBALS:
   * RETURNS: nothing
-  * REMARKS:- result in 'us' as a single utf8 string of '\n' 
-  *			  delimited lines which consists of fields separated
-  *			  by ssCommondelimiters (":")
-  *			- order of data stored for
+  * REMARKS:- fields are delimited by 'ssCommondelimiters' (":")
+  *			- order of strings in vector
   *				variables:  name,formula/value,unit,comment
   *				functions:	name,body,unit,comment
   *			- functions must have a body
   *------------------------------------------------------------*/
-void TfrmVariables::_SerializeInto(SmartString& us, size_t& cnt)
+void TfrmVariables::_CollectFrom(int table, bool firstIsEqSign)
 {
-    if(!_changed)    // 'changed' must be modified in caller when necessary
+    if(!_changed[table])    // 'changed' must be modified in caller when necessary
         return;
-    int n = 0; // count of user variables/functions
-	us.clear();
+
+	StringVector& sv = table ? _slUserVars : _slUserFuncs;
+	sv.clear();
     for(int i = 1; i < sgUser->RowCount(); ++i)
     {
         if(!sgUser->String(0,i).empty() && !sgUser->String(1, i).empty())
         {
-			us += SmartString(sgUser->String(0, i)) + ssCommentDelimiterString + SmartString(sgUser->String(1, i));
-							// unit (even when empty)
-			us += ssCommentDelimiterString + SmartString(sgUser->String(3, i));
-							// description / body
-			us += ssCommentDelimiterString + SmartString(sgUser->String(2, i)) + u"\n";
-            ++n;
+			SmartString s = SmartString(sgUser->String(0, i)) + (firstIsEqSign ?  ssEqString: ssCommentDelimiterString) +
+							SmartString(sgUser->String(0, i)) + ssCommentDelimiterString +
+							SmartString(sgUser->String(1, i)) + ssCommentDelimiterString +	// value/definition
+							SmartString(sgUser->String(3, i)) + ssCommentDelimiterString +	// description
+							SmartString(sgUser->String(2, i));
+			sv.push_back(s);
         }
     }
-    cnt = n;
 }
 
 void TfrmVariables::_SetupGridLayout(int tabIndex)
@@ -338,8 +338,7 @@ void TfrmVariables::tcVarsTabChange(void *sender, nlib::TabChangeParameters para
 	_activeTab = param.tabindex;
 
     size_t cntUser=0, cntBuiltin=0;
-    SmartString *psUser=nullptr, *psBuiltin=nullptr;
-    _changed = false;
+    //_changed = false;
 	// and set data into actual Tab
 
 	_SetupGridLayout(_activeTab);
@@ -347,35 +346,28 @@ void TfrmVariables::tcVarsTabChange(void *sender, nlib::TabChangeParameters para
     {
 		case FUNCTIONS:
 			// collect info from previously active Tab
-			_SerializeInto(_vf.sUserVars, _vf.uUserVarCnt);	// collect variables
+			_CollectFrom(VARIABLES, false);	// the page we switched from, but only if changed
 			sgUser->SetString(0,0,L"Function(args)");
 			sgUser->SetString(1,0,L"Definition");
 			sgUser->SetString(2,0,L"Unit");
 			sgUser->SetString(3,0,L"Comment");
-            cntUser		= _vf.uUserFuncCnt;
-            cntBuiltin	= _vf.uBuiltinFuncCnt;
-            psUser		= &_vf.sUserFuncs;
-            psBuiltin	= &_vf.sBuiltinFuncs;
+			cntUser = _slUserFuncs.size();
             break;
 		default:
 		case VARIABLES:
 			// collect info from previously active Tab
-			_SerializeInto(_vf.sUserFuncs,_vf.uUserFuncCnt);	// collect functions
+			_CollectFrom(FUNCTIONS,false);	//the tab we switched from
 			sgUser->SetString(0,0,L"Variable");
 			sgUser->SetString(1,0,L"Value");
 			sgUser->SetString(2,0,L"Unit");
 			sgUser->SetString(3,0,L"Comment");
-			 
-            cntUser    = _vf.uUserVarCnt;
-            cntBuiltin = _vf.uBuiltinVarCnt;
-            psUser		= &_vf.sUserVars;
-            psBuiltin	= &_vf.sBuiltinVars;
+			cntUser = _slUserVars.size();
             break;
     }
     if((size_t)sgUser->RowCount() != cntUser + (cntUser ? 1 : 2))
         sgUser->SetRowCount(cntUser + (cntUser ? 1 : 2));
-    if((size_t)sgBuiltin->RowCount() != cntBuiltin)
-        sgBuiltin->SetRowCount(cntBuiltin);
+    //if((size_t)sgBuiltin->RowCount() != cntBuiltin)
+    //    sgBuiltin->SetRowCount(cntBuiltin);
 
 	if(cntUser == 0)
 	{
@@ -384,74 +376,46 @@ void TfrmVariables::tcVarsTabChange(void *sender, nlib::TabChangeParameters para
 		sgUser->SetString(2,1,L"");
 		sgUser->SetString(3,1,L"");
 	}
+	// first the user variables:
 
-	std::vector<SmartString> sUserData, sBuiltinData;
-	std::vector<SmartString> sUserLines, sBuiltinLines;
+	StringVector& sv = _activeTab == FUNCTIONS ? _slUserFuncs : _slUserVars;
+	for (size_t i = 0; i < cntUser; ++i)
+	{
+		StringVector svTmp = sv[i].Split(schCommentDelimiter, true);
+		for (size_t j = 0; j < 4; ++j)
+			sgUser->SetString(j,i+1, svTmp[j].ToWideString());
+	}
 
-    switch( _activeTab )
-    {
-		case FUNCTIONS:
-			sUserData = psUser->Split(SCharT('\n'), false);
-			for (size_t i = 1; i <= cntUser; ++i)
-			{
-				int n = 0;
-				sUserLines = sUserData[i-1].Split(schCommentDelimiter, true);
-				sgUser->SetString(0,i,sUserLines[n].ToWideString());
-				sgUser->SetString(1,i,sUserLines[++n].ToWideString());
-				if(sUserLines.size() == 3)
-					sgUser->SetString(2,i,L"-");
-				else
-					sgUser->SetString(2,i,sUserLines[++n].ToWideString());
-				sgUser->SetString(3,i,sUserLines[++n].ToWideString());
-			}
-			sBuiltinData = psBuiltin->Split(SCharT('\n'), false);
-			for (size_t i = 0; i < cntBuiltin; ++i)
-			{
-				sBuiltinLines = sBuiltinData[i].Split(schCommentDelimiter, true);
+	// then the builtins
+	if (_activeTab == FUNCTIONS)
+	{	
+		BuiltinFuncTable &bfunc =  LittleEngine::builtinFunctions;
+		static const SmartString sx = SmartString("(x)");
+		sgBuiltin->SetRowCount(bfunc.size());
+		for (int i = 0; i < bfunc.size(); ++i)
+		{
+			SmartString s = bfunc[i].name + sx;
 
-				sgBuiltin->SetString(0,i,sBuiltinLines[0].ToWideString());
-				sgBuiltin->SetString(1,i,L"-");
-				sgBuiltin->SetString(2,i,L"-");
-				sgBuiltin->SetString(3,i,sBuiltinLines[2].ToWideString());
-			}
-			break;
-		case VARIABLES:
-			sUserData = psUser->Split(SCharT('\n'), false);
-			if (!sUserData.empty())
-			{
-				// fields: <name>:<definition>[:<comment>[:<unit>]]
-				// size: 2,3,4
-				for (size_t i = 1; i <= cntUser; ++i)
-				{
-					sUserLines = sUserData[i - 1].Split(schCommentDelimiter, true);
-					sgUser->SetString(0, i, sUserLines[0].ToWideString());		// name
-					sgUser->SetString(1, i, sUserLines[1].ToWideString());		// definition
-					sgUser->SetString(2, i, L"-");								// unit (may be modified below)
-					switch (sUserLines.size())
-					{
-						case 2:	// nothing, no comment, no unit
-							break;
-						case 3:	// comment but no unit
-							sgUser->SetString(3, i, sUserLines[2].ToWideString());
-							break;
-						default:// comment and unit
-							sgUser->SetString(2, i, sUserLines[3].ToWideString());
-							sgUser->SetString(3, i, sUserLines[2].ToWideString());
-							break;
-					}
-				}
-			}
-			sBuiltinData = psBuiltin->Split(SCharT('\n'), false);
-			for (size_t i = 0; i < cntBuiltin; ++i)
-			{
-				sBuiltinLines = sBuiltinData[i].Split(schCommentDelimiter, true);
-
-				sgBuiltin->SetString(0,i,sBuiltinLines[0].ToWideString());
-				sgBuiltin->SetString(1,i,sBuiltinLines[1].ToWideString());
-				sgBuiltin->SetString(2,i,sBuiltinLines[2].ToWideString());
-				sgBuiltin->SetString(3,i,sBuiltinLines[3].ToWideString());
-			}
-			break;
+			sgBuiltin->SetString(0, i,s.ToWideString());
+			sgBuiltin->SetString(1, i, L"-");
+			sgBuiltin->SetString(2, i, L"-");
+			sgBuiltin->SetString(3, i, bfunc[i].desc.ToWideString());
+		}
+	}
+	else	//	VARIABLES:
+	{
+		sgBuiltin->SetRowCount(constantsMap.size());
+		int i = 0;
+		DisplayFormat df;
+		
+		for (auto &it: constantsMap)
+		{
+			sgBuiltin->SetString(0, i, it.second->name.ToWideString());
+			sgBuiltin->SetString(1, i, it.second->value.ToDecimalString(df).ToWideString());
+			sgBuiltin->SetString(2, i, it.second->unit.ToWideString());
+			sgBuiltin->SetString(3, i, it.second->desc.ToWideString());
+			++i;
+		}
 	}
 }
 
@@ -476,7 +440,7 @@ void TfrmVariables::btnClearClick(void *sender, nlib::EventParameters param)
 	sgUser->SetString(1,1,L"");
 	sgUser->SetString(2,1,L"");
 	sgUser->SetString(3,1,L"");
-	btnSave->SetEnabled(_changed = true);
+	btnSave->SetEnabled(_changed[_activeTab] = true);
 }
 
 void TfrmVariables::btnDelVarClick(void *sender, nlib::EventParameters param)
@@ -488,31 +452,24 @@ void TfrmVariables::btnDelVarClick(void *sender, nlib::EventParameters param)
             btnClearClick(sender,param);
         else
 			sgUser->DeleteRow(n);
-        _changed = true;
+        _changed[_activeTab] = true;
     }
 	btnSave->SetEnabled(_changed);
 }
 
 void TfrmVariables::btnSaveClick(void *sender, nlib::EventParameters param)
 {
-    if(!_changed)		// should never happen
+    if(!_changed)		// should never happen (Save button not enabled)
 	{
 		return;
 	}
-    switch( tcVars->SelectedTab() )
-    {
-       case VARIABLES: _SerializeInto(_vf.sUserVars, _vf.uUserVarCnt); 
-				frmMain->pEngine()->AddUserVariablesAndFunctions(_vf.sUserVars,  1);
-		   break;
+	LittleEngine i2p;
 
-       case FUNCTIONS: _SerializeInto(_vf.sUserFuncs,_vf.uUserFuncCnt); 
-				frmMain->pEngine()->AddUserVariablesAndFunctions(_vf.sUserFuncs, 2);
-		   break;
-    }
+	i2p.AddUserVariables(_slUserVars );
+	i2p.AddUserFunctions(_slUserFuncs);
 
     frmMain->edtInfixTextChanged(sender,param); // to reflect changed values
-    _changed = false;
-	btnSave->SetEnabled(_changed);
+	btnSave->SetEnabled(_changed[_activeTab] = false);
 }
 
 void TfrmVariables::sgBuiltinColumnSizing(void *sender, nlib::ColumnRowSizeParameters param)
@@ -537,7 +494,7 @@ void TfrmVariables::FormClose(void *sender, nlib::FormCloseParameters param)
 void TfrmVariables::sgUserKeyPress(void *sender, nlib::KeyPressParameters param)
 {
 	if(param.key != VK_TAB && param.key != VK_RIGHT && param.key != VK_LEFT && param.key != VK_UP && param.key != VK_DOWN)
-		btnSave->SetEnabled(_changed = true);
+		btnSave->SetEnabled(_changed[_activeTab] = true);
 	if (param.key == '3' && param.vkeys & vksAlt)
 	{
 		nlib::EventParameters par;
@@ -558,7 +515,7 @@ void TfrmVariables::sgBuiltinDoubleClick(void* sender, nlib::MouseButtonParamete
 void TfrmVariables::sgUserEditorKeyDown(void *sender, nlib::KeyParameters param)
 {
 	if(param.keycode != VK_TAB && param.keycode != VK_RIGHT && param.keycode != VK_LEFT && param.keycode != VK_UP && param.keycode != VK_DOWN)
-		btnSave->SetEnabled(_changed = true);
+		btnSave->SetEnabled(_changed[_activeTab] = true);
 
 	if(param.keycode == VK_TAB)
 	{

@@ -9,8 +9,6 @@ public:
 	TfrmVariables();
 	virtual void Destroy();
 
-    void Setup(const FalconCalc::VarFuncInfo &vf);
-
 	FalconCalc::WindowSide GetSnapSide();		// returns area index: 0: none 1 top, 2 right, 3 bottom, 4 left	
 	void Snap();				// snap this window to the side of the main window usin'_snappedSide' and '_snapDist'
 	constexpr bool Snapped() const { return _snappedToSide != FalconCalc::wsNone; }
@@ -47,19 +45,20 @@ protected:
 	virtual ~TfrmVariables(); /* Don't make public. Call Destroy() to delete the object. */ 
 N_PROTECTED: /* Designer generated list of protected members. Do not edit by hand. */
 private:
-    FalconCalc::VarFuncInfo _vf;
-    bool _changed = false;
+	bool _changed[2] = { false, false };	// so that at creation data would be stored in the string vectors	
 	ConditionFlag _busy;					// e.g. don't handle snap
 	bool _underResize = false;	// user/builtin function pane
 	int  _gridH;				// size of user var/function grid during resize
 	int _activeTab = -1;		// not set yet
+
+	SmString::StringVector _slUserVars, _slUserFuncs;
 
 	FalconCalc::WindowSide _snappedToSide = FalconCalc::wsNone;
 	int _snapPixelLimit = 30;	// pixels snap if inside this distance from, main window
 	int _snapDist = 0;			// when '_snapped' is true: distance from '_snappedToSide'
 	static int _colW[2][4];		// column widths
 
-    void _SerializeInto(SmartString &dest, size_t &cnt);    // from stringrid on actual page
+	void _CollectFrom(int funct, bool firstIsEqSign);	// from last active  grid to stringlist
 	void _SetupGridLayout(int tabIndex = 0);	// 0: functions, 1: variables
 N_PRIVATE: /* Designer generated list of private members. Do not edit by hand. */
 	void InitializeFormAndControls(); /* Control initializations. Do not remove. */

@@ -295,7 +295,8 @@ namespace LongNumber {
 	public:
 		// special values
 		static const RealNumber RN_0, RN_1, RN_2, RN_3, RN_4, RN_5, RN_6, RN_7, RN_8, RN_9, RN_10, 
-								RN_11, RN_12, RN_13, RN_14, RN_15, RN_16;
+								RN_11, RN_12, RN_13, RN_14, RN_15, RN_16,
+								RN_30, RN_60, RN_90, RN_180, RN_270, RN_360	;
 
 	public:
 		// static functions
@@ -666,9 +667,9 @@ namespace LongNumber {
 		friend class ConstantsMap;
 
 		SmartString name;		// used from outside
-		RealNumber value;		// re-scaled value
 		SmartString unit;		// e.g. kg
 		SmartString desc;		// description
+		RealNumber value;		// re-scaled value
 
 		Constant& operator=(const Constant& other) { name = other.name; value = other.value; unit = other.unit; desc = other.desc; return *this; }
 		Constant& operator=(const SmartString sms) { name = sms; return *this; }
