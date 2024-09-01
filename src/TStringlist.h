@@ -1,5 +1,7 @@
 #pragma once
 
+#include "SmartString.h"
+
 using SmString::SmartString;
 
 class TStringList 
@@ -48,20 +50,20 @@ public:
 	void SetCapacity(const size_t max=0);
 	void SetSorted(bool par, bool special=false);
 	void Sort();
-	bool LoadFromFile(std::wstring name);
-	bool SaveToFile  (std::wstring name);
+	bool LoadFromFile(SmartString name);
+	bool SaveToFile  (SmartString name);
 
 	bool Delete(size_t index);
 private:
 	bool _caseSens=false;
 	bool _allowDuplicates = true;
-	bool _sorted=false;				// true: lines are alphabetically sorted
-	bool _special=false;				// if set the first line is excluded from sorting
-	size_t _cntMax=0;				// max number of lines this list can hold (0:unlimited)
+	bool _sorted=false;			// true: lines are alphabetically sorted
+	bool _special=false;		// if set the first line is excluded from sorting
+	size_t _cntMax=0;			// max number of lines this list can hold (0:unlimited)
 								// if not 0 drops lines from end of list when the count
 								// reaches cntMax. For sorted lists new lines are added
 								// first and the excess lines are deleted afterward
-	// internal storage for lines
+	// internal storage for lines and objects
 	class _Strings
 	{
 	public:

@@ -51,7 +51,7 @@ private:
 	int  _gridH;				// size of user var/function grid during resize
 	int _activeTab = -1;		// not set yet
 
-	SmString::StringVector _slUserVars, _slUserFuncs;
+	SmString::SmartStringVector _slUserVars, _slUserFuncs;
 
 	FalconCalc::WindowSide _snappedToSide = FalconCalc::wsNone;
 	int _snapPixelLimit = 30;	// pixels snap if inside this distance from, main window

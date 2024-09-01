@@ -124,7 +124,6 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="TStringList.cpp" />
     <ClCompile Include="variables.cpp" />
     <ClCompile Include="wcommon.cpp" />
   </ItemGroup>
@@ -142,7 +141,6 @@
     <ClInclude Include="resource.h" />
     <ClInclude Include="SmartString.h" />
     <ClInclude Include="stdafx_lc.h" />
-    <ClInclude Include="TStringlist.h" />
     <ClInclude Include="variables.h" />
     <ClInclude Include="wcommon.h" />
   </ItemGroup>

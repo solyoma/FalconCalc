@@ -273,7 +273,7 @@ void TfrmVariables::_CollectFrom(int table, bool firstIsEqSign)
     if(!_changed[table])    // 'changed' must be modified in caller when necessary
         return;
 
-	StringVector& sv = table ? _slUserVars : _slUserFuncs;
+	SmartStringVector& sv = table ? _slUserVars : _slUserFuncs;
 	sv.clear();
     for(int i = 1; i < sgUser->RowCount(); ++i)
     {
@@ -378,10 +378,10 @@ void TfrmVariables::tcVarsTabChange(void *sender, nlib::TabChangeParameters para
 	}
 	// first the user variables:
 
-	StringVector& sv = _activeTab == FUNCTIONS ? _slUserFuncs : _slUserVars;
+	SmartStringVector& sv = _activeTab == FUNCTIONS ? _slUserFuncs : _slUserVars;
 	for (size_t i = 0; i < cntUser; ++i)
 	{
-		StringVector svTmp = sv[i].Split(schCommentDelimiter, true);
+		SmartStringVector svTmp = sv[i].Split(schCommentDelimiter, true);
 		for (size_t j = 0; j < 4; ++j)
 			sgUser->SetString(j,i+1, svTmp[j].ToWideString());
 	}

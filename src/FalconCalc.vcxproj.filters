@@ -36,9 +36,6 @@
     <ClCompile Include="variables.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="TStringList.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="calculate.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -81,9 +78,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="variables.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="TStringlist.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="calculate.h">

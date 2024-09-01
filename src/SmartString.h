@@ -108,13 +108,14 @@ using UTF8Pos = size_t;			// when used for unicode position (no unicode characte
 //
 // The length() function returns the length in code points, the size() function returns
 // the number of bytes that makes up the string
-class StringVector;	// forward declaration
+class SmartStringVector;	// forward declaration
 
 class SmartString : public String
 {
 public:
 	using Iterator = String::iterator;		// std::basic_string<SCharT>::iterator;
 	using Const_Iterator = String::const_iterator;// std::basic_string<SCharT>::const_iterator;
+	enum CaseSens { csCaseInsensitive, csCaseSensitive};
 public:
 	SmartString() : String() {}
 #ifdef QTSA_PROJECT
@@ -149,8 +150,10 @@ public:
 	SmartString& operator +=(SCharT ch);
 	SmartString& operator +=(const std::wstring ws);
 
-	bool operator==(const SmartString& s);
-	bool operator!=(const SmartString& s);
+	bool operator==(const SmartString& s) const;
+	bool operator!=(const SmartString& s) const;
+
+	int CompareWith(const SmartString ss, CaseSens caseSensitivity) const;
 
 	SCharT at(size_t pos, SCharT defch = SCharT(0) ) const;
 
@@ -184,8 +187,8 @@ public:
 	SmartString Trimmed () { SmartString s = *this; s.Trim(); return s; }
 	void RemoveWhiteSpace();	// even from inside
 
-	StringVector Split(const SCharT ch, bool keepEmpty) const;
-	StringVector SplitRegex(const SmartString regex, bool keepEmpty) const;	// TODO
+	SmartStringVector Split(const SCharT ch, bool keepEmpty) const;
+	SmartStringVector SplitRegex(const SmartString regex, bool keepEmpty) const;	// TODO
 				
 	void Reverse(); // order of characters
 };
@@ -193,14 +196,28 @@ public:
 
 const SmartString operator"" _ss(const char* ps, size_t len);
 
-class StringVector : public std::vector<SmartString>
+class SmartStringVector : public std::vector<SmartString>
 {
 public:
-	StringVector() : std::vector<SmartString>() {}
-	StringVector(const SmartString s, const SCharT ch, bool keepEmpty, bool trim);
-	StringVector(const SmartString s, SmartString regex, bool keepEmpty, bool trim);
-	StringVector(const StringVector &sv):std::vector<SmartString>(sv) {}
+	SmartStringVector() : std::vector<SmartString>() {}
+	SmartStringVector(const SmartString s, const SCharT ch, bool keepEmpty, bool trim);
+	SmartStringVector(const SmartString s, SmartString regex, bool keepEmpty, bool trim);
+	SmartStringVector(const SmartStringVector &sv):std::vector<SmartString>(sv) {}
 
+	bool IsSorted() const { return _isSorted; }
+	bool isCaseSensitive() const { return _caseSens == SmartString::CaseSens::csCaseSensitive; }
+	void SetSorted(bool setSorted);		// when setSorted is true sorts the vector except for the first (topmost) item
+	void Add(SmartString s);
+	bool LoadFromFile(SmartString name);
+	bool SaveToFile(SmartString name);
+	int  IndexOf(const SmartString s);	// uses _caseSens and linear search
+	void Delete(int n) { erase(begin() + n); }
+	std::vector<std::wstring> ToWstringVector() const;
+private:
+	bool _changed = false;
+	bool _isSorted = false;	
+	SmartString::CaseSens _caseSens = SmartString::csCaseInsensitive;
+	void _Sort();	// the 0th indexed item remains that
 };
 
 

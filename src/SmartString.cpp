@@ -1,6 +1,8 @@
 #include <stdint.h>
 #include <regex>
 #include <cwchar>
+#include <iostream>
+#include <fstream>
 
 #ifdef QTSA_PROJECT
 	#include <QString>
@@ -9,6 +11,16 @@
 
 
 namespace SmString {
+
+	static bool __bCaseSens = false;
+	static int _sorter(const void* left, const void* right)
+	{
+		return __bCaseSens == SmartString::CaseSens::csCaseSensitive ?
+									(SmartString*)left < (SmartString*)right :
+									((SmartString*)left)->asLowerCase() < ((SmartString*)right)->asLowerCase();
+
+	}
+
 
 	// ************************** SCharT *********************
 
@@ -151,9 +163,9 @@ namespace SmString {
 		erase(std::remove_if(begin(), end(), [](SCharT ch) {return std::isspace((wchar_t)ch.Unicode(), std::cout.getloc()); }), end());
 	}
 
-	StringVector SmartString::Split(const SCharT ch, bool keepEmpty) const
+	SmartStringVector SmartString::Split(const SCharT ch, bool keepEmpty) const
 	{
-		StringVector sv;
+		SmartStringVector sv;
 		size_t pos0 = 0;
 		int pos;
 		while ((pos = indexOf(ch,pos0)) >=0) 
@@ -168,7 +180,7 @@ namespace SmString {
 		return sv; ;
 	}
 
-	StringVector SmartString::SplitRegex(const SmartString regexStr, bool keepEmpty) const
+	SmartStringVector SmartString::SplitRegex(const SmartString regexStr, bool keepEmpty) const
 	{
 		std::wstring ws = ToWideString(),
 					 rx = regexStr.ToWideString();
@@ -177,7 +189,7 @@ namespace SmString {
 		std::wsregex_token_iterator iti(ws.cbegin(), ws.cend(), re, -1);
 		std::wsregex_token_iterator end;
 
-		StringVector sv;
+		SmartStringVector sv;
 		SmartString ss;
 		while (iti != end) 
 		{
@@ -322,14 +334,29 @@ namespace SmString {
 		return substr(n);
 	}
 
-	bool SmartString::operator==(const SmartString& s)
+	bool SmartString::operator==(const SmartString& s) const
 	{
 		return String(*this) == String(s);
 	}
 
-	bool SmartString::operator!=(const SmartString& s)
+	bool SmartString::operator!=(const SmartString& s) const
 	{
 		return String(*this) != String(s);
+	}
+
+	int SmartString::CompareWith(const SmartString s, CaseSens caseSensitivity) const
+	{
+		SmartString left(*this), right(s);
+		if (caseSensitivity == csCaseInsensitive)
+		{
+			left.toLower();
+			right.toLower();
+		}
+		if (String(left) < String(right))
+			return -1;
+		if (String(left) == String(right))
+			return 0;
+		return 1;
 	}
 
 	// similar to substr but may extend the string with a given character 
@@ -427,19 +454,81 @@ namespace SmString {
 		return SmartString(ps); 
 	}
 
-	StringVector::StringVector(const SmartString s, const SCharT ch, bool keepEmpty, bool trim=false)
+	SmartStringVector::SmartStringVector(const SmartString s, const SCharT ch, bool keepEmpty, bool trim=false)
 	{
 		*this = s.Split(ch, keepEmpty);
 		if (trim)
 			for (size_t i = 0; i < size(); ++i)
 				(*this)[i].Trim();
 	}
-	StringVector::StringVector(const SmartString s, SmartString regex, bool keepEmpty, bool trim=false)
+	SmartStringVector::SmartStringVector(const SmartString s, SmartString regex, bool keepEmpty, bool trim=false)
 	{
 		*this = s.SplitRegex(regex, keepEmpty);
 		if (trim)
 			for (size_t i = 0; i < size(); ++i)
 				(*this)[i].Trim();
+	}
+	void SmartStringVector::SetSorted(bool setSorted)
+	{
+		_isSorted = setSorted;
+		if (setSorted)
+			_Sort();
+	}
+	void SmartStringVector::Add(SmartString s)	// no matter if it is sorted
+	{
+		int ix = IndexOf(s);
+		if (ix == 0)
+			return;
+		if (ix > 0)
+			Delete(ix);
+		insert(begin(), s);
+	}
+
+	bool SmartStringVector::LoadFromFile(SmartString name)
+	{
+		std::ifstream ifs(name.toUtf8String(), std::ios_base::in);
+		if(ifs.fail())
+			return false;
+		std::string line;
+		bool sorted = _isSorted;
+		sorted = false;
+		while (std::getline(ifs, line))
+			push_back(SmartString(line) );
+		SetSorted(sorted);	// sort if needed
+		return true;
+	}
+
+	bool SmartStringVector::SaveToFile(SmartString name)
+	{
+		std::ofstream ofs(name.toUtf8String(), std::ios_base::out);
+		if(ofs.fail())
+			return false;
+		for (auto& s : *this)
+			ofs << s << "\n";
+		return true;
+	}
+
+	int SmartStringVector::IndexOf(const SmartString s)
+	{
+		__bCaseSens = _caseSens;
+		for (size_t i = 0; i < size(); ++i)
+			if (_sorter((void*)&s, (void*)&(*this)[i]))
+				return i;
+		return -1;
+	}
+
+	std::vector<std::wstring> SmartStringVector::ToWstringVector() const
+	{
+		std::vector<std::wstring> ws;
+		for (auto s : *this)
+			ws.push_back(s.ToWideString());
+		return ws;
+	}
+
+	void SmartStringVector::_Sort()
+	{		   // do not sort the first item
+		__bCaseSens = _caseSens == SmartString::csCaseSensitive;
+		qsort((void*) & this[1], size(), sizeof(SmartString), _sorter);
 	}
 }
 // output operator

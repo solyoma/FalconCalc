@@ -140,7 +140,6 @@ using std::type_info;
 #endif
 
 #include "SmartString.h"
-#include "TStringList.h"
 #include "clipboard.h"
 
 

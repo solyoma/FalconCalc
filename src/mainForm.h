@@ -4,7 +4,8 @@
 #include <fstream>
 #include <string>
 #include <locale>
-class TStringList;
+
+#include "SmartString.h"
 
 class TfrmMain : public nlib::Form
 {
@@ -17,9 +18,10 @@ public:
 
 	virtual void Destroy();
 
-	TStringList *pslHistory;
+	SmString::SmartStringVector slHistory;
 	//FalconCalc::LittleEngine *pEngine();
 
+	SmString::SmartString UserDir();
 	bool InMoving() { return (bool)_inMoving; }
 
 N_PUBLIC: /* Designer generated list of public members. Do not edit by hand. */
@@ -190,16 +192,14 @@ private:
     int _watchLimit;	 // default: 10: 0 - switch off autosave
     size_t _maxHistDepth;// == 0: unlimited
 	size_t _minCharLength = 0;	// 0: all, else # of characters below which there's no save
-	std::wstring _wsUserDir;	// store user directory here
 
     nlib::Checkbox *	_chkArr[7];
 
 	void _EnableMyTimer(bool enable);
 
-	std::wstring _GetUserDir();
 	void _GetVirtualDisplaySize();
-	bool _LoadState(std::wstring name);
-	bool _SaveState(std::wstring name);
+	bool _LoadState(SmString::SmartString name);
+	bool _SaveState(SmString::SmartString name);
 	void _AddToHistory(std::wstring text);
 	void _ShowResults();
 	void _ShowMessageOnAllPanels(std::wstring s);

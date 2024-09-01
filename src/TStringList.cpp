@@ -96,26 +96,22 @@ int TStringList::Add(const SmartString& s1)
 	return (ind >= (int)_cntMax) ? -1 : ind;
 }
 
-bool TStringList::LoadFromFile(wstring name)
+bool TStringList::LoadFromFile(SmartString name)
 {
 	_strings.clear();
-	std::wifstream fs(name,ios_base::in);
+	std::ifstream fs(name.toUtf8String(), ios_base::in);
 	if(fs.fail() )
 		return false;
-	//fs.skipbom();
-	//if(fs.fail() )
-	//	return false;
-	wstring s;
+	std::string s;
 	while(!getline(fs,s).fail() )
 		Add(SmartString(s) );
 	SetCapacity(_cntMax);		// drop excess items
 	return !fs.bad();
 }
 
-bool TStringList::SaveToFile(wstring name)
+bool TStringList::SaveToFile(SmartString name)
 {
-	//nlib::FileStream fs(name,ios_base::out);
-	std::ofstream fs(name,ios_base::out);
+	std::ofstream fs(name.toUtf8String(), ios_base::out);
 	if(fs.fail() )
 		return false;
 	for(auto it=_strings.begin(); it != _strings.end(); ++it)
@@ -133,9 +129,6 @@ bool TStringList::_compare(bool caseSens, const SmartString &s1, const SmartStri
 		return s1 < s2; 
 	else 
 		return s1.asLowerCase() < s2.asLowerCase();
-//	SmartString ss1 = GenToLower(s1), ss2 = GenToLower(s2);
-//	bool b = ss1 < ss2;
-//	return b;
 }
 
 static bool _equal(bool caseSens, const SmartString &s1, const SmartString &s2) 

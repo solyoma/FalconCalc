@@ -14,7 +14,7 @@ namespace FalconCalc {
 	class LittleEngine;
 
 	enum WindowSide { wsNone, wsTop, wsRight, wsBottom, wsLeft };
-	constexpr auto STATE_VER_STRING = L"FalconCalc State File V1.0";
+	constexpr auto STATE_VER_STRING = "FalconCalc State File V1.0";
 }
 extern SIZE dropShadowSize;
 

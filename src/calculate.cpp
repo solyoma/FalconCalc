@@ -1032,7 +1032,7 @@ bool LittleEngine::_VariableAssignment(const SmartString &expr, unsigned &pos, T
         v.value = variables[lcName].value; // v = variables[ tok->Text()];
     ++pos;   // skip '='
 
-    StringVector sv(expr.mid(pos), schCommentDelimiter, true, true);     // pos after the '=' sign, doesn't drop empty fields
+    SmartStringVector sv(expr.mid(pos), schCommentDelimiter, true, true);     // pos after the '=' sign, doesn't drop empty fields
         // sv[0] = body, sv[1] = comment, sv[2] = unit
 
     v.body = v.desc = v.unit = ""_ss;
@@ -1110,9 +1110,9 @@ bool LittleEngine::_VariableAssignment(const SmartString &expr, unsigned &pos, T
    f.name = tok->Text();
       SmartString arguments = expr.mid(pos, poseq - pos - 1);  // argument list
 
-   f.args = StringVector(arguments, ',' /*argSeparator */ , false, true);
+   f.args = SmartStringVector(arguments, ',' /*argSeparator */ , false, true);
 
-   StringVector svFields(expr.mid(poseq+1), schCommentDelimiter, true, true);
+   SmartStringVector svFields(expr.mid(poseq+1), schCommentDelimiter, true, true);
 
    // fields: body:comment:unit
    switch (svFields.size())
@@ -1513,9 +1513,6 @@ bool LittleEngine::SaveUserData()
 	ofs << VERSION_STRING << "\n[Locale]\nloc=" <<  sLocale.toUtf8String()
         << "\n\n[Variables]\n";
 
-    //if (!vf.userVars.empty())
-    //    ofs << vf.Serialize(0);
-
     if (variables.size())
         for (int i = 0; i < variables.size(); ++i)
             ofs << variables[i].SerializeUtf8() << "\n";
@@ -1535,7 +1532,7 @@ bool LittleEngine::SaveUserData()
 /*========================================================
  * TASK: Write modified user functions and variables table to file
  * EXPECTS: 'name' is either the name of the file or empty
- *          When it is NULL the same name is used as in 'ReadTables'
+ *          When it is NULL "ssNameOfDatFile" is used as in 'ReadTables'
  *          if that was called before, otherwise no write occurs
  *          'clean' when true the tables are modified
  * RETURNS: true: if there was no need to save the data or the save was
@@ -1705,7 +1702,7 @@ LittleEngine &LittleEngine::operator=(const LittleEngine &src)
  * EXPECTS:
  * RETURNS:
  *-----------------------------------------------------------*/
-void LittleEngine::AddUserVariables(const StringVector& sv) //what 0: both, 1: vars, 2: functions
+void LittleEngine::AddUserVariables(const SmartStringVector& sv) //what 0: both, 1: vars, 2: functions
 {
 	LittleEngine ip(*this);
 
@@ -1731,7 +1728,7 @@ void LittleEngine::AddUserVariables(const StringVector& sv) //what 0: both, 1: v
 		}
 	}
 }
-void LittleEngine::AddUserFunctions(const StringVector& sv)
+void LittleEngine::AddUserFunctions(const SmartStringVector& sv)
 {
 	LittleEngine ip(*this);
 	functions.clear();

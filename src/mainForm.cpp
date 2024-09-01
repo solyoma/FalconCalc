@@ -38,9 +38,9 @@ using namespace std;
 Clipboard *MyClipboard;
 
 TfrmMain *frmMain;
-const wchar_t *FalconCalc_HIST_FILE = L"FalconCalc.hist";
-const wchar_t *FalconCalc_DAT_FILE  = L"FalconCalc.dat";
-const wchar_t *FalconCalc_CFG_FILE  = L"FalconCalc.cfg";
+const SmartString FalconCalc_HIST_FILE = SmartString("FalconCalc.hist");
+const SmartString FalconCalc_DAT_FILE  = SmartString("FalconCalc.dat");
+const SmartString FalconCalc_CFG_FILE  = SmartString("FalconCalc.cfg");
 
 /****************************************************************************************************************************************/
 
@@ -737,7 +737,6 @@ TfrmMain::TfrmMain()
 {
 	InitializeFormAndControls();
 	wiMain.InitInfo(this, L"frmMain");
-	_wsUserDir = _GetUserDir();
 	_GetVirtualDisplaySize();
 	// /for fun
 	_bAutoSave = false;
@@ -749,7 +748,7 @@ TfrmMain::TfrmMain()
 	lengine->displayFormat.strThousandSeparator = " "_ss;
 	lengine->displayFormat.displWidth = 59;
 
-	lengine->ssNameOfDatFile = SmartString(AppendToPath(_wsUserDir, FalconCalc_DAT_FILE).c_str());
+	lengine->ssNameOfDatFile = (UserDir() + SmartString(FalconCalc_DAT_FILE));
 	try
 	{
 		lengine->LoadUserData();	// may throw because of many errors
@@ -773,21 +772,16 @@ TfrmMain::TfrmMain()
     _nDecOptTop = pnlDecOpt->Top();
     _nHexBtnTop = btnOpenHexOptions->Top();
 
-    // ?? spnDecDigits->SetValue(20);
-    pslHistory = new TStringList;
-    pslHistory->SetCaseSensitive(false);
-    pslHistory->SetDuplicates(true);  // no duplicates
-    pslHistory->SetSorted(false);
-    pslHistory->LoadFromFile(AppendToPath(_wsUserDir, FalconCalc_HIST_FILE).c_str());
     _watchdog = 0;
     _watchLimit = 5; // seconds
 	_maxHistDepth=0; // unlimited
 
-    if(!_LoadState(AppendToPath(_wsUserDir, FalconCalc_CFG_FILE).c_str()))
+    if(!_LoadState(UserDir() + FalconCalc_CFG_FILE) )
     {
         ShowDecOptions(false);
         ShowHexOptions(false);
     }
+    slHistory.LoadFromFile(UserDir() + FalconCalc_HIST_FILE);
 
     _added = false;
 
@@ -830,9 +824,8 @@ TfrmMain::~TfrmMain()
 void TfrmMain::Destroy()
 {
 	lengine->SaveUserData();
-    _SaveState(AppendToPath(_wsUserDir, FalconCalc_CFG_FILE).c_str());
-    pslHistory->SaveToFile(AppendToPath(_wsUserDir, FalconCalc_HIST_FILE).c_str());
-    delete pslHistory;
+    _SaveState(UserDir() + FalconCalc_CFG_FILE);
+    slHistory.SaveToFile(UserDir() + FalconCalc_HIST_FILE);
 	delete lengine;
 	Form::Destroy();
 }
@@ -1156,12 +1149,13 @@ void TfrmMain::miShowHistClick(void *sender, nlib::EventParameters param)
 		frmHistory->SetTopLevelParent(this);
 		frmHistory->SetLeft(Left());
 		frmHistory->SetTop(Bottom() + 1);
-		frmHistory->chkSorted->SetChecked(pslHistory->Sorted());
+		frmHistory->chkSorted->SetChecked(slHistory.IsSorted());
 		wiHist.InitInfo(frmHistory, L"frmHistory");
 		frmHistory->Show();
 		frmHistory->GetSnapSide();
 		frmHistory->Snap();
-		frmHistory->lstHistory->Items().SetLines(pslHistory->Lines());
+
+		frmHistory->lstHistory->Items().SetLines(slHistory.ToWstringVector());
 		((MenuItem*)sender)->SetChecked(true);
 	}
 	SetFocus(edtInfix->Handle());
@@ -1169,7 +1163,7 @@ void TfrmMain::miShowHistClick(void *sender, nlib::EventParameters param)
 
 void TfrmMain::miClearHistClick(void *sender, nlib::EventParameters param)
 {
-    pslHistory->Clear();
+    slHistory.clear();
 	if(frmHistory)
 		frmHistory->lstHistory->Clear();
 }
@@ -1188,16 +1182,16 @@ void TfrmMain::miHistOptsClick(void *sender, nlib::EventParameters param)
 {
 	frmHistOptions = new TfrmHistOptions;
 	frmHistOptions->SetTopLevelParent(this);
-    frmHistOptions->Setup(_maxHistDepth, _watchLimit, pslHistory->Sorted() , _minCharLength);
+    frmHistOptions->Setup(_maxHistDepth, _watchLimit, slHistory.IsSorted() , _minCharLength);
 
 	if(frmHistOptions->ShowModal() == mrOk)
     {
         if(frmHistOptions->chkDepth->Checked())
         {
             _maxHistDepth = frmHistOptions->spinDepthBtn->Position();
-			pslHistory->SetCapacity(_maxHistDepth);
+			slHistory.reserve(_maxHistDepth);
 			if(frmHistory)
-				frmHistory->lstHistory->Items().SetLines(pslHistory->Lines());
+				frmHistory->lstHistory->Items().SetLines(slHistory.ToWstringVector());
         }
 		_minCharLength = stoi(frmHistOptions->edtMinLength->Text());
         if(frmHistOptions->chkAutoSave->Checked())
@@ -1224,9 +1218,9 @@ void TfrmMain::miHistOptsClick(void *sender, nlib::EventParameters param)
         }
         // Timer1->Enabled = _watchLimit > 0;
 		_EnableMyTimer(_watchLimit > 0);
-        pslHistory->SetSorted(frmHistOptions->chkSort->Checked(),true);	// first (last entered) line is not sorted
+        slHistory.SetSorted(frmHistOptions->chkSort->Checked());	// first (last entered) line is not sorted
         if(frmHistory)
-            frmHistory->lstHistory->Items().SetLines(pslHistory->Lines());
+            frmHistory->lstHistory->Items().SetLines(slHistory.ToWstringVector());
 
     }
 	frmHistOptions->Destroy();
@@ -1411,16 +1405,16 @@ void TfrmMain::_EnableMyTimer(bool enable)
 *	last=<text of last expression>
 */
 
-static const wstring
-		MAINFORMAT(L"mainFormat="),
-		DECFORMAT(L"decFormat="),
-		HEXFORMAT(L"hexFormat="),
-		FONTNAME(L"fontName="),
-		FONTDATA(L"fontData="),
-		OPTIONS(L"options="),
-		HISTOPTIONS(L"histOptions="),
-		VARCOLS(L"varCols="),
-		LAST(L"last=");
+static const SmartString
+		MAINFORMAT("mainFormat="),
+		DECFORMAT("decFormat="),
+		HEXFORMAT("hexFormat="),
+		FONTNAME("fontName="),
+		FONTDATA("fontData="),
+		OPTIONS("options="),
+		HISTOPTIONS("histOptions="),
+		VARCOLS("varCols="),
+		LAST("last=");
 
 
 /*=============================================================
@@ -1433,12 +1427,12 @@ static const wstring
  *			==0 => error, equal line not found
  * REMARKS: keeps empty fields as empty wstrings
  *------------------------------------------------------------*/
-static int __ReadAndSplitLine(FileStream& fs, std::vector<wstring>& data)
+static int __ReadAndSplitLine(std::ifstream& fs, SmartStringVector& data)
 {
 	if (fs.eof())	// no more output?
 		return 0;
 
-	wchar_t wbuf[1024];
+	char wbuf[1024];
 	SmartString s;
 	do
 	{
@@ -1447,7 +1441,7 @@ static int __ReadAndSplitLine(FileStream& fs, std::vector<wstring>& data)
 		s.Trim();
 	} while (!fs.eof() && s.empty() );
 
-	std::vector<SmartString> sdata;
+	SmartStringVector sdata;
 
 	int n = s.indexOf('=');
 	if (n < 0)
@@ -1459,21 +1453,27 @@ static int __ReadAndSplitLine(FileStream& fs, std::vector<wstring>& data)
 	else			   // cut name= and get the other fields
 		sdata = s.mid(n).Split(SCharT('|'), true);
 	data.clear();
-	data.push_back(name.ToWideString());
+	data.push_back(name);
 	for (auto& s : sdata)
-		data.push_back(s.ToWideString());
+		data.push_back(s);
 	return data.size();
 }
 
-std::wstring TfrmMain::_GetUserDir()
+SmartString TfrmMain::UserDir()
 {
+	static SmartString _userDir("*");
+
+	if (_userDir[0] != u'*')
+		return _userDir;
+
+
 	wchar_t buff[2046];
 	std::wstring w;
 	if (!SHGetFolderPath(NULL, CSIDL_PROFILE, NULL, 0, buff))
 	{
 		w = buff;
 
-		w += L"\\AppData\\Local\\FalconCalc";
+		w += L"\\AppData\\Local\\FalconCalc\\";
 		if (!PathExists(w))
 		{
 			if (!CreateDirectory(w.c_str(), NULL))
@@ -1483,12 +1483,12 @@ std::wstring TfrmMain::_GetUserDir()
 	else
 		w = (wstring&)ExecutablePath;
 
-	return w;
+	return _userDir = SmartString(w);
 }
 
-bool TfrmMain::_SaveState(wstring name)
+bool TfrmMain::_SaveState(SmartString name)
 {
-	FileStream fs(name,ios_base::out);
+	std::ofstream fs(name.toUtf8String(), ios_base::out);
 
      if(fs.fail())
         return false;
@@ -1496,7 +1496,7 @@ bool TfrmMain::_SaveState(wstring name)
 	fs << MAINFORMAT<< (int)lengine->displayFormat.mainFormat << "\n";
 
 	//int u = UpDown1->Position() + (chkDecDigits->Checked() ? 0x100 : 0); // 0x100: checked state. must use Position as num_digits may be -1
-	wstring wsep = (chkSep->Checked() ? L"1" : L"0") + (std::to_wstring(cbThousandSep->ItemIndex()));
+	std::string wsep = (chkSep->Checked() ? "1" : "0") + (std::to_string(cbThousandSep->ItemIndex()));
 	fs << DECFORMAT<< lengine->displayFormat.decDigits << "|" << (int)lengine->displayFormat.expFormat
 	   << "|" << wsep <<  "|" << (int)lengine->displayFormat.useFractionSeparator
 	   << "|" << (int)lengine->AngleUnit() << "\n";
@@ -1504,10 +1504,10 @@ bool TfrmMain::_SaveState(wstring name)
     fs << HEXFORMAT<< (int)lengine->displayFormat.hexFormat << "|"<< (int)lengine->displayFormat.littleEndian << "|"<<
 			(int)lengine->displayFormat.bSignedBinOrHex << "|" << (int)lengine->displayFormat.trippleE <<"|" << (int)lengine->displayFormat.useNumberPrefix << "\n";
 
-	fs << FONTNAME	<< edtChars->GetFont().Family() << "\n";
+	fs << FONTNAME	<< SmartString(edtChars->GetFont().Family()) << "\n";
 	fs << FONTDATA	<< (int)edtChars->GetFont().Size() << "|"<< (int)edtChars->GetFont().CharacterSet() << "|"<< (COLORREF)edtChars->GetFont().GetColor() << "\n";
     fs << OPTIONS	<< pnlDecOpt->Visible() << "|"<< pnlHexOpt->Visible()<<"\n";
-    fs << HISTOPTIONS << _watchLimit << "|"<< _maxHistDepth << "|"<< pslHistory->Sorted() << "|" << _minCharLength << "\n";
+    fs << HISTOPTIONS << _watchLimit << "|"<< _maxHistDepth << "|"<< slHistory.IsSorted() << "|" << _minCharLength << "\n";
 	fs << VARCOLS; 
 	for (int i = 0; i < 2; ++i)
 		for (int col = 0; col < 4; ++col)
@@ -1517,30 +1517,30 @@ bool TfrmMain::_SaveState(wstring name)
 				fs << "|";
 		}
     if(!edtInfix->Text().empty())
-        fs << LAST <<  edtInfix->Text() << "\n";
+        fs << LAST <<  SmartString(edtInfix->Text()) << "\n";
     return true;
 }
-bool TfrmMain::_LoadState(wstring name)
+bool TfrmMain::_LoadState(SmartString name)
 {
-	FileStream fs(name,ios_base::in);
+	std::ifstream fs(name.toUtf8String(), ios_base::in);
     if(fs.fail())
         return false;
 	DisplayFormat dspFormat;
 //	wstring s;
-	wchar_t wbuf[1024];// , nam[1024];
+	char wbuf[1024];// , nam[1024];
 	fs.getline(wbuf,1023);
 
-    if(wcscmp(wbuf, STATE_VER_STRING) )
+    if(strcmp(wbuf, STATE_VER_STRING) )
         return false;
 
     int n, val =0;
 
-	std::vector<wstring> data;
+	SmartStringVector data;
 	auto mainFormat = [&]()	-> bool // returns true if not processed, false if processed
 	{
 		if (n==2 && data[0] == MAINFORMAT)	// only one field
 		{
-			val = std::stoi(data[1]);
+			val = std::stoi(data[1].toUtf8String());
 			lengine->displayFormat.mainFormat = static_cast<NumberFormat>(val);
 			++_busy;
 			switch (lengine->displayFormat.mainFormat)
@@ -1563,7 +1563,7 @@ bool TfrmMain::_LoadState(wstring name)
 		{
 			++_busy;
 					// 1: decimal digits
-			val = std::stoi(data[1]);	// # of decimal digits n > 0 => used digits, n < 0 => used = abs(n+1)
+			val = std::stoi(data[1].toUtf8String());	// # of decimal digits n > 0 => used digits, n < 0 => used = abs(n+1)
 			lengine->displayFormat.decDigits = val;
 			if (val >= 0)
 				chkDecDigits->SetChecked(true);
@@ -1571,7 +1571,7 @@ bool TfrmMain::_LoadState(wstring name)
 				val = std::abs(val + 1);
 			UpDownDecDigits->SetPosition(val);
 					// 2: exponent display format
-			val = std::stoi(data[2]);	// (0)E: 1E5, (1)HTML: 1<sp>12</sup>, (2)TeX: 1^{12}, (3)normal: 1²³
+			val = std::stoi(data[2].toUtf8String());	// (0)E: 1E5, (1)HTML: 1<sp>12</sup>, (2)TeX: 1^{12}, (3)normal: 1²³
 			lengine->displayFormat.expFormat = static_cast<ExpFormat>(val);
 			if(lengine->displayFormat.expFormat == ExpFormat::rnsfE)
 				rdNone->SetChecked(true);
@@ -1588,21 +1588,21 @@ bool TfrmMain::_LoadState(wstring name)
 			{
 				if (data[3][0] == L'1')
 					chkSep->SetChecked(true);
-				else if (data[3][1] == L'0')
+				else if (data[3][1] == u'0')
 					cbThousandSep->SetItemIndex(0);
-				else if (data[3][1] == L'1')
+				else if (data[3][1] == u'1')
 					cbThousandSep->SetItemIndex(1);
-				else if (data[3][1] == L'2')
+				else if (data[3][1] == u'2')
 					cbThousandSep->SetItemIndex(2);
 				if (chkSep->Checked())
 					lengine->displayFormat.strThousandSeparator = SmartString(cbThousandSep->ItemIndex() > 0 ? cbThousandSep->Text()[0] : ' ');
 			}
 					// 4: fraction separator
-			if (!data[4].empty() && data[4] == L"1")
+			if (!data[4].empty() && data[4] == SmartString("1"))
 				chkDecDelim->SetState(nlib::csChecked);
 					// 5: angular unit 0:
 			if (!data[5].empty())
-				lengine->displayFormat.angUnit = static_cast<AngularUnit>(std::stoi(data[5]));
+				lengine->displayFormat.angUnit = static_cast<AngularUnit>(std::stoi(data[5].toUtf8String()));
 
 			--_busy;
 
@@ -1617,7 +1617,7 @@ bool TfrmMain::_LoadState(wstring name)
 		{
 			++_busy;
 				// 1. main Hex format
-			int val = std::stoi(data[1]);
+			int val = std::stoi(data[1].toUtf8String());
 			lengine->displayFormat.hexFormat = static_cast<HexFormat>(val);
 			switch (lengine->displayFormat.hexFormat)
 			{
@@ -1634,15 +1634,15 @@ bool TfrmMain::_LoadState(wstring name)
 					break;
 			}
 				// 2. endianness
-			val = std::stoi(data[2]);
+			val = std::stoi(data[2].toUtf8String());
 			if (val)
 				chkLittleEndian->SetChecked(true);
 				// 3. signed bin or hex?
-			val = std::stoi(data[3]);
+			val = std::stoi(data[3].toUtf8String());
 			if (val)
 				chkMinus->SetChecked(true);
 				// 4. IEEE format
-			val = std::stoi(data[4]);
+			val = std::stoi(data[4].toUtf8String());
 			// val = 0: no check
 			if (val==1)
 				chkIEEESingle->SetChecked(true);
@@ -1650,7 +1650,7 @@ bool TfrmMain::_LoadState(wstring name)
 				chkIEEEDouble->SetChecked(true);
 			--_busy;
 				// 5. number prefix is used on hex. numbers
-			val = std::stoi(data[5]);
+			val = std::stoi(data[5].toUtf8String());
 			lengine->displayFormat.useNumberPrefix = val;
 			chkHexPrefix->SetChecked(val);
 			return true;
@@ -1663,7 +1663,7 @@ bool TfrmMain::_LoadState(wstring name)
 		if (n==2 && data[0] == FONTNAME)  // 2 fields
 		{
 			Font f = edtChars->GetFont();
-			f.SetFamily(data[1]);
+			f.SetFamily(data[1].ToWideString());
 			edtChars->SetFont(f);
 			return true;
 		}
@@ -1675,9 +1675,9 @@ bool TfrmMain::_LoadState(wstring name)
 		if (n == 3 && data[0] == FONTDATA)	// 3 fields
 		{
 			Font f = edtChars->GetFont();
-			f.SetSize(std::stof(data[1]));
-			f.SetCharacterSet(static_cast<FontCharacterSets>(std::stoi(data[2])));
-			f.SetColor(std::stoul(data[2]));
+			f.SetSize(std::stof(data[1].toUtf8String()));
+			f.SetCharacterSet(static_cast<FontCharacterSets>(std::stoi(data[2].toUtf8String())));
+			f.SetColor(std::stoul(data[2].toUtf8String()));
 			return true;
 		}
 		return false;
@@ -1687,8 +1687,8 @@ bool TfrmMain::_LoadState(wstring name)
 	{
 		if (n == 3 && data[0] == OPTIONS)
 		{
-			ShowDecOptions(std::stoi(data[1])!=0);
-			ShowHexOptions(std::stoi(data[2])!=0);
+			ShowDecOptions(std::stoi(data[1].toUtf8String())!=0);
+			ShowHexOptions(std::stoi(data[2].toUtf8String())!=0);
 			return true;
 		}
 		return false;
@@ -1697,11 +1697,11 @@ bool TfrmMain::_LoadState(wstring name)
 	auto histOptions = [&]()
 	{
 		if (n == 5 && data[0] == HISTOPTIONS)	// 5 fields
-		{
-			_watchLimit = std::stoi(data[1]);
-			_maxHistDepth = std::stoi(data[2]);
-			pslHistory->SetSorted(std::stoi(data[3]));
-			_minCharLength = std::stoi(data[4]);
+		{								
+			_watchLimit			= std::stoi(data[1].toUtf8String());
+			_maxHistDepth		= std::stoi(data[2].toUtf8String());
+			slHistory.SetSorted(  std::stoi(data[3].toUtf8String()));
+			_minCharLength		= std::stoi(data[4].toUtf8String());
 			return true;
 		}
 		return false;
@@ -1713,12 +1713,12 @@ bool TfrmMain::_LoadState(wstring name)
 			{
 				for (int i = 0; i < 2; ++i)
 					for (int col = 0; col < 4; ++col)
-						TfrmVariables::_colW[i][col] = std::stoi(data[col + 4 * i+1]);
+						TfrmVariables::_colW[i][col] = std::stoi(data[col + 4 * i+1].toUtf8String());
 				return true;
 			}
 			return false;
 		};
-	auto last = [&](wstring &lastinfix)		
+	auto last = [&](SmartString &lastinfix)		
 	{
 		if (n==2 && data[0] == LAST)
 		{
@@ -1726,7 +1726,7 @@ bool TfrmMain::_LoadState(wstring name)
 		}
 	};
 
-	wstring wsLlastInfix;
+	SmartString wsLlastInfix;
 
 	while ((n = __ReadAndSplitLine(fs, data)))
 	{
@@ -1769,25 +1769,25 @@ void TfrmMain::_AddToHistory(wstring text)
 	}
 
     int n;
-    if( (n = pslHistory->IndexOf(ss)) >= 0)
+    if( (n = slHistory.IndexOf(ss)) >= 0)	// found
     {
-        if(n == 0 && pslHistory->Sorted())	// already at top
+        if(n == 0 && slHistory.IsSorted())	// already at top
             return;							// nothing to do
-        pslHistory->Delete(n);				// not at top delete expression from inside
+        slHistory.Delete(n);	// not at top delete expression from inside
     }
-	else if(pslHistory->Sorted() )			// then must put original top line in correct position
+	else if(slHistory.IsSorted() )			// then must put original top line in correct position
 	{										// first and add the new line afterwards, because
-		SmartString ws = (*pslHistory)[0];		// list may be truncated after adding a new line to it
-		pslHistory->Delete(0);				// delete original top line
-		pslHistory->Add(ws);					// and insert into string
+		SmartString ws = slHistory[0];		// list may be truncated after adding a new line to it
+		slHistory.Delete(0);	// delete original top line
+		slHistory.Add(ws);					// and insert into string
 	}
 
-    pslHistory->Insert(0, ss);				// then insert new expression to top of list
+    slHistory.insert(slHistory.begin(), ss);				// then insert new expression to top of list
 
     _added = true;
     _watchdog = 0;
     if(frmHistory != 0)
-        frmHistory->lstHistory->Items().SetLines(pslHistory->Lines());
+        frmHistory->lstHistory->Items().SetLines(slHistory.ToWstringVector());
 }
 
 void TfrmMain::FormClose(void *sender, nlib::FormCloseParameters param)
