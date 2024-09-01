@@ -671,7 +671,14 @@ namespace LongNumber {
 		SmartString desc;		// description
 		RealNumber value;		// re-scaled value
 
-		Constant& operator=(const Constant& other) { name = other.name; value = other.value; unit = other.unit; desc = other.desc; return *this; }
+		Constant& operator=(const Constant& other) 
+		{ 
+			name = other.name; 
+			value = other.value; 
+			unit = other.unit; 
+			desc = other.desc; 
+			return *this; 
+		}
 		Constant& operator=(const SmartString sms) { name = sms; return *this; }
 		Constant& operator=(const RealNumber val) { value = val; return *this; }
 		operator const SmartString& () const { return name; }	// CAN'T use these to mdify content
@@ -713,7 +720,7 @@ namespace LongNumber {
 		explicit Constant(const String name, const RealNumber value, const String unit, const String desc) :
 			name(name), value(value), unit(unit), desc(desc) {}
 		// for both
-		Constant(const Constant& co) : name(co.name), value(co.value), unit(unit), desc(co.desc), _pBaseValue(co._pBaseValue), _builtin(co._builtin), _set(co._set) {}
+		Constant(const Constant& co) : name(co.name), value(co.value), unit(co.unit), desc(co.desc), _pBaseValue(co._pBaseValue), _builtin(co._builtin), _set(co._set) {}
 
 		void SetAsBuiltIn()
 		{

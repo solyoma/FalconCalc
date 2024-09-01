@@ -334,7 +334,8 @@ namespace FalconCalc
             }
         }
         explicit Variable(const String name, const RealNumber value, const String unit, const String desc) : 
-            Constant(name, value, unit, desc, nullptr) , dirty(true) {}
+            Constant(name, value, unit, desc, nullptr) , dirty(true) 
+        {}
         virtual ~Variable()
         {
         }
