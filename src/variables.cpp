@@ -124,7 +124,7 @@ void TfrmVariables::InitializeFormAndControls() /* Control initialization functi
 
 	btnCancel = new nlib::Button();
 	btnCancel->SetBounds(nlib::Rect(445, 524, 520, 547));
-	btnCancel->SetText(L"&Cancel");
+	btnCancel->SetText(L"C&lose");
 	btnCancel->SetAnchors(nlib::caRight | nlib::caBottom);
 	btnCancel->SetTabOrder(3);
 	btnCancel->SetParent(this);
@@ -459,17 +459,22 @@ void TfrmVariables::btnDelVarClick(void *sender, nlib::EventParameters param)
 
 void TfrmVariables::btnSaveClick(void *sender, nlib::EventParameters param)
 {
-    if(!_changed)		// should never happen (Save button not enabled)
-	{
+    if(!_changed[0] && !_changed[1])		// should never happen (Save button not enabled)
 		return;
-	}
-	LittleEngine i2p;
+	
+	if (!_activeTab && _changed[0])
+		_CollectFrom(FUNCTIONS, true);	// changed VARIABLEs already collected in tcVarsTabChanged()
+	else if(_activeTab && _changed[1])
+		_CollectFrom(VARIABLES, true);	// changed FUNCTIONs -"-
 
-	i2p.AddUserVariables(_slUserVars );
-	i2p.AddUserFunctions(_slUserFuncs);
+	if (_changed[0])
+		lengine->AddUserVariables(_slUserVars );
+	if (_changed[1])
+		lengine->AddUserFunctions(_slUserFuncs);
 
     frmMain->edtInfixTextChanged(sender,param); // to reflect changed values
-	btnSave->SetEnabled(_changed[_activeTab] = false);
+	btnSave->SetEnabled(false); //  _changed[_activeTab] = false);
+
 }
 
 void TfrmVariables::sgBuiltinColumnSizing(void *sender, nlib::ColumnRowSizeParameters param)
@@ -493,8 +498,11 @@ void TfrmVariables::FormClose(void *sender, nlib::FormCloseParameters param)
 
 void TfrmVariables::sgUserKeyPress(void *sender, nlib::KeyPressParameters param)
 {
-	if(param.key != VK_TAB && param.key != VK_RIGHT && param.key != VK_LEFT && param.key != VK_UP && param.key != VK_DOWN)
+	if (param.key != VK_TAB && param.key != VK_RIGHT && param.key != VK_LEFT && param.key != VK_UP && param.key != VK_DOWN)
+	{
 		btnSave->SetEnabled(_changed[_activeTab] = true);
+		_changed[_activeTab] = true;
+	}
 	if (param.key == '3' && param.vkeys & vksAlt)
 	{
 		nlib::EventParameters par;

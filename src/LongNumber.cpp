@@ -609,6 +609,8 @@ SmartString RealNumber::_DecimalPartToString(const SmartString& strRounded, _Dis
 	int n = disp.nIntegerDigits;		// index in strRounded
 
 	int dd = disp.fmt.decDigits < 0 ? len - n + disp.nLeadingDecimalZeros : disp.fmt.decDigits; // # of digits to be shown
+	if (dd < 0)	// all digits integer diigits, no decimal part
+		return res = "";
 
 	size_t dp = 0;					// index of decimal digits w.o. decimal delimiter spaces
 	if (disp.nLeadingDecimalZeros)	// expects	 disp.cntDecDigitsInDisplay > 
