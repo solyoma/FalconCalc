@@ -1713,11 +1713,6 @@ void LittleEngine::AddUserVariables(const SmartStringVector& sv) //what 0: both,
 	v.dirty = true;
 	for (auto& s : sv)
 	{
-		v.name = sv[0];
-		v.body = sv[1];
-		v.unit = sv[2];
-		v.desc = sv[3];
-		variables[v.name] = v; // pushes back to index-th vector
 		try
 		{
 			ip._InfixToPostFix(s);

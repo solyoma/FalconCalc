@@ -165,16 +165,22 @@ TfrmVariables::TfrmVariables()
 	InitializeFormAndControls();
 
 	_underResize = false;
+	_RowData rd;
 	for (int i = 0; i < LittleEngine::variables.size(); ++i)
 	{
 		Variable& v = LittleEngine::variables[i];
-		_slUserVars.push_back(v.name + ssCommentDelimiterString + v.body + ssCommentDelimiterString + v.unit + ssCommentDelimiterString + v.desc);
+		rd = { v.name, v.body, v.unit, v.desc };
+		_rvUserVars[v.name] = rd;
 	}
+	_rvUserVarsIn = _rvUserVars;
+
 	for (int i = 0; i < LittleEngine::functions.size(); ++i)
 	{
 		Func& f = LittleEngine::functions[i];
-		_slUserFuncs.push_back(f.FullNameWithArgs() + ssCommentDelimiterString + f.body + ssCommentDelimiterString + f.unit + ssCommentDelimiterString + f.desc);
+		rd = { f.FullNameWithArgs(), f.body, f.unit, f.desc};
+		_rvUserFuncs[rd.cols[0]] = rd;
 	}
+	_rvUserFuncsIn = _rvUserFuncs;
 }
 
 TfrmVariables::~TfrmVariables()
@@ -256,37 +262,50 @@ void TfrmVariables::BuiltinMouseUp(void *sender, nlib::MouseButtonParameters par
  /*=============================================================
   * TASK   : store user data (from all rows of sgUser) for
   *				both user variables and user function in the  
-  *				string vector _svUserFunc or _svUserVars
-  * PARAMS : table: which type of data
-  *			 firstIsEqSign: if true the first field delimiter is an eq sign
+  *				maps _rvIserXXX (XXX = Vars or Funcs)
+  * PARAMS : table:		0: variables, 1: functions
   * EXPECTS:
-  * GLOBALS:
+  * GLOBALS: _rvUserXXX, _changed[]
   * RETURNS: nothing
-  * REMARKS:- fields are delimited by 'ssCommondelimiters' (":")
-  *			- order of strings in vector
-  *				variables:  name,formula/value,unit,comment
-  *				functions:	name,body,unit,comment
+  * REMARKS:- columns: name, body/definition, unit, description
   *			- functions must have a body
+  *			- _changed[table] only set if there is changed or 
+  *				new data in the table or when data is  erased
   *------------------------------------------------------------*/
-void TfrmVariables::_CollectFrom(int table, bool firstIsEqSign)
+void TfrmVariables::_CollectFrom(int table)
 {
-    if(!_changed[table])    // 'changed' must be modified in caller when necessary
-        return;
+    //if(!_changed[table])    // 'changed' must be modified in caller when necessary
+    //    return;
 
-	SmartStringVector& sv = table ? _slUserVars : _slUserFuncs;
-	sv.clear();
-    for(int i = 1; i < sgUser->RowCount(); ++i)
-    {
-        if(!sgUser->String(0,i).empty() && !sgUser->String(1, i).empty())
-        {
-			SmartString s = SmartString(sgUser->String(0, i)) + (firstIsEqSign ?  ssEqString: ssCommentDelimiterString) +
-							SmartString(sgUser->String(0, i)) + ssCommentDelimiterString +
-							SmartString(sgUser->String(1, i)) + ssCommentDelimiterString +	// value/definition
-							SmartString(sgUser->String(3, i)) + ssCommentDelimiterString +	// description
-							SmartString(sgUser->String(2, i));
-			sv.push_back(s);
-        }
-    }
+	_RowDataMap &rvIn = table ? _rvUserFuncsIn : _rvUserVarsIn,
+				&rv   = table ? _rvUserFuncs   : _rvUserVars  ;
+											  
+	_RowData rd;
+	// collect data from table into the non-input variables
+	rv.clear();
+	for (int i = 1; i < sgUser->RowCount(); ++i)
+	{
+		if (!sgUser->String(0, i).empty() && !sgUser->String(1, i).empty())
+		{
+			rd.cols[0] = SmartString(sgUser->String(0, i));		// name
+			rd.cols[1] = SmartString(sgUser->String(1, i));		// body/definition
+			rd.cols[2] = SmartString(sgUser->String(2, i));		// unit
+			rd.cols[3] = SmartString(sgUser->String(3, i));		// description
+		}
+		rv[rd.cols[0]] = rd;			// actual is always set
+	}
+
+	// next check for changes
+	if (rv.size() != rvIn.size())	// data deleted or added
+		_changed[table] = true;
+	else for (int i = 1; i < rv.size(); ++i)
+		if(rv[i] != rvIn[i])
+		{
+			_changed[table] = true;
+			break;
+		}
+    
+	btnSave->SetEnabled(_changed[0] || _changed[1]);
 }
 
 void TfrmVariables::_SetupGridLayout(int tabIndex)
@@ -335,39 +354,43 @@ void TfrmVariables::tcVarsTabChange(void *sender, nlib::TabChangeParameters para
 	if (_activeTab == param.tabindex)// && sgBuiltin->RowCount() > 5)
 		return;
 
+	bool initted = _activeTab >= 0;
 	_activeTab = param.tabindex;
 
     size_t cntUser=0, cntBuiltin=0;
-    //_changed = false;
+
+		// collect info from previously active Tab
 	// and set data into actual Tab
 
 	_SetupGridLayout(_activeTab);
-    switch( _activeTab )
-    {
-		case FUNCTIONS:
-			// collect info from previously active Tab
-			_CollectFrom(VARIABLES, false);	// the page we switched from, but only if changed
-			sgUser->SetString(0,0,L"Function(args)");
-			sgUser->SetString(1,0,L"Definition");
-			sgUser->SetString(2,0,L"Unit");
-			sgUser->SetString(3,0,L"Comment");
-			cntUser = _slUserFuncs.size();
-            break;
-		default:
-		case VARIABLES:
-			// collect info from previously active Tab
-			_CollectFrom(FUNCTIONS,false);	//the tab we switched from
-			sgUser->SetString(0,0,L"Variable");
-			sgUser->SetString(1,0,L"Value");
-			sgUser->SetString(2,0,L"Unit");
-			sgUser->SetString(3,0,L"Comment");
-			cntUser = _slUserVars.size();
-            break;
-    }
-    if((size_t)sgUser->RowCount() != cntUser + (cntUser ? 1 : 2))
-        sgUser->SetRowCount(cntUser + (cntUser ? 1 : 2));
-    //if((size_t)sgBuiltin->RowCount() != cntBuiltin)
-    //    sgBuiltin->SetRowCount(cntBuiltin);
+	if (initted)
+	{
+		switch (_activeTab)
+		{
+			case FUNCTIONS:
+				_CollectFrom(VARIABLES);	// the page we switched from
+				sgUser->SetString(0, 0, L"Function(args)");
+				sgUser->SetString(1, 0, L"Definition");
+				sgUser->SetString(2, 0, L"Unit");
+				sgUser->SetString(3, 0, L"Comment");
+				cntUser = _rvUserFuncs.size();
+				break;
+			default:
+			case VARIABLES:
+				_CollectFrom(FUNCTIONS);	//the tab we switched from
+				sgUser->SetString(0, 0, L"Variable");
+				sgUser->SetString(1, 0, L"Value");
+				sgUser->SetString(2, 0, L"Unit");
+				sgUser->SetString(3, 0, L"Comment");
+				cntUser = _rvUserVars.size();
+				break;
+		}
+	}
+	else
+		cntUser = _activeTab == VARIABLES ? _rvUserVars.size() : _rvUserFuncs.size();
+
+	if ((size_t)sgUser->RowCount() != cntUser + (cntUser ? 1 : 2))
+		sgUser->SetRowCount(cntUser + (cntUser ? 1 : 2));
 
 	if(cntUser == 0)
 	{
@@ -376,14 +399,18 @@ void TfrmVariables::tcVarsTabChange(void *sender, nlib::TabChangeParameters para
 		sgUser->SetString(2,1,L"");
 		sgUser->SetString(3,1,L"");
 	}
+
 	// first the user variables:
 
-	SmartStringVector& sv = _activeTab == FUNCTIONS ? _slUserFuncs : _slUserVars;
+	_RowDataMap& sv = _activeTab == FUNCTIONS ? _rvUserFuncs : _rvUserVars;
+	_RowData rd;
 	for (size_t i = 0; i < cntUser; ++i)
 	{
-		SmartStringVector svTmp = sv[i].Split(schCommentDelimiter, true);
 		for (size_t j = 0; j < 4; ++j)
-			sgUser->SetString(j,i+1, svTmp[j].ToWideString());
+		{
+			rd = sv[i];
+			sgUser->SetString(j, i + 1, rd.cols[j].ToWideString());
+		}
 	}
 
 	// then the builtins
@@ -454,7 +481,7 @@ void TfrmVariables::btnDelVarClick(void *sender, nlib::EventParameters param)
 			sgUser->DeleteRow(n);
         _changed[_activeTab] = true;
     }
-	btnSave->SetEnabled(_changed);
+	btnSave->SetEnabled(_changed[VARIABLES] ||_changed[FUNCTIONS]);
 }
 
 void TfrmVariables::btnSaveClick(void *sender, nlib::EventParameters param)
@@ -462,19 +489,38 @@ void TfrmVariables::btnSaveClick(void *sender, nlib::EventParameters param)
     if(!_changed[0] && !_changed[1])		// should never happen (Save button not enabled)
 		return;
 	
-	if (!_activeTab && _changed[0])
-		_CollectFrom(FUNCTIONS, true);	// changed VARIABLEs already collected in tcVarsTabChanged()
-	else if(_activeTab && _changed[1])
-		_CollectFrom(VARIABLES, true);	// changed FUNCTIONs -"-
+	if (_activeTab == VARIABLES)
+		_CollectFrom(VARIABLES);	// changed FUNCTIONs already collected in tcVarsTabChanged()
+	else if(_activeTab == FUNCTIONS)
+		_CollectFrom(FUNCTIONS);	// changed VARIABLEs -"-
 
-	if (_changed[0])
-		lengine->AddUserVariables(_slUserVars );
-	if (_changed[1])
-		lengine->AddUserFunctions(_slUserFuncs);
+	SmartString s;
+	SmartStringVector sv;
+	if (_changed[VARIABLES])
+	{
+		lengine->variables.clear();
+		for (int i = 0; i < _rvUserVars.size(); ++i)
+		{
+			s = _rvUserVars[i].Serialize();
+			sv.push_back(s);
+		}
+		lengine->AddUserVariables(sv);
+	}
+	if (_changed[FUNCTIONS])
+	{
+		lengine->functions.clear();
+		for (int i = 0; i < _rvUserFuncs.size(); ++i)
+		{
+			s = _rvUserFuncs[i].Serialize();
+			sv.push_back(s);
+		}
+		lengine->AddUserFunctions(sv);
+	}
 
     frmMain->edtInfixTextChanged(sender,param); // to reflect changed values
-	btnSave->SetEnabled(false); //  _changed[_activeTab] = false);
+	btnSave->SetEnabled(false); //  _changed[] = false);
 
+	lengine->clean = false;		// variables/functions saved at exit
 }
 
 void TfrmVariables::sgBuiltinColumnSizing(void *sender, nlib::ColumnRowSizeParameters param)
@@ -499,10 +545,8 @@ void TfrmVariables::FormClose(void *sender, nlib::FormCloseParameters param)
 void TfrmVariables::sgUserKeyPress(void *sender, nlib::KeyPressParameters param)
 {
 	if (param.key != VK_TAB && param.key != VK_RIGHT && param.key != VK_LEFT && param.key != VK_UP && param.key != VK_DOWN)
-	{
 		btnSave->SetEnabled(_changed[_activeTab] = true);
-		_changed[_activeTab] = true;
-	}
+
 	if (param.key == '3' && param.vkeys & vksAlt)
 	{
 		nlib::EventParameters par;
@@ -542,4 +586,9 @@ void TfrmVariables::sgUserEditorKeyDown(void *sender, nlib::KeyParameters param)
 		}
 	}
 
+}
+
+SmartString TfrmVariables::_RowData::Serialize()
+{	   //	name				  body/definition					description								unit
+	return cols[0] + ssEqString + cols[1] + ssCommentDelimiterString + cols[3] + ssCommentDelimiterString + cols[2];
 }

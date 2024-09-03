@@ -421,46 +421,44 @@ namespace FalconCalc
     // in which the order of the items remains the same as the
     // added order
 
-    using IntMap = std::map<SmartString, int>;
-
-    template<class T>
-    struct VarFuncData
-    {
-        IntMap index;
-        std::vector<T> vec;
-    };
-
     //---------------------------------
-    template <class T>
-    class DataMap : private VarFuncData<T>
+    template <class T, class String>
+    class DataMap
     {
+        std::map<String, int> _index;
+        std::vector<T> _vec;
     public:
-        DataMap() : VarFuncData<T>() {}
+        DataMap() {}
+        DataMap(const DataMap& o)
+        {
+            _index = o._index;
+            _vec = o._vec;
+        }
         virtual ~DataMap() {};
 
         bool changed = false;
 
         T& operator[](int ix)
         {
-            return this->vec[ix];
+            return this->_vec[ix];
         }
 
-        T& operator[](const SmartString key)
+        T& operator[](const String key)
         {
             int ix = -1;
-            if (this->index.count(key))                   // !!! w.o. this-> it won't find index
-                ix = this->index[key];
+            if (this->_index.count(key))                   // !!! w.o. this-> it won't find index
+                ix = this->_index[key];
             else
             {
-                ix = this->vec.size();
-                this->index[key] = ix;
+                ix = this->_vec.size();
+                this->_index[key] = ix;
                 T t=T();
-                this->vec.push_back(t);
+                this->_vec.push_back(t);
             }
-            return this->vec[ix];
+            return this->_vec[ix];
         }
 
-        const SmartString &Name(int ix) const   // name of index-th item
+        const String &Name(int ix) const   // name of index-th item
         {
             T& t = (*this)[ix];
             return t.Name();
@@ -468,34 +466,49 @@ namespace FalconCalc
 
         int size() const 
         { 
-            return this->index.size(); 
+            return this->_index.size(); 
         }
 
         int count(const SmartString &s) const
         { 
-            return this->index.count(s);
+            return this->_index.count(s);
         }
 
         void clear()
         {
-            this->index.clear();
-            this->vec.clear();
+            this->_index.clear();
+            this->_vec.clear();
         }
 
         void erase(int i)
         {
-            SmartString name = (*this)[i].Name();
-            this->index.erase(name);
-            this->vec.erase(this->vec.begin() + i);
-            for (auto& e : this->index)
-                if (e.second > i)
-                    --e.second;
+            this->_vec.erase(this->_vec.begin() + i);
+            _Remap();
+        }
+
+        void insert(T t, int i)
+        {
+            vec._insert(_vec.begin() + i, t);
+            _Remap();
+        }
+        int Index(String s)
+        {
+            if (count(s))
+                return _index[s];
+            return -1;
+        }
+    private:
+        void _Remap()
+        {
+            _index.clear();
+            for (size_t i = 0; i < _vec.size(); ++i)
+                _index[_vec[i].Name()] = i;
         }
     };
 
-    typedef DataMap<BuiltinFunc> BuiltinFuncTable;
-    typedef DataMap<Func> FunctionTable;
-    typedef DataMap<Variable> VariableTable;
+    typedef DataMap<BuiltinFunc, SmartString> BuiltinFuncTable;
+    typedef DataMap<Func, SmartString> FunctionTable;
+    typedef DataMap<Variable, SmartString> VariableTable;
 
 #endif
 
