@@ -4,6 +4,16 @@
 #include "resource.h"
 #include "wcommon.h"
 
+#include "SmartString.h"
+using namespace SmString;
+
+#include "LongNumber.h"
+
+using namespace LongNumber;
+
+
+#include "calculate.h"
+
 using namespace nlib;
 #undef max
 
@@ -19,7 +29,7 @@ using namespace LongNumber;
 #include "variables.h"
 
 TfrmVariables *frmVariables;
-const int	VARIABLES = 0,
+constexpr int	VARIABLES = 0,
 			FUNCTIONS = 1;
 
 int TfrmVariables::_colW[2][4] = { {80,100,60,300},{50,200,60,300} };
@@ -165,7 +175,7 @@ TfrmVariables::TfrmVariables()
 	InitializeFormAndControls();
 
 	_underResize = false;
-	_RowData rd;
+	RowData rd;
 	for (int i = 0; i < LittleEngine::variables.size(); ++i)
 	{
 		Variable& v = LittleEngine::variables[i];
@@ -277,10 +287,10 @@ void TfrmVariables::_CollectFrom(int table)
     //if(!_changed[table])    // 'changed' must be modified in caller when necessary
     //    return;
 
-	_RowDataMap &rvIn = table ? _rvUserFuncsIn : _rvUserVarsIn,
+	RowDataMap &rvIn = table ? _rvUserFuncsIn : _rvUserVarsIn,
 				&rv   = table ? _rvUserFuncs   : _rvUserVars  ;
 											  
-	_RowData rd;
+	RowData rd;
 	// collect data from table into the non-input variables
 	rv.clear();
 	for (int i = 1; i < sgUser->RowCount(); ++i)
@@ -402,8 +412,8 @@ void TfrmVariables::tcVarsTabChange(void *sender, nlib::TabChangeParameters para
 
 	// first the user variables:
 
-	_RowDataMap& sv = _activeTab == FUNCTIONS ? _rvUserFuncs : _rvUserVars;
-	_RowData rd;
+	RowDataMap& sv = _activeTab == FUNCTIONS ? _rvUserFuncs : _rvUserVars;
+	RowData rd;
 	for (size_t i = 0; i < cntUser; ++i)
 	{
 		for (size_t j = 0; j < 4; ++j)
@@ -586,9 +596,4 @@ void TfrmVariables::sgUserEditorKeyDown(void *sender, nlib::KeyParameters param)
 		}
 	}
 
-}
-
-SmartString TfrmVariables::_RowData::Serialize()
-{	   //	name				  body/definition					description								unit
-	return cols[0] + ssEqString + cols[1] + ssCommentDelimiterString + cols[3] + ssCommentDelimiterString + cols[2];
 }

@@ -51,44 +51,7 @@ private:
 	int  _gridH;				// size of user var/function grid during resize
 	int _activeTab = -1;		// not set yet
 
-	struct _RowData
-	{
-		SmartString cols[4];	// name, body, descr, unit
-
-		_RowData() {}
-		_RowData(const _RowData& o) { *this = o; }
-		_RowData(SmartString name, SmartString body, SmartString descr, SmartString unit)
-		{
-			cols[0] = name;
-			cols[1] = body;
-			cols[2] = descr;
-			cols[3] = unit;
-		}
-		void clear() { cols[0] = cols[1] = cols[2] = cols[3] = u""; }
-		_RowData& operator=(const _RowData& o)
-		{
-			cols[0] = o.cols[0];
-			cols[1] = o.cols[1];
-			cols[2] = o.cols[2];
-			cols[3] = o.cols[3];
-			return *this;
-		}
-		bool operator!=(const _RowData &rd)
-		{
-			for (int i = 0; i < 4; ++i)
-				if (cols[i] != rd.cols[i])
-					return true;
-			return false;
-		}
-		bool operator==(const _RowData &rd)
-		{
-			return !(*this != rd);
-		}
-		SmartString Serialize();
-	};
-	typedef DataMap<_RowData, SmartString> _RowDataMap;
-
-	_RowDataMap _rvUserVars, _rvUserFuncs, _rvUserVarsIn, _rvUserFuncsIn;
+	RowDataMap _rvUserVars, _rvUserFuncs, _rvUserVarsIn, _rvUserFuncsIn;
 
 	FalconCalc::WindowSide _snappedToSide = FalconCalc::wsNone;
 	int _snapPixelLimit = 30;	// pixels snap if inside this distance from, main window

@@ -412,11 +412,7 @@ namespace FalconCalc
     };
 
     class LittleEngine;
-#if 0
-    typedef std::map<SmartString,Func>       FunctionTable;
-    typedef std::map<SmartString,Variable>   VariableTable;  // user defined only. For builtins use 'constantsTable'
 
-#else
     // for user variables and functions we need a fast lookup by string container
     // in which the order of the items remains the same as the
     // added order
@@ -488,7 +484,7 @@ namespace FalconCalc
 
         void insert(T t, int i)
         {
-            vec._insert(_vec.begin() + i, t);
+            _vec.insert(_vec.begin() + i, t);
             _Remap();
         }
         int Index(String s)
@@ -509,8 +505,44 @@ namespace FalconCalc
     typedef DataMap<BuiltinFunc, SmartString> BuiltinFuncTable;
     typedef DataMap<Func, SmartString> FunctionTable;
     typedef DataMap<Variable, SmartString> VariableTable;
+     // row Data for rows in variables^functions table
+    struct RowData
+    {
+        SmartString cols[4];	// name, body, descr, unit
 
-#endif
+        RowData() {}
+        RowData(const RowData& o) { *this = o; }
+        RowData(SmartString name, SmartString body, SmartString descr, SmartString unit)
+        {
+            cols[0] = name;
+            cols[1] = body;
+            cols[2] = descr;
+            cols[3] = unit;
+        }
+        void clear() { cols[0] = cols[1] = cols[2] = cols[3] = u""; }
+        RowData& operator=(const RowData& o)
+        {
+            cols[0] = o.cols[0];
+            cols[1] = o.cols[1];
+            cols[2] = o.cols[2];
+            cols[3] = o.cols[3];
+            return *this;
+        }
+        bool operator!=(const RowData& rd)
+        {
+            for (int i = 0; i < 4; ++i)
+                if (cols[i] != rd.cols[i])
+                    return true;
+            return false;
+        }
+        bool operator==(const RowData& rd)
+        {
+            return !(*this != rd);
+        }
+        SmartString Serialize();
+    };
+
+    typedef DataMap<RowData, SmartString> RowDataMap;
 
     /*==================*/
 	class LittleEngine

@@ -9,40 +9,11 @@
 #include "ui_VariablesFunctionsDialog.h"
 
 namespace FalconCalc {
+	enum WindowSide;
+//	class RowDataMap;
 	class LittleEngine;
-	struct VarFuncInfo;
 }
 
-struct VarFuncInfoQt
-{
-	int which = 0;	// varFunc
-	unsigned uBuiltinFuncCnt= 0;
-	unsigned uBuiltinVarCnt= 0;
-	unsigned uUserFuncCnt= 0;
-	unsigned uUserVarCnt= 0;
-	QString sBuiltinFuncs;
-	QString sBuiltinVars;
-	QString sUserFuncs;
-	QString sUserVars;
-	FalconCalc::LittleEngine* pOwner = nullptr;
-
-	VarFuncInfoQt() {}
-	VarFuncInfoQt(const FalconCalc::VarFuncInfo&);
-
-	bool operator==(const VarFuncInfoQt& vf) const;
-	bool operator!=(const VarFuncInfoQt& vf) const { return !operator==(vf); }
-
-	FalconCalc::VarFuncInfo ToVarFuncInfo() const;
-
-	constexpr unsigned UserCount() const { return which ? uUserFuncCnt : uUserVarCnt; }
-	void SetUserCount(unsigned count) 
-	{ 
-		if (which) 
-			uUserFuncCnt = count; 
-		else 
-			uUserVarCnt = count; 
-	}
-};
 
 /*=============================================================
  * TASK   :	crete an elided text for display 
@@ -95,7 +66,7 @@ class VariablesFunctionsDialog : public QDialog
 {
 	Q_OBJECT
 public:
-	VariablesFunctionsDialog(VarFuncInfoQt &vfi, QWidget* parent = nullptr);
+	VariablesFunctionsDialog(int initialTabIndex, QWidget* parent = nullptr);
 	~VariablesFunctionsDialog();
 
 	QTableWidget* pUserVars = nullptr;
@@ -108,7 +79,7 @@ signals:
 	void SignalVarFuncClose();
 	void SignalTabChange(int tab);
 	void SignalVarFuncMoved();
-	void SignalVarFuncSaved(VarFuncInfoQt&vf);
+	void SignalVarFuncSaved();
 public slots:
 	void SlotSelectTab(int tab);
 	void SlotSetColWidths(int which, int cw1, int cw2, int cw3, int cw4); //which:) -> user, 1->builtin
@@ -130,24 +101,29 @@ protected slots:
 	void on_tblUserFuncs_cellDoubleClicked(int row, int col);
 private:
 	FalconCalc::LittleEngine* _lengine = nullptr;
-	bool _changed = false;
+	FalconCalc::RowDataMap *_rvUserVars, *_rvUserFuncs, *_rvUserVarsIn, *_rvUserFuncsIn;
+	int _snappedToSide = 0;	  // FalconCalc::WindowSide
+
+	static int _colW[2][4];		// column widths
+	bool _changed[2] = { false,false };
 	bool _busy = false;
 	QString _sTmp;	// for table cell change
-	FalconCalc::VarFuncInfo<QString, QStringList> _vf;
+
+	int _snapPixelLimit = 30;	// pixels snap if inside this distance from, main window
+	int _snapDist = 0;			// when '_snapped' is true: distance from '_snappedToSide'
 
 	QStack<QPair<int, QVector<ElidingTableWidgetItem*>>> _removedVarRows, _removedFuncRows;
 	QStack<QPair<int, QVector<ElidingTableWidgetItem*>>>* _pActStack;
 private:
-	void _ClearUserTables(int whichTab);
 	void _FillBuiltinFuncTable();
 	void _FillUserFuncTable();
 	void _FillFuncTables();
 	void _FillBuiltinVarTable();
 	void _FillUserVarTable();
 	void _FillVarTables();
-	void _Serialize(VarFuncInfoQt *pvf=nullptr);    // user functions and variables into _vf
+	//void _Serialize(VarFuncInfoQt *pvf=nullptr);    // user functions and variables into _vf
 	void _AddCellText(QTableWidget* ptw, int row, int col, QString text);
-	void convert(const FalconCalc::VarFuncInfo<QString,QStringList>& vfQt, FalconCalc::VarFuncInfo<SmartString, StringVector>&vf)
+	void _CollectFrom(int index);	// from index-th grid to RowDataMap
 private:
 	Ui::VariablesFunctionsDialogClass ui;
 

@@ -9,6 +9,12 @@
 #include "schemes.h"
 #include "HelpDialog.h"
 
+namespace FalconCalc {
+    enum WindowSide { wsNone, wsTop, wsRight, wsBottom, wsLeft };
+    class RowDataMap;
+}
+
+
 struct SEMAPHORE {
     int b = 0;
     int operator++() { ++b; return b; }
@@ -24,8 +30,6 @@ namespace FalconCalc {
 class VariablesFunctionsDialog;
 class HistoryDialog;
 class HistoryOptions;
-
-struct VarFuncInfoQt;
 
 class FalconCalcQt : public QMainWindow
 {
@@ -157,7 +161,7 @@ private: // functions
     enum class Placement {pmTop,pmRight,pmBottom,pmLeft};
     void _PlaceWidget(QWidget &widget, Placement pm);   // relative to the main window
 
-    bool _SaveUserData(QString fileName, VarFuncInfoQt &vf);
+    bool _SaveUserData(QString fileName, FalconCalc::RowDataMap &rd);
 
 private slots:
     void _watchdogTimerSlot();
@@ -171,7 +175,7 @@ private slots:
     void _SlotVarsFuncsClosing();
     void _SlotVarFuncMoved();
     void _SlotVarTabChanged(int newTab);
-    void _SlotVarFuncSaved(VarFuncInfoQt& vf);
+    void _SlotVarFuncSaved(FalconCalc::RowDataMap& vf);
 
 private: 
     signals:

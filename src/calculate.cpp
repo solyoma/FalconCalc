@@ -6,10 +6,10 @@
 #include "SmartString.h"
 using namespace SmString;
 
-namespace LongNumber {}
-using namespace LongNumber;
 
 #include "LongNumber.h"
+using namespace LongNumber;
+
 #include "calculate.h"
 
 /*----------------- global engine ------------------*/
@@ -1749,4 +1749,9 @@ void LittleEngine::AddUserFunctions(const SmartStringVector& sv)
 }
 
 // end of namespace FalconCalc
+}
+
+SmartString RowData::Serialize()
+{	   //	name				  body/definition					description								unit
+    return cols[0] + ssEqString + cols[1] + ssCommentDelimiterString + cols[3] + ssCommentDelimiterString + cols[2];
 }

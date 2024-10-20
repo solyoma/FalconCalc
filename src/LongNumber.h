@@ -18,6 +18,9 @@ namespace LongNumber {
 	extern const SmartString NAN_STR;
 	extern const SmartString INF_STR;
 
+#ifdef max
+	#undef max
+#endif
 	constexpr const size_t MaxExponent = std::numeric_limits<int>::max();
 
 
@@ -501,14 +504,15 @@ namespace LongNumber {
 			int		exp=0;
 			bool	numberIsZero = false;
 
-			size_t	nWSign = 0;
-			size_t	nIntegerDigits = 0;		// in _numberString ( if > _numberstring.length() logically right extended by '0's when needed)
-			size_t  nWIntegerPart = 1;		// width of whole integer part of formatted string w.o. sign
-			size_t  nWDisplayW =size_t(-1);
+			size_t	nIntegerDigits = 0;		// in _numberString of pRn ( if > _numberstring.length() logically right extended by '0's when needed)
 			size_t	cntDecDigitsToDisplay = 0;
 			size_t	cntDecDigitsInNumberString = 0;
-			size_t	nWFractionalPart = 0;	// includes decimal point
 			size_t	expLen = 0;
+
+			size_t	nWSign = 0;
+			size_t  nWIntegerPart = 1;		// width of whole integer part of formatted string w.o. sign
+			size_t  nWDisplayW =size_t(-1);
+			size_t	nWFractionalPart = 0;	// includes decimal point
 			size_t	nWDecPoint = 0;
 
 			SmartString strExponent;

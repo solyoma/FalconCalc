@@ -1,3 +1,8 @@
+#include "SmartString.h"
+using namespace SmString;
+#include "LongNumber.h"
+using namespace LongNumber;
+#include "calculate.h"
 #include "FalconCalcQt.h"
 #include <QtWidgets/QApplication>
 

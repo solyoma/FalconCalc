@@ -933,6 +933,8 @@ SmartString RealNumber::ToHexString(const DisplayFormat &format)
 	 * GLOBALS:	_dsplD, strRounded
 	 * RETURNS: nothing, 
 	 *			_dsplD  modified
+	 *			nIntegerDigits : the # of integer digits from _numberString
+	 *				may be larger than length of _numberString
 	 * REMARKS: if format is changed to 'rnfNormal' 'nLeadingDecimalZeros'
 	 *			is 0
 	 *------------------------------------------------------------*/
@@ -989,12 +991,12 @@ void RealNumber::_DisplData::CalculateExponentAndIntegerDigits()
 		++exp;
 	}
 	strExponent = FormatExponent();	// real 10's exponent
-};
+}
 
 /*=============================================================
- * TASK   : lambda to calculate '_dsplD.nWIntegerPart'
+ * TASK   : calculate '_dsplD.nWIntegerPart'
  * PARAMS : none
- * _dsplD.expECTS:	_dsplD.nIntegerDigits: # of characters in numberString
+ * EXPECTS:	_dsplD.nIntegerDigits: # of characters in _numberString
  *							w.o. separators, sign or decimal point
  * GLOBALS:	_dsplD.fmt.mainFormat, _dsplD.fmt.strThousandSeparator
  *			'_dsplD.nIntegerDigits':
@@ -1016,16 +1018,17 @@ int RealNumber::_DisplData::RequiredSpaceforIntegerDigits()
 	// else Sci format, nWIntegerPart is already 1
 	else // rnfSci
 		nWIntegerPart = 1;
-	nWIntegerPart = nWIntegerPart ? nWIntegerPart : 1;		// on display: always use an integer part
+	nWIntegerPart = nWIntegerPart ? nWIntegerPart : 1;		// on display: always use at least one character for integer part
 	return nWIntegerPart;
 }
 /*=============================================================
-	 * TASK   :	calculate the number of required decimal (fractional)
-	 *			digits
+	 * TASK   :	calculate the number of required (fractional)
+	 *			characters including decimal point and 
+	 *			space delimiters in display string
 	 * PARAMS :	none
-	 * _dsplD.expECTS:
+	 * EXPECTS:
 	 * GLOBALS: _dsplD.fmt, _dsplD.nReqdDecDigits
-	 * RETURNS: _dsplD.nWFractionalPart
+	 * RETURNS: _dsplD.nWFractionalPart, includes decimal point
 	 * REMARKS: - which is the space required for display including
 	 *				the decimal point,  possible decimal separators
 	 *				but disregarding display width
@@ -1046,13 +1049,13 @@ int RealNumber::_DisplData::RequriedSpaceForFraction()
 	//nWFractionalPart = nDisplDigits + (fmt.useFractionSeparator && nDisplDigits ? ((nDisplDigits - 1) / 3) : 0) + (nDisplDigits ? 1 : 0);
 	nWFractionalPart = nDisplDigits + (fmt.useFractionSeparator && nDisplDigits ? (nDisplDigits - 1) / 3 : 0);
 	if (nWFractionalPart)
-		nWDecPoint = nWFractionalPart++ ? 1 : 0;
+		nWDecPoint = nWFractionalPart++ ? 1 : 0;	// include one desimal point character
 	return nWFractionalPart;
 };
 /*=============================================================
 	 * TASK   : get rounding position in displayed fraction
 	 * PARAMS :
-	 * _dsplD.expECTS:	'_dsplD.nWFractionalPart' includes decimal point, leading zeros
+	 * EXPECTS:	'_dsplD.nWFractionalPart' includes decimal point, leading zeros
 	 *					and decimal separators
 	 * GLOBALS:	_dsplD
 	 * RETURNS: rounding position
@@ -1061,20 +1064,10 @@ int RealNumber::_DisplData::RequriedSpaceForFraction()
 int RealNumber::_DisplData::RoundingPos()
 {
 	int __lenIntPart = nWSign + nWIntegerPart + expLen;
-	if (nWDisplayW < 0)					// no limit in display
-		return cntDecDigitsInNumberString;
-
-	if ((int)nWDisplayW >= __lenIntPart + nWFractionalPart)
-		return nWFractionalPart + nIntegerDigits;
-
-	// re-calculate decimal (fractional) part because of 'nDisplayW'
-	nWFractionalPart = (int)nWDisplayW - __lenIntPart;
-	if (nWFractionalPart <= 1)	// nWFractionalPart contains the decimal point!
-		return -1;						// no place for fractional part
-	// how many delimiters are in this wide space?
-	int fracDelimCnt = fmt.useFractionSeparator ? (nWFractionalPart - 1 - 1) / 4 : 0;	// -1 : decimal point, other -1: for width
-	// rounding position in strRounded
-	return nWFractionalPart - fracDelimCnt - nLeadingDecimalZeros - 1;
+	if (nIntegerDigits + cntDecDigitsToDisplay >= strRounded.length())					// no limit in display
+		return strRounded.length();
+	else
+		return nIntegerDigits + cntDecDigitsToDisplay;
 };
 
 bool RealNumber::_DisplData::Round()

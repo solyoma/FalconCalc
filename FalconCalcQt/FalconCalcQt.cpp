@@ -1,4 +1,3 @@
-#include "FalconCalcQt.h"
 
 #include <QDir>
 #include <QFile>
@@ -21,6 +20,8 @@ using namespace LongNumber;
 
 #include "calculate.h"
 using namespace FalconCalc;
+
+#include "FalconCalcQt.h"
 
 #include "AboutDialog.h"
 #include "VariablesFunctionsDialog.h"
@@ -277,11 +278,9 @@ void FalconCalcQt::_EditVarsCommon(int which)
 	}
 	else
 	{
-		VarFuncInfo vf;
 		lengine->GetVarFuncInfo(vf);
-		VarFuncInfoQt vfQt(vf);
 
-		_pVF = new VariablesFunctionsDialog(vfQt, this);
+		_pVF = new VariablesFunctionsDialog(, this);
 		connect(_pVF, &VariablesFunctionsDialog::SignalVarFuncClose, this, &FalconCalcQt::_SlotVarsFuncsClosing);
 		connect(_pVF, &VariablesFunctionsDialog::SignalTabChange, this, &FalconCalcQt::_SlotVarTabChanged);
 		connect(this, &FalconCalcQt::_SignalSelectTab, _pVF, &VariablesFunctionsDialog::SlotSelectTab);
