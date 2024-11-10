@@ -110,9 +110,10 @@ namespace LongNumber {
 												// -1	: all digits stored is displayed (if displWidth allows it)
 												// > _numberstring.length(): add trailing zeros
 
-		int displWidth = -1;					// when > 0 and the number sting is shorter than this then the number is
-												// right aligned, otherwise it is left aligned. 
-												// the displayed number is always determined by 'decDigits
+		int displWidth = -1;					// display width in characters, -1: unlimited
+												// when > 0 and the number string is shorter than this then the number is
+												//		right aligned, otherwise it is left aligned. 
+												//	the displayed number is determined by 'decDigits' and this
 		SignOption signOption = SignOption::soNormal;
 		SmartString strThousandSeparator;		// for decimal format. Empty: no separator
 		bool useFractionSeparator = false;		// when true use a space character
@@ -491,42 +492,43 @@ namespace LongNumber {
 		static SCharT _decPoint;	// get from locale
 		EFlagSet _eFlags;
 
-		struct _DisplData
+		struct _DisplData				   // friend of RealNumber
 		{
 			// DEBUG
-			RealNumber* pRn = nullptr;
+			RealNumber* pRn = nullptr;	   // display this number
 			// /DEBUG
 
-			DisplayFormat fmt;
+			DisplayFormat fmt;			   // in this format
 
-			int		nLeadingDecimalZeros = 0;
-			int		cntThousandSeparators = 0;
-			int		exp=0;
+			int		nLeadingDecimalZeros = 0;	// which are not stored in pRn's _numberString, but comes before it
+			int		cntThousandSeparators = 0;	// any string
+			int		exp=0;						// so we don't change _exp
 			bool	numberIsZero = false;
 
-			size_t	nIntegerDigits = 0;		// in _numberString of pRn ( if > _numberstring.length() logically right extended by '0's when needed)
-			size_t	cntDecDigitsToDisplay = 0;
-			size_t	cntDecDigitsInNumberString = 0;
-			size_t	expLen = 0;
+			size_t	nIntegerDigits = 0;			// in pRn->_numberString  ( if > _numberstring.length() logically right extended by '0's when needed on display)
+			size_t	cntDecDigitsToDisplay = 0;	// rounding position in pRn->_numberString
+			size_t	cntDecDigitsInNumberString = 0;	// total number for decimal part in pRn->_numberString
+			size_t	expLen = 0;					// length of exponent string
+			size_t	expW = 0;					// display length of same (TODO: using pixel units)
 
-			size_t	nWSign = 0;
-			size_t  nWIntegerPart = 1;		// width of whole integer part of formatted string w.o. sign
-			size_t  nWDisplayW =size_t(-1);
-			size_t	nWFractionalPart = 0;	// includes decimal point
-			size_t	nWDecPoint = 0;
+			int nRoundPos = -1;					// relative to pRn->_numberString, including integer part! -1: no rounding 
+
+			size_t	nWSign = 0;					// 0 or 1
+			size_t  nWIntegerPart = 1;			// width of whole integer part of formatted string including thousand separators, but w.o. dec. point or sign
+			size_t  nWDisplayW =size_t(-1);		// display width in characters, -1: unlimited
+			size_t	nWFractionalPart = 0;		// length of visible part of fractional digits + 1 for decimal point
+			size_t	nWDecPoint = 0;				// or 1
 
 			SmartString strExponent;
-			SmartString strRounded;			// rounded string of digits
-			int nRoundPos = 0;
+			SmartString strRounded;				// rounded string of digits from pRn->_numberString may be empty
 
 			void Setup(const DisplayFormat& format, RealNumber& rN);
-			SmartString FormatExponent();
+			SmartString FormatExponent();		// normal: smaller numbers at upper index position, TEX: with ^, HTML with <sup>...</sup>, else Exxx
 
-			void CalculateExponentAndIntegerDigits();
-			int RequiredSpaceforIntegerDigits();
-			int RequriedSpaceForFraction();
-			int RoundingPos();
-			bool Round();
+			void FixNumberFormatAndSetExponent(); // for general format or too large/small numbers
+			int RequiredSpaceforIntegerDigits();  // calc. nWIntegerPart
+			bool PrepareRoundedString();		  // calc. nWFractionalPart including decimal separators
+			bool Round();						// from pRn->_numberString to strRounded	
 		};
 		_DisplData _dsplD;
 

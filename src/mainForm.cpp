@@ -746,7 +746,7 @@ TfrmMain::TfrmMain()
 	lengine = new FalconCalc::LittleEngine;			// this remain valid when the program is running
 	lengine->displayFormat.useNumberPrefix = true;
 	lengine->displayFormat.strThousandSeparator = " "_ss;
-	lengine->displayFormat.displWidth = 59;
+	lengine->displayFormat.displWidth = 58;
 
 	lengine->ssNameOfDatFile = (UserDir() + SmartString(FalconCalc_DAT_FILE));
 	try
