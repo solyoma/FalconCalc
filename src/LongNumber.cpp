@@ -832,6 +832,8 @@ SmartString RealNumber::ToHexString(const DisplayFormat &format)
 	if (hex.length() & 1)	// hex string must always have even number of characters
 		hex = "0"_ss + hex; // the leading 0 will be dropped if the number has
 							// a prefix and not LSB order is used
+	if (hex.length() > 57 - size_t(_sign < 0 && format.bSignedBinOrHex ? 1:0))
+		return "Too long"_ss;
 	// lambda
 	auto addone = [&hex](int i, int& carry)
 	{	
@@ -1054,7 +1056,7 @@ bool RealNumber::_DisplData::PrepareRoundedString()
 		if (dw <= 0)
 			return res;			// and strRounded is empty
 
-		nRoundPos = fmt.decDigits >= 0 && fmt.decDigits < nDecLen ? fmt.decDigits : nDecLen; // max. number of decimal digits that should be displayed w.o delimiters
+		nRoundPos = fmt.decDigits >= 0 && fmt.decDigits < (int)nDecLen ? fmt.decDigits : nDecLen; // max. number of decimal digits that should be displayed w.o delimiters
 		if (fmt.useFractionSeparator)
 		{	// 123456789 dw:			0		1	  2		  3		  4		  5			6	       7		     8			9
 			//			 str			''	   '1'	 '12'	'123'	'123'	'123 4'	  '123 45'	  '123 456'  '123 456'	  '123 456 7'
@@ -1064,7 +1066,7 @@ bool RealNumber::_DisplData::PrepareRoundedString()
 			// Displayed as	0.642 787 609 686 539 326 322 643 409 907 263 432 907 559 8		rp = (57%4)+(57/4)
 			size_t rp = (dw % 4) + (dw / 4)*3;	// max possible count of decimal digits that fits the width
 
-			if (rp >= nRoundPos)	// then it'll fit
+			if (rp >= (size_t)nRoundPos)	// then it'll fit
 				cntDecSep = (nRoundPos - 1) / 3;
 			else
 			{
