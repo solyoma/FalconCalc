@@ -55,26 +55,24 @@ class GraphicText;
 
 struct TextSection
 {
-	std::wstring &text;		// from 'GraphicText' object
-	std::wstring myText;	// text section copied here
-	nlib::Canvas *canvas;	// from 'GraphicText' object
-	TextSection *next,		// next section at this text level
-		*upper, *lower;		// upper/lower index of this level
-	int len;				// in text	len = 0: base section
-	int level;				// base: 0, upper > 0, lower < 0
-	float nFontSize;		// 0 for same font as selected for the canvas super- and subscript size is 75%
-	int x, y;				// of the **top left** of this section in pixels, relative to x=0,y=0
-	nlib::Rect box;			// this is the rectangle which contains this text and all of its indices
-							// i.e. the leftmost point of the text is 'box.left = x', 
-							// highest point (smallest y) of it is 'box.top'
-							// rightmost point is 'box.right' and lowest point is 'box.bottom'
-							// where all coordinates are relative to x,y and in pixels
-	int width, height;		// of this section w.o. indices when displayed on 'canvas' in pixels
-	bool _no_processing;	// single section
+	std::wstring &text;				// from 'GraphicText' object
+	std::wstring myText;			// text section copied here
+	nlib::Canvas *canvas = nullptr;	// from 'GraphicText' object
+	TextSection *next=nullptr,		// next section at this text level
+		*upper = nullptr, *lower = nullptr;		// upper/lower index of this level
+	int len = 0;					// in text	len = 0: base section
+	int level = 0;					// base: 0, upper > 0, lower < 0
+	float nFontSize=12;				// 0 for same font as selected for the canvas super- and subscript size is 75%
+	int x=0, y=0;						// of the **top left** of this section in pixels, relative to x=0,y=0
+	nlib::Rect box;					// this is the rectangle which contains this text and all of its indices
+									// i.e. the leftmost point of the text is 'box.left = x', 
+									// highest point (smallest y) of it is 'box.top'
+									// rightmost point is 'box.right' and lowest point is 'box.bottom'
+									// where all coordinates are relative to x,y and in pixels
+	int width=0, height=0;				// of this section w.o. indices when displayed on 'canvas' in pixels
+	bool _no_processing=false;			// single section
 
-	TextSection(std:: wstring &text, nlib::Canvas* canvas) : 
-		text(text), canvas(canvas), next(0), upper(0), lower(0),
-		len(0), nFontSize(12), x(0), y(0), box(), width(0), height(0), _no_processing(false) {}
+	TextSection(std:: wstring &text, nlib::Canvas* canvas) : text(text), canvas(canvas)	  {}
 	~TextSection() { delete upper; delete lower; delete next;}
 	bool Process(int &pos, bool isSingleLtter=false);	// read section and process it. returns true at section end and false at end of text
 	bool ProcessBrace(int &pos);	// read section and process it. returns true at section end and false at end of text

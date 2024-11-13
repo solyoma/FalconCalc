@@ -8,12 +8,15 @@
 #include <set>
 #include <map>
 
+
+
 namespace LongNumber {
 	//using namespace SmString;				// SmartString.h
 	extern const SCharT chZero;				// = (SCharT)'0';
 	extern const SCharT chOne;				// = (SCharT)'1';
-	const size_t MaxAllowedDigits = 65;	// !!! Modify this  - no number string can have more digits than this + LengthOverflow
-	const size_t LengthOverFlow = 2;		// add this to the _maxLength of a RealNumber to get the real maximum string length
+	constexpr const size_t MaxAllowedDigits = 65;	// !!! Modify this  - no number string can have more digits than this + LengthOverflow
+	constexpr const size_t LengthOverFlow = 2;		// add this to the _maxLength of a RealNumber to get the real maximum string length
+	constexpr const size_t TrigAccuracy = 58;		// max this many digits used for trigonometric functions
 
 	extern const SmartString NAN_STR;
 	extern const SmartString INF_STR;

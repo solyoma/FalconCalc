@@ -7,6 +7,8 @@
 
 #include "SmartString.h"
 
+constexpr const int MAX_OUTPUT_WIDTH = 58;
+
 class TfrmMain : public nlib::Form
 {
 public:

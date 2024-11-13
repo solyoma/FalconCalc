@@ -3076,15 +3076,15 @@ RealNumber sin (RealNumber r, AngularUnit angu)		// sine
 				return r.SetSign(sign);
 			}
 			else									  // 0 <= r <= π/2
-				return _sin(r).Round(58).SetSign(sign);
+				return _sin(r).Round(TrigAccuracy).SetSign(sign);
 		}
 			
 		case AngularUnit::auTurn:		// full circle 1 turn
-			return _sin(r.Frac()*rn2Pi).Round(58).SetSign(sign);
+			return _sin(r.Frac()*rn2Pi).Round(TrigAccuracy).SetSign(sign);
 			break;
 
 		case AngularUnit::auGrad:			// full circle 400 Grad
-			return _sin(r / RealNumber("400").SetSign(sign) * rn2Pi).Round(58);	// display width is 59
+			return _sin(r / RealNumber("400").SetSign(sign) * rn2Pi).Round(TrigAccuracy);	// display width is 59
 			break;
 	}
 	return RealNumber();

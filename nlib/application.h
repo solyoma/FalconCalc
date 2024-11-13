@@ -44,7 +44,7 @@ namespace NLIBNS
         struct RegClassData
         {
             std::wstring classname;
-            WNDPROC wndproc;
+            WNDPROC wndproc=nullptr;
             RegClassData() : wndproc(NULL) {}
             RegClassData(const std::wstring classname, WNDPROC wndproc) : classname(classname), wndproc(wndproc) {}
         };
