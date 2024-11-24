@@ -1317,7 +1317,13 @@ void RealNumber::_DisplData::Setup(const DisplayFormat& format, RealNumber& rN)
  *------------------------------------------------------------*/
 SmartString RealNumber::_DisplData::FormatExponent()
 {
-	SmartString s = numberIsZero ? "0"_ss : SmartString(std::to_wstring(exp - 1));
+	if (numberIsZero)
+	{
+		expLen = 0;
+		return strExponent="";
+	}
+
+	SmartString s = SmartString(std::to_wstring(exp - 1));
 	expW = expLen = 0;				// no exponent for general or normal format
 	if (fmt.mainFormat == NumberFormat::rnfSci || fmt.mainFormat == NumberFormat::rnfEng)
 	{
@@ -1340,7 +1346,8 @@ SmartString RealNumber::_DisplData::FormatExponent()
 			case ExpFormat::rnsfGraph:
 			default:
 				expW = 2 + s.length() * 2 / 3;
-				s = SmartString(1, SCharT(183)) + u"10^{" + s + u"}";
+				//s = SmartString(1, SCharT(183)) + u"10^{" + s + u"}";
+				s = SmartString(1, SCharT(0xd7)) + u"10^{" + s + u"}";
 				expLen = s.length() - 2;
 				break;
 		}
