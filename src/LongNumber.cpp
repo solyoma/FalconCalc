@@ -1081,7 +1081,7 @@ bool RealNumber::_DisplData::PrepareRoundedString()
 		}
 		nWFractionalPart = nRoundPos + cntDecSep + (nRoundPos ?1:0);	// +1 : dec. point
 		cntDecDigitsToDisplay = nRoundPos;
-		nRoundPos -= nLeadingDecimalZeros;	// < 0 => no rounding, == 0 round
+		//nRoundPos -= nLeadingDecimalZeros;	// < 0 => no rounding, == 0 round
 		nRoundPos += nIntegerDigits;		// rounding is for the whole number string
 		if (nRoundPos < 0)
 			return false;
@@ -1159,6 +1159,7 @@ bool RealNumber::_DisplData::Round()
 	{		   // example: 0.999991 rounded to 3 decimal places: 1.000
 		strRounded = SmartString(chOne) + strRounded;
 		++exp;
+		--nLeadingDecimalZeros;
 		if (exp >= 0)	// the number was > 0.9
 		{
 		   ++nIntegerDigits;
