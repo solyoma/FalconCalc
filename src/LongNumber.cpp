@@ -30,6 +30,7 @@ namespace LongNumber {
 	const SCharT chOne = (SCharT)'1';
 	const SmartString NAN_STR("NaN");
 	const SmartString INF_STR("Inf");
+	const SmartString TOO_LONG_STR("Too long");
 
 
 	const SCharT chSpace = SCharT(' ');
@@ -113,7 +114,7 @@ static const RealNumber rnNull("0"),
 			     rnLgE("0.434294481903251827651128918916605082294397005803666566114453783165864649208870774729224949338431748318"), // lg(e)
 				 rnLge = rnLgE,
 
-					rnNaN(NAN_STR), rnInf(INF_STR),
+					rnNaN(NAN_STR), rnInf(INF_STR), rnTooLong(TOO_LONG_STR), 
 // physical constants		// they are not rescaled in RealNumber::SetMaxLength()
 			rn_au		("149597870700"),		// astronomival unit - definition (m)
 			rn_c		("299792458"),			// speed of light in vacuum	 m⋅s-1
@@ -143,7 +144,8 @@ static const RealNumber rnNull("0"),
 RealNumber	zero  		(rnNull), 
 			half 		(rnHalf), 
 			NaN 		(rnNaN),
-			Inf 		(rnInf);
+			Inf 		(rnInf),
+			tooLong		(rnTooLong);
 Constant
 	//				 name     	value		 unit				  explanation
 				// math
@@ -354,7 +356,7 @@ RealNumber RealNumber::operator=(double value) // usually will loose accuracy as
 
 RealNumber& RealNumber::operator++()
 {
-	if (IsNaN() || IsInf())
+	if (IsNaN() || IsInf() || IsTooLong())
 		return *this;
 	RealNumber r("1");
 	operator+=(r);
@@ -370,7 +372,7 @@ RealNumber RealNumber::operator++(int)
 
 RealNumber& RealNumber::operator--()
 {
-	if (IsNaN() || IsInf())
+	if (IsNaN() || IsInf() || IsTooLong())
 		return *this;
 	RealNumber r("1");
 	operator-=(r);
@@ -392,7 +394,7 @@ bool RealNumber::operator==(const RealNumber& rn) const
 bool RealNumber::operator!=(const RealNumber& rn) const { return !operator==(rn); }
 bool RealNumber::operator<(const RealNumber& rn) const
 {
-	if ( (IsNaN() || rn.IsNaN()) || (_sign > rn._sign) || (_sign == rn._sign && IsInf() && !rn.IsInf())	)
+	if ( (IsNaN() || rn.IsNaN()) || (_sign > rn._sign) || (_sign == rn._sign && IsInf() && !rn.IsInf())	|| IsTooLong() || rn.IsTooLong())
 		return false;
 
 	// sign <= rn._sign
@@ -488,6 +490,8 @@ RealNumber RealNumber::RoundToDigits(int countOfSignificantDigits, int cntIntDig
 }
 RealNumber RealNumber::RoundedToDigits(int countOfSignificantDigits, int cntInteDigits) const
 {
+	if (_numberString[0] == 'T')	// too long
+		return *this;
 	RealNumber r(*this);
 	return r.RoundToDigits(countOfSignificantDigits, cntInteDigits);
 }
@@ -497,6 +501,8 @@ SmartString RealNumber::_ToBase(int base, size_t maxNumDigits) const	// base mus
 	if (IsNaN())
 		return NAN_STR;
 
+	if (_exponent > MaxAllowedDigits)
+		return TOO_LONG_STR;
 	// expects remainder to be <one (binary, octal, hexadecimal) < 16
 	RealNumber tmp(*this),
 				divisor = (base == 16 ? RN_16 : base == 8 ? RN_8 : base == 2 ? RN_2 : RN_10),
@@ -668,10 +674,13 @@ SmartString RealNumber::_DecimalPartToString(const SmartString& strRounded, _Dis
   *------------------------------------------------------------*/
 SmartString RealNumber::ToBinaryString(const DisplayFormat& format)
 {
-	SmartString bin = _ToBase(2, _maxLength+LengthOverFlow);
 
-	if (IsInf() || IsNaN())
+	if (IsInf() || IsNaN() || IsTooLong())
 		return _numberString;
+
+	SmartString bin = _ToBase(2, _maxLength+LengthOverFlow);
+	if ((bin == u"Inf" && !IsInf()) || (bin == u"NaN" && !IsNaN()) || (bin[0] == 'T'))
+		return TOO_LONG_STR;
 
 	size_t len = bin.length();
 	if (!len)
@@ -682,7 +691,7 @@ SmartString RealNumber::ToBinaryString(const DisplayFormat& format)
 		++len;
 
 	if ((format.displWidth > 0  && len > (size_t)format.displWidth) || (bin == u"Inf" && !IsInf()) || (bin == u"NaN" && !IsNaN()))
-		return "Too long"_ss;
+		return TOO_LONG_STR;
 
 	size_t lenb = bin.length();
 
@@ -740,15 +749,15 @@ SmartString RealNumber::ToBinaryString(const DisplayFormat& format)
  *------------------------------------------------------------*/
 SmartString RealNumber::ToOctalString(const DisplayFormat& format)
 {
-	if (IsInf() || IsNaN())
+	if (IsInf() || IsNaN() || IsTooLong())
 		return _numberString;
 
 	SmartString oct = _ToBase(8, _maxLength+LengthOverFlow);	// w.o. leading '0'
-	//oct = SmartString("0")+ oct;
-	size_t leno = oct.length();
 
-	if ( (oct == u"Inf" && !IsInf()) || (oct == u"NaN" && !IsNaN()))
-		return "Too long"_ss;
+	if ( (oct == u"Inf" && !IsInf()) || (oct == u"NaN" && !IsNaN()) || (oct[0] == 'T'))
+		return TOO_LONG_STR;
+
+	size_t leno = oct.length();
 
 	if (_eFlags.count(EFlag::rnfInvalid))
 		oct = INF_STR;
@@ -802,7 +811,7 @@ SmartString RealNumber::ToOctalString(const DisplayFormat& format)
  *------------------------------------------------------------*/
 SmartString RealNumber::ToHexString(const DisplayFormat &format)
 {
-	if (IsInf() || IsNaN())
+	if (IsInf() || IsNaN() || IsTooLong())
 		return _numberString;
 
 	SmartString hex;
@@ -826,14 +835,14 @@ SmartString RealNumber::ToHexString(const DisplayFormat &format)
 	else
 		hex = _ToBase(16, _maxLength+LengthOverFlow);
 
-	if ( (hex == u"Inf" && !IsInf()) || (hex == u"NaN" && !IsNaN()))
-		return "Too long"_ss;
+	if ( (hex == u"Inf" && !IsInf()) || (hex == u"NaN" && !IsNaN()) || (hex[0]=='T'))
+		return TOO_LONG_STR;
 
 	if (hex.length() & 1)	// hex string must always have even number of characters
 		hex = "0"_ss + hex; // the leading 0 will be dropped if the number has
 							// a prefix and not LSB order is used
 	if (hex.length() > 57 - size_t(_sign < 0 && format.bSignedBinOrHex ? 1:0))
-		return "Too long"_ss;
+		return TOO_LONG_STR;
 	// lambda
 	auto addone = [&hex](int i, int& carry)
 	{	
@@ -1201,7 +1210,7 @@ bool RealNumber::_DisplData::Round()
  *----------------------------------------------------------------------------*/
 SmartString RealNumber::ToDecimalString(const DisplayFormat &format)
 {
-	if (IsNaN())
+	if (IsNaN() || IsTooLong())
 		return _numberString;
 	SmartString signStr = _SignString(format);
 	if (IsInf())
@@ -1425,7 +1434,7 @@ SmartString RealNumber::_AsSmartString() const
 
 LDouble RealNumber::ToLongDouble()
 {
-	if (IsNaN())
+	if (IsNaN() || IsTooLong())
 		return std::nanl("");
 	if (IsInf())
 		return _sign * INFINITY;
@@ -1472,7 +1481,7 @@ RealNumber RealNumber::Int()	const
 bool RealNumber::ConvertToInteger()
 {
 	bool result = true;
-	if (IsNaN() || IsInf())
+	if (IsNaN() || IsInf() || IsTooLong())
 		return false;
 	if (_exponent <= 0)
 	{
@@ -1549,8 +1558,14 @@ RealNumber RealNumber::_PowInt(const RealNumber& power) const // integer powers 
 	while (n > RN_1)
 	{
 		if (n.IsOdd())
+		{
 			y = x * y;
+			if (y.IsTooLong())
+				return y;
+		}
 		x = x * x;
+		if (x.IsTooLong())
+			return x;
 		n = (n / RN_2).Int();	// == floor
 	}
 	return x * y;
@@ -1580,7 +1595,7 @@ RealNumber RealNumber::Pow(const RealNumber &power) const
 
 	//  power == 0 already handled above
 	rnIntPart = _PowInt(rnIntPart);	// handles negative integer exponents too
-	if (rnFracPart.IsNull())
+	if (rnIntPart.IsTooLong() || rnFracPart.IsNull())
 		return rnIntPart;
 
 	if (*this != rnE)
@@ -1610,18 +1625,23 @@ RealNumber RealNumber::_Add(const RealNumber& rnOther, bool negateOther) const
 	if (rnOther.IsNaN())
 		return rnOther;
 
-	RealNumber left(*this);	
-	RealNumber right(rnOther);	
+	if (IsTooLong())
+		return *this;
+	if (rnOther.IsTooLong())
+		return rnOther;
 
 	if (IsInf() || rnOther.IsInf())
 	{
 		if (IsInf() && rnOther.IsInf())
-			return _sign > 0 ? left : (right._sign > 0 ? right : left);
+			return _sign > 0 ? *this : (rnOther._sign > 0 ? rnOther: *this);
 		else if (!IsInf())
-			return right;
+			return rnOther;
 		else
-			return left;
+			return *this;
 	}
+
+	RealNumber left(*this);	
+	RealNumber right(rnOther);	
 
 	if(negateOther)
 		right._sign = - right._sign;
@@ -1682,6 +1702,11 @@ RealNumber RealNumber::_Subtract(const RealNumber& rnOther) const // from this n
 
 RealNumber RealNumber::_Multiply(const RealNumber& rnOther) const
 {
+	if (IsTooLong())
+		return *this;
+	if (rnOther.IsTooLong())
+		return rnOther;
+
 	RealNumber left(*this);	// adjust number to larger precision
 	left._sign *= rnOther._sign;
 	if (rnOther.IsPure10Power())
@@ -1719,12 +1744,19 @@ RealNumber RealNumber::_Multiply(const RealNumber& rnOther) const
 	// and both have the same precision
 
 	left._AddExponents(right._exponent);
-	_MultiplyStrings(left, right);
+	if(!left.IsInf() && !left.IsTooLong())
+		_MultiplyStrings(left, right);
 	return left;
 }
 
-bool RealNumber::__IsDivideByZero(RealNumber& dividend, const RealNumber& divisor) const
+bool RealNumber::__HandleSpecialDivisions(RealNumber& dividend, const RealNumber& divisor) const
 {
+	if (dividend.IsTooLong() || divisor.IsTooLong())
+	{
+			dividend._SetNaN();
+			return true;
+	}
+
 	if (divisor.IsNull())		// division by 0
 	{
 		dividend._eFlags.insert( EFlag::rnfDivBy0);
@@ -1762,7 +1794,7 @@ RealNumber RealNumber::_Divide(const RealNumber& rnOther) const
 
 	RealNumber right(rnOther);	// i.e. when parameter +- diff is positive
 
-	if (__IsDivideByZero(left, rnOther))	// handle null, inf, nan
+	if (__HandleSpecialDivisions(left, rnOther))	// handle null, inf, nan
 		return left;
 
 	_DivideInternal(left, right);
@@ -1776,7 +1808,7 @@ RealNumber RealNumber::_Div(const RealNumber& divisor, RealNumber& remainder) co
 	// RealNumber d(this->Int()), dv(divisor.Int());	// result, divident, divisor
 	RealNumber d(*this), dv(divisor);	// result, divident, divisor
 
-	if (__IsDivideByZero(d, dv))
+	if (__HandleSpecialDivisions(d, dv))
 		return d;
 	int sl = d._sign, sr = dv._sign;
 
@@ -1808,6 +1840,8 @@ RealNumber RealNumber::_Div(const RealNumber& divisor, RealNumber& remainder) co
 RealNumber RealNumber::_LogOpWith(const RealNumber& ra, LogicalOperator lop) const	// only integer part!
 {
 	int sign = _sign * ra._sign;
+	if (IsTooLong() || ra.IsTooLong())
+		return tooLong;
 	if (IsNaN() || ra.IsNaN() )
 		return NaN;
 	if (IsInf() || ra.IsInf())
@@ -1940,7 +1974,7 @@ void RealNumber::_AddExponents(int otherExp)
 {
 	long ex = _AddExponents(_exponent, otherExp, _eFlags);
 	if (_eFlags.count(EFlag::rnfOverflow) || _eFlags.count(EFlag::rnfUnderflow))
-		_SetInf();
+		_SetTooLong();
 	else
 		_exponent = ex;
 }
@@ -2281,6 +2315,11 @@ void RealNumber::_SetNaN()
 void RealNumber::_SetInf()
 {
 	_numberString = INF_STR;
+}
+
+void RealNumber::_SetTooLong()
+{
+	_numberString = TOO_LONG_STR;
 }
 
 SCharT RealNumber::_AddDigits(SCharT digit1, SCharT digit2, int& carry)	 const
@@ -2751,7 +2790,7 @@ RealNumber fact(const RealNumber n)
 
 RealNumber RadToAu(RealNumber r, AngularUnit angu)
 {
-	if(r.IsNaN() || r. IsInf())
+	if(r.IsNaN() || r. IsInf() || r.IsTooLong())
 		return r;
 	static RealNumber RN_360("360"), RN_400("400");
 	switch (angu)
@@ -3214,7 +3253,7 @@ RealNumber atan(RealNumber r, AngularUnit angu)		// arcus tangent
 
 	// result must be converted to the selected units
   /* Special cases for fast answers */
-	if (r.IsNaN())
+	if (r.IsNaN() || r.IsTooLong())
 		return r;
 	int sign = r.Sign();
 

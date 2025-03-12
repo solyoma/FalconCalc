@@ -25,26 +25,22 @@ VariablesFunctionsDialog::VariablesFunctionsDialog(int initialTabIndex, QWidget*
 {
 	ui.setupUi(this);
 	_busy = true;
-	pUserVars = ui.tblUserVars;
-	pBuiltinVars = ui.tblBuiltinVars;
-	pUserFuncs = ui.tblUserFuncs;
-	pBuiltinFuncs = ui.tblBuiltinFuncs;
 
-	_rvUserFuncs = new RowDataMap();
-	_rvUserFuncsIn = new RowDataMap();
-	_rvUserVars = new RowDataMap();
-	_rvUserVarsIn = new RowDataMap();
+	_pUserFuncsMap = new RowDataMap();
+	_pUserFuncsInMap = new RowDataMap();
+	_pUserVarsMap = new RowDataMap();
+	_pUserVarsInMap = new RowDataMap();
 
 	_FillVarTables();
 	_FillFuncTables();
 
 	// Enable the button if any rows are selected button->setEnabled(!tableWidget->selectedItems().isEmpty()); })
 	QToolButton* pbtn = ui.btnRemoveRow;
-	connect(pUserVars->selectionModel(), &QItemSelectionModel::selectionChanged, this, [this, pbtn]() {
-		pbtn->setEnabled(!pUserVars->selectedItems().isEmpty());
+	connect(ui.tblUserVars->selectionModel(), &QItemSelectionModel::selectionChanged, this, [this, pbtn]() {
+		pbtn->setEnabled(!ui.tblUserVars->selectedItems().isEmpty());
 		});
-	connect(pUserFuncs->selectionModel(), &QItemSelectionModel::selectionChanged, this, [this, pbtn]() {
-		pbtn->setEnabled(!pUserFuncs->selectedItems().isEmpty());
+	connect(ui.tblUserFuncs->selectionModel(), &QItemSelectionModel::selectionChanged, this, [this, pbtn]() {
+		pbtn->setEnabled(!ui.tblUserFuncs->selectedItems().isEmpty());
 		});
 	/*----------------------------------------------------------*/
 	// connect sectionResized signal to update the item when the column is resized
@@ -58,38 +54,38 @@ VariablesFunctionsDialog::VariablesFunctionsDialog(int initialTabIndex, QWidget*
 	//		}
 	//	};
 
-	connect(pUserVars->horizontalHeader(),		&QHeaderView::sectionResized, [this](int index, int, int newSize)
+	connect(ui.tblUserVars->horizontalHeader(),		&QHeaderView::sectionResized, [this](int index, int, int newSize)
 		{
-			for (int row = 0; row < pUserVars->rowCount(); ++row) {
-				auto item = pUserVars->item(row, index);
+			for (int row = 0; row < ui.tblUserVars->rowCount(); ++row) {
+				auto item = ui.tblUserVars->item(row, index);
 				if (item) {
-					pUserVars->update();  // Trigger a repaint to update the elided text
+					ui.tblUserVars->update();  // Trigger a repaint to update the elided text
 				}
 			}
 		}
 	);
-//	connect(pUserFuncs->horizontalHeader(),		&QHeaderView::sectionResized, resFunc);
-	connect(pBuiltinVars->horizontalHeader(), &QHeaderView::sectionResized, [this](int index, int, int newSize)
+//	connect(ui.tblUserFuncs->horizontalHeader(),		&QHeaderView::sectionResized, resFunc);
+	connect(ui.tblBuiltinVars->horizontalHeader(), &QHeaderView::sectionResized, [this](int index, int, int newSize)
 		{
-			for (int row = 0; row < pBuiltinVars->rowCount(); ++row) {
-				auto item = pBuiltinVars->item(row, index);
+			for (int row = 0; row < ui.tblBuiltinVars->rowCount(); ++row) {
+				auto item = ui.tblBuiltinVars->item(row, index);
 				if (item) {
-					pBuiltinVars->update();  // Trigger a repaint to update the elided text
+					ui.tblBuiltinVars->update();  // Trigger a repaint to update the elided text
 				}
 			}
 		}
 	);
-//	connect(pBuiltinFuncs->horizontalHeader(),	&QHeaderView::sectionResized, resFunc);
+//	connect(ui.tblBuiltinFuncs->horizontalHeader(),	&QHeaderView::sectionResized, resFunc);
 	/*----------------------------------------------------------*/
 
 	if (initialTabIndex)
 	{
-		_pActUserTable = pUserFuncs;
+		_pActUserTable = ui.tblUserFuncs;
 		_pActStack = &_removedFuncRows;
 	}
 	else
 	{
-		_pActUserTable = pUserVars;
+		_pActUserTable = ui.tblUserVars;
 		_pActStack = &_removedVarRows;
 	}
 	_busy = false;
@@ -97,10 +93,10 @@ VariablesFunctionsDialog::VariablesFunctionsDialog(int initialTabIndex, QWidget*
 
 VariablesFunctionsDialog::~VariablesFunctionsDialog()
 {
-	delete _rvUserFuncs		;
-	delete _rvUserFuncsIn	;
-	delete _rvUserVars		;
-	delete _rvUserVarsIn	;
+	delete _pUserFuncsMap		;
+	delete _pUserFuncsInMap	;
+	delete _pUserVarsMap		;
+	delete _pUserVarsInMap	;
 	emit SignalVarFuncClose();
 }
 
@@ -136,12 +132,12 @@ void VariablesFunctionsDialog::on_tabHeader_currentChanged(int index)
 {
 	if (index)
 	{
-		_pActUserTable = pUserFuncs;
+		_pActUserTable = ui.tblUserFuncs;
 		_pActStack = &_removedFuncRows;
 	}
 	else
 	{
-		_pActUserTable = pUserVars;
+		_pActUserTable = ui.tblUserVars;
 		_pActStack = &_removedVarRows;
 	}
 	ui.btnRemoveAll->setEnabled(_pActUserTable->rowCount());
@@ -213,9 +209,9 @@ void VariablesFunctionsDialog::on_btnSave_clicked()
 	if (_changed[VARIABLES])
 	{
 		lengine->variables.clear();
-		for (int i = 0; i < _rvUserVars->size(); ++i)
+		for (int i = 0; i < _pUserVarsMap->size(); ++i)
 		{
-			s = (*_rvUserVars)[i].Serialize();
+			s = (*_pUserVarsMap)[i].Serialize();
 			sv.push_back(s);
 		}
 		lengine->AddUserVariables(sv);
@@ -223,9 +219,9 @@ void VariablesFunctionsDialog::on_btnSave_clicked()
 	if (_changed[FUNCTIONS])
 	{
 		lengine->functions.clear();
-		for (int i = 0; i < _rvUserFuncs->size(); ++i)
+		for (int i = 0; i < _pUserFuncsMap->size(); ++i)
 		{
-			s = (*_rvUserFuncs)[i].Serialize();
+			s = (*_pUserFuncsMap)[i].Serialize();
 			sv.push_back(s);
 		}
 		lengine->AddUserFunctions(sv);
@@ -234,7 +230,8 @@ void VariablesFunctionsDialog::on_btnSave_clicked()
 	ui.btnSave->setEnabled(false); //  _changed[] = false);
 
 	lengine->clean = _changed[0] = _changed[1] = false;			
-	emit SignalVarFuncSaved();
+	if(lengine->SaveUserData())
+		lengine->LoadUserData();
 }
 
 void VariablesFunctionsDialog::on_btnAddRow_clicked()
@@ -303,14 +300,13 @@ void VariablesFunctionsDialog::on_tblUserFuncs_cellDoubleClicked(int row, int co
 
 void VariablesFunctionsDialog::_FillBuiltinFuncTable()
 {
-	QStringList sl;
 	ElidingTableWidgetItem* ptw;
-	size_t pos = 0, pos1;
+	size_t pos = 0, pos1 = 0;
 	QString qs;
 	int cntFunctions = LittleEngine::builtinFunctions.size();
 	ui.tblBuiltinFuncs->setRowCount(cntFunctions);
 
-	for (size_t row = 0; row < cntFunctions; ++row)
+	for (int row = 0; row < cntFunctions; ++row)
 	{
 		BuiltinFunc& bif = LittleEngine::builtinFunctions[row];
 
@@ -320,8 +316,8 @@ void VariablesFunctionsDialog::_FillBuiltinFuncTable()
 		ui.tblBuiltinFuncs->setItem(row, 1, ptw);
 		ptw = new ElidingTableWidgetItem("-");
 		ui.tblBuiltinFuncs->setItem(row, 2, ptw);
-		ptw = new ElidingTableWidgetItem(sl[1]);	
-		ui.tblBuiltinFuncs->setItem(row, 3, bif.desc.toQString());
+		ptw = new ElidingTableWidgetItem(bif.desc.toQString());	
+		ui.tblBuiltinFuncs->setItem(row, 3, ptw);
 	}
 }
 
@@ -330,17 +326,17 @@ void VariablesFunctionsDialog::_FillUserFuncTable()
 	if(ui.tblUserFuncs->rowCount() < LittleEngine::functions.size())
 		ui.tblUserFuncs->setRowCount(LittleEngine::functions.size());
 	RowData rd;
-	for (size_t row = 0; row < LittleEngine::functions.size(); ++row)
+	for (int row = 0; row < LittleEngine::functions.size(); ++row)
 	{
 		Func& f = LittleEngine::functions[row];
 		rd = { f.name, f.body, f.unit, f.desc };
-		_rvUserFuncs[f->name] = rd;
+		(*_pUserFuncsMap)[f.name] = rd;
 		_AddCellText(ui.tblUserFuncs, row, 0, f.name.toQString());
 		_AddCellText(ui.tblUserFuncs, row, 1, f.body.toQString());
 		_AddCellText(ui.tblUserFuncs, row, 2, f.unit.toQString());
 		_AddCellText(ui.tblUserFuncs, row, 3, f.desc.toQString());
 	}
-	_rvUserFuncsIn = _rvUserFuncs;
+	_pUserFuncsInMap = _pUserFuncsMap;
 }
 
 void VariablesFunctionsDialog::_FillFuncTables()   
@@ -351,21 +347,20 @@ void VariablesFunctionsDialog::_FillFuncTables()
 
 void VariablesFunctionsDialog::_FillBuiltinVarTable()
 {
-	QStringList sl;
-	size_t pos = 0, pos1;
 	QString qs;
-	ui.tblBuiltinVars->setRowCount(_vf.uBuiltinVarCnt);
-
-	for (size_t row = 0; row < _vf.uBuiltinVarCnt; ++row)
+	LongNumber::ConstantsMap builtIns;
+	ui.tblBuiltinVars->setRowCount(builtIns.size());
+	int row = 0;
+	DisplayFormat df;
+	df.nFormatSwitchFracLength = 3;
+	df.nFormatSwitchIntLength = 15;
+	df.strThousandSeparator = " ";
+	for (auto &bi: builtIns)
 	{
-		pos1 = _vf.sBuiltinVars.indexOf(QChar('\n'), pos);
-		sl = _vf.sBuiltinVars.mid(pos, pos1 - pos).split(qsCommentDelimiterString,Qt::SkipEmptyParts);
-		pos = pos1 + 1;
-
-		_AddCellText(ui.tblBuiltinVars, row, 0, sl[0]);
-		_AddCellText(ui.tblBuiltinVars, row, 1, sl[1]);
-		_AddCellText(ui.tblBuiltinVars, row, 2, sl[2]);
-		_AddCellText(ui.tblBuiltinVars, row, 3, sl[3]);
+		_AddCellText(ui.tblBuiltinVars, row, 0, bi.second->name.toQString());
+		_AddCellText(ui.tblBuiltinVars, row, 1, bi.second->value.ToDecimalString(df).toQString());
+		_AddCellText(ui.tblBuiltinVars, row, 2, bi.second->unit.toQString());
+		_AddCellText(ui.tblBuiltinVars, row, 3, bi.second->desc.toQString());
 	}
 }
 
@@ -379,13 +374,13 @@ void VariablesFunctionsDialog::_FillUserVarTable()
 	{
 		Variable& v = LittleEngine::variables[row];
 		rd = { v.name, v.body, v.unit, v.desc };
-		_rvUserVars[v->name] = rd;
+		(*_pUserVarsMap)[v.name] = rd;
 		_AddCellText(ui.tblUserVars, row, 0, v.name.toQString());
 		_AddCellText(ui.tblUserVars, row, 1, v.body.toQString());
 		_AddCellText(ui.tblUserVars, row, 2, v.unit.toQString());
 		_AddCellText(ui.tblUserVars, row, 3, v.desc.toQString());
 	}
-	_rvUserVarsIn = _rvUserVars;
+	_pUserVarsInMap = _pUserVarsMap;
 
 }
 
@@ -441,13 +436,13 @@ void VariablesFunctionsDialog::_AddCellText(QTableWidget* ptw, int row, int col,
 
 void VariablesFunctionsDialog::_CollectFrom(int table)
 {
-	RowDataMap& rvIn = table ? _rvUserFuncsIn : _rvUserVarsIn,
-		& rv = table ? _rvUserFuncs : _rvUserVars;
-	QTableWidget* ptw = table ? pUserVars : pUserFuncs;
+	RowDataMap  * pDmIn = table ? _pUserFuncsInMap : _pUserVarsInMap,
+				* pDm = table ? _pUserFuncsMap : _pUserVarsMap;
+	QTableWidget* ptw = table ? ui.tblUserVars : ui.tblUserFuncs;
 
 	RowData rd;
 	// collect data from table into the non-input variables
-	rv.clear();
+	pDm->clear();
 	for (int row = 1; row < ptw->rowCount(); ++row)
 	{
 		if (!ptw->item(row,0)->text().isEmpty() && !ptw->item(row, 1)->text().isEmpty())
@@ -457,14 +452,14 @@ void VariablesFunctionsDialog::_CollectFrom(int table)
 			rd.cols[2] = SmartString(ptw->item(row, 1)->text());		// unit
 			rd.cols[3] = SmartString(ptw->item(row, 1)->text());		// description
 		}
-		rv[rd.cols[0]] = rd;			// actual is always set
+		(*pDm)[rd.cols[0]] = rd;			// actual is always set
 	}
 
 	// next check for changes
-	if (rv.size() != rvIn.size())	// data deleted or added
+	if (pDm->size() != pDmIn->size())	// data deleted or added
 		_changed[table] = true;
-	else for (int i = 1; i < rv.size(); ++i)
-		if (rv[i] != rvIn[i])
+	else for (int i = 1; i < pDm->size(); ++i)
+		if ((*pDm)[i] != (*pDmIn)[i])
 		{
 			_changed[table] = true;
 			break;

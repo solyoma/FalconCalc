@@ -8,9 +8,11 @@
 
 #include "ui_VariablesFunctionsDialog.h"
 
+#include "SmartString.h"
+#include "calculate.h"
+
 namespace FalconCalc {
 	enum WindowSide;
-//	class RowDataMap;
 	class LittleEngine;
 }
 
@@ -44,7 +46,8 @@ public:
 	//	QTableWidgetItem::setData(role, value);
 	//}
 
-	QVariant data(int role) const override {
+	QVariant data(int role) const override 
+	{
 		if (role == Qt::DisplayRole) 
 		{
 			QFontMetrics metrics(QTableWidgetItem::tableWidget()->font());
@@ -58,6 +61,11 @@ public:
 			// /DEBUG
 			return elidedText;
 		}
+		else if (role == Qt::ToolTipRole)
+		{
+			QString fullText = QTableWidgetItem::data(Qt::DisplayRole).toString();
+			return QTableWidgetItem::data(Qt::ToolTipRole);
+		}
 		return QTableWidgetItem::data(role);
 	}
 };
@@ -69,17 +77,11 @@ public:
 	VariablesFunctionsDialog(int initialTabIndex, QWidget* parent = nullptr);
 	~VariablesFunctionsDialog();
 
-	QTableWidget* pUserVars = nullptr;
-	QTableWidget* pUserFuncs = nullptr;
-	QTableWidget* pBuiltinVars = nullptr;
-	QTableWidget* pBuiltinFuncs = nullptr;
-
 	int ActualTab() const { return ui.tabHeader->currentIndex(); }
 signals:
 	void SignalVarFuncClose();
 	void SignalTabChange(int tab);
 	void SignalVarFuncMoved();
-	void SignalVarFuncSaved();
 public slots:
 	void SlotSelectTab(int tab);
 	void SlotSetColWidths(int which, int cw1, int cw2, int cw3, int cw4); //which:) -> user, 1->builtin
@@ -101,7 +103,7 @@ protected slots:
 	void on_tblUserFuncs_cellDoubleClicked(int row, int col);
 private:
 	FalconCalc::LittleEngine* _lengine = nullptr;
-	FalconCalc::RowDataMap *_rvUserVars, *_rvUserFuncs, *_rvUserVarsIn, *_rvUserFuncsIn;
+	FalconCalc::RowDataMap *_pUserVarsMap, *_pUserFuncsMap, *_pUserVarsInMap, *_pUserFuncsInMap;
 	int _snappedToSide = 0;	  // FalconCalc::WindowSide
 
 	static int _colW[2][4];		// column widths

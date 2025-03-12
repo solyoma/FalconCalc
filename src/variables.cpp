@@ -152,10 +152,14 @@ void TfrmVariables::InitializeFormAndControls() /* Control initialization functi
 	sgUser->OnEditorKeyDown = CreateEvent(this, &TfrmVariables::sgUserEditorKeyDown);
 	sgUser->OnEditorKeyPress = CreateEvent(this, &TfrmVariables::sgUserKeyPress);
 	sgUser->OnDblClick = CreateEvent(this, &TfrmVariables::sgUserDoubleClick);
+
 	pBuiltin->OnMouseMove = CreateEvent(this, &TfrmVariables::BuiltinMouseMove);
 	pBuiltin->OnMouseDown = CreateEvent(this, &TfrmVariables::BuiltinMouseDown);
 	pBuiltin->OnMouseUp = CreateEvent(this, &TfrmVariables::BuiltinMouseUp);
+
 	sgBuiltin->OnColumnSizing = CreateEvent(this, &TfrmVariables::sgBuiltinColumnSizing);
+	sgBuiltin->OnDblClick = CreateEvent(this, &TfrmVariables::sgBuiltinDoubleClick);
+
 	btnDelVar->OnClick = CreateEvent(this, &TfrmVariables::btnDelVarClick);
 	btnClear->OnClick = CreateEvent(this, &TfrmVariables::btnClearClick);
 	btnCancel->OnClick = CreateEvent(this, &TfrmVariables::btnCancelClick);
@@ -387,7 +391,7 @@ void TfrmVariables::tcVarsTabChange(void *sender, nlib::TabChangeParameters para
 				break;
 			default:
 			case VARIABLES:
-				_CollectFrom(FUNCTIONS);	//the tab we switched from
+				_CollectFrom(FUNCTIONS);	// the tab we switched from
 				sgUser->SetString(0, 0, L"Variable");
 				sgUser->SetString(1, 0, L"Value");
 				sgUser->SetString(2, 0, L"Unit");
@@ -566,12 +570,14 @@ void TfrmVariables::sgUserKeyPress(void *sender, nlib::KeyPressParameters param)
 
 void TfrmVariables::sgUserDoubleClick(void* sender, nlib::MouseButtonParameters param)
 {
-	//int i = sgUser->
-	//frmMain->edtInfix->SetSelText()
+	frmMain->edtInfix->SetSelText(sgUser->Selected().x == 0 ? sgUser->String(0, sgUser->Selected().y) : sgUser->String(1, sgUser->Selected().y));
+	frmMain->edtInfix->Focus();
 }
 
 void TfrmVariables::sgBuiltinDoubleClick(void* sender, nlib::MouseButtonParameters param)
 {
+	frmMain->edtInfix->SetSelText(sgBuiltin->Selected().x == 0 ? sgBuiltin->String(0, sgBuiltin->Selected().y) : sgBuiltin->String(1, sgBuiltin->Selected().y));
+	frmMain->edtInfix->Focus();
 }
 
 void TfrmVariables::sgUserEditorKeyDown(void *sender, nlib::KeyParameters param)

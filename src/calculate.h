@@ -13,8 +13,6 @@
 #include <fstream>
 
 #include <map>
-#include <string>
-#include <vector>
 #include <locale>
 
 #include <cmath>
@@ -25,8 +23,8 @@
     // before including this
 #endif
 
-bool IsAlpha(wchar_t ch, std::locale loc);    // needed for names in one locale when working in another localse
-bool IsAlnum(wchar_t ch, std::locale loc);    // needed for names in one locale when working in another localse
+bool IsAlpha(wchar_t ch, std::locale loc);    // needed for names in one locale when working in another locale
+bool IsAlnum(wchar_t ch, std::locale loc);    // needed for names in one locale when working in another locale
 
 
 namespace FalconCalc
@@ -442,11 +440,11 @@ namespace FalconCalc
         T& operator[](const String key)
         {
             int ix = -1;
-            if (this->_index.count(key))                   // !!! w.o. this-> it won't find index
+            if (this->_index.count(key))                   // !!! w.o. this-> it won't find _index
                 ix = this->_index[key];
             else
             {
-                ix = this->_vec.size();
+                ix = this->_vec.size();                    // !!! w.o. this-> it won't find _vec
                 this->_index[key] = ix;
                 T t=T();
                 this->_vec.push_back(t);
@@ -505,7 +503,7 @@ namespace FalconCalc
     typedef DataMap<BuiltinFunc, SmartString> BuiltinFuncTable;
     typedef DataMap<Func, SmartString> FunctionTable;
     typedef DataMap<Variable, SmartString> VariableTable;
-     // row Data for rows in variables^functions table
+     // row Data for each row in variables/functions table
     struct RowData
     {
         SmartString cols[4];	// name, body, descr, unit
@@ -634,8 +632,6 @@ namespace FalconCalc
         bool SaveUserData();
         bool SaveUserData(SmartString name);                // if it wasn't read and no name is given it wont be saved
         bool ResultOk() const { return calcResult.IsValid(); }
-
-        // void GetVarFuncInfo(VarFuncInfo<SmartString, SmartStringVector>& vf);       // how many and what are they
 
         RealNumber Result() const { return calcResult; }
         SmartString ResultAsDecString();

@@ -10,8 +10,7 @@
 #include "HelpDialog.h"
 
 namespace FalconCalc {
-    enum WindowSide { wsNone, wsTop, wsRight, wsBottom, wsLeft };
-    class RowDataMap;
+//    class RowDataMap;
 }
 
 
@@ -24,6 +23,7 @@ struct SEMAPHORE {
 
 //---------------------------------------------------
 namespace FalconCalc {
+    enum WindowSide { wsNone, wsTop, wsRight, wsBottom, wsLeft };
     class LittleEngine;
 }
 
@@ -161,8 +161,6 @@ private: // functions
     enum class Placement {pmTop,pmRight,pmBottom,pmLeft};
     void _PlaceWidget(QWidget &widget, Placement pm);   // relative to the main window
 
-    bool _SaveUserData(QString fileName, FalconCalc::RowDataMap &rd);
-
 private slots:
     void _watchdogTimerSlot();
     void _SlotDataFromHistory(QString qs);
@@ -175,7 +173,7 @@ private slots:
     void _SlotVarsFuncsClosing();
     void _SlotVarFuncMoved();
     void _SlotVarTabChanged(int newTab);
-    void _SlotVarFuncSaved(FalconCalc::RowDataMap& vf);
+    //void _SlotVarFuncSaved(FalconCalc::RowDataMap& vf);
 
 private: 
     signals:

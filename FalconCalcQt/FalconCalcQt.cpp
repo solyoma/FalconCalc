@@ -245,7 +245,7 @@ void FalconCalcQt::_SlotVarsFuncsClosing()
 		disconnect(this, &FalconCalcQt::_SignalSelectTab, _pVF, &VariablesFunctionsDialog::SlotSelectTab);
 		disconnect(this, &FalconCalcQt::_SignalSetColWidths, _pVF, &VariablesFunctionsDialog::SlotSetColWidths);
 		disconnect(_pVF, &VariablesFunctionsDialog::SignalVarFuncMoved, this, &FalconCalcQt::_SlotVarFuncMoved);
-		disconnect(_pVF, &VariablesFunctionsDialog::SignalVarFuncSaved, this, &FalconCalcQt::_SlotVarFuncSaved);
+//		disconnect(_pVF, &VariablesFunctionsDialog::SignalVarFuncSaved, this, &FalconCalcQt::_SlotVarFuncSaved);
 		delete _pVF;
 		_pVF = nullptr;
 	}
@@ -278,15 +278,13 @@ void FalconCalcQt::_EditVarsCommon(int which)
 	}
 	else
 	{
-		lengine->GetVarFuncInfo(vf);
-
-		_pVF = new VariablesFunctionsDialog(, this);
+		_pVF = new VariablesFunctionsDialog(which, this);
 		connect(_pVF, &VariablesFunctionsDialog::SignalVarFuncClose, this, &FalconCalcQt::_SlotVarsFuncsClosing);
 		connect(_pVF, &VariablesFunctionsDialog::SignalTabChange, this, &FalconCalcQt::_SlotVarTabChanged);
 		connect(this, &FalconCalcQt::_SignalSelectTab, _pVF, &VariablesFunctionsDialog::SlotSelectTab);
 		connect(this, &FalconCalcQt::_SignalSetColWidths, _pVF, &VariablesFunctionsDialog::SlotSetColWidths);
 		connect(_pVF, &VariablesFunctionsDialog::SignalVarFuncMoved, this, &FalconCalcQt::_SlotVarFuncMoved);
-		connect(_pVF, &VariablesFunctionsDialog::SignalVarFuncSaved, this, &FalconCalcQt::_SlotVarFuncSaved);
+		//connect(_pVF, &VariablesFunctionsDialog::SignalVarFuncSaved, this, &FalconCalcQt::_SlotVarFuncSaved);
 		_actTab = which;
 		ui.actionEditFunc->setChecked(which);
 		ui.actionEditVars->setChecked(!which);
@@ -651,14 +649,6 @@ void FalconCalcQt::_PlaceWidget(QWidget& w, Placement pm)
 		// if(xw +w.width())
 	} while (0);	// Should see if it fits screen not yet
 	w.move(xw, yw);
-}
-
-bool FalconCalcQt::_SaveUserData(QString fileName, VarFuncInfoQt& vfQt)		// from 
-{
-	VarFuncInfo vf = vfQt.ToVarFuncInfo();
-	if(lengine->SaveUserData(vf))
-		return lengine->LoadUserData();
-	return false;
 }
 
 void FalconCalcQt::_SetHexDisplFomatForFlags()
@@ -1347,11 +1337,5 @@ void FalconCalcQt::_SlotHistMoved()
 void FalconCalcQt::_SlotVarTabChanged(int newTab)
 {
 	_actTab = newTab;
-}
-
-void FalconCalcQt::_SlotVarFuncSaved(VarFuncInfoQt& vfQt)
-{
-	if(lengine->SaveUserData(vfQt.ToVarFuncInfo()) )
-		lengine->LoadUserData();
 }
 

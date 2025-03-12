@@ -458,6 +458,7 @@ namespace LongNumber {
 		}
 		inline bool IsNaN()  const noexcept { return _numberString[0] == SCharT('N'); };
 		inline int  IsInf()  const noexcept { return _numberString[0] == SCharT('I'); };	// +Inf or -Inf
+		inline int  IsTooLong()  const noexcept { return _numberString[0] == SCharT('T'); };	// +Inf or -Inf
 		inline bool IsPure10Power() const noexcept { return _numberString == SmartString(chOne); }
 
 		inline bool IsNull() const
@@ -557,7 +558,7 @@ namespace LongNumber {
 		RealNumber _Add(const RealNumber& ra, bool negateRa = false) const;
 		RealNumber _Subtract(const RealNumber& ra) const;
 		RealNumber _Multiply(const RealNumber& ra) const;
-		bool __IsDivideByZero(RealNumber& dividend, const RealNumber& divisor) const;
+		bool __HandleSpecialDivisions(RealNumber& dividend, const RealNumber& divisor) const;
 		RealNumber _Divide(const RealNumber& ra) const;
 		RealNumber _Div(const RealNumber& divisor, RealNumber& remainder) const; // rmainder may be the same variable as divisor
 		RealNumber _LogOpWith(const RealNumber& ra, LogicalOperator lop) const;
@@ -578,6 +579,7 @@ namespace LongNumber {
 		void _SetNull();
 		void _SetNaN();
 		void _SetInf();
+		void _SetTooLong();
 								// allocates may change nIntDigits: stores the position in the result string
 		SmartString _IntegerPartToString(const SmartString &sNumber, int sign, const DisplayFormat &format, size_t &nIntDigits, size_t chunkSize, bool prefixToAllChunks) const;
 		SmartString _DecimalPartToString(const SmartString& sNumber, _DisplData &disp, size_t& nIntDigits) const;

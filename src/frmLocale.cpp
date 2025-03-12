@@ -73,7 +73,8 @@ void TfrmLocale::InitializeFormAndControls() /* Control initialization function 
 
 	Label2 = new nlib::Label();
 	Label2->SetText(L"Locale names usually consist of two lowercase and two uppercase letters separated"
-					 " by an underline character. Examples: en_US and en_GB are both English locale names.");
+					 " by an underline character. Examples: en_US and en_GB are both English locale names."
+					 " The 'C' locale roughly corresponds to 'en_US'.");
 	Label2->SetBounds(nlib::Rect(14, 77, 406, 122));	// 392 x 45
 	Label2->SetAnchors(nlib::caLeft | nlib::caTop | nlib::caRight | nlib::caBottom);
 	Label2->SetWordWrap(true);
