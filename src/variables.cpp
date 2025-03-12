@@ -431,11 +431,11 @@ void TfrmVariables::tcVarsTabChange(void *sender, nlib::TabChangeParameters para
 	if (_activeTab == FUNCTIONS)
 	{	
 		BuiltinFuncTable &bfunc =  LittleEngine::builtinFunctions;
-		static const SmartString sx = SmartString("(x)");
+		static const SmartString sx1 = SmartString("(x)"), sx2 = SmartString("(x, y)");
 		sgBuiltin->SetRowCount(bfunc.size());
 		for (int i = 0; i < bfunc.size(); ++i)
 		{
-			SmartString s = bfunc[i].name + sx;
+			SmartString s = bfunc[i].name + (bfunc[i].funct1 ? sx1 : sx2);
 
 			sgBuiltin->SetString(0, i,s.ToWideString());
 			sgBuiltin->SetString(1, i, L"-");

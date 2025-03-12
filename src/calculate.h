@@ -220,9 +220,9 @@ namespace FalconCalc
 
                 // only one of the 'func...' pointers isn't nullptr
         FUNCT1 funct1 = nullptr;        // argument: RealNumber
-        FUNCT2R funct2r = nullptr;      // arguments: RealNumber RealNumber
-        FUNCT2I funct2i = nullptr;      // arguments: RealNumber integer
-        FUNCT2A funct2a = nullptr;      // arguments: RealNumber Angular Units
+        FUNCT2R funct2r = nullptr;      // arguments: (RealNumber, RealNumber   )
+        FUNCT2I funct2i = nullptr;      // arguments: (RealNumber, integer      )
+        FUNCT2A funct2a = nullptr;      // arguments: (RealNumber, Angular Units)
 
         bool useAngleUnit = false,      // for builtin trigonometric functions only (default: false)
              useAngleUnitAsResult=false;// for built in inverse trigonometric functions only

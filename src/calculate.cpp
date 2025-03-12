@@ -605,9 +605,9 @@ LittleEngine::LittleEngine() : clean(true)
             // they are not 'dirty' and they are 'isnumber's
        BuiltinFunc f;
 
-	   #define SET_BUILTIN_FUNC1(a,b,c)  f.name = u#a; f.desc = u#b; f.funct1  = c; builtinFunctions[#a##_ss] = f;
-	   #define SET_BUILTIN_FUNC2R(a,b,c) f.name = u#a; f.desc = u#b; f.funct2r = c; builtinFunctions[#a##_ss] = f;
-	   #define SET_BUILTIN_FUNC2I(a,b,c) f.name = u#a; f.desc = u#b; f.funct2i = c; builtinFunctions[#a##_ss] = f;
+	   #define SET_BUILTIN_FUNC1(a,b,c)  f.name = u#a; f.desc = u#b; f.funct1  = c; f.funct2r=nullptr; f.funct2i=nullptr; builtinFunctions[#a##_ss] = f;
+	   #define SET_BUILTIN_FUNC2R(a,b,c) f.name = u#a; f.desc = u#b; f.funct2r = c; f.funct1=nullptr;  f.funct2i=nullptr; builtinFunctions[#a##_ss] = f;
+	   #define SET_BUILTIN_FUNC2I(a,b,c) f.name = u#a; f.desc = u#b; f.funct2i = c; f.funct1=nullptr;  f.funct2r=nullptr; builtinFunctions[#a##_ss] = f;
        SET_BUILTIN_FUNC1(abs, absolute value, abs);
 
 	   f.useAngleUnitAsResult=true;
@@ -648,7 +648,7 @@ LittleEngine::LittleEngine() : clean(true)
        SET_BUILTIN_FUNC1(log10, base 10 logarithm, log10);
        SET_BUILTIN_FUNC1(ln, natural logarithm, ln);
        SET_BUILTIN_FUNC2R(pow, pow(x,y)=x^y, pow);
-       SET_BUILTIN_FUNC2I(root, n-th root, root);
+       SET_BUILTIN_FUNC2I(root, y-th root of x, root);
        SET_BUILTIN_FUNC2I(round, rounding, round);
        SET_BUILTIN_FUNC1(sign, sign of number, Sign);
        SET_BUILTIN_FUNC1(sqrt, square root, sqrt);
