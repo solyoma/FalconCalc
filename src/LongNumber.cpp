@@ -2869,7 +2869,7 @@ RealNumber pow(RealNumber base, RealNumber power)
 	return base.Pow(power);
 }
 
-RealNumber root(RealNumber num, int r)
+RealNumber root(int r, RealNumber num)
 {
 	if (num.Sign() < 0 && !(r & 1))
 		return NaN;

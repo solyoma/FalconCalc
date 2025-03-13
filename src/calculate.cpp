@@ -601,7 +601,7 @@ LittleEngine::LittleEngine() : clean(true)
 
     if(!builtinFunctions.size())
     {
-            // all built in function requires a single RealNumber argument
+            // all but 2 built in functions require a single RealNumber argument
             // they are not 'dirty' and they are 'isnumber's
        BuiltinFunc f;
 
@@ -648,11 +648,11 @@ LittleEngine::LittleEngine() : clean(true)
        SET_BUILTIN_FUNC1(log10, base 10 logarithm, log10);
        SET_BUILTIN_FUNC1(ln, natural logarithm, ln);
        SET_BUILTIN_FUNC2R(pow, pow(x,y)=x^y, pow);
-       SET_BUILTIN_FUNC2I(root, y-th root of x, root);
-       SET_BUILTIN_FUNC2I(round, rounding, round);
+       SET_BUILTIN_FUNC2I(root, x-th root of y, root);
+       SET_BUILTIN_FUNC2I(round, round y to x decimals, round);
        SET_BUILTIN_FUNC1(sign, sign of number, Sign);
        SET_BUILTIN_FUNC1(sqrt, square root, sqrt);
-       SET_BUILTIN_FUNC1(tanh, tangent, tanh);
+       SET_BUILTIN_FUNC1(tanh, hyperbolic tangent, tanh);
        SET_BUILTIN_FUNC1(trunc, truncate to integer, floor);
     }
 }

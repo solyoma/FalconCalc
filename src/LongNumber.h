@@ -620,7 +620,7 @@ namespace LongNumber {
 	inline RealNumber floor(const RealNumber r) { return r.Int(); }
 	inline RealNumber ceil(const RealNumber r) { return (r + RealNumber::RN_1).Int(); }
 	inline RealNumber frac(const RealNumber r) { return r.Frac(); }
-	inline RealNumber round(const RealNumber r, int decDigits) { return r.Rounded(decDigits); }
+	inline RealNumber round(int decDigits, const RealNumber r) { return r.Rounded(decDigits); }
 	inline RealNumber fmod(const RealNumber x, const RealNumber& y) 
 	{ 
 		RealNumber xi(x);
@@ -635,7 +635,7 @@ namespace LongNumber {
 	inline RealNumber sqrt(RealNumber r);							// calculate the result up till _maxLength
 	RealNumber sqrtA(RealNumber r, int cntDigitsAccuracy);	// calculate the result up till 1e-<cntDigitsAccuracy> or. when == -1 to  _maxLength
 	RealNumber pow(RealNumber base, RealNumber power);			// base ^power
-	RealNumber root(RealNumber base, int r);				// r√
+	RealNumber root(int n, RealNumber base);				// n√base
 
 	// transcendent functions
 	RealNumber exp(RealNumber exponent);						// e^x

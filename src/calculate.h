@@ -209,7 +209,7 @@ namespace FalconCalc
     /*============= built-in function types ============*/
     typedef RealNumber (*FUNCT1)(RealNumber val);
     typedef RealNumber (*FUNCT2R)(RealNumber x, RealNumber y);
-    typedef RealNumber (*FUNCT2I)(RealNumber x, int y);
+    typedef RealNumber (*FUNCT2I)(int y, RealNumber x);
     typedef RealNumber (*FUNCT2A)(RealNumber x, AngularUnit au);
     struct BuiltinFunc
     {
@@ -243,7 +243,7 @@ namespace FalconCalc
         RealNumber operator() (RealNumber r, int i) 
         { 
             if (funct2i) 
-                return funct2i(r,i); 
+                return funct2i(i, r); 
             return NaN; 
         }
         RealNumber operator() (RealNumber r, AngularUnit angu)
