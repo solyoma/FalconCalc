@@ -2501,6 +2501,8 @@ void RealNumber::_MultiplyTheStrings(RealNumber& left, RealNumber& right) const
 			{
 				res[j] += digOvf;
 				digOvf = res[j] / 10;
+				if(digOvf)
+					res[j] -= digOvf * 10;
 			}
 			else
 				break;
