@@ -1462,7 +1462,7 @@ int64_t RealNumber::ToInt64() const
 		throw("Number can't fit in a 64 bit integer");
 	if (r._exponent > (int)r._numberString.length())
 		r._numberString += SmartString(r._exponent - (int)r._numberString.length(), u'0');
-	return std::strtoll(r._numberString.toUtf8String().c_str(), nullptr, 10);
+	return std::strtoll(r._numberString.toUtf8String().c_str(), nullptr, 10)*r._sign;
 }
 
 RealNumber RealNumber::Int()	const
@@ -1530,15 +1530,15 @@ RealNumber RealNumber::_PowInt(const RealNumber& power) const // integer powers 
 
 	RealNumber n(power);
 
-	if(n._sign < 0)		// when negative
-	{
-		x = RN_1 / x;
-		n._sign = 1;
-	}
 	// special case:  (10^x)^power = 10^(x*power)
 	if (_numberString.length() == 1 && _numberString[0] == '1')
 	{
 		return TenToThePowerOf((_exponent - 1) * (int)power.ToInt64());
+	}
+	if(n._sign < 0)		// when negative
+	{
+		x = RN_1 / x;
+		n._sign = 1;
 	}
 	/* https://en.wikipedia.org/wiki/Exponentiation_by_squaring
 	* 

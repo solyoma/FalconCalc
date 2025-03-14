@@ -315,7 +315,12 @@ namespace LongNumber {
 		}
 		static size_t SetMaxLength(size_t mxl);	// returns original
 		static RealNumber NumberLimit(bool smallest = false) { RealNumber r; r._exponent = (int)r._maxExponent * (smallest ? 1 : -1); r._numberString = "1"; return r; }
-		static RealNumber TenToThePowerOf(int exp) /* exp is normal 10's exponent*/ { RealNumber x(RN_1); x._exponent = exp + 1; return x; }
+		static RealNumber TenToThePowerOf(int exp) /* exp is normal 10's exponent*/ 
+		{ 
+			RealNumber x(RN_1); 
+			x._exponent = exp + 1; 
+			return x; 
+		}
 	public:	// operators
 		RealNumber operator=(const RealNumber& rn);
 		RealNumber operator=(RealNumber&& rn) noexcept;
