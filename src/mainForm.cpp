@@ -50,7 +50,11 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	SetLeft(777);
 	SetTop(436);
 
+#if defined(_DEBUG)
+	SetText(L"FalconCalc - Debug");
+#else
 	SetText(L"FalconCalc");
+#endif
 	GetFont().SetFamily(L"Tahoma");
 	GetFont().SetSize(10);
 	SetWantedKeyTypes(nlib::wkArrows | nlib::wkTab | nlib::wkEnter | nlib::wkEscape | nlib::wkOthers);

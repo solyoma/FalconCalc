@@ -417,7 +417,7 @@ namespace LongNumber {
 		SmartString ToOctalString(const DisplayFormat& format);
 		SmartString ToHexString(const DisplayFormat& format);
 		SmartString ToDecimalString(const DisplayFormat& format);
-		SmartString ToTextString(const DisplayFormat& format, TextFormat textFormat);
+		// SmartString ToTextString(const DisplayFormat& format, TextFormat textFormat);
 		SmartString ToSmartString() const;
 		UTF8String  toUtf8String() const;	   // because Qt uses this type of function names
 		std::wstring ToWideString() const;
@@ -595,7 +595,7 @@ namespace LongNumber {
 		//  < 0 for left shift, > 0 for right shift
 		void _AddStrings(RealNumber& left, RealNumber& right) const;	// sign of result is sign of left summand
 		void _SubtractStrings(RealNumber& minuend, RealNumber& subtrahend)const;	// always set the larger absolute value number as 'left'
-		void _MultiplyStrings(RealNumber& left, RealNumber& right) const;	// result will be as long as the sum of the significant digits
+		void _MultiplyTheStrings(RealNumber& left, RealNumber& right) const;	// result will be as long as the sum of the significant digits
 		void _DivideInternal(RealNumber& left, RealNumber& right, RealNumber* pRemainder = nullptr) const;
 		void _CorrectResult(RealNumber& left, String& result, int trailingchZeros, int carry) const;
 		inline SmartString _SignString(const DisplayFormat format) const

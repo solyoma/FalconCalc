@@ -1377,7 +1377,7 @@ void LittleEngine::_DoOperator(const Token &tok)
                         res = stack.peek(2).Value() * stack.peek(1).Value();
                         stack.pop(2);
                         break;
-            case opDIV: if(stack.peek(1).Value() == RealNumber::RN_0)
+            case opDIV: if(stack.peek(1).Value().IsNull() )//  was  == RealNumber::RN_0)
                             Trigger(Trigger_Type::DIVISON_BY_0);
                         res = stack.peek(2).Value() / stack.peek(1).Value();
                         stack.pop(2);
@@ -1391,7 +1391,7 @@ void LittleEngine::_DoOperator(const Token &tok)
                         stack.pop(1);
                         break;
             case opNOT:
-                        res = stack.peek(1).Value() != RealNumber::RN_0 ? RealNumber::RN_0 : RealNumber::RN_1;
+                        res = stack.peek(1).Value().IsNull() ? RealNumber::RN_1 : RealNumber::RN_0; // was Value() != RealNumber::RN_0 ? RealNumber::RN_0 : RealNumber::RN_1;
                         stack.pop(1);
                         break;
 			case opCompl:

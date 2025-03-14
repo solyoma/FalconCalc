@@ -1536,7 +1536,7 @@ RealNumber RealNumber::_PowInt(const RealNumber& power) const // integer powers 
 		n._sign = 1;
 	}
 	// special case:  (10^x)^power = 10^(x*power)
-	if (_numberString == SmartString("1"))	
+	if (_numberString.length() == 1 && _numberString[0] == '1')
 	{
 		return TenToThePowerOf((_exponent - 1) * (int)power.ToInt64());
 	}
@@ -1707,45 +1707,46 @@ RealNumber RealNumber::_Multiply(const RealNumber& rnOther) const
 	if (rnOther.IsTooLong())
 		return rnOther;
 
-	RealNumber left(*this);	// adjust number to larger precision
-	left._sign *= rnOther._sign;
-	if (rnOther.IsPure10Power())
-	{
-		left._exponent += rnOther._exponent - 1;
-		return left;
-	}
-
-	RealNumber right(rnOther);	// i.e. when parameter +- diff is positive
+	RealNumber left(*this);				
+	left._sign *= rnOther._sign;		// sign of left is OK for any combination of arguments
+								// simple cases
 
 	if (IsNaN() || ( IsNull() && !rnOther.IsInf()) )
 		return left;
+	// !Nan and not (0 * inf)
 	if (rnOther.IsNaN() || (!IsInf() && rnOther.IsNull()))
-		return right;
-
-	if ((IsNull() && rnOther.IsInf()) || (IsInf() && rnOther.IsNull()) )
 	{
 		left._SetNaN();
 		return left;
 	}
+	// neither is Nan and not (inf * 0) or (0 * inf)
 
 	if (IsInf() || rnOther.IsInf())
 	{
-		if (IsInf() && rnOther.IsInf())
-		{
-			left._sign = _sign == rnOther._sign ? 1 : -1;
+		if (IsInf())
 			return left;
-		}
-		else if (!IsInf())	
-			return right;
-		else
-			return left;
+		left._SetInf();
+		return left;
 	}
-	// here neither of the numbers is Nan or Inf or 0
+
+	// neither is Inf or Nan, and not (inf * 0) or (0 * inf)
+
+	bool bLeftPure10P = IsPure10Power() ? true : false;
+	if (bLeftPure10P ||rnOther.IsPure10Power())
+	{
+		left._exponent += rnOther._exponent - 1;
+		if (bLeftPure10P)
+			left._numberString = rnOther._numberString;
+		return left;
+	}
+
+	RealNumber right(rnOther);	// i.e. when parameter +- diff is positive
+	// here neither of the numbers is Nan or Inf, nor is the result 0 * inf
 	// and both have the same precision
 
-	left._AddExponents(right._exponent);
-	if(!left.IsInf() && !left.IsTooLong())
-		_MultiplyStrings(left, right);
+	left._AddExponents(right._exponent);	// doesn't change 'inf' status, but may set the too long status
+	if(!left.IsTooLong())
+		_MultiplyTheStrings(left, right);		// i.e. the '_numberString's
 	return left;
 }
 
@@ -1962,7 +1963,7 @@ long RealNumber::_AddExponents(long oneExp, long otherExp, EFlagSet& efs) const
 {
 	int64_t ex = (int64_t)oneExp + (int64_t)otherExp;
 	int64_t	dx = std::abs(ex);
-	if (dx >= (int)_maxExponent)	// as _maxExponent is just an integer this always work
+	if (dx >= (int)_maxExponent)	// as _maxExponent is just an integer this always works
 	{
 		efs.insert(ex > 0 ? EFlag::rnfOverflow : EFlag::rnfUnderflow);
 		return oneExp;
@@ -2434,7 +2435,7 @@ void RealNumber::_SubtractStrings(RealNumber& minuend, RealNumber& subtrahend) c
 }
 
 /*=============================================================
- * TASK   : multiply two strings
+ * TASK   : multiply two decimal numeric strings
  * EXPECTS:	- neither number is infinite or NaN
  *			- strings may have different sizes
  * PARAMS :	left, right: REAL_NUMBERS to be multiplied
@@ -2442,67 +2443,80 @@ void RealNumber::_SubtractStrings(RealNumber& minuend, RealNumber& subtrahend) c
  * RETURNS: none
  * REMARKS:	- the result is returned in 'left'
  *------------------------------------------------------------*/
-void RealNumber::_MultiplyStrings(RealNumber& left, RealNumber& right) const
+void RealNumber::_MultiplyTheStrings(RealNumber& left, RealNumber& right) const
 {
-	size_t	ll = left. Precision() + left._leadingZeros,
-			lr = right.Precision() + right._leadingZeros,
-		l = ll + lr - 1 + LengthOverFlow;	// for overflow
-	unsigned chZ = chZero.Unicode();
+	int		ll = (int)left. Precision(),	  // total string lengths
+			lr = (int)right.Precision(),
+			l = ll + lr+1;	// max length of result string with either no leading zeros or just a single one
+						//and an ending zero byte
+						// e.g. ll = l3 = 3, 100 x 100 = 10 000, l = 5 and 999 x 999 = 998 001 l = 6 = ll+lr
+	unsigned chZ = chZero.Unicode();	// usually chZ = 48 (= 0x30)
 
-	SmartString result(l, SCharT(0) ); // not chZero till the end (?NOT SmartString?)
-	unsigned digLeft, digRight, digResult, digTmp, fdaTmp;	// not numeric character, but the numbers themselves
-	for (size_t i = 0; i < lr; ++i)		// multiply left starting at the most significant digit of right
+	/*	  Multiply from right to left starting at the most significant digit of right
+	*		   ll			lr					   algorithm: put a 0 into start at the most significant digit in 'right'
+	* 		   ____			__								  multiply the non leading zero digits of left with actual and
+	*		0007234 * 00000056
+	*       --------
+	*		000000|
+	*			  |00
+	*			  | 36170
+	*			  |  43404
+	*       ---------------
+	*		000000|0405104
+	*              -------
+	*			    result
+	*/
+		// for speed we use a fixed size zero delimited character array for the result
+	char* res = new char[l];
+	memset(res, 0, l);	  // reserve the first digit for overflow in the multiplication
+	char digL = 0, digR = 0, digMul = 0, digOvf = 0; // digit from left, right, result digit, overflow from prev multiplication, temporary for result
+
+	for (int ir = 0; ir < lr; ++ir)	// index in right string from most significant digit
 	{
-		digRight = right._CharAt((int)i).Unicode() - chZ;
-		int fda=0;	// overflow of accu and on result
-		for (int j = (int)ll - 1; j >= 0; --j)						  // multiply by one digit from the right
-		{														  // and add it to partial result, which gives
-			digLeft = left._CharAt(j).Unicode() - chZ;					  // intermediate result
-			digResult = digLeft * digRight + fda;
-			fda = digResult >= 10 ? digResult / 10 : 0;
-			digTmp = result.at((int)(LengthOverFlow + i) + j).Unicode() + digResult - fda * 10;
-			fdaTmp = digTmp >= 10 ? digTmp / 10 : 0;
-			fda += fdaTmp;
-			result[LengthOverFlow + i + j] = char16_t(digTmp - fdaTmp * 10);
-		}
-			// deal with overflow
-		for (int j = (int)(LengthOverFlow + i - 1); j >= 0 && fda; --j)
+		digR = (char)right._numberString[ir] - chZ;
+		digOvf = 0;
+		for (int il = ll - 1; il >= 0; --il)	// index in left string from least significant digit
 		{
-			digResult = result.at(j).Unicode() + fda;
-			fda = digResult >= 10 ? digResult / 10 : 0;
-
-			result[j] = char16_t(digResult - fda * 10);
+			digL = (char)left._numberString[il]- chZ;
+			digMul = digR * digL + digOvf;						// may be larger than 10	Example: 3 * 5 = 15		digMul = 0x0F
+			res[ir + il + 1] += digMul;							// this also						 9 + 15 = 24	res[ir+il] = 0x18
+			if (res[ir + il + 1] > 9)							// 
+			{
+				digOvf = res[ir + il + 1] / 10;					//                                                  digOvf = x02
+				res[ir + il + 1] -= digOvf * 10;
+			}
+			else
+				digOvf = 0;
+		}
+		res[ir] += digOvf;	 // ignore WS Warning C6385: Reading invalid data from 'res':  the readable size is 'l' bytes, but '1' bytes may be read.
+		digOvf = 0;
+		for (int j = ir; j >= 0; --j)
+		{
+			if (res[j] > 9)
+			{
+				digOvf = res[j] / 10;
+				res[j] -= digOvf * 10;
+			}
+			else if (digOvf)
+			{
+				res[j] += digOvf;
+				digOvf = res[j] / 10;
+			}
+			else
+				break;
 		}
 	}
-	// calculate count of leading zeros
-	size_t cntZeros = 0;
-	while (result.at(cntZeros).Unicode() == 0)
-		++cntZeros;
-	left._exponent += (int)(LengthOverFlow - cntZeros)-1;	// overflow in decimal places changes exponent
-	if (cntZeros)			   // remove them
-	{
-		size_t i = cntZeros;
-		for(size_t j = 0; i < l; ++i, ++j)
-			result[j] = result.at(i) + chZero;
-		l -= cntZeros;
-		result.erase(l, String::npos);
-	}
-
-	result.erase(std::find_if(result.rbegin(), result.rend(), [](SCharT ch) {return ch != chZero; }).base(), result.end());
-//	size_t maxLength = _maxLength + LengthOverFlow;
-	if (result.length() > _maxLength)
-	{
-		int tensOverflow = 0;
-		int cntLeadingZeros = 0,
-			roundPos = (int)_maxLength;	// round from here
-
-		_RoundNumberString(result, tensOverflow, roundPos, cntLeadingZeros);	
-		if(roundPos < (int)result.size())
-			result.erase(roundPos, std::string::npos);
-		if (tensOverflow)
-			++left._exponent;
-	}
-	left._numberString = result;
+	left._leadingZeros += right._leadingZeros;
+	if(left._leadingZeros && res[0])	// if there was an overflow into res[0] whe have one less leading zeros
+		--left._leadingZeros;
+	if(res[0])
+		res[0] += chZ;
+	for (int i = 1; i < l-1; ++i)
+		res[i] += chZ;
+	left._numberString = res[0] ? res : res+1;
+	if (!res[0])
+		--left._exponent;
+	delete[] res;
 }
 
 /*=============================================================
@@ -2881,7 +2895,7 @@ RealNumber root(int r, RealNumber num)
 // transcendent functions
 RealNumber exp(RealNumber power)						// e^x = e^(int(x)) x e^(frac(x))
 {
-	RealNumber	rnIntPart = power.Int().Abs(),		    // because e^(-x) = 1/e^x and Taylor formula for e^(-x) slow convergence
+	RealNumber	rnIntPart = power.Int().Abs(),		    // because e^(-x) = 1/e^x and Taylor formula for e^(-x) has very slow convergence
 				rnFracPart = power.Frac().Abs(),
 				res(RealNumber::RN_1);
 	rnIntPart = e.value.Pow(rnIntPart);	// this will not call exp()	for integer powers
