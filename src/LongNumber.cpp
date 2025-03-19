@@ -1716,7 +1716,7 @@ RealNumber RealNumber::_Multiply(const RealNumber& rnOther) const
 	// !Nan and not (0 * inf)
 	if (rnOther.IsNaN() || (!IsInf() && rnOther.IsNull()))
 	{
-		left._SetNaN();
+		left = rnOther;
 		return left;
 	}
 	// neither is Nan and not (inf * 0) or (0 * inf)
@@ -2897,6 +2897,13 @@ RealNumber root(int r, RealNumber num)
 // transcendent functions
 RealNumber exp(RealNumber power)						// e^x = e^(int(x)) x e^(frac(x))
 {
+	if (power.IsNull())
+		return RealNumber::RN_1;
+	if (power.IsInf())
+		return power.IsNegative() ? RealNumber::RN_0 : power;
+	if (power.IsNaN())
+		return power;
+
 	RealNumber	rnIntPart = power.Int().Abs(),		    // because e^(-x) = 1/e^x and Taylor formula for e^(-x) has very slow convergence
 				rnFracPart = power.Frac().Abs(),
 				res(RealNumber::RN_1);
@@ -2920,10 +2927,10 @@ RealNumber exp(RealNumber power)						// e^x = e^(int(x)) x e^(frac(x))
 
 RealNumber ln(RealNumber num)
 {
-	if (num.Sign() < 0 || !num.IsValid())
+	if (num.Sign() < 0 || !num.IsValid() || num.IsNull())
 		return NaN;
-	if (num.IsNull())
-		return Inf;
+	if (num == RealNumber::RN_1)
+		return RealNumber::RN_0;
 	if (num == e)
 		return RealNumber::RN_1;
 	// if x = a * 10^y =>  ln(x) = y*ln10 + ln(a)  , where  0 < a < 1
@@ -2937,13 +2944,15 @@ RealNumber ln(RealNumber num)
 	//	y := lnx y_(n+1) = y_n + 2 * -------------
 	//								  x	+ exp(y_n)
 	int iter = 0;
-	RealNumber yn(1), ynp1(0), expy,
-				epsilon(SmartString("1"), 1, -(int)RealNumber::MaxLength() + 2 );
+	RealNumber yn(RealNumber::RN_1), ynp1(RealNumber::RN_0), expy,
+				epsilon("1"_ss, 1, -(int)RealNumber::MaxLength() + 2 );
 	while ((yn - ynp1).Abs() > epsilon && iter++ < 1000)
 	{
 		yn = ynp1;
 		expy = exp(yn);
-		ynp1 = yn + RealNumber(2) * (x - expy) / (x + expy);
+		ynp1 = yn + RealNumber::RN_2 * (x - expy) / (x + expy);
+		if (ynp1.IsNaN())
+			break;
 	}
 	yn = yn + rnIntPart;
 	return yn;
