@@ -650,6 +650,7 @@ LittleEngine::LittleEngine() : clean(true)
        SET_BUILTIN_FUNC2R(pow, pow(x,y)=x^y, pow);
        SET_BUILTIN_FUNC2I(root, x-th root of y, root);
        SET_BUILTIN_FUNC2I(round, round y to x decimals, round);
+       SET_BUILTIN_FUNC1(root3, cubic root of x, root3);
        SET_BUILTIN_FUNC1(sign, sign of number, Sign);
        SET_BUILTIN_FUNC1(sqrt, square root, sqrt);
        SET_BUILTIN_FUNC1(tanh, hyperbolic tangent, tanh);

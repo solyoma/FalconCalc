@@ -7,8 +7,8 @@
     type Form
     {
         Name = "frmMain"
-        Left = "671"
-        Top = "521"
+        Left = "462"
+        Top = "560"
         Text = "FalconCalc"
         class Font
         {
@@ -40,59 +40,6 @@
             {
                 Family = "Tahoma"
                 Size = "8"
-            }
-        }
-
-        type PopupMenu
-        {
-            Name = "pmCopy"
-            AccessLevel = "alPublic"
-
-            subtype Items : MenuItem
-            {
-                Name = "miCopyDec"
-                AccessLevel = "alPublic"
-                Text = "Copy &Decimal"
-                event OnClick = "miCopyDecClick"
-            }
-
-            subtype Items : MenuItem
-            {
-                Name = "miCopyHex"
-                AccessLevel = "alPublic"
-                Text = "Copy He&xadecimal"
-                event OnClick = "miCopyHexClick"
-            }
-
-            subtype Items : MenuItem
-            {
-                Name = "miCopyOct"
-                AccessLevel = "alPublic"
-                Text = "Copy &Octal"
-                event OnClick = "miCopyOctClick"
-            }
-
-            subtype Items : MenuItem
-            {
-                Name = "miCopyBin"
-                AccessLevel = "alPublic"
-                Text = "Copy &Binary"
-                event OnClick = "miCopyBinClick"
-            }
-
-            subtype Items : MenuItem
-            {
-                Name = "miCopySep"
-                AccessLevel = "alPublic"
-                Text = "-"
-            }
-
-            subtype Items : MenuItem
-            {
-                Name = "miCopyText"
-                AccessLevel = "alPublic"
-                Text = "Copy &Formula"
-                event OnClick = "miCopyClick"
             }
         }
 
@@ -341,6 +288,59 @@
                     Shortcut = "F1"
                     event OnClick = "miGenHelpClick"
                 }
+            }
+        }
+
+        type PopupMenu
+        {
+            Name = "pmCopy"
+            AccessLevel = "alPublic"
+
+            subtype Items : MenuItem
+            {
+                Name = "miCopyDec"
+                AccessLevel = "alPublic"
+                Text = "Copy &Decimal"
+                event OnClick = "miCopyDecClick"
+            }
+
+            subtype Items : MenuItem
+            {
+                Name = "miCopyHex"
+                AccessLevel = "alPublic"
+                Text = "Copy He&xadecimal"
+                event OnClick = "miCopyHexClick"
+            }
+
+            subtype Items : MenuItem
+            {
+                Name = "miCopyOct"
+                AccessLevel = "alPublic"
+                Text = "Copy &Octal"
+                event OnClick = "miCopyOctClick"
+            }
+
+            subtype Items : MenuItem
+            {
+                Name = "miCopyBin"
+                AccessLevel = "alPublic"
+                Text = "Copy &Binary"
+                event OnClick = "miCopyBinClick"
+            }
+
+            subtype Items : MenuItem
+            {
+                Name = "miCopySep"
+                AccessLevel = "alPublic"
+                Text = "-"
+            }
+
+            subtype Items : MenuItem
+            {
+                Name = "miCopyText"
+                AccessLevel = "alPublic"
+                Text = "Copy &Formula"
+                event OnClick = "miCopyClick"
             }
         }
 
@@ -1800,8 +1800,8 @@
     type Form
     {
         Name = "frmHelp"
-        Left = "531"
-        Top = "566"
+        Left = "641"
+        Top = "668"
         Text = "FalconCalc Help"
         class Font
         {
@@ -1812,7 +1812,7 @@
         BorderStyle = "fbsDialog"
         KeyPreview = "True"
         UnitName = "help"
-        DesignVisible = "False"
+        DesignVisible = "True"
         LastExportedName = "frmHelp"
         LastExportedEvents = "3100340033007C00789CF361486448624865C8613066700692990CC90CD90C350C3E38C4F3C0EC24062B2074652803AAC86328610800AA2E02E25C20BF04888B188A816AD380742E8307D89402145370CB906FBE3790AE647061C8672807EA21248B6C0F440E9B1D002ACD380D"
         CreationOrder = "4"
@@ -1847,9 +1847,9 @@
             AccessLevel = "alPublic"
             Left = "224"
             Top = "39"
-            Width = "201"
+            Width = "214"
             Height = "14"
-            Text = "A handy little calculator for everyone"
+            Text = "The handy little calculator for Windows"
             Anchors = "caTop"
             class Font
             {
@@ -1858,25 +1858,64 @@
             ParentFont = "False"
         }
 
-        type Label
+        type TabControl
         {
-            Name = "Label3"
+            Name = "tcHelp"
             AccessLevel = "alPublic"
             Left = "8"
-            Top = "72"
+            Top = "56"
             Width = "636"
-            Height = "390"
-            Text = "Label3"
-            Anchors = "caLeft, caTop, caRight"
-            class Font
-            {
-                Family = "Tahoma"
-                Size = "8"
+            Height = "408"
+            Text = "tcHelp"
+            Anchors = "caLeft, caTop, caRight, caBottom"
+            TabOrder = "0"
+            vector<nlib::Tab> Tabs = { 
+                {
+                    Text = "General"
+                }
+                , 
+                {
+                    Text = "Variables"
+                }
+                , 
+                {
+                    Text = "Functions"
+                }
             }
-            ParentFont = "False"
-            AutoSize = "False"
-            WordWrap = "True"
-            event OnClick = "Label3Click"
+            SelectedTab = "0"
+
+            type Label
+            {
+                Name = "lblHeader"
+                AccessLevel = "alPublic"
+                Left = "6"
+                Top = "25"
+                Width = "50"
+                Height = "14"
+                Text = "lblHeader"
+            }
+
+            type Label
+            {
+                Name = "lblFooter"
+                AccessLevel = "alPublic"
+                Left = "0"
+                Top = "368"
+                Width = "47"
+                Height = "14"
+                Text = "lblFooter"
+            }
+
+            type StringGrid
+            {
+                Name = "sgDetails"
+                AccessLevel = "alPublic"
+                Left = "0"
+                Top = "40"
+                Width = "632"
+                Height = "328"
+                TabOrder = "0"
+            }
         }
     }
     type Form
@@ -1891,7 +1930,7 @@
         }
         WantedKeyTypes = "wkArrows, wkTab, wkEnter, wkEscape, wkOthers"
         UnitName = "variables"
-        DesignVisible = "True"
+        DesignVisible = "False"
         LastExportedName = "frmVariables"
         LastExportedEvents = "31003000300032007C00789CAD545D4F8430109CDFE5A307BE1813A39EEFD78320912BCA87C68B3FDEE99E4885F65AD01068D999EE6CBBBB55E8A0718F1DDE9063830A25F678C6279417D13257B8E0930AAAC9BD25B3E17BE07FC7B741FBE36543BBE6EA9C2BE71A3E748D4E458BC15D2A2E6CB94622713E7A547CE8129D16052ED1935FD15A4AEC35E73D792623258E622D1672ED186CD61DE7EFDFDCDC13D36F8D1BAEE869CFB1C54B10B57547CCACE9F8D4C497692612AF8E62FCB7B69999ECC530DCDA03EECFFD56780DAEF9FD20AFE1D846A0B6DE140DABA5C8B8DA9CC9E07B3CC5589E2B8290EEF9DA0EB3FE52D51DBBF3D4AB2D1E382A7A7892DBA8900C86705B7B8EBB35AFE4E40E723BD4B23BB7CDF63DC7CFFB1E763DD45A4A6F19C72C92636B8F2768944BA9F75AEE9971A79937CFAF933E49A40F94DCC5F6FD18CF5CDBD17635F9A30873D6EA9FEAA8942AA9A42BA7DD1366C4F5D71792959094"
         CreationOrder = "5"
@@ -1923,7 +1962,7 @@
                     Text = "&Variables"
                 }
             }
-            SelectedTab = "0"
+            SelectedTab = "1"
             event OnTabChange = "tcVarsTabChange"
 
             type StringGrid
@@ -2462,7 +2501,7 @@
         BorderStyle = "fbsDialog"
         BorderButtons = "fbbSystemMenu"
         UnitName = "frmLocale"
-        DesignVisible = "True"
+        DesignVisible = "False"
         LastExportedName = "frmLocale"
         LastExportedEvents = "3100360030007C00789C958DD10A40501044CF777995271E942F70D907E11252CAC79B2829146D53BBF7CCDC714C783272668C90868A829A15F74AFCBE3B024DB4532F6F2AE720B5BA2769603C7F09F5EE953625EF1D6FF44F8F51EA4AE894CD95336269A1173739BE7AAE9D074D4FFAD4BC01E8DB3FBA"
         CreationOrder = "7"

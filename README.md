@@ -1,5 +1,5 @@
 ﻿# FalconCalc
-Windows scientist and programmer calculator featuring decimal arithmetic, arbitrary precision, built in mathematical and physics constants, history and more
+Windows scientist's and programmer's calculator featuring arbitrary precision decimal arithmetic, built in mathematical and physics constants, claculation history user definable constants and functions and more.
 # Screenshot
 
 ![falconcalc1](https://github.com/solyoma/FalconCalc/assets/37068759/4abcf0bd-c4e4-4df7-a300-778cb7338cc9)
@@ -8,8 +8,8 @@ Windows scientist and programmer calculator featuring decimal arithmetic, arbitr
   Every Windows version has a desktop calculator with many features but FalconCalc offers many 
   unique features not found in them:
 
-    - FalconCalc continuously evaluates expressions as they are entered that may contain built-in and 
-      *user defined* constants and functions of any number of arguments.
+    - FalconCalc continuously evaluates expressions, that may contain built-in and 
+      *user defined* constants and functions of any number of arguments, as they are entered.
 
     - *Numbers* may be entered in decimal, hexadecimal, octal or binary notation or as character strings.
              Examples       number string        what it is          decimal value
@@ -27,19 +27,23 @@ Windows scientist and programmer calculator featuring decimal arithmetic, arbitr
 
     - Decimal display formats:  normal, html, TEX and 'E' (1.2·10³, 1.2x10<sup>3</sup>, 1.2\cdot10^{8},1.2E3)
 
-    - Hexadecimal format: normal, as bytes, as words, as dwords, as IEEE754 single or double (when applicable), 
-      big- or little endian, with or without 0x prefix, unsigned or signed 
+    - Hexadecimal formats: normal or grouped as bytes, words or dwords each with or without the 0x prefix. 
+      Also as Big- or little endian, unsigned or signed numbers.
+	  For smaller numbers that fits inside an IEEE754 single or double number the hexadecimal representation for
+	  that format can also be selected. (For large numbers the display will be incorrect!)
 
-    - Angular units: degrees, radians, gradians and turns
+    - Angles for triginometric functions can be entered as degrees, radians, gradians or turns.
+	  (The full circle is 360°, 2π, 400 grad, 1turn)
 
-    - Formulas may contain the following operators:
+    - Formulas may contain the following operators (+ and - may be unary):
           arithmetics: +, -, *, /, ^(power), | (or 'or'), & (or 'and'), xor, << (or 'shl' - shift left), 
                         << (or 'shl' - shift right),% (or mod - remainder), ! (or 'not') 
           logical: ==, != (not equal), <, >, <=, >= (these results in 1 or 0)
 
-    - Built-in functions (alternative names in parenthesis)
-          abs, arcsin (asin), arccos (acos), arctan (atan), cos, cosh (ch), coth (cth), exp, fact, frac, int, 
-          log (ln), log2, log10 (lg), round, sign, sin, sinh (sh), sqrt, tan (tg), trunc
+    - Built-in functions alternative names separated by slashes ('/'), argument(s) in ():
+			abs(x), arcsin/asin(x), arccos/acos(x), arctan/atan(x), cos(x), cosh/ch(x), coth/cth(x), exp(x), fact(n), frac(x),"
+			int(x), log/ln(x), log2(x), log10/lg(x), pow(base,power), root(n,x), root3(x), round(n,x), sign(x), sin(x), sinh/sh(x),"
+			sqrt(x), tan/tg(x), trunc(x)"
 
     - Built in mathematical constants:
            e (base of the natural logarithm), log2e (base 2 logarithm of e), log10e (or lge - base

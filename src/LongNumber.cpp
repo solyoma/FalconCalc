@@ -2894,6 +2894,11 @@ RealNumber root(int r, RealNumber num)
 	return exp( ln(num)/RealNumber(r) );
 }
 
+RealNumber root3(RealNumber base)
+{
+	return root(3, base);
+}
+
 // transcendent functions
 RealNumber exp(RealNumber power)						// e^x = e^(int(x)) x e^(frac(x))
 {

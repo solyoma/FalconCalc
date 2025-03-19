@@ -640,7 +640,8 @@ namespace LongNumber {
 	inline RealNumber sqrt(RealNumber r);							// calculate the result up till _maxLength
 	RealNumber sqrtA(RealNumber r, int cntDigitsAccuracy);	// calculate the result up till 1e-<cntDigitsAccuracy> or. when == -1 to  _maxLength
 	RealNumber pow(RealNumber base, RealNumber power);			// base ^power
-	RealNumber root(int n, RealNumber base);				// n√base
+	RealNumber root(int n, RealNumber base);				// n√base		// see also root3
+	RealNumber root3(RealNumber base);						// ³√base
 
 	// transcendent functions
 	RealNumber exp(RealNumber exponent);						// e^x
