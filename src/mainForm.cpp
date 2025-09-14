@@ -1510,7 +1510,9 @@ bool TfrmMain::_SaveState(SmartString name)
 
 	fs << FONTNAME	<< SmartString(edtChars->GetFont().Family()) << "\n";
 	fs << FONTDATA	<< (int)edtChars->GetFont().Size() << "|"<< (int)edtChars->GetFont().CharacterSet() << "|"<< (COLORREF)edtChars->GetFont().GetColor() << "\n";
-    fs << OPTIONS	<< pnlDecOpt->Visible() << "|"<< pnlHexOpt->Visible()<<"\n";
+	int angleOption = rdDeg->Checked() ? 0 : rdRad->Checked() ? 1 : rdGrad->Checked() ? 2 : 3;
+	int showOption = rdNormal->Checked() ? 0 : rdHtml->Checked() ? 1 : rdTex->Checked() ? 2 : 3;
+    fs << OPTIONS	<< pnlDecOpt->Visible() << "|"<< pnlHexOpt->Visible()<<"|"<<angleOption<<"|"<<showOption <<"\n";
     fs << HISTOPTIONS << _watchLimit << "|"<< _maxHistDepth << "|"<< slHistory.IsSorted() << "|" << _minCharLength << "\n";
 	fs << VARCOLS; 
 	for (int i = 0; i < 2; ++i)
@@ -1520,6 +1522,7 @@ bool TfrmMain::_SaveState(SmartString name)
 			if(i != 1 || col != 3)
 				fs << "|";
 		}
+	fs << "\n";
     if(!edtInfix->Text().empty())
         fs << LAST <<  SmartString(edtInfix->Text()) << "\n";
     return true;
@@ -1676,12 +1679,12 @@ bool TfrmMain::_LoadState(SmartString name)
 	};
 	auto fontData = [&]()
 	{
-		if (n == 3 && data[0] == FONTDATA)	// 3 fields
+		if (n == 4 && data[0] == FONTDATA)	// 3 fields
 		{
 			Font f = edtChars->GetFont();
 			f.SetSize(std::stof(data[1].toUtf8String()));
 			f.SetCharacterSet(static_cast<FontCharacterSets>(std::stoi(data[2].toUtf8String())));
-			f.SetColor(std::stoul(data[2].toUtf8String()));
+			f.SetColor(std::stoul(data[3].toUtf8String()));
 			return true;
 		}
 		return false;
@@ -1689,10 +1692,28 @@ bool TfrmMain::_LoadState(SmartString name)
 	};
 	auto options = [&]()					  // 3 fields
 	{
-		if (n == 3 && data[0] == OPTIONS)
+		if (n == 5 && data[0] == OPTIONS)
 		{
 			ShowDecOptions(std::stoi(data[1].toUtf8String())!=0);
 			ShowHexOptions(std::stoi(data[2].toUtf8String())!=0);
+			rdDeg->SetChecked(false);			// default: true
+			switch (data[3].at(0).Unicode())
+			{
+				case '0':	rdDeg->SetChecked(true);   break;
+				case '1':	rdRad->SetChecked(true);   break;
+				case '2':	rdDeg->SetChecked(true);   break;
+				case '3':	rdTurn->SetChecked(true);  break;
+				default:  break;
+			}
+			rdNormal->SetChecked(false);	// default
+			switch (data[4].at(0).Unicode())
+			{
+				case '0':	rdNormal->SetChecked(true); break;
+				case '1':	rdHtml->SetChecked(true);  break;
+				case '2':	rdTex->SetChecked(true);   break;
+				case '3':	rdNone->SetChecked(true);  break;
+				default:  break;
+			}
 			return true;
 		}
 		return false;
@@ -1726,7 +1747,7 @@ bool TfrmMain::_LoadState(SmartString name)
 	{
 		if (n==2 && data[0] == LAST)
 		{
-			lastinfix = data[1];
+			edtInfix->SetText((lastinfix = data[1]).ToWideString());
 		}
 	};
 
