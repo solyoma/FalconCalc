@@ -7,8 +7,8 @@
     type Form
     {
         Name = "frmMain"
-        Left = "462"
-        Top = "560"
+        Left = "686"
+        Top = "510"
         Text = "FalconCalc"
         class Font
         {
@@ -16,7 +16,6 @@
             Size = "10"
         }
         WantedKeyTypes = "wkArrows, wkTab, wkEnter, wkEscape, wkOthers"
-        ActiveControl = "edtInfix"
         ShowPosition = "fspActiveMonitorCenter"
         BorderStyle = "fbsSingle"
         UnitName = "frmMain"
@@ -40,6 +39,59 @@
             {
                 Family = "Tahoma"
                 Size = "8"
+            }
+        }
+
+        type PopupMenu
+        {
+            Name = "pmCopy"
+            AccessLevel = "alPublic"
+
+            subtype Items : MenuItem
+            {
+                Name = "miCopyDec"
+                AccessLevel = "alPublic"
+                Text = "Copy &Decimal"
+                event OnClick = "miCopyDecClick"
+            }
+
+            subtype Items : MenuItem
+            {
+                Name = "miCopyHex"
+                AccessLevel = "alPublic"
+                Text = "Copy He&xadecimal"
+                event OnClick = "miCopyHexClick"
+            }
+
+            subtype Items : MenuItem
+            {
+                Name = "miCopyOct"
+                AccessLevel = "alPublic"
+                Text = "Copy &Octal"
+                event OnClick = "miCopyOctClick"
+            }
+
+            subtype Items : MenuItem
+            {
+                Name = "miCopyBin"
+                AccessLevel = "alPublic"
+                Text = "Copy &Binary"
+                event OnClick = "miCopyBinClick"
+            }
+
+            subtype Items : MenuItem
+            {
+                Name = "miCopySep"
+                AccessLevel = "alPublic"
+                Text = "-"
+            }
+
+            subtype Items : MenuItem
+            {
+                Name = "miCopyText"
+                AccessLevel = "alPublic"
+                Text = "Copy &Formula"
+                event OnClick = "miCopyClick"
             }
         }
 
@@ -291,59 +343,6 @@
             }
         }
 
-        type PopupMenu
-        {
-            Name = "pmCopy"
-            AccessLevel = "alPublic"
-
-            subtype Items : MenuItem
-            {
-                Name = "miCopyDec"
-                AccessLevel = "alPublic"
-                Text = "Copy &Decimal"
-                event OnClick = "miCopyDecClick"
-            }
-
-            subtype Items : MenuItem
-            {
-                Name = "miCopyHex"
-                AccessLevel = "alPublic"
-                Text = "Copy He&xadecimal"
-                event OnClick = "miCopyHexClick"
-            }
-
-            subtype Items : MenuItem
-            {
-                Name = "miCopyOct"
-                AccessLevel = "alPublic"
-                Text = "Copy &Octal"
-                event OnClick = "miCopyOctClick"
-            }
-
-            subtype Items : MenuItem
-            {
-                Name = "miCopyBin"
-                AccessLevel = "alPublic"
-                Text = "Copy &Binary"
-                event OnClick = "miCopyBinClick"
-            }
-
-            subtype Items : MenuItem
-            {
-                Name = "miCopySep"
-                AccessLevel = "alPublic"
-                Text = "-"
-            }
-
-            subtype Items : MenuItem
-            {
-                Name = "miCopyText"
-                AccessLevel = "alPublic"
-                Text = "Copy &Formula"
-                event OnClick = "miCopyClick"
-            }
-        }
-
         type FlatButton
         {
             Name = "btnOpenHexOptions"
@@ -360,7 +359,7 @@
                 Size = "10"
             }
             ParentFont = "False"
-            TabOrder = "10"
+            TabOrder = "9"
             class Image
             {
                 Bitmap = "0900720069006700680074002E0062006D007000F80000000100FFFFFF00789C73F2FDC100016540AC01C40250CCC8C002166F0262216E0846050D60C4D0D000A140102404240E1C380014F90F460CFFFF432810040981F8E8E0033F9466E087D210C607B07E08CD00A3F9D1685475FC28E6F0635805020C0C00A4C572A3"
@@ -384,7 +383,7 @@
                 Size = "10"
             }
             ParentFont = "False"
-            TabOrder = "9"
+            TabOrder = "8"
             class Image
             {
                 Bitmap = "0900720069006700680074002E0062006D007000F80000000100FFFFFF00789C73F2FDC100016540AC01C40250CCC8C002166F0262216E0846050D60C4D0D000A140102404240E1C380014F90F460CFFFF432810040981F8E8E0033F9466E087D210C607B07E08CD00A3F9D1685475FC28E6F0635805020C0C00A4C572A3"
@@ -401,7 +400,7 @@
             Width = "528"
             Height = "29"
             Alignment = "alTop"
-            TabOrder = "1"
+            TabOrder = "0"
             InnerBorderStyle = "pbsNone"
 
             type FlatButton
@@ -505,26 +504,6 @@
             }
         }
 
-        type Edit
-        {
-            Name = "edtInfix"
-            AccessLevel = "alPublic"
-            Left = "8"
-            Top = "29"
-            Width = "513"
-            Height = "22"
-            class Font
-            {
-                Family = "Tahoma"
-                Size = "10"
-            }
-            ParentFont = "False"
-            TabOrder = "0"
-            WantedKeyTypes = "wkArrows, wkEnter, wkOthers"
-            event OnKeyDown = "edtInfixKeyDown"
-            event OnTextChanged = "edtInfixTextChanged"
-        }
-
         type Groupbox
         {
             Name = "gbResults"
@@ -541,7 +520,7 @@
                 Size = "10"
             }
             ParentFont = "False"
-            TabOrder = "2"
+            TabOrder = "1"
 
             type Button
             {
@@ -695,7 +674,7 @@
             Top = "191"
             Width = "505"
             Height = "110"
-            TabOrder = "3"
+            TabOrder = "2"
             InnerBorderStyle = "pbsNone"
 
             type Groupbox
@@ -1070,7 +1049,7 @@
             Top = "325"
             Width = "507"
             Height = "82"
-            TabOrder = "4"
+            TabOrder = "3"
             InnerBorderStyle = "pbsNone"
 
             type Groupbox
@@ -1279,7 +1258,7 @@
                 Size = "10"
             }
             ParentFont = "False"
-            TabOrder = "5"
+            TabOrder = "4"
             ReadOnly = "True"
         }
 
@@ -1298,7 +1277,7 @@
                 Size = "10"
             }
             ParentFont = "False"
-            TabOrder = "6"
+            TabOrder = "5"
             AcceptInput = "True"
             class Image
             {
@@ -1324,7 +1303,7 @@
                 Size = "10"
             }
             ParentFont = "False"
-            TabOrder = "7"
+            TabOrder = "6"
             class Image
             {
                 Bitmap = "080064006F0077006E002E0062006D007000F80000000100FFFFFF00789C758EB10D80300C041F898E22882998839E75A82D26F34829E98CED8F14A5C8DB9793BFCA757F601EE774F6C68235FBD739363246722142C544E58FAA7A63B930A362A28A7B9E5A686070050A4F16CD355CBAF9B1EE49801FB67670E1"
@@ -1347,7 +1326,7 @@
                 Size = "10"
             }
             ParentFont = "False"
-            TabOrder = "8"
+            TabOrder = "7"
             class Image
             {
                 Bitmap = "080064006F0077006E002E0062006D007000F80000000100FFFFFF00789C758EB10D80300C041F898E22882998839E75A82D26F34829E98CED8F14A5C8DB9793BFCA757F601EE774F6C68235FBD739363246722142C544E58FAA7A63B930A362A28A7B9E5A686070050A4F16CD355CBAF9B1EE49801FB67670E1"
@@ -1359,15 +1338,28 @@
         {
             Name = "btnClearInfix"
             AccessLevel = "alPublic"
-            Left = "502"
-            Top = "29"
-            Width = "19"
-            Height = "21"
+            Left = "501"
+            Top = "28"
+            Width = "20"
+            Height = "22"
             Text = "x"
             BorderStyle = "bsSingle"
             Anchors = "caTop, caRight"
-            TabOrder = "11"
+            Color = "clWindowText"
+            ParentColor = "False"
+            TabOrder = "10"
             Margin = "0"
+        }
+
+        type Combobox
+        {
+            Name = "cbInfix"
+            AccessLevel = "alPublic"
+            Left = "5"
+            Top = "27"
+            Width = "496"
+            Height = "24"
+            TabOrder = "11"
         }
     }
     type Form
@@ -1800,8 +1792,8 @@
     type Form
     {
         Name = "frmHelp"
-        Left = "641"
-        Top = "668"
+        Left = "749"
+        Top = "830"
         Text = "FalconCalc Help"
         class Font
         {

@@ -463,7 +463,7 @@ void TfrmVariables::tcVarsTabChange(void *sender, nlib::TabChangeParameters para
 void TfrmVariables::VariablesKeyDown(void* sender, nlib::KeyParameters param)
 {
 	if (param.keycode == VK_ESCAPE || (param.keycode== '0' && param.vkeys.contains(vksAlt)) )
-		SetFocus(frmMain->edtInfix->Handle());
+		SetFocus(frmMain->cbInfix->Handle());
 
 	if (param.keycode == VK_ESCAPE)
 		Close();
@@ -531,7 +531,7 @@ void TfrmVariables::btnSaveClick(void *sender, nlib::EventParameters param)
 		lengine->AddUserFunctions(sv);
 	}
 
-    frmMain->edtInfixTextChanged(sender,param); // to reflect changed values
+    frmMain->cbInfixTextChanged(sender,param); // to reflect changed values
 	btnSave->SetEnabled(false); //  _changed[] = false);
 
 	lengine->clean = false;		// variables/functions saved at exit
@@ -553,7 +553,7 @@ void TfrmVariables::FormClose(void *sender, nlib::FormCloseParameters param)
 {
     param.action = caDeleteForm;
 	frmVariables=NULL;
-	SetFocus(frmMain->edtInfix->Handle());
+	SetFocus(frmMain->cbInfix->Handle());
 }
 
 void TfrmVariables::sgUserKeyPress(void *sender, nlib::KeyPressParameters param)
@@ -570,14 +570,14 @@ void TfrmVariables::sgUserKeyPress(void *sender, nlib::KeyPressParameters param)
 
 void TfrmVariables::sgUserDoubleClick(void* sender, nlib::MouseButtonParameters param)
 {
-	frmMain->edtInfix->SetSelText(sgUser->Selected().x == 0 ? sgUser->String(0, sgUser->Selected().y) : sgUser->String(1, sgUser->Selected().y));
-	frmMain->edtInfix->Focus();
+	frmMain->cbInfix->SetSelText(sgUser->Selected().x == 0 ? sgUser->String(0, sgUser->Selected().y) : sgUser->String(1, sgUser->Selected().y));
+	frmMain->cbInfix->Focus();
 }
 
 void TfrmVariables::sgBuiltinDoubleClick(void* sender, nlib::MouseButtonParameters param)
 {
-	frmMain->edtInfix->SetSelText(sgBuiltin->Selected().x == 0 ? sgBuiltin->String(0, sgBuiltin->Selected().y) : sgBuiltin->String(1, sgBuiltin->Selected().y));
-	frmMain->edtInfix->Focus();
+	frmMain->cbInfix->SetSelText(sgBuiltin->Selected().x == 0 ? sgBuiltin->String(0, sgBuiltin->Selected().y) : sgBuiltin->String(1, sgBuiltin->Selected().y));
+	frmMain->cbInfix->Focus();
 }
 
 void TfrmVariables::sgUserEditorKeyDown(void *sender, nlib::KeyParameters param)

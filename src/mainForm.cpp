@@ -196,16 +196,16 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	tbPaste->SetTabOrder(3);
 	tbPaste->SetParent(pToolbar);
 
-	edtInfix = new nlib::Edit();
-	edtInfix->SetBounds(nlib::Rect(8, 29, 513, 50));
-	edtInfix->SetAnchors(nlib::caLeft | nlib::caTop);
-	edtInfix->GetFont().SetFamily(L"Calibri");
-	edtInfix->GetFont().SetSize(12);
-	edtInfix->SetParentFont(false);
-	edtInfix->SetTabOrder(0);
-	edtInfix->SetParent(this);
+	cbInfix = new nlib::Combobox();
+	cbInfix->SetBounds(nlib::Rect(8, 29, 492, 50));
+	cbInfix->SetAnchors(nlib::caLeft | nlib::caTop);
+	cbInfix->GetFont().SetFamily(L"Calibri");
+	cbInfix->GetFont().SetSize(12);
+	cbInfix->SetParentFont(false);
+	cbInfix->SetTabOrder(0);
+	cbInfix->SetParent(this);
 
-	edtInfix->SetWantedKeyTypes(wkOthers | wkArrows | wkEnter);
+	cbInfix->SetWantedKeyTypes(wkOthers | wkArrows | wkEnter);
 
 	btnClearInfix = new nlib::FlatButton();
 	btnClearInfix->SetBounds(nlib::Rect(492, 29, 513, 50));
@@ -218,7 +218,7 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	btnClearInfix->SetParent(this);
 
 	gbResults = new nlib::Groupbox();
-	gbResults->SetBounds(nlib::Rect(16, 52, 521, 175));
+	gbResults->SetBounds(nlib::Rect(16, 54, 521, 175));
 	gbResults->SetText(L"Result");
 	gbResults->SetPadding(nlib::Rect(0, 0, 0, 0));
 	gbResults->GetFont().SetFamily(L"Tahoma");
@@ -635,7 +635,7 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	btnCloseHexOptions->SetTabOrder(8);
 	btnCloseHexOptions->SetParent(this);
 
-	SetActiveControl(edtInfix);
+	SetActiveControl(cbInfix);
 	SetMenu(mnuMain);
 	btnOpenHexOptions->Image()->SetBitmap(new nlib::Bitmap(NULL, MAKEINTRESOURCE(28672)));
 	btnOpenDecOptions->Image()->SetBitmap(new nlib::Bitmap(NULL, MAKEINTRESOURCE(28673)));
@@ -688,8 +688,8 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	tbHistory->OnClick = CreateEvent(this, &TfrmMain::tbHistoryClick);
 	tbCopy->OnClick = CreateEvent(this, &TfrmMain::tbCopyClick);
 	tbPaste->OnClick = CreateEvent(this, &TfrmMain::tbPasteClick);
-	edtInfix->OnKeyDown = CreateEvent(this, &TfrmMain::edtInfixKeyDown);
-	edtInfix->OnTextChanged = CreateEvent(this, &TfrmMain::edtInfixTextChanged);
+	cbInfix->OnKeyDown = CreateEvent(this, &TfrmMain::cbInfixKeyDown);
+	cbInfix->OnTextChanged = CreateEvent(this, &TfrmMain::cbInfixTextChanged);
 	btnClearInfix->OnClick = CreateEvent(this, &TfrmMain::btnClearInfixClick);
 	btnDecimal->OnClick = CreateEvent(this, &TfrmMain::btnCopyFormatClick);
 	btnHexadecimal->OnClick = CreateEvent(this, &TfrmMain::btnCopyFormatClick);
@@ -795,8 +795,8 @@ LRESULT TfrmMain::WindowProc(UINT msg, WPARAM w,LPARAM l)
 	switch(msg)
 	{
 		case  WM_TIMER:
-			    if(_bAutoSave && ++_watchdog >= _watchLimit && lengine->ResultOk() && !_added && !edtInfix->Text().empty())
-					    _AddToHistory(edtInfix->Text());
+			if (_bAutoSave && ++_watchdog >= _watchLimit && lengine->ResultOk() && !_added && !cbInfix->Text().empty())
+				_AddToHistory(cbInfix->Text());
 				break;
 		case WM_CHANGECBCHAIN:
 				// If the next clipboard viwer window is closing, repair the chain.
@@ -845,7 +845,7 @@ void TfrmMain::btnFontClick(void *sender, nlib::EventParameters param)
 
 void TfrmMain::btnClearInfixClick(void* sender, nlib::EventParameters param)
 {
-	edtInfix->SetText(L"");
+	cbInfix->SetText(L"");
 }
 
 void TfrmMain::pnlDecPaint(void *sender, nlib::PaintParameters param)
@@ -892,7 +892,7 @@ void TfrmMain::_GetVirtualDisplaySize()
 
 void TfrmMain::_ShowResults()	// from lengine
 {
-    if(edtInfix->Text().empty())
+    if(cbInfix->Text().empty())
     {
 		_ShowMessageOnAllPanels(L"");
         return;
@@ -917,7 +917,7 @@ void TfrmMain::_ShowResults()	// from lengine
     pnlBin->SetText(lengine->ResultAsBinString().ToWideString());
     edtChars->SetText(lengine->ResultAsCharString().ToWideString());
 
-	SetFocus(edtInfix->Handle());
+	SetFocus(cbInfix->Handle());
 }
 
 // display same message in all panels
@@ -932,24 +932,29 @@ void TfrmMain::_ShowMessageOnAllPanels(wstring s)
     edtChars->SetText(L"");
 }
 
-void TfrmMain::edtInfixTextChanged(void *sender, nlib::EventParameters param)
+void TfrmMain::cbInfixTextChanged(void *sender, nlib::EventParameters param)
 {
 	if (_busy)
 		return;
 
-	if(edtInfix->Text().empty() )
+	if(cbInfix->Text().empty() )
     {
         _ShowMessageOnAllPanels(L"");
         return;
     }
-    wstring s = edtInfix->Text();
+    wstring s = cbInfix->Text();
 //	cbInfix->SetText(s);
     try
-    {
+    {		  
+		int n = cbInfix->SelStart();
 		lengine->infix = s;
         RealNumber res = lengine->Calculate();
         gbResults->SetText(L"Results");
         _ShowResults();
+
+		cbInfix->SetSelLength(0);
+		cbInfix->SetSelStart(n);
+
         s = lengine->Postfix().ToWideString();
     }
     catch(wstring s)
@@ -969,14 +974,14 @@ void TfrmMain::edtInfixTextChanged(void *sender, nlib::EventParameters param)
 	--_busy;
 }
 
-void TfrmMain::edtInfixKeyDown(void* sender, nlib::KeyParameters param)
+void TfrmMain::cbInfixKeyDown(void* sender, nlib::KeyParameters param)
 {
 	_watchdog = 0;   // reset counter
-	if (edtInfix->Text().empty())
+	if (cbInfix->Text().empty())
 		return;
 
 	if (param.keycode == VK_RETURN)
-		_AddToHistory(edtInfix->Text());
+		_AddToHistory(cbInfix->Text());
 	else if (param.keycode != VK_RIGHT && param.keycode != VK_LEFT && param.keycode != VK_UP && param.keycode != VK_DOWN &&
 		param.keycode != VK_TAB)
 	{
@@ -988,8 +993,8 @@ void TfrmMain::edtInfixKeyDown(void* sender, nlib::KeyParameters param)
 void TfrmMain::rdDegClick(void *sender, nlib::EventParameters param)
 {
 	lengine->displayFormat.angUnit = (LongNumber::AngularUnit)((Radiobox*)sender)->Tag();
-	edtInfixTextChanged(sender,param);
-	SetFocus(edtInfix->Handle());
+	cbInfixTextChanged(sender,param);
+	SetFocus(cbInfix->Handle());
 }
 
 void TfrmMain::spnDecDigitsTextChanged(void *sender, nlib::EventParameters param)
@@ -1000,7 +1005,7 @@ void TfrmMain::spnDecDigitsTextChanged(void *sender, nlib::EventParameters param
 	else
 		lengine->displayFormat.decDigits = - (lengine->displayFormat.decDigits+1);	// changed, but not shown
 	//else
-	//	SetFocus(edtInfix->Handle());
+	//	SetFocus(cbInfix->Handle());
 }
 
 void TfrmMain::tbCopyClick(void *sender, nlib::EventParameters param)
@@ -1081,21 +1086,21 @@ void TfrmMain::miExitClick(void *sender, nlib::EventParameters param)
 
 void TfrmMain::miCopyClick(void *sender, nlib::EventParameters param)
 {
-    if(edtInfix->SelLength())
-        MyClipboard->SetText(edtInfix->SelText());
+    if(cbInfix->SelLength())
+        MyClipboard->SetText(cbInfix->SelText());
     else
-        MyClipboard->SetText( edtInfix->Text());
+        MyClipboard->SetText( cbInfix->Text());
 }
 
 void TfrmMain::miPasteClick(void *sender, nlib::EventParameters param)
 {
-    edtInfix->SetText(edtInfix->Text().substr(0, edtInfix->SelStart()) +
-			MyClipboard->GetText() + edtInfix->Text().substr(edtInfix->SelStart(),999));
+    cbInfix->SetText(cbInfix->Text().substr(0, cbInfix->SelStart()) +
+			MyClipboard->GetText() + cbInfix->Text().substr(cbInfix->SelStart(),999));
 }
 
 void TfrmMain::miAppendClick(void *sender, nlib::EventParameters param)
 {
-    edtInfix->SetText( edtInfix->Text() + MyClipboard->GetText());
+    cbInfix->SetText( cbInfix->Text() + MyClipboard->GetText());
 }
 
 void TfrmMain::miEditVarsClick(void *sender, nlib::EventParameters param)
@@ -1126,7 +1131,7 @@ void TfrmMain::miEditVarsClick(void *sender, nlib::EventParameters param)
 		OpenVarsOrFunctions(sender, tag, param);
 		pVarMenu->SetChecked(true);
 	}
-	SetFocus(edtInfix->Handle());
+	SetFocus(cbInfix->Handle());
 }
 
 void TfrmMain::miEditFuncsClick(void *sender, nlib::EventParameters param)
@@ -1162,7 +1167,7 @@ void TfrmMain::miShowHistClick(void *sender, nlib::EventParameters param)
 		frmHistory->lstHistory->Items().SetLines(slHistory.ToWstringVector());
 		((MenuItem*)sender)->SetChecked(true);
 	}
-	SetFocus(edtInfix->Handle());
+	SetFocus(cbInfix->Handle());
 }
 
 void TfrmMain::miClearHistClick(void *sender, nlib::EventParameters param)
@@ -1361,7 +1366,7 @@ void TfrmMain::OpenVarsOrFunctions(void* sender, int which, nlib::EventParameter
 
 	frmVariables->Show();
 
-	SetFocus(edtInfix->Handle());
+	SetFocus(cbInfix->Handle());
 }
 
 void TfrmMain::btnCloseDecOptionsClick(void *sender, nlib::EventParameters param)
@@ -1523,8 +1528,8 @@ bool TfrmMain::_SaveState(SmartString name)
 				fs << "|";
 		}
 	fs << "\n";
-    if(!edtInfix->Text().empty())
-        fs << LAST <<  SmartString(edtInfix->Text()) << "\n";
+    if(!cbInfix->Text().empty())
+        fs << LAST <<  SmartString(cbInfix->Text()) << "\n";
     return true;
 }
 bool TfrmMain::_LoadState(SmartString name)
@@ -1747,7 +1752,7 @@ bool TfrmMain::_LoadState(SmartString name)
 	{
 		if (n==2 && data[0] == LAST)
 		{
-			edtInfix->SetText((lastinfix = data[1]).ToWideString());
+			cbInfix->SetText((lastinfix = data[1]).ToWideString());
 		}
 	};
 
@@ -1808,6 +1813,7 @@ void TfrmMain::_AddToHistory(wstring text)
 	}
 
     slHistory.insert(slHistory.begin(), ss);				// then insert new expression to top of list
+	cbInfix->Items().Insert(0, ss.ToWideString());	// and to combobox
 
     _added = true;
     _watchdog = 0;
@@ -1892,7 +1898,7 @@ void TfrmMain::btnCopyFormatClick(void *sender, nlib::EventParameters param)
 		case 2: MyClipboard->SetText(pnlOct->Text() ); break;
 		case 3: MyClipboard->SetText(pnlBin->Text() ); break;
 	}
-	SetFocus(edtInfix->Handle());
+	SetFocus(cbInfix->Handle());
 }
 
 void TfrmMain::miSetLocale(void* sender, nlib::EventParameters param)

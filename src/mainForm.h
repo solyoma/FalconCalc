@@ -74,7 +74,7 @@ N_PUBLIC: /* Designer generated list of public members. Do not edit by hand. */
 	nlib::FlatButton* tbHistory;
 	nlib::FlatButton* tbCopy;
 	nlib::FlatButton* tbPaste;
-	nlib::Edit* edtInfix;
+	nlib::Combobox* cbInfix;
 	nlib::Groupbox* gbResults;
 	nlib::Button* btnDecimal;
 	nlib::Button* btnHexadecimal;
@@ -160,8 +160,8 @@ N_PUBLIC: /* Designer generated list of public members. Do not edit by hand. */
 	void cbThousandSepChanged(void* sender, nlib::EventParameters param);
 	void chkSepClick(void* sender, nlib::EventParameters param);
 	void btnCopyFormatClick(void* sender, nlib::EventParameters param);
-	void edtInfixTextChanged(void* sender, nlib::EventParameters param);
-	void edtInfixKeyDown(void* sender, nlib::KeyParameters param);
+	void cbInfixTextChanged(void* sender, nlib::EventParameters param);
+	void cbInfixKeyDown(void* sender, nlib::KeyParameters param);
 	void btnClearInfixClick(void* sender, nlib::EventParameters param);
 	void tbPasteClick(void* sender, nlib::EventParameters param);
 	void tbCopyClick(void* sender, nlib::EventParameters param);

@@ -109,7 +109,7 @@ void TfrmHistory::lstHistoryDblClick(void *sender, nlib::MouseButtonParameters p
         int n;
         if( (n = lstHistory->ItemIndex()) >= 0)
         {
-            frmMain->edtInfix->SetText(lstHistory->Items().Text(n));
+            frmMain->cbInfix->SetText(lstHistory->Items().Text(n));
             frmMain->Focus();
         }
     }
@@ -169,7 +169,7 @@ void TfrmHistory::FormKeyPress(void *sender, nlib::KeyPressParameters param)
 				int n;
 				if( (n = lstHistory->ItemIndex()) >= 0)
 				{
-					frmMain->edtInfix->SetText(lstHistory->Items().Text(n)) ;
+					frmMain->cbInfix->SetText(lstHistory->Items().Text(n)) ;
 					frmMain->Focus();
 				}
 			}
