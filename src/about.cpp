@@ -2,6 +2,7 @@
 
 using namespace nlib;
 #include "about.h"
+#include "translations.h"
 
 TfrmAbout *frmAbout;
 
@@ -10,13 +11,13 @@ void TfrmAbout::InitializeFormAndControls() /* Control initialization function g
 	/* Generated member initialization. Do not modify. */
 	SetLeft(524);
 	SetTop(67);
-	SetText(L"About LittlaCalc++");
+	SetText(lt.GetTranslationFor(FCT_ABOUTFC));
 	GetFont().SetFamily(L"Tahoma");
 	SetWantedKeyTypes(nlib::wkArrows | nlib::wkTab | nlib::wkEnter | nlib::wkEscape | nlib::wkOthers);
 	SetShowPosition(nlib::fspActiveMonitorCenter);
 	SetBorderStyle(nlib::fbsDialog);
 	SetKeyPreview(true);
-	SetClientRect(nlib::Rect(0, 0, 288, 222));
+	SetClientRect(nlib::Rect(0, 0, 290, 222));
 
 	Label1 = new nlib::Label();
 	Label1->SetBounds(nlib::Rect(98, 15, 184, 34));
@@ -29,46 +30,46 @@ void TfrmAbout::InitializeFormAndControls() /* Control initialization function g
 
 	Label2 = new nlib::Label();
 	Label2->SetBounds(nlib::Rect(41, 41, 242, 55));
-	Label2->SetText(L"A handy little calculator for everyone");
+	Label2->SetText(lt.GetTranslationFor(FCT_ABOUTLINE1));
 	Label2->SetParent(this);
 
 	Label3 = new nlib::Label();
 	Label3->SetBounds(nlib::Rect(7, 62, 275, 76));
-	Label3->SetText(L"(especially useful for physicists and programmers)");
+	Label3->SetText(lt.GetTranslationFor(FCT_ABOUTLINE2));
 	Label3->SetParent(this);
 
 	Label4 = new nlib::Label();
 	Label4->SetBounds(nlib::Rect(25, 84, 258, 98));
-	Label4->SetText(L"Based on the 'LongNumber' cross platform");
+	Label4->SetText(lt.GetTranslationFor(FCT_ABOUTLINE3));
 	Label4->SetParent(this);
 
 	Label5 = new nlib::Label();
 	Label5->SetBounds(nlib::Rect(60, 105, 223, 119));
-	Label5->SetText(L"arithmetic library of A. Sólyom");
+	Label5->SetText(lt.GetTranslationFor(FCT_ABOUTLINE4));
 	Label5->SetParent(this);
+
+	Label9 = new nlib::Label();
+	Label9->SetBounds(nlib::Rect(131, 126, 151, 140));
+	Label9->SetText(lt.GetTranslationFor(FCT_ABOUTLINE5));
+	Label9->SetParent(this);
+
+	Label10 = new nlib::Label();
+	Label10->SetBounds(nlib::Rect(58, 148, 228, 162));
+	Label10->SetText(lt.GetTranslationFor(FCT_ABOUTLINE6));
+	Label10->SetParent(this);
 
 	Label7 = new nlib::Label();
 	Label7->SetBounds(nlib::Rect(68, 169, 215, 183));
-	Label7->SetText(L"© A. Sólyom - 2012-24 ");
+	Label7->SetText(L"© A. Sólyom - 2012- ");
 	Label7->GetFont().SetFamily(L"Tahoma");
 	Label7->GetFont().SetBold(true);
 	Label7->SetParentFont(false);
 	Label7->SetParent(this);
 
 	Label8 = new nlib::Label();
-	Label8->SetBounds(nlib::Rect(43, 191, 239, 205));
-	Label8->SetText(L"This program is open source (GPL3)");
+	Label8->SetBounds(nlib::Rect(5, 191, 239, 205));
+	Label8->SetText(lt.GetTranslationFor(FCT_ABOUTLINE7));
 	Label8->SetParent(this);
-
-	Label9 = new nlib::Label();
-	Label9->SetBounds(nlib::Rect(131, 126, 151, 140));
-	Label9->SetText(L"and");
-	Label9->SetParent(this);
-
-	Label10 = new nlib::Label();
-	Label10->SetBounds(nlib::Rect(58, 148, 228, 162));
-	Label10->SetText(L"the NLIB library © Z. Sólyom");
-	Label10->SetParent(this);
 
 
 	OnKeyDown = CreateEvent(this, &TfrmAbout::frmAboutKeyDown);

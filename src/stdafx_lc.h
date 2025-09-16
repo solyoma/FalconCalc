@@ -161,7 +161,7 @@ using std::type_info;
 
 		#define _ATL_CSTRING_EXPLICIT_CONSTRUCTORS      // some CString constructors will be explicit
      #endif
-	 #ifdef _MFC_VER
+	 #ifdef _MFCT_VER
 		// turns off MFC's hiding of some common and often safely ignored warning messages
 		#define _AFX_ALL_WARNINGS
 

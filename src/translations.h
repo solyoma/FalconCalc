@@ -1,0 +1,147 @@
+#pragma once
+// multi language support for calculator
+// currently only english and hungarian
+
+enum Language { en = 0, hu = 1 };		// 0: english, 1: hungarian
+
+enum TextIDs {
+	FCT_ABOUT				,
+	FCT_LANGUAGE			,	
+	FCT_SETEN				,
+	FCT_SETHUN			,
+	FCT_ANGLEF			,
+	FCT_APPEND			,
+	FCT_BIN				,
+	FCT_BYTES				,
+	FCT_CHARFONT			,
+	FCT_CLEARHIST			,
+	FCT_COPYBIN			,
+	FCT_COPYDEC			,
+	FCT_COPYEXPR			,
+	FCT_COPYHEX			,
+	FCT_COPYOCT			,
+	FCT_COPYTEXT			,
+	FCT_DATA				,
+	FCT_DDIGITS			,
+	FCT_DEC				,
+	FCT_SHOWDECOPTS		,
+	FCT_DECSEP			,
+	FCT_DEG				,
+	FCT_DISPLAS			,
+	FCT_DOUBLE			,
+	FCT_DWORDS			,
+	FCT_EDIT				,
+	FCT_EDITCOPY			,
+	FCT_EDITFUNCS			,
+	FCT_EDITVARS			,
+	FCT_ENG				,
+	FCT_EXIT				,
+	FCT_FILE				,
+	FCT_FONT				,
+	FCT_GENHELP			,
+	FCT_GRAD				,
+	FCT_HELP				,
+	FCT_HEX				,
+	FCT_HEXMIN			,
+	FCT_SHOWHEXOPTS		,
+	FCT_HEXOPTS			,
+	FCT_HEXPREFIX			,
+	FCT_HISTOPTS			,
+	FCT_HISTORY			,
+	FCT_HTML				,
+	FCT_LITTLEE			,
+	FCT_LOCALE			,
+	FCT_NORMAL			,
+	FCT_OCT				,
+	FCT_OPTIONS			,
+	FCT_PASTEEXPR			,
+	FCT_RAD				,
+	FCT_RESULT			,
+	FCT_SCI				,
+	FCT_SHOWHIST			,
+	FCT_SINGLE			,
+	FCT_STRING			,
+	FCT_TEX				,
+	FCT_THOUSAND			,
+	FCT_TURN				,
+	FCT_VIEW				,
+	FCT_WORDS				,
+
+	FCT_TIPDEC			,
+	FCT_TIPHEX			,
+	FCT_TIPOCT			,
+	FCT_TIPBIN			,
+	FCT_TIPSPC			,
+	FCT_TIPDEG			,
+	FCT_TIPRAD			,
+	FCT_TIPGRAD			,
+	FCT_TIPTURN			,
+	FCT_TIPDPOV			,
+	FCT_TIPDHTML			,
+	FCT_TIPDTEX			,
+	FCT_TIPDE				,
+	FCT_TIPNEGH			,
+	FCT_TIPINT			,
+	FCT_TIPSP				,
+	FCT_TIPDP				,
+
+	FCT_BUILTIN_FUNCTIONS_CANNOT_BE_REDEFINED,
+	FCT_BUILTIN_VARIABLES_CANNOT_BE_REDEFINED,
+	FCT_CLOSING_QUOTE_NOT_FOUND,
+	FCT_DIVISON_BY_0,
+	FCT_EITHER_THE_SEPARATOR_WAS_MISPLACED_OR_PARENTHESIS_WERE_MISMATCHED,
+	FCT_EXPRESSION_ERROR,
+	FCT_FUNCTION_DEFINITION_MISSING_RIGHT_BRACE,
+	FCT_FUNCTION_MISSING_OPENING_BRACE,
+	FCT_ILLEGAL_AT_LINE_END,
+	FCT_ILLEGAL_BINARY_NUMBER,
+	FCT_ILLEGAL_CHARACTER_NUMBER,
+	FCT_ILLEGAL_HEXADECIMAL_NUMBER,
+	FCT_ILLEGAL_NUMBER_No1,
+	FCT_ILLEGAL_NUMBER_No2,
+	FCT_ILLEGAL_OCTAL_NUMBER,
+	FCT_ILLEGAL_OPERATOR_AT_LINE_END,
+	FCT_INVALID_CHARACTER_IN_FUNCTION_DEFINITION,
+	FCT_INVALID_FUNCTION_DEFINITION,
+	FCT_MISMATCHED_PARENTHESIS,
+	FCT_MISSING_BINARY_NUMBER,
+	FCT_NO_FUNCTION_ARGUMENT,
+	FCT_RECURSIVE_FUNCTIONS_ARE_NOT_ALLOWED,
+	FCT_STACK_ERROR,
+	FCT_SYNTAX_ERROR,
+	FCT_UNKNOWN_FUNCTION_IN_EXPRESSION,
+	FCT_VARIABLE_DEFINITION_MISSING,
+
+	FCT_HELPTITLE,		// L"FalconCalc Help"
+	FCT_ABOUT1,			// L"About FalconCalc"
+
+	FCT_ABOUTFC,			// L"About FalconCalc"
+	FCT_ABOUTLINE1,
+	FCT_ABOUTLINE2,
+	FCT_ABOUTLINE3,
+	FCT_ABOUTLINE4,
+	FCT_ABOUTLINE5,
+	FCT_ABOUTLINE6,
+	FCT_ABOUTLINE7
+};
+
+class LanguageTexts
+{
+public:
+	LanguageTexts();
+	constexpr Language GetLanguage() const { return _lang; }
+	bool SetLanguage(Language lang);		// true: must set menus and help text in the selected language
+											// false: already OK
+	wchar_t* GetHelpText() const;		// returns the help text in the current language
+	wchar_t* GetTranslationFor(TextIDs id) const; // returns the text in the current language
+private:
+	Language _lang= Language::en;
+};
+
+extern LanguageTexts lt;
+
+
+
+
+
+

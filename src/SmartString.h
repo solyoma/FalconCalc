@@ -182,9 +182,9 @@ public:
 	void LTrim();
 	void RTrim();
 	void Trim();
-	SmartString LTrimmed() { SmartString s = *this; s.LTrim(); return s; }
-	SmartString RTrimmed() { SmartString s = *this; s.RTrim(); return s; }
-	SmartString Trimmed () { SmartString s = *this; s.Trim(); return s; }
+	SmartString LTrimmed() const { SmartString s = *this; s.LTrim(); return s; }
+	SmartString RTrimmed() const { SmartString s = *this; s.RTrim(); return s; }
+	SmartString Trimmed () const { SmartString s = *this; s.Trim(); return s; }
 	void RemoveWhiteSpace();	// even from inside
 
 	SmartStringVector Split(const SCharT ch, bool keepEmpty) const;

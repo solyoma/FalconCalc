@@ -16,7 +16,6 @@ N_PUBLIC: /* Designer generated list of public members. Do not edit by hand. */
 protected:
 	virtual ~TfrmHelp(); /* Don't make public. Call Destroy() to delete the object. */ 
 N_PROTECTED: /* Designer generated list of protected members. Do not edit by hand. */
-private:
 N_PRIVATE: /* Designer generated list of private members. Do not edit by hand. */
 	void InitializeFormAndControls(); /* Control initializations. Do not remove. */
 };

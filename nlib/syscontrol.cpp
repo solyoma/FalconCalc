@@ -2803,6 +2803,19 @@ namespace NLIBNS
             out[ix] = Text(ix);
     }
 
+    // Function added by SA
+    int ControlElemList::IndexOf(std::wstring& str)
+    {
+        using MyPair = std::pair<std::wstring, void*>;
+        using MyList = std::vector<MyPair>;
+        using MyIter = MyList::iterator;
+
+        MyPair key(str, nullptr);
+
+        MyIter iter = std::find_if(list.begin(), list.end(), [&](const MyPair arg) {return arg.first == str; });
+        return iter == list.end() ? -1: (iter -list.begin());
+    }
+
     void ControlElemList::SetLines(const std::vector<std::wstring> &newlines)
     {
         Clear();

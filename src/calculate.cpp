@@ -14,7 +14,12 @@ using namespace LongNumber;
 
 /*----------------- global engine ------------------*/
 FalconCalc::LittleEngine *lengine = nullptr;    // created in main
-/*----------------- /global engine ------------------*/
+
+namespace FalconCalc
+{
+    Trigger trigger;    // trigger error conditions
+}
+/*----------------- /global ------------------*/
 
 using namespace std;
 
@@ -88,41 +93,7 @@ const SmartString ssCommentDelimiterString = ":"_ss;
 const SmartString ssEqString = "="_ss;
 
 
-std::map<Trigger_Type, SmartString> triggerMap
-{
-    {Trigger_Type::BUILTIN_FUNCTIONS_CANNOT_BE_REDEFINED,"Builtin functions cannot be redefined"_ss},
-    {Trigger_Type::BUILTIN_VARIABLES_CANNOT_BE_REDEFINED,"Builtin variables cannot be redefined"_ss},
-    {Trigger_Type::CLOSING_QUOTE_NOT_FOUND,"Closing quote not found"_ss},
-    {Trigger_Type::DIVISON_BY_0,"Divison by 0"_ss},
-    {Trigger_Type::EITHER_THE_SEPARATOR_WAS_MISPLACED_OR_PARENTHESIS_WERE_MISMATCHED,"Either the separator was misplaced or parenthesis were mismatched"_ss},
-    {Trigger_Type::EXPRESSION_ERROR,"Expression error"_ss},
-    {Trigger_Type::FUNCTION_DEFINITION_MISSING_RIGHT_BRACE,"Function definition missing right brace"_ss},
-    {Trigger_Type::FUNCTION_MISSING_OPENING_BRACE,"Function missing opening brace"_ss},
-    {Trigger_Type::ILLEGAL_AT_LINE_END,"Illegal at line end"_ss},
-    {Trigger_Type::ILLEGAL_BINARY_NUMBER,"Illegal binary number"_ss},
-    {Trigger_Type::ILLEGAL_CHARACTER_NUMBER,"Illegal character number"_ss},
-    {Trigger_Type::ILLEGAL_HEXADECIMAL_NUMBER,"Illegal hexadecimal number"_ss},
-    {Trigger_Type::ILLEGAL_NUMBER_No1,"Illegal number #1"_ss},
-    {Trigger_Type::ILLEGAL_NUMBER_No2,"Illegal number #2"_ss},
-    {Trigger_Type::ILLEGAL_OCTAL_NUMBER,"Illegal octal number"_ss},
-    {Trigger_Type::ILLEGAL_OPERATOR_AT_LINE_END,"Illegal operator at line end"_ss},
-    {Trigger_Type::INVALID_CHARACTER_IN_FUNCTION_DEFINITION,"Invalid character in function definition"_ss},
-    {Trigger_Type::INVALID_FUNCTION_DEFINITION,"Invalid function definition"_ss},
-    {Trigger_Type::MISMATCHED_PARENTHESIS,"Mismatched parenthesis"_ss},
-    {Trigger_Type::MISSING_BINARY_NUMBER,"Missing binary number"_ss},
-    {Trigger_Type::NO_FUNCTION_ARGUMENT,"No function argument"_ss},
-    {Trigger_Type::RECURSIVE_FUNCTIONS_ARE_NOT_ALLOWED,"Recursive functions are not allowed"_ss},
-    {Trigger_Type::STACK_ERROR,"Stack error"_ss},
-    {Trigger_Type::SYNTAX_ERROR,"Syntax error"_ss},
-    {Trigger_Type::UNKNOWN_FUNCTION_IN_EXPRESSION,"Unknown function in expression"_ss},
-    {Trigger_Type::VARIABLE_DEFINITION_MISSING,"Variable definition missing"_ss}
-};
 		
-void Trigger(Trigger_Type tt)
-{
-		throw tt;
-}
-
 // Class MathOperator
 map<SmartString, OP> MathOperator::ops; // operator table
 bool MathOperator::bOpsOk = false;
@@ -258,7 +229,7 @@ void Token::_GetOperator(const SmartString &text, unsigned &pos)
 	switch(c)
 	{
 	    case '<' : if(!cn) // no more character in line
-					    Trigger(Trigger_Type::ILLEGAL_AT_LINE_END);
+					    trigger.Raise(FCT_ILLEGAL_AT_LINE_END);
 				    switch(cn)
 				    {
 					    case '<' : name = u"<<"; break;
@@ -267,7 +238,7 @@ void Token::_GetOperator(const SmartString &text, unsigned &pos)
 				    };
 				    break;
 	    case '>' : if(!cn) // no more character in line
-					    Trigger(Trigger_Type::ILLEGAL_OPERATOR_AT_LINE_END);
+					    trigger.Raise(FCT_ILLEGAL_OPERATOR_AT_LINE_END);
 				    switch(cn)
 				    {               
 					    case '>' : name = u">>"; break;
@@ -276,7 +247,7 @@ void Token::_GetOperator(const SmartString &text, unsigned &pos)
 				    };
 				    break;
 	    case '!':  if(!cn) // no more character in line
-					    Trigger(Trigger_Type::ILLEGAL_OPERATOR_AT_LINE_END);
+					    trigger.Raise(FCT_ILLEGAL_OPERATOR_AT_LINE_END);
 				    switch(cn)
 				    {
 					    case '=' : name =u"!="; break;
@@ -284,7 +255,7 @@ void Token::_GetOperator(const SmartString &text, unsigned &pos)
 				    };
 				    break;
 	    case '=' :  if(!cn) // no more character in line
-					    Trigger(Trigger_Type::ILLEGAL_OPERATOR_AT_LINE_END);
+					    trigger.Raise(FCT_ILLEGAL_OPERATOR_AT_LINE_END);
 				    switch(cn)
 				    {
 					    case '=' : name = u"=="; break;
@@ -292,7 +263,7 @@ void Token::_GetOperator(const SmartString &text, unsigned &pos)
 				    };
 				    break;
 	    case '~' :  if (!cn) // no more character in line
-					    Trigger(Trigger_Type::ILLEGAL_OPERATOR_AT_LINE_END);
+					    trigger.Raise(FCT_ILLEGAL_OPERATOR_AT_LINE_END);
                     name = u"~"; 
                     break;
 	    default:  *this = s;
@@ -359,7 +330,7 @@ void Token::_GetDecimalNumber(const SmartString &text, unsigned &pos)
 	 // a number from a single decimal point or with no exponent after the 'e'
 	 // is illegal
 	if( (!nIntP && ! nFracP)  || (bExp && ! nExpP))
-		Trigger(Trigger_Type::ILLEGAL_NUMBER_No1);
+		trigger.Raise(FCT_ILLEGAL_NUMBER_No1);
 	type = tknNumber;
 	name = text.substr(startpos, pos - startpos);
     val = RealNumber(name);
@@ -379,7 +350,7 @@ void Token::_GetHexNumber(const SmartString &text, unsigned &pos)
 	while(pos < text.length() && isxdigit(text[pos],loc) )
 		++pos;
 	if(pos == startpos+2)
-		Trigger(Trigger_Type::ILLEGAL_HEXADECIMAL_NUMBER);
+		trigger.Raise(FCT_ILLEGAL_HEXADECIMAL_NUMBER);
 	type = tknNumber;
 	name = text.substr(startpos, pos - startpos);
     val = RealNumber(name);
@@ -398,7 +369,7 @@ void Token::_GetOctNumber(const SmartString &text, unsigned &pos)
 	while(pos < text.length() && isdigit(text[pos],loc))
 	{
 		if(text[pos] > '7')
-				Trigger(Trigger_Type::ILLEGAL_OCTAL_NUMBER);
+				trigger.Raise(FCT_ILLEGAL_OCTAL_NUMBER);
 		++pos;
 	}
 	type = tknNumber;
@@ -417,7 +388,7 @@ void Token::_GetBinaryNumber(const SmartString &text, unsigned &pos)
 {
     auto triggerError = []()
         {
-            Trigger(Trigger_Type::ILLEGAL_BINARY_NUMBER);
+            trigger.Raise(FCT_ILLEGAL_BINARY_NUMBER);
         };
     locale loc = cout.getloc();
     unsigned startpos = pos++;    // skip '#'
@@ -456,9 +427,9 @@ void Token::_GetNumberFromQuotedString(const SmartString &text, unsigned &pos)
 		++pos;
     }
 	if(pos == startpos)
-		Trigger(Trigger_Type::ILLEGAL_CHARACTER_NUMBER);
+		trigger.Raise(FCT_ILLEGAL_CHARACTER_NUMBER);
     if(pos == text.length() )
-        Trigger(Trigger_Type::CLOSING_QUOTE_NOT_FOUND);
+        trigger.Raise(FCT_CLOSING_QUOTE_NOT_FOUND);
 
 	type = tknCharacter;
 	name = "'"_ss + text.mid(startpos, pos - startpos) + "'"_ss;
@@ -541,13 +512,13 @@ void Token::FromText(const SmartString &text, unsigned &pos)
 		else if(bBinF)                  // #...
 		{
 			if(!cn) // then EOL and number is a single binary type character
-				Trigger(Trigger_Type::MISSING_BINARY_NUMBER);
+				trigger.Raise(FCT_MISSING_BINARY_NUMBER);
 			_GetBinaryNumber(text, pos);  // starting after the '#' type character
 		}
 		else // decimal number
 		{
 			if((!cn && bDecpF) || (bDecpF && !isdigit(cn,loc)))	// then EOL and number is a single decimal point
-				Trigger(Trigger_Type::ILLEGAL_NUMBER_No2);
+				trigger.Raise(FCT_ILLEGAL_NUMBER_No2);
 			_GetDecimalNumber(text, pos); // start at the first number/decimal point
 		}
 	}
@@ -662,7 +633,7 @@ LittleEngine::LittleEngine() : clean(true)
 const Token& LittleEngine::_Stack::peek(unsigned n) const
 {
     if (_stack.size() < n)
-        Trigger(Trigger_Type::STACK_ERROR);
+        trigger.Raise(FCT_STACK_ERROR);
     return _stack[_stack.size() - n];
 }
 
@@ -688,7 +659,7 @@ void LittleEngine::_HandleUnknown(Token *tok)
 			stack.popto(tvPostfix);
 		}
 		if(stack.empty () )
-			Trigger(Trigger_Type::EITHER_THE_SEPARATOR_WAS_MISPLACED_OR_PARENTHESIS_WERE_MISMATCHED);
+			trigger.Raise(FCT_EITHER_THE_SEPARATOR_WAS_MISPLACED_OR_PARENTHESIS_WERE_MISMATCHED);
 	}
 }
 
@@ -734,7 +705,7 @@ void LittleEngine::_HandleBrace(Token* tok)
                 stack.pop();					   // Pop the left parenthesis from the stack, but not onto the output queue.
         }
         else                                       // If the stack runs out without finding a left parenthesis, then there are mismatched parenthesis.
-            Trigger(Trigger_Type::MISMATCHED_PARENTHESIS);
+            trigger.Raise(FCT_MISMATCHED_PARENTHESIS);
     }
 }
 
@@ -799,13 +770,13 @@ int LittleEngine::_InfixToPostFix(const SmartString expr)
             if (isspace(*it, loc))  // drop spaces inside
                 continue;
             if (!IsAlnum((wchar_t)*it, loc) && pattern.find_first_of(*it) == std::string::npos)
-                Trigger(Trigger_Type::ILLEGAL_CHARACTER);
+                trigger.Raise(FCT_ILLEGAL_CHARACTER_NUMBER);
             if (*it == u'(')
                 ++bc;
             else if (*it == u')')
             {
                 if (--bc < 0)
-                    Trigger(Trigger_Type::MISMATCHED_PARENTHESIS);
+                    trigger.Raise(FCT_MISMATCHED_PARENTHESIS);
             }
         }
         if(*it == '\'')
@@ -813,7 +784,7 @@ int LittleEngine::_InfixToPostFix(const SmartString expr)
         infix.push_back(*it);   //  even quoted string don't lowercase anything here
     }
     if(bc)
-        Trigger(Trigger_Type::MISMATCHED_PARENTHESIS);
+        trigger.Raise(FCT_MISMATCHED_PARENTHESIS);
     infix += expr.mid(it - expr.begin());   // add comment and unit
 
     bool inq = false;       // inside quote
@@ -868,7 +839,7 @@ int LittleEngine::_InfixToPostFix(const SmartString expr)
 					if (!_VariableAssignment(infix, pos, tok))   // handles assignment
 					{
 						if (functions.count(tok->Text()))   // then this isn't a variable just missing the braces yet
-							Trigger(Trigger_Type::FUNCTION_MISSING_OPENING_BRACE);
+							trigger.Raise(FCT_FUNCTION_MISSING_OPENING_BRACE);
 						tvPostfix.push_back(*tok);          // add variable to the output queue.
 						needOp = true;
 					}
@@ -879,7 +850,7 @@ int LittleEngine::_InfixToPostFix(const SmartString expr)
 					if (!_FunctionAssignment(infix, pos, tok))
 					{
 						if (pos >= infix.length() || infix.at(pos) == SCharT(')'))    // eg 'sin(' or 'sin()' w.o. argument
-							Trigger(Trigger_Type::NO_FUNCTION_ARGUMENT);
+							trigger.Raise(FCT_NO_FUNCTION_ARGUMENT);
 
 						stack.push(*tok);   // then push it onto the stack.
 					}
@@ -907,7 +878,7 @@ int LittleEngine::_InfixToPostFix(const SmartString expr)
                             {
                                 delete next;
                                 delete tok;
-                                Trigger(Trigger_Type::SYNTAX_ERROR);
+                                trigger.Raise(FCT_SYNTAX_ERROR);
                             }
                         }
 					    delete next;
@@ -931,7 +902,7 @@ int LittleEngine::_InfixToPostFix(const SmartString expr)
 					    else
 					    {
 						    delete tok;
-						    Trigger(Trigger_Type::SYNTAX_ERROR);
+						    trigger.Raise(FCT_SYNTAX_ERROR);
 					    }
 				    }
 					_HandleOperator(tok);
@@ -945,10 +916,10 @@ int LittleEngine::_InfixToPostFix(const SmartString expr)
 			//      delete tok;
 				  //tok = new Token(infix, pos);
 		}
-        catch (Trigger_Type tt)
+        catch (TextIDs tt)
         {
-            if (tok->Type() == tknBrace && tt == Trigger_Type::STACK_ERROR)
-                throw Trigger_Type::MISMATCHED_PARENTHESIS;
+            if (tok->Type() == tknBrace && tt == FCT_STACK_ERROR)
+                throw FCT_MISMATCHED_PARENTHESIS;
             else
                 throw;
         }
@@ -964,7 +935,7 @@ int LittleEngine::_InfixToPostFix(const SmartString expr)
 	while( !stack.empty())				// While there are still operator tokens in the stack:
 	{
 		if(stack.peek().Type() == tknBrace )
-			Trigger(Trigger_Type::MISMATCHED_PARENTHESIS);
+			trigger.Raise(FCT_MISMATCHED_PARENTHESIS);
 		stack.popto(tvPostfix);
 	}
     return result; // 0: assignment, 1: other expression
@@ -1028,7 +999,7 @@ bool LittleEngine::_VariableAssignment(const SmartString &expr, unsigned &pos, T
     v.name = tok->Text();  // not necessarily in lower case
     SmartString lcName = tok->Text().asLowerCase();
     if(constantsMap.count(lcName )) 
-        Trigger(Trigger_Type::BUILTIN_VARIABLES_CANNOT_BE_REDEFINED);
+        trigger.Raise(FCT_BUILTIN_VARIABLES_CANNOT_BE_REDEFINED);
     else if(variables.count(lcName)) // already defined
         v.value = variables[lcName].value; // v = variables[ tok->Text()];
     ++pos;   // skip '='
@@ -1050,7 +1021,7 @@ bool LittleEngine::_VariableAssignment(const SmartString &expr, unsigned &pos, T
             v.body = sv[0];
             break;
         default:
-            Trigger(Trigger_Type::VARIABLE_DEFINITION_MISSING);
+            trigger.Raise(FCT_VARIABLE_DEFINITION_MISSING);
             break;
     }
 
@@ -1102,10 +1073,10 @@ bool LittleEngine::_VariableAssignment(const SmartString &expr, unsigned &pos, T
    SmartString lcName = tok->Text().asLowerCase();
    int existing = 0;        // 1: in builtinfunc table, 2: in function table
    if(builtinFunctions.count(lcName) )
-            Trigger(Trigger_Type::BUILTIN_FUNCTIONS_CANNOT_BE_REDEFINED);
+            trigger.Raise(FCT_BUILTIN_FUNCTIONS_CANNOT_BE_REDEFINED);
     // it may have been already defined user function, but we will overwrite it with the new
    if(expr[poseq-1] != ')')
-        Trigger(Trigger_Type::FUNCTION_DEFINITION_MISSING_RIGHT_BRACE);
+        trigger.Raise(FCT_FUNCTION_DEFINITION_MISSING_RIGHT_BRACE);
 
    Func f;
    f.name = tok->Text();
@@ -1129,7 +1100,7 @@ bool LittleEngine::_VariableAssignment(const SmartString &expr, unsigned &pos, T
             f.body = svFields[0];
             break;
         default:
-            Trigger(Trigger_Type::INVALID_FUNCTION_DEFINITION);
+            trigger.Raise(FCT_INVALID_FUNCTION_DEFINITION);
             break;
    }
 
@@ -1211,7 +1182,7 @@ void LittleEngine::_DoFunction(const Token &token)
     int isBuiltin = builtinFunctions.count(name);
     int isUser = isBuiltin ? 0 : functions.count(name);
     if(!isBuiltin && !isUser ) // non existing function
-        Trigger(Trigger_Type::UNKNOWN_FUNCTION_IN_EXPRESSION);
+        trigger.Raise(FCT_UNKNOWN_FUNCTION_IN_EXPRESSION);
 
     RealNumber v,r;
 
@@ -1256,7 +1227,7 @@ void LittleEngine::_DoFunction(const Token &token)
 
     Func &f = functions[name];
     if(f.being_processed) // then recursive call
-        Trigger(Trigger_Type::RECURSIVE_FUNCTIONS_ARE_NOT_ALLOWED);
+        trigger.Raise(FCT_RECURSIVE_FUNCTIONS_ARE_NOT_ALLOWED);
     vector<RealNumber> params;
     unsigned n = f.args.size();
         // get parameters from stack into 'params'
@@ -1379,7 +1350,7 @@ void LittleEngine::_DoOperator(const Token &tok)
                         stack.pop(2);
                         break;
             case opDIV: if(stack.peek(1).Value().IsNull() )//  was  == RealNumber::RN_0)
-                            Trigger(Trigger_Type::DIVISON_BY_0);
+                            trigger.Raise(FCT_DIVISON_BY_0);
                         res = stack.peek(2).Value() / stack.peek(1).Value();
                         stack.pop(2);
                         break;
@@ -1435,7 +1406,7 @@ RealNumber LittleEngine::_CalcPostfix(TokenVec& tvPostfix)
         }
     }
     if(stack.empty() || stack.size() > stack_cnt + 1 || (stack.peek().Type() != tknNumber && stack.peek().Type() != tknCharacter))
-        Trigger(Trigger_Type::EXPRESSION_ERROR);
+        trigger.Raise(FCT_EXPRESSION_ERROR);
     Token tok( stack.peek() );
     stack.pop(1);
 
@@ -1747,6 +1718,19 @@ void LittleEngine::AddUserFunctions(const SmartStringVector& sv)
 			;
 		}
 	}
+}
+
+void Trigger::SetLanguage(Language lang)
+{
+    if (_lang == lang)
+        return;
+    _lang = lang;
+}
+
+void Trigger::Raise(TextIDs tids)
+{
+	lengine->resultValid = LittleEngine::ResValid::rvInvalid;
+	throw tids;
 }
 
 // end of namespace FalconCalc

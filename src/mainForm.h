@@ -61,6 +61,9 @@ N_PUBLIC: /* Designer generated list of public members. Do not edit by hand. */
 	nlib::MenuItem* separator3;
 	nlib::MenuItem* miHistOpts;
 	nlib::MenuItem* mnuOptions;
+	nlib::MenuItem* miLanguage;
+	nlib::MenuItem* miSetEn;
+	nlib::MenuItem* miSetHun;
 	nlib::MenuItem* miLocale;
 	nlib::MenuItem* miCharFont;
 	nlib::MenuItem* miHelp;
@@ -144,8 +147,8 @@ N_PUBLIC: /* Designer generated list of public members. Do not edit by hand. */
 	void btnCloseHexOptionsClick(void* sender, nlib::EventParameters param);
 	void btnCloseDecOptionsClick(void* sender, nlib::EventParameters param);
 	void btnFontClick(void* sender, nlib::EventParameters param);
-	void chkDoubleClick(void* sender, nlib::EventParameters param);
-	void chkSingleClick(void* sender, nlib::EventParameters param);
+	//void chkDoubleClick(void* sender, nlib::EventParameters param);
+	//void chkSingleClick(void* sender, nlib::EventParameters param);
 	void chkAsDWordsClick(void* sender, nlib::EventParameters param);
 	void chkAsWordsClick(void* sender, nlib::EventParameters param);
 	void chkAsBytesClick(void* sender, nlib::EventParameters param);
@@ -177,6 +180,8 @@ N_PUBLIC: /* Designer generated list of public members. Do not edit by hand. */
 	//void cbInfixKeyPress(void* sender, nlib::KeyPressParameters param);
 	void chkIEEEDoubleClick(void* sender, nlib::EventParameters param);
 	void chkIEEESingleClick(void* sender, nlib::EventParameters param);
+	void miSetEnClick(void* sender, nlib::EventParameters param);
+	void miSetHunClick(void* sender, nlib::EventParameters param);
 	void miSetLocale(void* sender, nlib::EventParameters param);
 protected:
 	virtual ~TfrmMain(); /* Don't make public. Call Destroy() to delete the object. */
@@ -205,6 +210,7 @@ private:
 	void _AddToHistory(std::wstring text);
 	void _ShowResults();
 	void _ShowMessageOnAllPanels(std::wstring s);
+	void _SetupForLanguage();
 
 N_PRIVATE: /* Designer generated list of private members. Do not edit by hand. */
 	void InitializeFormAndControls(); /* Control initializations. Do not remove. */

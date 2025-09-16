@@ -510,9 +510,10 @@ namespace SmString {
 
 	int SmartStringVector::IndexOf(const SmartString s)
 	{
-		__bCaseSens = _caseSens;
+		SmartString::CaseSens caseSens = _caseSens;
+
 		for (size_t i = 0; i < size(); ++i)
-			if (_sorter((void*)&s, (void*)&(*this)[i]))
+			if (!s.CompareWith((*this)[i], caseSens))
 				return i;
 		return -1;
 	}

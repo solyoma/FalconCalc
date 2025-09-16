@@ -17,6 +17,8 @@
 
 #include <cmath>
 
+#include "translations.h"
+
 #ifndef QTSA_PROJECT
     #include "stdafx_lc.h"
     // always use 'using namespace SmString;' and 'using namespace LongNumber;'
@@ -171,40 +173,16 @@ namespace FalconCalc
 
 	typedef std::vector<Token> TokenVec;
 
-    enum class Trigger_Type
-    {
-        NO_PROBLEM,
-        BUILTIN_FUNCTIONS_CANNOT_BE_REDEFINED,
-        BUILTIN_VARIABLES_CANNOT_BE_REDEFINED,
-        CLOSING_QUOTE_NOT_FOUND,
-        DIVISON_BY_0,
-        EITHER_THE_SEPARATOR_WAS_MISPLACED_OR_PARENTHESIS_WERE_MISMATCHED,
-        EXPRESSION_ERROR,
-        FUNCTION_DEFINITION_MISSING_RIGHT_BRACE,
-        FUNCTION_MISSING_OPENING_BRACE,
-        ILLEGAL_AT_LINE_END,
-        ILLEGAL_BINARY_NUMBER,
-        ILLEGAL_CHARACTER,
-        ILLEGAL_CHARACTER_NUMBER,
-        ILLEGAL_HEXADECIMAL_NUMBER,
-        ILLEGAL_NUMBER_No1,
-        ILLEGAL_NUMBER_No2,
-        ILLEGAL_OCTAL_NUMBER,
-        ILLEGAL_OPERATOR_AT_LINE_END,
-        INVALID_CHARACTER_IN_FUNCTION_DEFINITION,
-        INVALID_FUNCTION_DEFINITION,
-        MISMATCHED_PARENTHESIS,
-        MISSING_BINARY_NUMBER,
-        NO_FUNCTION_ARGUMENT,
-        RECURSIVE_FUNCTIONS_ARE_NOT_ALLOWED,
-        SYNTAX_ERROR,
-        STACK_ERROR,
-        UNKNOWN_FUNCTION_IN_EXPRESSION,
-        VARIABLE_DEFINITION_MISSING
+    class Trigger
+    {  
+    public:
+        Trigger() { SetLanguage(Language::en); }
+        void SetLanguage(Language lang);
+        void Raise(TextIDs tids);    // sets error state into global 'lengine'
+    private:
+        Language _lang;
     };
-
-    extern std::map<Trigger_Type, SmartString> triggerMap;
-	void Trigger(Trigger_Type tt);
+    extern Trigger trigger;
 
     /*============= built-in function types ============*/
     typedef RealNumber (*FUNCT1)(RealNumber val);

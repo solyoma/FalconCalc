@@ -34,6 +34,7 @@ using namespace std;
 #include "calculate.h"
 #include "resource.h"
 #include "variables.h"
+#include "translations.h"
 
 Clipboard *MyClipboard;
 
@@ -75,65 +76,68 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	FontDialog1->SetParent(this);
 
 	pmCopy = new nlib::PopupMenu();
-	miCopyDec = pmCopy->Add(L"Copy &Decimal");
-	miCopyHex = pmCopy->Add(L"Copy He&xadecimal");
-	miCopyOct = pmCopy->Add(L"Copy &Octal");
-	miCopyBin = pmCopy->Add(L"Copy &Binary");
+	miCopyDec = pmCopy->Add(lt.GetTranslationFor(FCT_COPYDEC));
+	miCopyHex = pmCopy->Add(lt.GetTranslationFor(FCT_COPYHEX));
+	miCopyOct = pmCopy->Add(lt.GetTranslationFor(FCT_COPYOCT));
+	miCopyBin = pmCopy->Add(lt.GetTranslationFor(FCT_COPYBIN));
 	miCopySep = pmCopy->Add(L"-");
-	miCopyText = pmCopy->Add(L"Copy &Formula");
+	miCopyText = pmCopy->Add(lt.GetTranslationFor(FCT_COPYTEXT));
 	pmCopy->SetParent(this);
 
 	mnuMain = new nlib::Menubar();
-	miFile = mnuMain->Add(L"&File");
-	miExit = miFile->Add(L"E&xit");
+	miFile = mnuMain->Add(lt.GetTranslationFor(FCT_FILE));
+	miExit = miFile->Add(lt.GetTranslationFor(FCT_EXIT));
 	miExit->SetShortcut(L"CTRL+W");
-	miEdit = mnuMain->Add(L"&Edit");
-	miCopy = miEdit->Add(L"&Copy expression");
+	miEdit = mnuMain->Add(lt.GetTranslationFor(FCT_EDIT));
+	miCopy = miEdit->Add(lt.GetTranslationFor(FCT_COPYEXPR));
 	miCopy->SetShortcutText(L"Ctrl+C");
-	miPaste = miEdit->Add(L"&Paste expression");
+	miPaste = miEdit->Add(lt.GetTranslationFor(FCT_PASTEEXPR));
 	miPaste->SetShortcutText(L"Ctrl+V");
-	miAppend = miEdit->Add(L"Paste &After expression");
+	miAppend = miEdit->Add(lt.GetTranslationFor(FCT_APPEND));
 	miAppend->SetShortcut(L"Ctrl+Shift+V");
 	separator1 = miEdit->Add(L"-");
-	mnuEditCopy = miEdit->Add(L"Cop&y ...");
-	miCopyDecimal = mnuEditCopy->Add(L"Copy &Decimal");
-	miCopyHexadecimal = mnuEditCopy->Add(L"Copy He&xadecimal");
+	mnuEditCopy = miEdit->Add(lt.GetTranslationFor(FCT_EDITCOPY));
+	miCopyDecimal = mnuEditCopy->Add(lt.GetTranslationFor(FCT_COPYDEC));
+	miCopyHexadecimal = mnuEditCopy->Add(lt.GetTranslationFor(FCT_COPYHEX));
 	miCopyHexadecimal->SetTag(1);
-	miCopyOctal = mnuEditCopy->Add(L"Copy &Octal");
+	miCopyOctal = mnuEditCopy->Add(lt.GetTranslationFor(FCT_COPYOCT));
 	miCopyOctal->SetTag(2);
-	miCopyBinary = mnuEditCopy->Add(L"Copy &Binary");
+	miCopyBinary = mnuEditCopy->Add(lt.GetTranslationFor(FCT_COPYBIN));
 	miCopyBinary->SetTag(3);
-	miData = miEdit->Add(L"&Data...");
+	miData = miEdit->Add(lt.GetTranslationFor(FCT_DATA));
 	miData->SetTag(1);
-	miEditVars = miData->Add(L"Edit User &Variables...");
+	miEditVars = miData->Add(lt.GetTranslationFor(FCT_EDITVARS));
 	miEditVars->SetShortcut(L"Alt+1");
-	miEditFuncs = miData->Add(L"Edit User &Functions...");
+	miEditFuncs = miData->Add(lt.GetTranslationFor(FCT_EDITFUNCS));
 	miEditFuncs->SetShortcut(L"Alt+2");
 	miEditFuncs->SetTag(1);
 	separator2 = miEdit->Add(L"-");
-	miClearHist = miEdit->Add(L"C&lear History");
-	miView = mnuMain->Add(L"&View");
-	miShowDecOpts = miView->Add(L"Show &Decimal Options");
+	miClearHist = miEdit->Add(lt.GetTranslationFor(FCT_CLEARHIST));
+	miView = mnuMain->Add(lt.GetTranslationFor(FCT_VIEW));
+	miShowDecOpts = miView->Add(lt.GetTranslationFor(FCT_SHOWDECOPTS));
 	miShowDecOpts->SetShortcutText(L"Ctrl+D");
-	miShowHexOpts = miView->Add(L"Show Hexadecimal  Options");
+	miShowHexOpts = miView->Add(lt.GetTranslationFor(FCT_SHOWHEXOPTS));
 	miShowHexOpts->SetShortcut(L"Ctrl+X");
-	miHistory = mnuMain->Add(L"H&istory");
-	miShowHist = miHistory->Add(L"Edit &History");
+	miHistory = mnuMain->Add(lt.GetTranslationFor(FCT_HISTORY));
+	miShowHist = miHistory->Add(lt.GetTranslationFor(FCT_SHOWHIST));
 	miShowHist->SetShortcut(L"Alt+3");
 	separator3 = miHistory->Add(L"-");
-	miHistOpts = miHistory->Add(L"Histor&y Options...");
-	mnuOptions = mnuMain->Add(L"&Options");
-	miLocale = mnuOptions->Add(L"Set Locale...");
-	miCharFont = mnuOptions->Add(L"&Font For 'As String...' Display...");
-	miHelp = mnuMain->Add(L"&Help");
-	miAbout = miHelp->Add(L"&About");
-	miGenHelp = miHelp->Add(L"&General Help");
+	miHistOpts = miHistory->Add(lt.GetTranslationFor(FCT_HISTOPTS));
+	mnuOptions = mnuMain->Add(lt.GetTranslationFor(FCT_OPTIONS));
+	miLanguage = mnuOptions->Add(lt.GetTranslationFor(FCT_LANGUAGE));
+	miLocale = mnuOptions->Add(lt.GetTranslationFor(FCT_LOCALE));
+	miSetEn  = miLanguage->Add(lt.GetTranslationFor(FCT_SETEN));
+	miSetHun = miLanguage->Add(lt.GetTranslationFor(FCT_SETHUN));
+	miCharFont = mnuOptions->Add(lt.GetTranslationFor(FCT_CHARFONT));
+	miHelp = mnuMain->Add(lt.GetTranslationFor(FCT_HELP));
+	miAbout = miHelp->Add(lt.GetTranslationFor(FCT_ABOUT));
+	miGenHelp = miHelp->Add(lt.GetTranslationFor(FCT_GENHELP));
 	miGenHelp->SetShortcut(L"F1");
 	mnuMain->SetParent(this);
 
 	btnOpenHexOptions = new nlib::FlatButton();
 	btnOpenHexOptions->SetBounds(nlib::Rect(14, 311, 242, 323));
-	btnOpenHexOptions->SetText(L"-----------Hex. options------------------");
+	btnOpenHexOptions->SetText(lt.GetTranslationFor(FCT_SHOWHEXOPTS));
 	btnOpenHexOptions->SetVisible(false);
 	btnOpenHexOptions->GetFont().SetFamily(L"Tahoma");
 	btnOpenHexOptions->GetFont().SetSize(10);
@@ -143,7 +147,7 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 
 	btnOpenDecOptions = new nlib::FlatButton();
 	btnOpenDecOptions->SetBounds(nlib::Rect(14, 175, 242, 187));
-	btnOpenDecOptions->SetText(L"-----------Decimal options--------------");
+	btnOpenDecOptions->SetText(lt.GetTranslationFor(FCT_SHOWDECOPTS));
 	btnOpenDecOptions->SetVisible(false);
 	btnOpenDecOptions->GetFont().SetFamily(L"Tahoma");
 	btnOpenDecOptions->GetFont().SetSize(10);
@@ -219,7 +223,7 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 
 	gbResults = new nlib::Groupbox();
 	gbResults->SetBounds(nlib::Rect(16, 54, 521, 175));
-	gbResults->SetText(L"Result");
+	gbResults->SetText(lt.GetTranslationFor(FCT_DEC));
 	gbResults->SetPadding(nlib::Rect(0, 0, 0, 0));
 	gbResults->GetFont().SetFamily(L"Tahoma");
 	gbResults->GetFont().SetSize(10);
@@ -229,33 +233,33 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 
 	btnDecimal = new nlib::Button();
 	btnDecimal->SetBounds(nlib::Rect(1, 16, 80, 39));
-	btnDecimal->SetText(L"Deci&mal");
+	btnDecimal->SetText(lt.GetTranslationFor(FCT_DEC));
 	btnDecimal->SetTabOrder(1);
-	btnDecimal->SetTooltipText(L"Copy decimal number to clipboard");
+	btnDecimal->SetTooltipText(lt.GetTranslationFor(FCT_TIPDEC));
 	btnDecimal->SetParent(gbResults);
 
 	btnHexadecimal = new nlib::Button();
 	btnHexadecimal->SetTag(1);
 	btnHexadecimal->SetBounds(nlib::Rect(1, 41, 80, 64));
-	btnHexadecimal->SetText(L"He&xadecimal");
+	btnHexadecimal->SetText(lt.GetTranslationFor(FCT_HEX));
 	btnHexadecimal->SetTabOrder(2);
-	btnHexadecimal->SetTooltipText(L"Copy hexadec. number to clipboard");
+	btnHexadecimal->SetTooltipText(lt.GetTranslationFor(FCT_TIPHEX));
 	btnHexadecimal->SetParent(gbResults);
 
 	btnOctal = new nlib::Button();
 	btnOctal->SetTag(2);
 	btnOctal->SetBounds(nlib::Rect(2, 67, 81, 90));
-	btnOctal->SetText(L"O&ctal");
+	btnOctal->SetText(lt.GetTranslationFor(FCT_OCT));
 	btnOctal->SetTabOrder(4);
-	btnOctal->SetTooltipText(L"Copy octal number to clipboard");
+	btnOctal->SetTooltipText(lt.GetTranslationFor(FCT_TIPOCT));
 	btnOctal->SetParent(gbResults);
 
 	btnBinary = new nlib::Button();
 	btnBinary->SetTag(3);
 	btnBinary->SetBounds(nlib::Rect(2, 94, 81, 117));
-	btnBinary->SetText(L"&Binary");
+	btnBinary->SetText(lt.GetTranslationFor(FCT_BIN));
 	btnBinary->SetTabOrder(6);
-	btnBinary->SetTooltipText(L"Copy binary number to clipboard");
+	btnBinary->SetTooltipText(lt.GetTranslationFor(FCT_TIPBIN));
 	btnBinary->SetParent(gbResults);
 
 	pnlDec = new nlib::Panel();
@@ -309,7 +313,7 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 
 	gbDecOptions = new nlib::Groupbox();
 	gbDecOptions->SetBounds(nlib::Rect(11, 1, 230, 105));
-	gbDecOptions->SetText(L"Decimal options");
+	gbDecOptions->SetText(lt.GetTranslationFor(FCT_DEC));
 	gbDecOptions->SetPadding(nlib::Rect(0, 0, 0, 0));
 	gbDecOptions->GetFont().SetFamily(L"Tahoma");
 	gbDecOptions->GetFont().SetSize(10);
@@ -319,7 +323,7 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 
 	chkSep = new nlib::Checkbox();
 	chkSep->SetBounds(nlib::Rect(8, 16, 165, 33));
-	chkSep->SetText(L"Use thousand se&parator:");
+	chkSep->SetText(lt.GetTranslationFor(FCT_THOUSAND));
 	chkSep->GetFont().SetFamily(L"Tahoma");
 	chkSep->GetFont().SetSize(10);
 	chkSep->SetParentFont(false);
@@ -329,7 +333,7 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 
 	chkDecDelim = new nlib::Checkbox();
 	chkDecDelim->SetBounds(nlib::Rect(8, 33, 160, 47));
-	chkDecDelim->SetText(L"&Use decimal separator");
+	chkDecDelim->SetText(lt.GetTranslationFor(FCT_DECSEP));
 	chkDecDelim->SetTabOrder(6);
 	chkDecDelim->SetParent(gbDecOptions);
 
@@ -350,7 +354,7 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 
 	chkSci = new nlib::Checkbox();
 	chkSci->SetBounds(nlib::Rect(8, 48, 141, 62));
-	chkSci->SetText(L"&Scientific format");
+	chkSci->SetText(lt.GetTranslationFor(FCT_SCI));
 	chkSci->GetFont().SetFamily(L"Tahoma");
 	chkSci->GetFont().SetSize(10);
 	chkSci->SetParentFont(false);
@@ -359,7 +363,7 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 
 	chkEng = new nlib::Checkbox();
 	chkEng->SetBounds(nlib::Rect(8, 64, 149, 79));
-	chkEng->SetText(L"Engeneering f&ormat");
+	chkEng->SetText(lt.GetTranslationFor(FCT_ENG));
 	chkEng->GetFont().SetFamily(L"Tahoma");
 	chkEng->GetFont().SetSize(10);
 	chkEng->SetParentFont(false);
@@ -368,7 +372,7 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 
 	chkDecDigits = new nlib::Checkbox();
 	chkDecDigits->SetBounds(nlib::Rect(8, 80, 149, 97));
-	chkDecDigits->SetText(L"&Decimal digits:");
+	chkDecDigits->SetText(lt.GetTranslationFor(FCT_DDIGITS));
 	chkDecDigits->GetFont().SetFamily(L"Tahoma");
 	chkDecDigits->GetFont().SetSize(10);
 	chkDecDigits->SetParentFont(false);
@@ -391,7 +395,7 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 
 	gbAngleUnit = new nlib::Groupbox();
 	gbAngleUnit->SetBounds(nlib::Rect(236, 7, 492, 53));
-	gbAngleUnit->SetText(L"Angles in");
+	gbAngleUnit->SetText(lt.GetTranslationFor(FCT_ANGLEF));
 	gbAngleUnit->SetPadding(nlib::Rect(0, 0, 0, 0));
 	gbAngleUnit->GetFont().SetFamily(L"Tahoma");
 	gbAngleUnit->GetFont().SetSize(10);
@@ -402,49 +406,49 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	rdDeg = new nlib::Radiobox();
 	rdDeg->SetTag(0);
 	rdDeg->SetBounds(nlib::Rect(11, 19, 59, 35));
-	rdDeg->SetText(L"De&g");
+	rdDeg->SetText(lt.GetTranslationFor(FCT_DEG));
 	rdDeg->GetFont().SetFamily(L"Tahoma");
 	rdDeg->GetFont().SetSize(10);
 	rdDeg->SetParentFont(false);
 	rdDeg->SetTabOrder(0);
-	rdDeg->SetTooltipText(L"Degrees");
+	rdDeg->SetTooltipText(lt.GetTranslationFor(FCT_TIPDEG));
 	rdDeg->SetChecked(true);
 	rdDeg->SetParent(gbAngleUnit);
 
 	rdRad = new nlib::Radiobox();
 	rdRad->SetTag(1);
 	rdRad->SetBounds(nlib::Rect(59, 19, 114, 35));
-	rdRad->SetText(L"&Rad");
+	rdRad->SetText(lt.GetTranslationFor(FCT_RAD));
 	rdRad->GetFont().SetFamily(L"Tahoma");
 	rdRad->GetFont().SetSize(10);
 	rdRad->SetParentFont(false);
 	rdRad->SetTabOrder(1);
-	rdRad->SetTooltipText(L"Radians");
+	rdRad->SetTooltipText(lt.GetTranslationFor(FCT_TIPRAD));
 	rdRad->SetParent(gbAngleUnit);
 
 	rdGrad = new nlib::Radiobox();
 	rdGrad->SetTag(2);
 	rdGrad->SetBounds(nlib::Rect(116, 19, 172, 35));
-	rdGrad->SetText(L"&Grad");
+	rdGrad->SetText(lt.GetTranslationFor(FCT_GRAD));
 	rdGrad->GetFont().SetFamily(L"Tahoma");
 	rdGrad->GetFont().SetSize(10);
 	rdGrad->SetParentFont(false);
 	rdGrad->SetTabOrder(2);
-	rdGrad->SetTooltipText(L"360º = 400 grad");
+	rdGrad->SetTooltipText(lt.GetTranslationFor(FCT_TIPGRAD));
 	rdGrad->SetParent(gbAngleUnit);
 
 
 	rdTurn = new nlib::Radiobox();
 	rdTurn->SetTag(3);
 	rdTurn->SetBounds(nlib::Rect(184, 19, 248, 37));
-	rdTurn->SetText(L"&Turns");
+	rdTurn->SetText(lt.GetTranslationFor(FCT_TURN));
 	rdTurn->SetTabOrder(3);
-	rdTurn->SetTooltipText(L"360º = 1 turn");
+	rdTurn->SetTooltipText(lt.GetTranslationFor(FCT_TIPTURN));
 	rdTurn->SetParent(gbAngleUnit);
 
 	gbDisplayFormat = new nlib::Groupbox();
 	gbDisplayFormat->SetBounds(nlib::Rect(236, 59, 492, 105));
-	gbDisplayFormat->SetText(L"Display as");
+	gbDisplayFormat->SetText(lt.GetTranslationFor(FCT_DISPLAS));
 	gbDisplayFormat->SetPadding(nlib::Rect(0, 0, 0, 0));
 	gbDisplayFormat->GetFont().SetFamily(L"Tahoma");
 	gbDisplayFormat->GetFont().SetSize(10);
@@ -454,35 +458,35 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 
 	rdNormal = new nlib::Radiobox();
 	rdNormal->SetBounds(nlib::Rect(11, 19, 91, 35));
-	rdNormal->SetText(L"Norm&al");
+	rdNormal->SetText(lt.GetTranslationFor(FCT_NORMAL));
 	rdNormal->GetFont().SetFamily(L"Tahoma");
 	rdNormal->GetFont().SetSize(10);
 	rdNormal->SetParentFont(false);
 	rdNormal->SetTabOrder(0);
 	rdNormal->SetChecked(true);
-	rdNormal->SetTooltipText(L"Exponent display with 10's power");
+	rdNormal->SetTooltipText(lt.GetTranslationFor(FCT_TIPDPOV));
 	rdNormal->SetParent(gbDisplayFormat);
 
 	rdHtml = new nlib::Radiobox();
 	rdHtml->SetTag(1);
 	rdHtml->SetBounds(nlib::Rect(77, 20, 141, 36));
-	rdHtml->SetText(L"HT&ML");
+	rdHtml->SetText(lt.GetTranslationFor(FCT_HTML));
 	rdHtml->GetFont().SetFamily(L"Tahoma");
 	rdHtml->GetFont().SetSize(10);
 	rdHtml->SetParentFont(false);
 	rdHtml->SetTabOrder(1);
-	rdHtml->SetTooltipText(L"Exponent display with <sup>x</sup>");
+	rdHtml->SetTooltipText(lt.GetTranslationFor(FCT_TIPDHTML));
 	rdHtml->SetParent(gbDisplayFormat);
 
 	rdTex = new nlib::Radiobox();
 	rdTex->SetTag(2);
 	rdTex->SetBounds(nlib::Rect(142, 20, 190, 36));
-	rdTex->SetText(L"&TeX");
+	rdTex->SetText(lt.GetTranslationFor(FCT_TEX));
 	rdTex->GetFont().SetFamily(L"Tahoma");
 	rdTex->GetFont().SetSize(10);
 	rdTex->SetParentFont(false);
 	rdTex->SetTabOrder(2);
-	rdTex->SetTooltipText(L"Exponent display with {10^x}");
+	rdTex->SetTooltipText(lt.GetTranslationFor(FCT_TIPDTEX));
 	rdTex->SetParent(gbDisplayFormat);
 
 	rdNone = new nlib::Radiobox();
@@ -490,7 +494,7 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	rdNone->SetBounds(nlib::Rect(198, 20, 238, 36));
 	rdNone->SetText(L"E");
 	rdNone->SetTabOrder(3);
-	rdNone->SetTooltipText(L"Exponent display as 'Ex'");
+	rdNone->SetTooltipText(lt.GetTranslationFor(FCT_TIPDE));
 	rdNone->SetParent(gbDisplayFormat);
 
 	pnlHexOpt = new nlib::Panel();
@@ -501,7 +505,7 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 
 	gbHexOptions = new nlib::Groupbox();
 	gbHexOptions->SetBounds(nlib::Rect(8, 1, 490, 75));
-	gbHexOptions->SetText(L"Hexadecimal Options");
+	gbHexOptions->SetText(lt.GetTranslationFor(FCT_HEXOPTS));
 	gbHexOptions->SetPadding(nlib::Rect(0, 0, 0, 0));
 	gbHexOptions->GetFont().SetFamily(L"Tahoma");
 	gbHexOptions->GetFont().SetSize(10);
@@ -511,17 +515,17 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 
 	chkMinus = new nlib::Checkbox();
 	chkMinus->SetBounds(nlib::Rect(8, 18, 102, 35));
-	chkMinus->SetText(L"Mi&nus sign");
+	chkMinus->SetText(lt.GetTranslationFor(FCT_HEXMIN));
 	chkMinus->GetFont().SetFamily(L"Tahoma");
 	chkMinus->GetFont().SetSize(10);
 	chkMinus->SetParentFont(false);
 	chkMinus->SetTabOrder(0);
-	chkMinus->SetTooltipText(L"Absolute value of negative numbers are shown with a minus sign");
+	chkMinus->SetTooltipText(lt.GetTranslationFor(FCT_TIPNEGH));
 	chkMinus->SetParent(gbHexOptions);
 
 	chkHexPrefix = new nlib::Checkbox();
 	chkHexPrefix->SetBounds(nlib::Rect(8, 52, 111, 68));
-	chkHexPrefix->SetText(L"0x p&refix");
+	chkHexPrefix->SetText(lt.GetTranslationFor(FCT_HEXPREFIX));
 	chkHexPrefix->SetTabOrder(7);
 	chkHexPrefix->SetChecked(true);
 	chkHexPrefix->SetParent(gbHexOptions);
@@ -529,18 +533,18 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	chkLittleEndian = new nlib::Checkbox();
 	chkLittleEndian->SetTag(6);
 	chkLittleEndian->SetBounds(nlib::Rect(360, 52, 446, 69));
-	chkLittleEndian->SetText(L"&Little endian");
+	chkLittleEndian->SetText(lt.GetTranslationFor(FCT_LITTLEE));
 	chkLittleEndian->GetFont().SetFamily(L"Tahoma");
 	chkLittleEndian->GetFont().SetSize(10);
 	chkLittleEndian->SetParentFont(false);
 	chkLittleEndian->SetTabOrder(1);
-	chkLittleEndian->SetTooltipText(L"Left to right order of bytes from least significant to most significant (Intel ordering)");
+	chkLittleEndian->SetTooltipText(lt.GetTranslationFor(FCT_TIPINT));
 	chkLittleEndian->SetParent(gbHexOptions);
 
 	chkBytes = new nlib::Checkbox();
 	chkBytes->SetTag(1);
 	chkBytes->SetBounds(nlib::Rect(116, 18, 202, 35));
-	chkBytes->SetText(L"As B&ytes");
+	chkBytes->SetText(lt.GetTranslationFor(FCT_BYTES));
 	chkBytes->GetFont().SetFamily(L"Tahoma");
 	chkBytes->GetFont().SetSize(10);
 	chkBytes->SetParentFont(false);
@@ -550,7 +554,7 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	chkWords = new nlib::Checkbox();
 	chkWords->SetTag(2);
 	chkWords->SetBounds(nlib::Rect(116, 35, 202, 52));
-	chkWords->SetText(L"As &Words");
+	chkWords->SetText(lt.GetTranslationFor(FCT_WORDS));
 	chkWords->GetFont().SetFamily(L"Tahoma");
 	chkWords->GetFont().SetSize(10);
 	chkWords->SetParentFont(false);
@@ -560,7 +564,7 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	chkDWords = new nlib::Checkbox();
 	chkDWords->SetTag(3);
 	chkDWords->SetBounds(nlib::Rect(116, 52, 202, 69));
-	chkDWords->SetText(L"As DWo&rds");
+	chkDWords->SetText(lt.GetTranslationFor(FCT_DWORDS));
 	chkDWords->GetFont().SetFamily(L"Tahoma");
 	chkDWords->GetFont().SetSize(10);
 	chkDWords->SetParentFont(false);
@@ -570,28 +574,28 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	chkIEEESingle = new nlib::Checkbox();
 	chkIEEESingle->SetTag(4);
 	chkIEEESingle->SetBounds(nlib::Rect(203, 18, 321, 35));
-	chkIEEESingle->SetText(L"As IEE &754 single");
+	chkIEEESingle->SetText(lt.GetTranslationFor(FCT_SINGLE));
 	chkIEEESingle->GetFont().SetFamily(L"Tahoma");
 	chkIEEESingle->GetFont().SetSize(10);
 	chkIEEESingle->SetParentFont(false);
 	chkIEEESingle->SetTabOrder(5);
-	chkIEEESingle->SetTooltipText(L"Single precision floating point format");
+	chkIEEESingle->SetTooltipText(lt.GetTranslationFor(FCT_TIPSP));
 	chkIEEESingle->SetParent(gbHexOptions);
 
 	chkIEEEDouble = new nlib::Checkbox();
 	chkIEEEDouble->SetTag(5);
 	chkIEEEDouble->SetBounds(nlib::Rect(203, 35, 321, 52));
-	chkIEEEDouble->SetText(L"As IEE 7&54 double");
+	chkIEEEDouble->SetText(lt.GetTranslationFor(FCT_DOUBLE));
 	chkIEEEDouble->GetFont().SetFamily(L"Tahoma");
 	chkIEEEDouble->GetFont().SetSize(10);
 	chkIEEEDouble->SetParentFont(false);
 	chkIEEEDouble->SetTabOrder(6);
-	chkIEEEDouble->SetTooltipText(L"Double precision floating point format");
+	chkIEEEDouble->SetTooltipText(lt.GetTranslationFor(FCT_TIPDP));
 	chkIEEEDouble->SetParent(gbHexOptions);
 
 	Label1 = new nlib::Label();
 	Label1->SetBounds(nlib::Rect(256, 177, 313, 193));
-	Label1->SetText(L"As String:");
+	Label1->SetText(lt.GetTranslationFor(FCT_STRING));
 	Label1->GetFont().SetFamily(L"Tahoma");
 	Label1->GetFont().SetSize(10);
 	Label1->SetParentFont(false);
@@ -608,7 +612,7 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 
 	btnFont = new nlib::FlatButton();
 	btnFont->SetBounds(nlib::Rect(440, 175, 508, 198));
-	btnFont->SetText(L"&Font...");
+	btnFont->SetText(lt.GetTranslationFor(FCT_FONT));
 	btnFont->GetFont().SetFamily(L"Tahoma");
 	btnFont->GetFont().SetSize(10);
 	btnFont->SetParentFont(false);
@@ -678,6 +682,8 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	miShowHexOpts->OnClick = CreateEvent(this, &TfrmMain::miShowHexOptsClick);
 	miShowHist->OnClick = CreateEvent(this, &TfrmMain::miShowHistClick);
 	miHistOpts->OnClick = CreateEvent(this, &TfrmMain::miHistOptsClick);
+	miSetEn->OnClick = CreateEvent(this, &TfrmMain::miSetEnClick);
+	miSetHun->OnClick = CreateEvent(this, &TfrmMain::miSetHunClick);
 	miLocale->OnClick = CreateEvent(this, &TfrmMain::miSetLocale);
 	miCharFont->OnClick = CreateEvent(this, &TfrmMain::miCharFontClick);
 	miAbout->OnClick = CreateEvent(this, &TfrmMain::miAboutClick);
@@ -786,7 +792,10 @@ TfrmMain::TfrmMain()
         ShowHexOptions(false);
     }
     slHistory.LoadFromFile(UserDir() + FalconCalc_HIST_FILE);
-
+		// add max 20 items from slHistory to combo box
+	for (int i = 0; i < slHistory.size() && i < 20; i++)
+		if (cbInfix->Text() != slHistory[i].ToWideString())
+			cbInfix->AddItem(slHistory[i].ToWideString(), nullptr);
     _added = false;
 
 }
@@ -932,6 +941,107 @@ void TfrmMain::_ShowMessageOnAllPanels(wstring s)
     edtChars->SetText(L"");
 }
 
+/*=============================================================
+ * TASK   : when language cjange change all texts
+ * PARAMS :
+ * EXPECTS:
+ * GLOBALS:
+ * RETURNS:
+ * REMARKS:
+ *------------------------------------------------------------*/
+void TfrmMain::_SetupForLanguage()
+{
+	trigger.SetLanguage(lt.GetLanguage());	// for error messages
+
+	miSetEn->SetChecked(lt.GetLanguage() == Language::en);
+	miSetHun->SetChecked(lt.GetLanguage() == Language::hu);
+
+	miCopyDec->SetText(lt.GetTranslationFor(FCT_COPYDEC));
+	miCopyHex->SetText(lt.GetTranslationFor(FCT_COPYHEX));
+	miCopyOct->SetText(lt.GetTranslationFor(FCT_COPYOCT));
+	miCopyBin->SetText(lt.GetTranslationFor(FCT_COPYBIN));
+	miCopyText->SetText(lt.GetTranslationFor(FCT_COPYTEXT));
+	miFile->SetText(lt.GetTranslationFor(FCT_FILE));
+	miExit->SetText(lt.GetTranslationFor(FCT_EXIT));
+	miEdit->SetText(lt.GetTranslationFor(FCT_EDIT));
+	miCopy->SetText(lt.GetTranslationFor(FCT_COPYEXPR));
+	miPaste->SetText(lt.GetTranslationFor(FCT_PASTEEXPR));
+	miAppend->SetText(lt.GetTranslationFor(FCT_APPEND));
+	mnuEditCopy->SetText(lt.GetTranslationFor(FCT_EDITCOPY));
+	miCopyDecimal->SetText(lt.GetTranslationFor(FCT_COPYDEC));
+	miCopyHexadecimal->SetText(lt.GetTranslationFor(FCT_COPYHEX));
+	miCopyOctal->SetText(lt.GetTranslationFor(FCT_COPYOCT));
+	miCopyBinary->SetText(lt.GetTranslationFor(FCT_COPYBIN));
+	miData->SetText(lt.GetTranslationFor(FCT_DATA));
+	miEditVars->SetText(lt.GetTranslationFor(FCT_EDITVARS));
+	miEditFuncs->SetText(lt.GetTranslationFor(FCT_EDITFUNCS));
+	miClearHist->SetText(lt.GetTranslationFor(FCT_CLEARHIST));
+	miView->SetText(lt.GetTranslationFor(FCT_VIEW));
+	miShowDecOpts->SetText(lt.GetTranslationFor(FCT_SHOWDECOPTS));
+	miShowHexOpts->SetText(lt.GetTranslationFor(FCT_SHOWHEXOPTS));
+	miHistory->SetText(lt.GetTranslationFor(FCT_HISTORY));
+	miShowHist->SetText(lt.GetTranslationFor(FCT_SHOWHIST));
+	miHistOpts->SetText(lt.GetTranslationFor(FCT_HISTOPTS));
+	mnuOptions->SetText(lt.GetTranslationFor(FCT_OPTIONS));
+	miLanguage->SetText(lt.GetTranslationFor(FCT_LANGUAGE));
+	miLocale->SetText(lt.GetTranslationFor(FCT_LOCALE));
+	miSetEn->SetText(lt.GetTranslationFor(FCT_SETEN));
+	miSetHun->SetText(lt.GetTranslationFor(FCT_SETHUN));
+	miCharFont->SetText(lt.GetTranslationFor(FCT_CHARFONT));
+	miHelp->SetText(lt.GetTranslationFor(FCT_HELP));
+	miAbout->SetText(lt.GetTranslationFor(FCT_ABOUT));
+	miGenHelp->SetText(lt.GetTranslationFor(FCT_GENHELP));
+	btnOpenHexOptions->SetText(lt.GetTranslationFor(FCT_SHOWHEXOPTS));
+	btnOpenDecOptions->SetText(lt.GetTranslationFor(FCT_SHOWDECOPTS));
+	gbResults->SetText(lt.GetTranslationFor(FCT_DEC));
+	btnDecimal->SetText(lt.GetTranslationFor(FCT_DEC));
+	btnDecimal->SetTooltipText(lt.GetTranslationFor(FCT_TIPDEC));
+	btnHexadecimal->SetText(lt.GetTranslationFor(FCT_HEX));
+	btnHexadecimal->SetTooltipText(lt.GetTranslationFor(FCT_TIPHEX));
+	btnOctal->SetText(lt.GetTranslationFor(FCT_OCT));
+	btnOctal->SetTooltipText(lt.GetTranslationFor(FCT_TIPOCT));
+	btnBinary->SetText(lt.GetTranslationFor(FCT_BIN));
+	btnBinary->SetTooltipText(lt.GetTranslationFor(FCT_TIPBIN));
+	gbDecOptions->SetText(lt.GetTranslationFor(FCT_DEC));
+	chkSep->SetText(lt.GetTranslationFor(FCT_THOUSAND));
+	chkDecDelim->SetText(lt.GetTranslationFor(FCT_DECSEP));
+	chkSci->SetText(lt.GetTranslationFor(FCT_SCI));
+	chkEng->SetText(lt.GetTranslationFor(FCT_ENG));
+	chkDecDigits->SetText(lt.GetTranslationFor(FCT_DDIGITS));
+	gbAngleUnit->SetText(lt.GetTranslationFor(FCT_ANGLEF));
+	rdDeg->SetText(lt.GetTranslationFor(FCT_DEG));
+	rdDeg->SetTooltipText(lt.GetTranslationFor(FCT_TIPDEG));
+	rdRad->SetText(lt.GetTranslationFor(FCT_RAD));
+	rdRad->SetTooltipText(lt.GetTranslationFor(FCT_TIPRAD));
+	rdGrad->SetText(lt.GetTranslationFor(FCT_GRAD));
+	rdGrad->SetTooltipText(lt.GetTranslationFor(FCT_TIPGRAD));
+	rdTurn->SetText(lt.GetTranslationFor(FCT_TURN));
+	rdTurn->SetTooltipText(lt.GetTranslationFor(FCT_TIPTURN));
+	gbDisplayFormat->SetText(lt.GetTranslationFor(FCT_DISPLAS));
+	rdNormal->SetText(lt.GetTranslationFor(FCT_NORMAL));
+	rdNormal->SetTooltipText(lt.GetTranslationFor(FCT_TIPDPOV));
+	rdHtml->SetText(lt.GetTranslationFor(FCT_HTML));
+	rdHtml->SetTooltipText(lt.GetTranslationFor(FCT_TIPDHTML));
+	rdTex->SetText(lt.GetTranslationFor(FCT_TEX));
+	rdTex->SetTooltipText(lt.GetTranslationFor(FCT_TIPDTEX));
+	rdNone->SetTooltipText(lt.GetTranslationFor(FCT_TIPDE));
+	gbHexOptions->SetText(lt.GetTranslationFor(FCT_HEXOPTS));
+	chkMinus->SetText(lt.GetTranslationFor(FCT_HEXMIN));
+	chkMinus->SetTooltipText(lt.GetTranslationFor(FCT_TIPNEGH));
+	chkHexPrefix->SetText(lt.GetTranslationFor(FCT_HEXPREFIX));
+	chkLittleEndian->SetText(lt.GetTranslationFor(FCT_LITTLEE));
+	chkLittleEndian->SetTooltipText(lt.GetTranslationFor(FCT_TIPINT));
+	chkBytes->SetText(lt.GetTranslationFor(FCT_BYTES));
+	chkWords->SetText(lt.GetTranslationFor(FCT_WORDS));
+	chkDWords->SetText(lt.GetTranslationFor(FCT_DWORDS));
+	chkIEEESingle->SetText(lt.GetTranslationFor(FCT_SINGLE));
+	chkIEEESingle->SetTooltipText(lt.GetTranslationFor(FCT_TIPSP));
+	chkIEEEDouble->SetText(lt.GetTranslationFor(FCT_DOUBLE));
+	chkIEEEDouble->SetTooltipText(lt.GetTranslationFor(FCT_TIPDP));
+	Label1->SetText(lt.GetTranslationFor(FCT_STRING));
+	btnFont->SetText(lt.GetTranslationFor(FCT_FONT));
+}
+
 void TfrmMain::cbInfixTextChanged(void *sender, nlib::EventParameters param)
 {
 	if (_busy)
@@ -949,7 +1059,7 @@ void TfrmMain::cbInfixTextChanged(void *sender, nlib::EventParameters param)
 		int n = cbInfix->SelStart();
 		lengine->infix = s;
         RealNumber res = lengine->Calculate();
-        gbResults->SetText(L"Results");
+        gbResults->SetText(lt.GetTranslationFor(FCT_RESULT));
         _ShowResults();
 
 		cbInfix->SetSelLength(0);
@@ -962,9 +1072,9 @@ void TfrmMain::cbInfixTextChanged(void *sender, nlib::EventParameters param)
         gbResults->SetText(s);
         _ShowMessageOnAllPanels(L"???");
     }
-    catch(Trigger_Type tt)
+    catch(TextIDs tt)
     {
-        gbResults->SetText(triggerMap[tt].ToWideString());
+        gbResults->SetText(lt.GetTranslationFor(tt));
         _ShowMessageOnAllPanels(L"???");
     }
     catch(...)
@@ -979,6 +1089,7 @@ void TfrmMain::cbInfixKeyDown(void* sender, nlib::KeyParameters param)
 	_watchdog = 0;   // reset counter
 	if (cbInfix->Text().empty())
 		return;
+	lengine->resultValid = LittleEngine::ResValid::rvOk;
 
 	if (param.keycode == VK_RETURN)
 		_AddToHistory(cbInfix->Text());
@@ -1423,6 +1534,7 @@ static const SmartString
 		OPTIONS("options="),
 		HISTOPTIONS("histOptions="),
 		VARCOLS("varCols="),
+		LANGUAGE("language="),
 		LAST("last=");
 
 
@@ -1502,6 +1614,7 @@ bool TfrmMain::_SaveState(SmartString name)
      if(fs.fail())
         return false;
     fs << STATE_VER_STRING << "\n";
+	fs << LANGUAGE << lt.GetLanguage() << "\n";
 	fs << MAINFORMAT<< (int)lengine->displayFormat.mainFormat << "\n";
 
 	//int u = UpDown1->Position() + (chkDecDigits->Checked() ? 0x100 : 0); // 0x100: checked state. must use Position as num_digits may be -1
@@ -1532,6 +1645,8 @@ bool TfrmMain::_SaveState(SmartString name)
         fs << LAST <<  SmartString(cbInfix->Text()) << "\n";
     return true;
 }
+
+
 bool TfrmMain::_LoadState(SmartString name)
 {
 	std::ifstream fs(name.toUtf8String(), ios_base::in);
@@ -1548,6 +1663,30 @@ bool TfrmMain::_LoadState(SmartString name)
     int n, val =0;
 
 	SmartStringVector data;
+	auto language = [&]()
+	{
+		if (n == 2 && data[0] == LANGUAGE)	// only one field
+		{
+			int val = std::stoi(data[1].toUtf8String());
+			Language lang = (Language)val;
+			switch(val)
+			{
+				case 0: lt.SetLanguage(Language::en);
+					miSetEn->SetChecked(false);
+					break;
+				case 1:	lt.SetLanguage(Language::hu);
+					miSetEn->SetChecked(false);
+					miSetHun->SetChecked(true);
+					break;
+				default:
+					val = -1;
+			}
+			_SetupForLanguage();
+			
+			return true;
+		}
+		return false;
+		};
 	auto mainFormat = [&]()	-> bool // returns true if not processed, false if processed
 	{
 		if (n==2 && data[0] == MAINFORMAT)	// only one field
@@ -1753,6 +1892,7 @@ bool TfrmMain::_LoadState(SmartString name)
 		if (n==2 && data[0] == LAST)
 		{
 			cbInfix->SetText((lastinfix = data[1]).ToWideString());
+			cbInfixTextChanged(nullptr, nlib::EventParameters());
 		}
 	};
 
@@ -1762,15 +1902,16 @@ bool TfrmMain::_LoadState(SmartString name)
 	{
 		if (data[0][data[0].length() - 1] == SCharT('='))	// valid line
 		{
-			if(!mainFormat() )
-				if(!decFormat())
-					if(!hexFormat())
-						if(!fontName())
-							if(!fontData())
-								if(!options())
-									if(!histOptions())
-										if(!varCols())
-											last(wsLlastInfix);
+			if (!language())
+				if(!mainFormat() )
+					if(!decFormat())
+						if(!hexFormat())
+							if(!fontName())
+								if(!fontData())
+									if(!options())
+										if(!histOptions())
+											if(!varCols())
+												last(wsLlastInfix);
 		}
 	}
 
@@ -1791,6 +1932,12 @@ void TfrmMain::_AddToHistory(wstring text)
 	if (_minCharLength >= ss.length())	// do not add to short strings
 		return;
 
+	if (lengine->resultValid != LittleEngine::ResValid::rvOk)
+	{
+		_watchdog = 0;
+		return;
+	}
+
 	if (LittleEngine::variables.count(ss) || LongNumber::constantsMap.count(ss) )		// single, already defined variable?
 	{
 		_added = true;	// so won't try it to add again
@@ -1799,7 +1946,11 @@ void TfrmMain::_AddToHistory(wstring text)
 	}
 
     int n;
-    if( (n = slHistory.IndexOf(ss)) >= 0)	// found
+	bool added = false;
+    if( (n = cbInfix->Items().IndexOf(ss.ToWideString())) == -1)	// not found
+		cbInfix->Items().Insert(0, ss.ToWideString());	// and to combobox
+
+    if( (n = slHistory.IndexOf(ss)) >= 0)	// found in history
     {
         if(n == 0 && slHistory.IsSorted())	// already at top
             return;							// nothing to do
@@ -1810,10 +1961,13 @@ void TfrmMain::_AddToHistory(wstring text)
 		SmartString ws = slHistory[0];		// list may be truncated after adding a new line to it
 		slHistory.Delete(0);	// delete original top line
 		slHistory.Add(ws);					// and insert into string
+		added = true;						// do not add twice
 	}
+	if (!added)	// then not sorted or already added original top line
+		slHistory.insert(slHistory.begin(), ss);	// insert new expression to top of list
 
-    slHistory.insert(slHistory.begin(), ss);				// then insert new expression to top of list
-	cbInfix->Items().Insert(0, ss.ToWideString());	// and to combobox
+	if (_maxHistDepth && slHistory.size() > _maxHistDepth)		// check if history is full
+		slHistory.erase(slHistory.begin() + _maxHistDepth, slHistory.end());
 
     _added = true;
     _watchdog = 0;
@@ -1880,6 +2034,18 @@ void TfrmMain::chkIEEESingleClick(void *sender, nlib::EventParameters param)
 	chkIEEEDouble->SetChecked(false);
 	lengine->displayFormat.trippleE =  chkIEEESingle->Checked() ? IEEEFormat::rntHexIEEE754Single : IEEEFormat::rntHexNotIEEE;
 	_ShowResults();
+}
+
+void TfrmMain::miSetEnClick(void* sender, nlib::EventParameters param)
+{
+	if (lt.SetLanguage(Language::en))	// then set it up
+	_SetupForLanguage();
+}
+
+void TfrmMain::miSetHunClick(void* sender, nlib::EventParameters param)
+{
+	if (lt.SetLanguage(Language::hu))	// then set it up
+		_SetupForLanguage();
 }
 
 void TfrmMain::chkLittleEndianClick(void *sender, nlib::EventParameters param)
