@@ -3591,7 +3591,7 @@ namespace NLIBNS
 
     void Control::SetText(const std::wstring &newtext)
     {
-        if (!handle && text == newtext)
+        if (!handle && text == newtext)  // SA was: &&
             return;
 
         if (handle != NULL)
@@ -5520,6 +5520,9 @@ namespace NLIBNS
             CreateChildHandles();
             break;
         case WM_COMMAND:
+            // WParam: HI word notification code (0:Menu, 1: accelerator, 
+            //          other), LOQ word : control ID
+            // LParam: 0 for menus and accel, handle for control
             if (lParam) {
                 control = ControlFromHandle((HWND)lParam);
                 if (control)

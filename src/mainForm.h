@@ -163,6 +163,7 @@ N_PUBLIC: /* Designer generated list of public members. Do not edit by hand. */
 	void cbThousandSepChanged(void* sender, nlib::EventParameters param);
 	void chkSepClick(void* sender, nlib::EventParameters param);
 	void btnCopyFormatClick(void* sender, nlib::EventParameters param);
+	void cbInfixChanged(void* sender, nlib::EventParameters param);
 	void cbInfixTextChanged(void* sender, nlib::EventParameters param);
 	void cbInfixKeyDown(void* sender, nlib::KeyParameters param);
 	void btnClearInfixClick(void* sender, nlib::EventParameters param);
@@ -211,6 +212,7 @@ private:
 	void _ShowResults();
 	void _ShowMessageOnAllPanels(std::wstring s);
 	void _SetupForLanguage();
+	void _CBInfixChanged(void* pCBIndexChangedParams = nullptr);
 
 N_PRIVATE: /* Designer generated list of private members. Do not edit by hand. */
 	void InitializeFormAndControls(); /* Control initializations. Do not remove. */

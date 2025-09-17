@@ -2,7 +2,7 @@
 // multi language support for calculator
 // currently only english and hungarian
 
-enum Language { en = 0, hu = 1 };		// 0: english, 1: hungarian
+enum Language { none = -1, en = 0, hu = 1 };		// 0: english, 1: hungarian
 
 enum TextIDs {
 	FCT_ABOUT				,
@@ -24,7 +24,9 @@ enum TextIDs {
 	FCT_DATA				,
 	FCT_DDIGITS			,
 	FCT_DEC				,
+	FCT_DECOPTS				,
 	FCT_SHOWDECOPTS		,
+	FCT_DECOPTSOPENER	,
 	FCT_DECSEP			,
 	FCT_DEG				,
 	FCT_DISPLAS			,
@@ -43,8 +45,9 @@ enum TextIDs {
 	FCT_HELP				,
 	FCT_HEX				,
 	FCT_HEXMIN			,
-	FCT_SHOWHEXOPTS		,
 	FCT_HEXOPTS			,
+	FCT_SHOWHEXOPTS		,
+	FCT_HEXOPTSOPENER			,
 	FCT_HEXPREFIX			,
 	FCT_HISTOPTS			,
 	FCT_HISTORY			,
@@ -135,7 +138,7 @@ public:
 	wchar_t* GetHelpText() const;		// returns the help text in the current language
 	wchar_t* GetTranslationFor(TextIDs id) const; // returns the text in the current language
 private:
-	Language _lang= Language::en;
+	Language _lang= Language::none;
 };
 
 extern LanguageTexts lt;

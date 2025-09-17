@@ -22,7 +22,7 @@ void TfrmHelp::InitializeFormAndControls() /* Control initialization function ge
 	SetShowPosition(nlib::fspActiveMonitorCenter);
 	SetBorderStyle(nlib::fbsDialog);
 	SetKeyPreview(true);
-	SetClientRect(nlib::Rect(0, 0, 652, 472));
+	SetClientRect(nlib::Rect(0, 0, 656, 472));
 
 	MyLoadWindowIcon(this);
 

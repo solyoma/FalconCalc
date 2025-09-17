@@ -79,8 +79,7 @@ static wchar_t* __helpTexts[2] = {
                     L"  kc  - Coulomb állandó (=1/4π eps0) [N m^2/C^2], LA  - Avogadro szám [1/mol],\n"
                     L"  rf  - Föld sugara [m], RG  - moláris gázállandó (8.31 J/ mol K), Rs - a Nap sugara\n"
                     L"  u    - atomi tömegegység [1]\n\n"
-                    L"Bárhány saját állandót és függvényt definiálhatunk a beépített és addig definiáltak és az összes művelet használatával (ha értelmezhető)\n\n."
-                    L"Any number of user constants and functions may be defined with any valid arithmetic formula including other constants and variables:\n\n"
+                    L"Bárhány saját állandót és függvényt definiálhatunk a beépített és addig definiáltak használatával (ha értelmezhető)\n\n."
                     L"Ezek formátuma:   név = kifejezés:megjegyzés:egység, ahol a név egy változó, vagy egy függvény neve és a függvényparaméterek: 'a(x,y)'\n\n"
                     L"Példák:\n"
                     L"      constR=8.31446261815324:Universal gas constant:J/K/mol\n"
@@ -123,15 +122,15 @@ static _LanguageTexts_private __texts[] = {
  { FCT_HELP,				L"&Help",							L"S&úgó" },
  { FCT_ABOUT,		    	L"&About",							L"&Névjegy" },
  { FCT_GENHELP,				L"&General Help",					L"Á&ltalános súgó" },
- { FCT_SHOWHEXOPTS,			L"-----------Hex. options------------------",				
-                            L"-----------Hex. opciók------------------" },
- { FCT_SHOWDECOPTS,			L"-----------Decimal options--------------",				
-                            L"-----------Decimális opciók--------------" },
+ { FCT_HEXOPTSOPENER,		L"─────Hexadecimal options──────",				
+                            L"─────Hexadecimális opciók─────" },
+ { FCT_DECOPTSOPENER,		L"──────Decimal options────────",				
+                            L"──────Decimális opciók───────" },
  { FCT_DEC,				 	L"Deci&mal",						L"Deci&mális" },
  { FCT_HEX,				 	L"He&xadecimal",					L"He&xadecimális" },
  { FCT_OCT,				 	L"O&ctal",							L"O&ctális" },
  { FCT_BIN,				 	L"&Binary",							L"&Bináris" },
- { FCT_DEC,				 	L"Decimal options",					L"Decimalális optcók" },
+ { FCT_DECOPTS,			 	L"Decimal options",					L"Decimalális optcók" },
  { FCT_THOUSAND,			L"Use thousand se&parator:",		L"Ezres el&választó:" },
  { FCT_DECSEP,				L"&Use decimal separator",			L"Tizedes elválasztó" },
  { FCT_SCI,				 	L"&Scientific format",				L"&Tudományos formátum" },
@@ -249,7 +248,7 @@ wchar_t* LanguageTexts::GetHelpText() const
 
 wchar_t* LanguageTexts::GetTranslationFor(TextIDs id) const
 {
-    if(!((int)id >= 0 && (int)id < sizeof(__texts)/sizeof(__texts[0])))
+    if((int)_lang < 0 || !((int)id >= 0 && (int)id < sizeof(__texts)/sizeof(__texts[0])))
 		return L"";
 	if (__texts[(int)id].id != id)
     {

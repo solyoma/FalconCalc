@@ -2921,12 +2921,25 @@ namespace NLIBNS
     {
     }
 
-    bool ListControl::HandleCommand(Control *parent, WPARAM wParam)
+/*=============================================================
+ * TASK   : handle WM_COMMAND messages
+ * PARAMS : parent:
+ *          wParam: HI word notification code (0:Menu, 1: accelerator, 
+ *              other), 
+ *                  LO word: ID( menu ID, accelrator ID, control ID)
+ * EXPECTS:
+ * GLOBALS:
+ * RETURNS:
+ * REMARKS:
+ *          * LParam: 0 for menus and accel, handle for control
+ *            not used here
+ *------------------------------------------------------------*/
+    bool ListControl::HandleCommand(Control* parent, WPARAM wParam)     // WM_COMMAND
     {
         if (base::HandleCommand(parent, wParam))
             return true;
 
-        if (HIWORD(wParam) == listnotify[lcnChanged])
+        if (HIWORD(wParam) == listnotify[lcnChanged])   // LBN_SELCHANGED
         {
             SelChanged();
             return true;
