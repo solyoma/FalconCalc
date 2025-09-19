@@ -188,14 +188,14 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	miHistory = mnuMain->Add(lt.GetTranslationFor(FCT_HISTORY));
 	miShowHist = miHistory->Add(lt.GetTranslationFor(FCT_SHOWHIST));
 	miShowHist->SetShortcut(L"Alt+3");
-	separator3 = miHistory->Add(L"-");
-	miHistOpts = miHistory->Add(lt.GetTranslationFor(FCT_HISTOPTS));
 	mnuOptions = mnuMain->Add(lt.GetTranslationFor(FCT_OPTIONS));
 	miLanguage = mnuOptions->Add(lt.GetTranslationFor(FCT_LANGUAGE));
+	separator3 = mnuOptions->Add(L"-");
+	miHistOpts = mnuOptions->Add(lt.GetTranslationFor(FCT_HISTOPTS));
 	miLocale = mnuOptions->Add(lt.GetTranslationFor(FCT_LOCALE));
+	miCharFont = mnuOptions->Add(lt.GetTranslationFor(FCT_CHARFONT));
 	miSetEn  = miLanguage->Add(lt.GetTranslationFor(FCT_SETEN));
 	miSetHun = miLanguage->Add(lt.GetTranslationFor(FCT_SETHUN));
-	miCharFont = mnuOptions->Add(lt.GetTranslationFor(FCT_CHARFONT));
 	miHelp = mnuMain->Add(lt.GetTranslationFor(FCT_HELP));
 	miAbout = miHelp->Add(lt.GetTranslationFor(FCT_ABOUT));
 	miGenHelp = miHelp->Add(lt.GetTranslationFor(FCT_GENHELP));
@@ -967,6 +967,7 @@ bool TfrmMain::_LoadState(SmartString name)
 			Language lang = (Language)val;
 			switch(val)
 			{
+				default:
 				case 0: lt.SetLanguage(Language::en);
 					miSetEn->SetChecked(false);
 					break;
@@ -974,8 +975,6 @@ bool TfrmMain::_LoadState(SmartString name)
 					miSetEn->SetChecked(false);
 					miSetHun->SetChecked(true);
 					break;
-				default:
-					val = -1;
 			}
 			_SetupForLanguage();
 			
@@ -1569,7 +1568,7 @@ void TfrmMain::tbExitClick(void *sender, nlib::EventParameters param)
 
 void TfrmMain::tbHistoryClick(void *sender, nlib::EventParameters param)
 {
-	miShowHistClick(sender,param);
+	miShowHistClick(miShowHist,param);
 }
 
 void TfrmMain::tbPasteClick(void *sender, nlib::EventParameters param)

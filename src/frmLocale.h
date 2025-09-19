@@ -9,15 +9,15 @@ public:
 	std::wstring LocaleName() const;
 
 N_PUBLIC: /* Designer generated list of public members. Do not edit by hand. */
-	nlib::Button *btnSave;
-	nlib::Button *btnCancel;
-	nlib::Label *lblText;
-	nlib::Label *lblInput;
-	nlib::Edit *edtLocale;
-	nlib::Label *lblOldLocale;
 	nlib::Panel* Panel1;
 	nlib::Label *Label1;
 	nlib::Label *Label2;
+	nlib::Label *lblOldLocale;				// "Current locale"
+	nlib::Label *lblCurLocaleName;			// " C "
+	nlib::Label *lblNewLocale;				// "New locale"
+	nlib::Edit *edtLocale;
+	nlib::Button *btnSave;
+	nlib::Button *btnCancel;
 
 	void btnSaveClick(void *sender, nlib::EventParameters param);
 	void btnCancelClick(void *sender, nlib::EventParameters param);

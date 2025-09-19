@@ -7,8 +7,8 @@
     type Form
     {
         Name = "frmMain"
-        Left = "686"
-        Top = "510"
+        Left = "682"
+        Top = "628"
         Text = "FalconCalc"
         class Font
         {
@@ -39,6 +39,59 @@
             {
                 Family = "Tahoma"
                 Size = "8"
+            }
+        }
+
+        type PopupMenu
+        {
+            Name = "pmCopy"
+            AccessLevel = "alPublic"
+
+            subtype Items : MenuItem
+            {
+                Name = "miCopyDec"
+                AccessLevel = "alPublic"
+                Text = "Copy &Decimal"
+                event OnClick = "miCopyDecClick"
+            }
+
+            subtype Items : MenuItem
+            {
+                Name = "miCopyHex"
+                AccessLevel = "alPublic"
+                Text = "Copy He&xadecimal"
+                event OnClick = "miCopyHexClick"
+            }
+
+            subtype Items : MenuItem
+            {
+                Name = "miCopyOct"
+                AccessLevel = "alPublic"
+                Text = "Copy &Octal"
+                event OnClick = "miCopyOctClick"
+            }
+
+            subtype Items : MenuItem
+            {
+                Name = "miCopyBin"
+                AccessLevel = "alPublic"
+                Text = "Copy &Binary"
+                event OnClick = "miCopyBinClick"
+            }
+
+            subtype Items : MenuItem
+            {
+                Name = "miCopySep"
+                AccessLevel = "alPublic"
+                Text = "-"
+            }
+
+            subtype Items : MenuItem
+            {
+                Name = "miCopyText"
+                AccessLevel = "alPublic"
+                Text = "Copy &Formula"
+                event OnClick = "miCopyClick"
             }
         }
 
@@ -287,59 +340,6 @@
                     Shortcut = "F1"
                     event OnClick = "miGenHelpClick"
                 }
-            }
-        }
-
-        type PopupMenu
-        {
-            Name = "pmCopy"
-            AccessLevel = "alPublic"
-
-            subtype Items : MenuItem
-            {
-                Name = "miCopyDec"
-                AccessLevel = "alPublic"
-                Text = "Copy &Decimal"
-                event OnClick = "miCopyDecClick"
-            }
-
-            subtype Items : MenuItem
-            {
-                Name = "miCopyHex"
-                AccessLevel = "alPublic"
-                Text = "Copy He&xadecimal"
-                event OnClick = "miCopyHexClick"
-            }
-
-            subtype Items : MenuItem
-            {
-                Name = "miCopyOct"
-                AccessLevel = "alPublic"
-                Text = "Copy &Octal"
-                event OnClick = "miCopyOctClick"
-            }
-
-            subtype Items : MenuItem
-            {
-                Name = "miCopyBin"
-                AccessLevel = "alPublic"
-                Text = "Copy &Binary"
-                event OnClick = "miCopyBinClick"
-            }
-
-            subtype Items : MenuItem
-            {
-                Name = "miCopySep"
-                AccessLevel = "alPublic"
-                Text = "-"
-            }
-
-            subtype Items : MenuItem
-            {
-                Name = "miCopyText"
-                AccessLevel = "alPublic"
-                Text = "Copy &Formula"
-                event OnClick = "miCopyClick"
             }
         }
 
@@ -1805,7 +1805,7 @@
         BorderStyle = "fbsDialog"
         KeyPreview = "True"
         UnitName = "help"
-        DesignVisible = "True"
+        DesignVisible = "False"
         LastExportedName = "frmHelp"
         LastExportedEvents = "3100340033007C00789CF361486448624865C8613066700692990CC90CD90C350C3E38C4F3C0EC24062B2074652803AAC86328610800AA2E02E25C20BF04888B188A816AD380742E8307D89402145370CB906FBE3790AE647061C8672807EA21248B6C0F440E9B1D002ACD380D"
         CreationOrder = "4"
@@ -2487,27 +2487,27 @@
     type Form
     {
         Name = "frmLocale"
-        Left = "597"
-        Top = "607"
+        Left = "724"
+        Top = "606"
         Text = "FalconCalc Locale"
         WantedKeyTypes = "wkArrows, wkTab, wkEnter, wkEscape, wkOthers"
         BorderStyle = "fbsDialog"
         BorderButtons = "fbbSystemMenu"
         UnitName = "frmLocale"
-        DesignVisible = "False"
+        DesignVisible = "True"
         LastExportedName = "frmLocale"
         LastExportedEvents = "3100360030007C00789C958DD10A40501044CF777995271E942F70D907E11252CAC79B2829146D53BBF7CCDC714C783272668C90868A829A15F74AFCBE3B024DB4532F6F2AE720B5BA2769603C7F09F5EE953625EF1D6FF44F8F51EA4AE894CD95336269A1173739BE7AAE9D074D4FFAD4BC01E8DB3FBA"
         CreationOrder = "7"
         Icon = "240053003A005C007600650067007900650073005C00460061006C0063006F006E00430061006C0063005C007300720063005C00700072006F006700720061006D002E00690063006F00FE020000789CB592310EC3200C457FA28AB95367C61E83A10761A858938D95A3711AD43153BBD5B5814821129D92F731C6B66C240430B0B4BE42788DC08DFD9D4DB319B601975C0B233A84BC104271223EC418D94B86F20251712249C97630EAF9D86254725B8C7A5BAC02384ED35CE5FD2CF569A9225ADCDF7EDBF6B39A7ED629FDBE50E36429F3E9D6EBCBD4F8DB60D08C77B6FBB027413B227FB780FA9D0E3099B7BF63CB0F892FD8B7"
-        ClientWidth = "434"
-        ClientHeight = "223"
+        ClientWidth = "430"
+        ClientHeight = "301"
 
         type Button
         {
             Name = "btnSave"
             AccessLevel = "alPublic"
-            Left = "346"
-            Top = "160"
+            Left = "342"
+            Top = "238"
             Width = "75"
             Height = "23"
             Text = "&Save"
@@ -2521,8 +2521,8 @@
         {
             Name = "btnCancel"
             AccessLevel = "alPublic"
-            Left = "346"
-            Top = "190"
+            Left = "342"
+            Top = "268"
             Width = "75"
             Height = "23"
             Text = "&Cancel"
@@ -2535,30 +2535,30 @@
         {
             Name = "lblText"
             AccessLevel = "alPublic"
-            Left = "14"
-            Top = "149"
-            Width = "124"
+            Left = "22"
+            Top = "239"
+            Width = "154"
             Height = "15"
-            Text = "Name of current locale:"
+            Text = "A jelenlegi nyelvi környezet:"
         }
 
         type Label
         {
             Name = "lblInput"
             AccessLevel = "alPublic"
-            Left = "14"
-            Top = "173"
-            Width = "108"
+            Left = "22"
+            Top = "263"
+            Width = "117"
             Height = "15"
-            Text = "Name of new locale:"
+            Text = "Az új nyelvi környezet:"
         }
 
         type Edit
         {
             Name = "edtLocale"
             AccessLevel = "alPublic"
-            Left = "145"
-            Top = "172"
+            Left = "169"
+            Top = "262"
             Width = "80"
             Height = "23"
             Text = "C"
@@ -2570,8 +2570,8 @@
         {
             Name = "lblOldLocale"
             AccessLevel = "alPublic"
-            Left = "153"
-            Top = "149"
+            Left = "177"
+            Top = "239"
             Width = "8"
             Height = "15"
             Text = "C"
@@ -2583,8 +2583,8 @@
             AccessLevel = "alPublic"
             Left = "5"
             Top = "7"
-            Width = "424"
-            Height = "135"
+            Width = "420"
+            Height = "215"
             Text = "Panel1"
             Anchors = "caLeft, caTop, caRight"
             TabOrder = "3"
@@ -2595,10 +2595,10 @@
                 Name = "Label1"
                 AccessLevel = "alPublic"
                 Left = "14"
-                Top = "13"
-                Width = "392"
-                Height = "60"
-                Text = "The locale determines the character used for a decimal point, the ordering of the characters and the correspondance bewtween upper and lowercase letters.  Variable and function names may contain  accented or special letters in your locale that are not present in other locales and viceversa."
+                Top = "5"
+                Width = "375"
+                Height = "155"
+                Text = "A nyelvi környezet határozza meg a tizedes pont karakterét, a karakterek sorrendjét és a kis- és nagybetűk megfeleltetését. A változó és függvénynevek tartalmazhatnak ékezetes vagy speciális karaktereket az adott nyelvi környezetben, amelyek más nyelvi környezetben nem találhatók meg és fordítva."
                 Anchors = "caLeft, caTop, caRight, caBottom"
                 WordWrap = "True"
             }
@@ -2608,10 +2608,10 @@
                 Name = "Label2"
                 AccessLevel = "alPublic"
                 Left = "14"
-                Top = "77"
-                Width = "391"
-                Height = "45"
-                Text = "Locale names usually consist of two lowercase and two uppercase letters separated by an underline character. Examples: en_US and en_GB are both English locale names."
+                Top = "86"
+                Width = "380"
+                Height = "113"
+                Text = "A nyelvi környezet neve általában két kisbetűből és két nagybetűből áll, amelyeket aláhúzás választ el egymástól (például: hu_HU, en_US, de_DE). Az első rész (két kisbetű) határozza meg a nyelvet, a második rész (két nagybetű) pedig az országot vagy régiót. Ha olyan nyelvi környezetet állít be, amely nincs telepítve a rendszerén, a FalconCalc megpróbál egy hasonlót használni (például: ha az en_GB-t állítja be, de csak az en_US van telepítve, akkor az en_US-t fogja használni)."
                 Anchors = "caLeft, caTop, caRight, caBottom"
                 WordWrap = "True"
             }
