@@ -1743,6 +1743,8 @@ void TfrmMain::miHistOptsClick(void *sender, nlib::EventParameters param)
 
 	if(frmHistOptions->ShowModal() == mrOk)
     {
+		if(frmHistOptions->ClearHistory())
+			slHistory.clear();
         if(frmHistOptions->chkDepth->Checked())
         {
             _maxHistDepth = frmHistOptions->spinDepthBtn->Position();

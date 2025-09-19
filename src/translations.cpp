@@ -89,6 +89,10 @@ static wchar_t* __helpTexts[2] = {
 };
 
 static _LanguageTexts_private __texts[] = {
+ { FCT_OK,              L"O&k", L"&Rendben"},
+ { FCT_SAVE ,		    L"&Save", L"&Mentés" },
+ { FCT_CANCEL,          L"Cance&l", L"E&lvet"},
+ { FCT_CLOSE,           L"C&lose", L"Be&zárás"},
  { FCT_ABOUT,		    	L"&About",							L"&Névjegy" },
  { FCT_ANGLEF,				L"Angles in",						L"Szögek formátuma" },
  { FCT_APPEND,				L"Paste &After expression",			L"&Adat hozzáragasztás" },
@@ -227,8 +231,6 @@ static _LanguageTexts_private __texts[] = {
  { FCT_ABOUTLINE6,      L"the NLIB library © Zoltán. Sólyom",                                          L"Zoltán Sólyom NLIB © könyvtára"},
  { FCT_ABOUTLINE7,      L"This program (except NLIB) is open source (GPL3)",                           L"Ez a program az NLIB-et kivéve  Copyright (GPL3)"},
  { FCT_LOCALETITLE,		L"FalconCalc Locale", L"FalconCalc Nyelvi környezet"},
- { FCT_LOCALESAVE ,		L"&Save", L"&Mentés" },
- { FCT_LOCALECANCEL,    L"Cance&l", L"E&lvet"},
  { FCT_LOCALE1,			L"The locale determines the character used for a decimal point, the ordering of the characters"
                          " and the correspondance bewtween upper and lowercase letters. Variable and function names may"
                          " contain accented or special letters in your locale that are not present in other locales and vice-versa.", 
@@ -244,7 +246,21 @@ static _LanguageTexts_private __texts[] = {
                          " pedig az országot vagy régiót. Ha olyan nyelvi környezetet állít be, amely nincs telepítve a rendszerén, a FalconCalc"
                          " megpróbál egy hasonlót használni (például: ha az en_GB-t állítja be, de csak az en_US van telepítve, akkor az en_US-t fogja használni)." },
  { FCT_CURNAMELABEL,    L"Name of current locale:", L"A jelenlegi nyelvi környezet:" },
- { FCT_NEWNAMELABEL,    L"Name of new locale:",     L"Az új nyelvi környezet:" }
+ { FCT_NEWNAMELABEL,    L"Name of new locale:",     L"Az új nyelvi környezet:" },
+     // history options
+ { FCT_HISTOPTS_TITLE,			L"FalconCalc - History options", L"FalconCalc - Előzmények beállításai" },
+ { FCT_MAXHISTDEPTH,			L"Maximum history &depth:",L"Maximum megjegyzettek száma:"  },
+ { FCT_MAXHISTDEPTHTIP,		    L"Set the maximum number of expressions kept in the history", L"Ennyi előzmény kifejezést jegyez meg"   },
+ { FCT_AUTOSAVE,				L"Sa&ve after this interval:", L"Automatikus mentés ideje:" },
+ { FCT_AUTOSAVETIP,			    L"When unchecked, no history will be saved", L"Ha nincs bejelölve az előzményeket nem jegyzi meg"   },
+ { FCT_HHMMSS,					L"(HH:MM:SS)",L"(ÓÓ:PP:MP)" },
+ { FCT_HISTMINLENGTHLABEL,		L"&Min. length to save:",L"&Megjegyzendő minimális hossz:"   },
+ { FCT_HISTMINLENGTHTIP,		L"Expressions shorter than this will not be remembered", L"Csak ennél hosszabb kifejezéseket jegyez meg"   },
+ { FCT_HISTMINLENGTHSAVEALL,	L"(0: all)",	L"(0: mindet)"  },
+ { FCT_HISTSORTED,				L"Sorted",	L"Sorbarendezés"    },
+ { FCT_HISTAUTOSAVELABEL,		L"Automatically save history",L"Automatikusan mentse az előzményeket"   },
+ { FCT_HISTCLEAR,               L"&Discard history", L"Elő&zmények eldobása" },
+
 };
 
 

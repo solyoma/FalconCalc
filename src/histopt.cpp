@@ -6,6 +6,7 @@ using namespace nlib;
 #include "resource.h"
 void MyLoadWindowIcon(nlib::Form* f);
 
+#include "translations.h"
 #include "histopt.h"
 
 TfrmHistOptions *frmHistOptions;
@@ -20,92 +21,116 @@ void TfrmHistOptions::InitializeFormAndControls() /* Control initialization func
 	SetWantedKeyTypes(nlib::wkArrows | nlib::wkTab | nlib::wkEnter | nlib::wkEscape | nlib::wkOthers);
 	SetShowPosition(nlib::fspActiveMonitorCenter);
 	SetBorderStyle(nlib::fbsSingle);
-	SetClientRect(nlib::Rect(0, 0, 340, 192));
+	SetClientRect(nlib::Rect(0, 0, 425, 243));
 
 	MyLoadWindowIcon(this);
 
+	Panel1 = new nlib::Panel();
+	Panel1->SetBounds(nlib::Rect(8, 8, 416, 168));
+	Panel1->SetTabOrder(2);
+	Panel1->SetInnerBorderStyle(nlib::pbsRaisedSunken);
+	Panel1->SetParent(this);
+
 	chkDepth = new nlib::Checkbox();
-	chkDepth->SetBounds(nlib::Rect(16, 32, 161, 48));
-	chkDepth->SetText(L"Maximum History &Depth:");
+	chkDepth->SetBounds(nlib::Rect(24, 32, 221, 48));
+	chkDepth->SetText(lt.GetTranslationFor(FCT_MAXHISTDEPTH));
+	chkDepth->SetTooltipText(lt.GetTranslationFor(FCT_MAXHISTDEPTHTIP));
 	chkDepth->SetTabOrder(0);
 	chkDepth->SetParent(this);
 
 	spinDepth = new nlib::Edit();
-	spinDepth->SetBounds(nlib::Rect(176, 32, 256, 53));
-	spinDepth->SetText(L"100");
+	spinDepth->SetBounds(nlib::Rect(223, 32, 303, 53));
+	spinDepth->SetText(L"20");
 	spinDepth->SetTabOrder(1);
 	spinDepth->SetParent(this);
 
 	spinDepthBtn = new nlib::UpDown();
-	spinDepthBtn->SetBounds(nlib::Rect(255, 32, 272, 53));
+	spinDepthBtn->SetBounds(nlib::Rect(302, 32, 319, 53));
 	spinDepthBtn->SetMinValue(1);
 	spinDepthBtn->SetMaxValue(9999);
 	spinDepthBtn->SetPosition(100);
 	spinDepthBtn->SetParent(this);
 
 	chkAutoSave = new nlib::Checkbox();
-	chkAutoSave->SetBounds(nlib::Rect(16, 56, 174, 72));
-	chkAutoSave->SetText(L"Sa&ve after this interval:");
+	chkAutoSave->SetBounds(nlib::Rect(24, 56, 206, 72));
+	chkAutoSave->SetText(lt.GetTranslationFor(FCT_AUTOSAVE));
 	chkAutoSave->SetTabOrder(2);
+	chkAutoSave->SetTooltipText(lt.GetTranslationFor(FCT_AUTOSAVETIP));
 	chkAutoSave->SetParent(this);
 
 	edtInterval = new nlib::Edit();
-	edtInterval->SetBounds(nlib::Rect(176, 56, 256, 77));
+	edtInterval->SetBounds(nlib::Rect(223, 56, 302, 77));
 	edtInterval->SetText(L"00:00:10");
 	edtInterval->SetTabOrder(3);
 	edtInterval->SetParent(this);
 
+	Label1 = new nlib::Label();
+	Label1->SetBounds(nlib::Rect(328, 59, 394, 73));
+	Label1->SetText(lt.GetTranslationFor(FCT_HHMMSS));
+	Label1->SetParent(this);
+
 	Label2 = new nlib::Label();
-	Label2->SetBounds(nlib::Rect(18, 89, 166, 103));
-	Label2->SetText(L"&Min. length to save: (0:any):");
+	Label2->SetBounds(nlib::Rect(26, 89, 200, 103));
+	Label2->SetText(lt.GetTranslationFor(FCT_HISTMINLENGTHLABEL));
+	Label2->SetTooltipText(lt.GetTranslationFor(FCT_HISTMINLENGTHTIP));
 	Label2->SetParent(this);
 
 	edtMinLength = new nlib::Edit();
-	edtMinLength->SetBounds(nlib::Rect(176, 85, 256, 107));
+	edtMinLength->SetBounds(nlib::Rect(223, 85, 303, 107));
 	edtMinLength->SetText(L"0");
 	edtMinLength->SetTabOrder(4);
 	edtMinLength->SetParent(this);
 
+	lblNone = new nlib::Label();
+	lblNone->SetBounds(nlib::Rect(318, 80, 391, 102));
+	lblNone->SetText(lt.GetTranslationFor(FCT_HISTMINLENGTHSAVEALL));
+	lblNone->SetParent(Panel1);
+
 	sbMinLength = new nlib::UpDown();
-	sbMinLength->SetBounds(nlib::Rect(255, 85, 272, 107));
+	sbMinLength->SetBounds(nlib::Rect(302, 85, 319, 107));
 	sbMinLength->SetParent(this);
 
 	chkSort = new nlib::Checkbox();
-	chkSort->SetBounds(nlib::Rect(16, 144, 96, 160));
-	chkSort->SetText(L"&Sorted");
+	chkSort->SetBounds(nlib::Rect(24, 120, 144, 136));
+	chkSort->SetText(lt.GetTranslationFor(FCT_HISTSORTED));
 	chkSort->SetTabOrder(5);
 	chkSort->SetParent(this);
 
+	cbClearHist = new nlib::Checkbox();
+	//cbClearHist->SetBounds(nlib::Rect(224, 120, 376, 136));
+	cbClearHist->SetBounds(nlib::Rect(150, 112, 302, 128));
+	cbClearHist->SetText(lt.GetTranslationFor(FCT_HISTCLEAR));
+	cbClearHist->SetTabOrder(5);
+	cbClearHist->SetParent(Panel1);
+
 	btnOk = new nlib::Button();
-	btnOk->SetBounds(nlib::Rect(248, 128, 323, 151));
-	btnOk->SetText(L"&Ok");
+	btnOk->SetBounds(nlib::Rect(328, 179, 403, 202));
+	btnOk->SetText(lt.GetTranslationFor(FCT_OK));
 	btnOk->SetTabOrder(6);
+	btnOk->SetAnchors(nlib::caRight | nlib::caBottom);
 	btnOk->SetParent(this);
 
 	btnCancel = new nlib::Button();
-	btnCancel->SetBounds(nlib::Rect(248, 152, 323, 175));
-	btnCancel->SetText(L"Cance&l");
+	btnCancel->SetBounds(nlib::Rect(328, 203, 403, 226));
+	btnCancel->SetAnchors(nlib::caRight | nlib::caBottom);
+	btnCancel->SetText(lt.GetTranslationFor(FCT_CANCEL));
 	btnCancel->SetTabOrder(7);
 	btnCancel->SetCancel(true);
 	btnCancel->SetParent(this);
-
-	Label1 = new nlib::Label();
-	Label1->SetBounds(nlib::Rect(261, 59, 327, 73));
-	Label1->SetText(L"(HH:MM:SS)");
-	Label1->SetParent(this);
 
 	SetActiveControl(btnOk);
 	spinDepthBtn->SetAttachedEditor(spinDepth);
 	sbMinLength->SetAttachedEditor(edtMinLength);
 
-	chkDepth->OnClick = CreateEvent(this, &TfrmHistOptions::chkDepthClick);
+	cbClearHist->OnClick = CreateEvent(this, &TfrmHistOptions::cbClearHistClick);
+	btnCancel->OnClick = CreateEvent(this, &TfrmHistOptions::btnCancelClick);
+	btnOk->OnClick = CreateEvent(this, &TfrmHistOptions::btnOkClick);
 	chkAutoSave->OnClick = CreateEvent(this, &TfrmHistOptions::chkAutoSaveClick);
+	chkDepth->OnClick = CreateEvent(this, &TfrmHistOptions::chkDepthClick);
 	chkSort->OnClick = CreateEvent(this, &TfrmHistOptions::chkSortClick);
 	edtInterval->OnKeyPress = CreateEvent(this, &TfrmHistOptions::edtIntervalKeyPressed);
-	spinDepth->OnKeyPress = CreateEvent(this, &TfrmHistOptions::edtIntervalKeyPressed);
 	edtMinLength->OnKeyPress = CreateEvent(this, &TfrmHistOptions::edtMinLengthKeyPressed);
-	btnOk->OnClick = CreateEvent(this, &TfrmHistOptions::btnOkClick);
-	btnCancel->OnClick = CreateEvent(this, &TfrmHistOptions::btnCancelClick);
+	spinDepth->OnKeyPress = CreateEvent(this, &TfrmHistOptions::edtIntervalKeyPressed);
 }
 
 void TfrmHistOptions::Destroy()
@@ -156,6 +181,10 @@ void TfrmHistOptions::btnCancelClick(void *sender, nlib::EventParameters param)
 void TfrmHistOptions::btnOkClick(void *sender, nlib::EventParameters param)
 {
 	SetModalResult(mrOk);
+}
+void TfrmHistOptions::cbClearHistClick(void* sender, nlib::EventParameters param)
+{
+	_clearhistory = cbClearHist->Checked();
 }
 void TfrmHistOptions::edtSpinDepthKeyPressed(void* sender, nlib::KeyPressParameters param)
 {

@@ -65,7 +65,7 @@ void TfrmLocale::InitializeFormAndControls() /* Control initialization function 
 
 	btnSave = new nlib::Button();
 	btnSave->SetBounds(MY_RECT(342,238, 73, 23));
-	btnSave->SetText(lt.GetTranslationFor(FCT_LOCALESAVE));		 // L"&Save"
+	btnSave->SetText(lt.GetTranslationFor(FCT_SAVE));		 // L"&Save"
 	btnSave->SetEnabled(false);
 	btnSave->SetAnchors(nlib::caRight | nlib::caBottom);
 	btnSave->SetTabOrder(2);
@@ -73,7 +73,7 @@ void TfrmLocale::InitializeFormAndControls() /* Control initialization function 
 
 	btnCancel = new nlib::Button();
 	btnCancel->SetBounds(MY_RECT(342,268, 75, 23));
-	btnCancel->SetText(lt.GetTranslationFor(FCT_LOCALECANCEL));
+	btnCancel->SetText(lt.GetTranslationFor(FCT_CANCEL));
 	btnCancel->SetAnchors(nlib::caRight | nlib::caBottom);
 	btnCancel->SetTabOrder(1);
 	btnCancel->SetCancel(true);
@@ -91,7 +91,7 @@ TfrmLocale::TfrmLocale()
 
 	std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
 	_wsLocName = converter.from_bytes(loc.name());
-	lblOldLocale->SetText(_wsLocName);
+	lblCurLocaleName->SetText(_wsLocName);
 	edtLocale->SetText	 (_wsLocName);
 }
 

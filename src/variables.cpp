@@ -126,7 +126,7 @@ void TfrmVariables::InitializeFormAndControls() /* Control initialization functi
 
 	btnSave = new nlib::Button();
 	btnSave->SetBounds(nlib::Rect(445, 497, 520, 520));
-	btnSave->SetText(L"&Save");
+	btnSave->SetText(lt.GetTranslationFor(FCT_SAVE));
 	btnSave->SetAnchors(nlib::caRight | nlib::caBottom);
 	btnSave->SetTabOrder(4);
 	btnSave->SetEnabled(false);
@@ -134,7 +134,7 @@ void TfrmVariables::InitializeFormAndControls() /* Control initialization functi
 
 	btnCancel = new nlib::Button();
 	btnCancel->SetBounds(nlib::Rect(445, 524, 520, 547));
-	btnCancel->SetText(L"C&lose");
+	btnCancel->SetText(lt.GetTranslationFor(FCT_CLOSE));
 	btnCancel->SetAnchors(nlib::caRight | nlib::caBottom);
 	btnCancel->SetTabOrder(3);
 	btnCancel->SetParent(this);

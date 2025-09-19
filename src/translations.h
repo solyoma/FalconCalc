@@ -1,10 +1,14 @@
-#pragma once
+﻿#pragma once
 // multi language support for calculator
 // currently only english and hungarian
 
 enum Language { none = -1, en = 0, hu = 1 };		// 0: english, 1: hungarian
 
 enum TextIDs {
+	FCT_OK,              // L"O&k", L"&Rendben"
+	FCT_SAVE,
+	FCT_CANCEL,
+	FCT_CLOSE,			// L"Close", L"Bezárás"
 	FCT_ABOUT				,
 	FCT_ANGLEF			,
 	FCT_APPEND			,
@@ -127,14 +131,25 @@ enum TextIDs {
 
 	// locale
 		FCT_LOCALETITLE,	// L"FalconCalc Locale"
-		FCT_LOCALESAVE,
-		FCT_LOCALECANCEL,
 		FCT_LOCALE1,		// L"The locale determines the character used for a decimal point, the ordering of the characters"
 							// " and the correspondance bewtween upper and lowercase letters. Variable and function names may"
 							// " contain accented or special letters in your locale that are not present in other locales and vice-versa."
 		FCT_LOCALE2,		// L"Locale names usually consist of two lowercase and two uppercase letters separated..."
 		FCT_CURNAMELABEL,	// L"Name of current locale:"
 		FCT_NEWNAMELABEL,	// L"Name of new locale:"
+	// history options
+		FCT_HISTOPTS_TITLE,			// L"FalconCalc - History options", L"FalconCalc - Előzmények beállításai"
+		FCT_MAXHISTDEPTH,			// L"Maximum history &depth:",L"Maximum megjegyzettek száma:"
+		FCT_MAXHISTDEPTHTIP,		// L"Set the maximum number of expressions kept in the history", L"Ennyi előzmény kifejezést jegyez meg"
+		FCT_AUTOSAVE,				// L"Sa&ve after this interval:", L"Automatikus mentés ideje:"
+		FCT_AUTOSAVETIP,			// L"When unchecked, no history will be saved", L"Ha nincs bejelölve az előzményeket nem jegyzi meg"
+		FCT_HHMMSS,					// L"(HH:MM:SS)",L"(ÓÓ:PP:MP)"
+		FCT_HISTMINLENGTHLABEL,		// L"&Min. length to save:",L"&Min. kif. hossz:"
+		FCT_HISTMINLENGTHTIP,		// 	L"Expressions shorter than this will not be remembered", L"Csak ennél hosszabb kifejezéseket jegyez meg";
+		FCT_HISTMINLENGTHSAVEALL,	// L"(0: all)",	L"(0: mindet)"
+		FCT_HISTSORTED,				// L"Sorted",	L"Sorbarendezés"
+		FCT_HISTAUTOSAVELABEL,		// L"Automatically save history",L"Automatikusan mentse az előzményeket"
+		FCT_HISTCLEAR,				// L"&Discard history", L"Elő&zmények eldobása"
 };
 
 class LanguageTexts

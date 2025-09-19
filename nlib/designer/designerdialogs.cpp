@@ -1357,7 +1357,7 @@ namespace NLIBNS
 
         btnOk = new Button();
         btnOk->SetBounds(Rect(241, 434, 321, 458));
-        btnOk->SetText(L"&Ok");
+        btnOk->SetText(lt.GetTranslationFor(FCT_OK));
         btnOk->SetAnchors(caBottom);
         btnOk->SetTabOrder(7);
         btnOk->SetParent(this);
@@ -1365,7 +1365,7 @@ namespace NLIBNS
 
         btnCancel = new Button();
         btnCancel->SetBounds(Rect(547, 434, 627, 458));
-        btnCancel->SetText(L"&Cancel");
+        btnCancel->SetText(lt.GetTranslationFor(FCT_CANCEL));
         btnCancel->SetAnchors(caBottom | caRight);
         btnCancel->SetTabOrder(8);
         btnCancel->SetParent(this);
