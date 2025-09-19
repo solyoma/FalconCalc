@@ -154,7 +154,7 @@ static _LanguageTexts_private __texts[] = {
  { FCT_SHOWHEXOPTS,			L"Show Hexadecimal  Options",		L"&Hexadecimális Opciók" },
  { FCT_SHOWHIST,			L"Edit &History",					L"Előzmények &szerk." },
  { FCT_SINGLE,				L"As IEE &754 single",				L"IEE &754" },
- { FCT_STRING,				L"As String:",						L"Szövegként:" },
+ { FCT_STRING,				L"As String:",						L"Szöveg:" },
  { FCT_TEX,				 	L"&TeX",							L"&TeX" },
  { FCT_THOUSAND,			L"Use thousand se&parator:",		L"Ezres el&választó:" },
  { FCT_TIPBIN  ,            L"Copy binary number to clipboard", L"Bináris szám másolása" },
