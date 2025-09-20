@@ -40,7 +40,7 @@ namespace NLIBNS
     class DesignFormBase;
     class PageControl;
     class TabPage;
-    class FlatButton;
+    class ToolButton;
     class Combobox;
 
 #ifdef TOOLBARS_ENABLED
@@ -198,8 +198,8 @@ namespace NLIBNS
         PropertyListbox *lbProp;
         PropertyListbox *lbEvents;
         Panel *pPropTop;
-        FlatButton *btnPropAbc;
-        FlatButton *btnPropCat;
+        ToolButton *btnPropAbc;
+        ToolButton *btnPropCat;
         Combobox *cbControlList;
 
 #ifdef TOOLBARS_ENABLED

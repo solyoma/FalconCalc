@@ -28,7 +28,7 @@ namespace NLIBNS
     //        L"Form", L"Container",
     //
     //        // Visual controls
-    //        L"Panel", L"Paintbox", L"FlatButton", L"Label", 
+    //        L"Panel", L"Paintbox", L"ToolButton", L"Label", 
     //        L"Bevel", L"Button", L"Checkbox", L"Radiobox",
     //        L"Groupbox", L"Edit", L"Memo", L"UpDown",
     //        L"Progressbar", L"Listbox", L"Combobox", L"TabControl",
@@ -54,7 +54,7 @@ namespace NLIBNS
     //        typeid(DesignForm).name(), typeid(Container).name(),
     //
     //        // Visual controls
-    //        typeid(Panel).name(), typeid(Paintbox).name(), typeid(FlatButton).name(), typeid(Label).name(), 
+    //        typeid(Panel).name(), typeid(Paintbox).name(), typeid(ToolButton).name(), typeid(Label).name(), 
     //        typeid(Bevel).name(), typeid(Button).name(), typeid(Checkbox).name(), typeid(Radiobox).name(),
     //        typeid(Groupbox).name(), typeid(Edit).name(), typeid(Memo).name(), typeid(UpDown).name(),
     //        typeid(Progressbar).name(), typeid(Listbox).name(), typeid(Combobox).name(), typeid(TabControl).name(),
@@ -469,7 +469,7 @@ namespace NLIBNS
 
     extern ValuePair<Colors> ColorStrings[];
 
-    extern ValuePair<FlatButtonTypes> FlatButtonTypeStrings[];
+    extern ValuePair<ToolButtonTypes> ToolButtonTypeStrings[];
     extern ValuePair<ButtonImagePositions> ButtonImagePositionStrings[];
     extern ValuePair<ButtonContentPositions> ButtonContentPositionStrings[];
     extern ValuePair<FontCharacterSets> FontCharacterSetStrings[];
@@ -566,7 +566,7 @@ namespace NLIBNS
         RegisterControlEvent<ButtonOwnerDrawEvent>(L"ButtonOwnerDrawParameters");
 
         RegisterEnumStrings(ColorStrings, clCount);
-        RegisterEnumStrings(FlatButtonTypeStrings, fbtCount);
+        RegisterEnumStrings(ToolButtonTypeStrings, fbtCount);
         RegisterEnumStrings(ButtonImagePositionStrings, bipCount);
         RegisterEnumStrings(ButtonContentPositionStrings, bcpCount);
         RegisterEnumStrings(FontCharacterSetStrings, fcsCount);
@@ -662,7 +662,7 @@ namespace NLIBNS
         // Visual controls
         CreateDesignProperties<Panel, otVisual>         (L"Panel", L"Containers", BR(0));
         CreateDesignProperties<Paintbox, otVisual>      (L"Paintbox", L"General Controls", BR(1));
-        CreateDesignProperties<FlatButton, otVisual>    (L"FlatButton", L"Buttons", BR(2));
+        CreateDesignProperties<ToolButton, otVisual>    (L"ToolButton", L"Buttons", BR(2));
         CreateDesignProperties<Label, otVisual>         (L"Label", L"General Controls", BR(3));
 
         CreateDesignProperties<Bevel, otVisual>         (L"Bevel", L"General Controls", BR(22));

@@ -31,7 +31,7 @@ public:
     ModalResults Show(Form *dialog, Form *topparent);
 };
 
-class FlatButton;
+class ToolButton;
 // Custom dialog for picking transparent pixel from a bitmap.
 class TransparentColorPickerDialog : public DesignerDialog
 {
@@ -82,10 +82,10 @@ private:
         Panel *pPick;
 
         Button *btnOk;
-        FlatButton *btnHand;
-        FlatButton *btnPick;
-        FlatButton *btnPlus;
-        FlatButton *btnMinus;
+        ToolButton *btnHand;
+        ToolButton *btnPick;
+        ToolButton *btnPlus;
+        ToolButton *btnMinus;
     };
 public:
     TransparentColorPickerDialog();
@@ -296,21 +296,21 @@ protected:
         virtual void Destroy();
 
         Listbox *lbItems;
-        FlatButton *fbUp;
-        FlatButton *fbDown;
-        FlatButton *fbAdd;
-        FlatButton *fbAddSub;
-        FlatButton *fbDelete;
+        ToolButton *fbUp;
+        ToolButton *fbDown;
+        ToolButton *fbAdd;
+        ToolButton *fbAddSub;
+        ToolButton *fbDelete;
         Button *btnOk;
         Button *btnCancel;
         PageControl *pcProp;
         TabPage *tpProperties;
         Panel *pProp;
-        FlatButton *fbPropAbc;
-        FlatButton *fbPropCat;
+        ToolButton *fbPropAbc;
+        ToolButton *fbPropCat;
         Panel *pEvents;
-        FlatButton *fbEventAbc;
-        FlatButton *fbEventCat;
+        ToolButton *fbEventAbc;
+        ToolButton *fbEventCat;
         PropertyListbox *lbProp;
         TabPage *tpEvents;
         PropertyListbox *lbEvents;
@@ -371,9 +371,9 @@ protected:
         Panel *Panel1;
         Button *btnOk;
         Button *btnCancel;
-        FlatButton *btnUp;
-        FlatButton *btnDown;
-        FlatButton *btnDel;
+        ToolButton *btnUp;
+        ToolButton *btnDown;
+        ToolButton *btnDel;
     };
 public:
     FileExtensionDialog();

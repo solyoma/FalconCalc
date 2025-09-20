@@ -791,7 +791,7 @@ namespace NLIBNS
 
         //cgen->AddButton(typeid(Panel));
         //cgen->AddButton(typeid(Paintbox));
-        //cgen->AddButton(typeid(FlatButton));
+        //cgen->AddButton(typeid(ToolButton));
         //cgen->AddButton(typeid(Label));
         //cgen->AddButton(typeid(Bevel));
         //cgen->AddButton(typeid(StringGrid));
@@ -829,7 +829,7 @@ namespace NLIBNS
         pPropTop->SetParent(tpProperties);
         pPropTop->SetParentBackground(false);
 
-        btnPropAbc = new FlatButton();
+        btnPropAbc = new ToolButton();
         btnPropAbc->SetBounds(RectS(2 * Scaling, 2 * Scaling, 23 * Scaling, 23 * Scaling));
         btnPropAbc->SetDoubleBuffered(true);
         //btnPropAbc->SetText(L"Abc");
@@ -844,7 +844,7 @@ namespace NLIBNS
         btnPropAbc->SetTooltipText(L"Sort alphabetically");
         btnPropAbc->SetParent(pPropTop);
 
-        btnPropCat = new FlatButton();
+        btnPropCat = new ToolButton();
         btnPropCat->SetBounds(RectS(int(2 * Scaling) * 2 + int(23 * Scaling), 2 * Scaling, 23 * Scaling, 23 * Scaling));
         btnPropCat->SetDoubleBuffered(true);
         //btnPropCat->SetText(L"Cat");
@@ -1514,7 +1514,7 @@ namespace NLIBNS
     {
         Object *obj = (Object*)sender;
 
-        bool showcat = dynamic_cast<FlatButton*>(obj) != nullptr ? (obj->Tag() == 1) == ((FlatButton*)obj)->Down() : obj->Tag() == 1;
+        bool showcat = dynamic_cast<ToolButton*>(obj) != nullptr ? (obj->Tag() == 1) == ((ToolButton*)obj)->Down() : obj->Tag() == 1;
 
         miVSortAlpha->SetShortcut(showcat ? L"F9" : L"");
         miVSortCat->SetShortcut(!showcat ? L"F9" : L"");

@@ -77,7 +77,7 @@ enum WindowStyles { wsBorder = 0x00800000L, wsCaption = 0x00C00000L /* == wsDlgF
                     cbsLowercase = 0x4000L,
 
                     // for tabcontrols:
-                    tcsBottom = 0x0002 /* Not supported when themed */, tcsButtons = 0x0100, tcsFixedWidth = 0x0400, tcsFlatButtons = 0x0008, tcsFocusNever = 0x8000,
+                    tcsBottom = 0x0002 /* Not supported when themed */, tcsButtons = 0x0100, tcsFixedWidth = 0x0400, tcsToolButtons = 0x0008, tcsFocusNever = 0x8000,
                     tcsFocusOnClick = 0x1000, tcsIconLeft = 0x0010, tcsLabelLeft = 0x0020 /* implies  tcsIconLeft */, tcsHotTrack = 0x0040,
                     tcsMultiline = 0x0200, tcsMultiselect = 0x0004, tcsOwnerDrawFixed = 0x2000, tcsRaggedRight = 0x0800 /* don't stratch tabs to take up whole control width. default */,
                     tcsRight = tcsBottom /* Not supported when themed */, tcsRightJustify = 0x0000 /* Only for multiline controls */, tcsScrollOpposite = 0x0001,

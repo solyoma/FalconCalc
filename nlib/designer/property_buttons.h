@@ -10,15 +10,15 @@ namespace NLIBNS
 {
 
 
-    extern ValuePair<FlatButtonTypes> FlatButtonTypeStrings[];
+    extern ValuePair<ToolButtonTypes> ToolButtonTypeStrings[];
     template<typename PropertyHolder>
-    class FlatButtonTypesDesignProperty : public EnumDesignProperty<PropertyHolder, FlatButtonTypes>
+    class ToolButtonTypesDesignProperty : public EnumDesignProperty<PropertyHolder, ToolButtonTypes>
     {
     private:
-        typedef EnumDesignProperty<PropertyHolder, FlatButtonTypes>    base;
+        typedef EnumDesignProperty<PropertyHolder, ToolButtonTypes>    base;
     public:
         template<typename GetterProc, typename SetterProc>
-        FlatButtonTypesDesignProperty(const std::wstring &name, const std::wstring &category, GetterProc getter, SetterProc setter) : base(name, category, getter, setter, FlatButtonTypeStrings)
+        ToolButtonTypesDesignProperty(const std::wstring &name, const std::wstring &category, GetterProc getter, SetterProc setter) : base(name, category, getter, setter, ToolButtonTypeStrings)
         {}
     };
 

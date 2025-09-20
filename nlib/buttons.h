@@ -76,7 +76,7 @@ namespace NLIBNS
 
 
     /*
-     * FlatButtonTypes: Describes possible button behavior (but not appearance)
+     * ToolButtonTypes: Describes possible button behavior (but not appearance)
      *  fbtPushbutton - normal button behavior.
      *  fbtCheckbutton - checkbox behavior.
      *  fbtCheckRadiobutton - radiobuttons but they can be all unpressed.
@@ -84,7 +84,7 @@ namespace NLIBNS
      *  fbtDropdownButton - Button with additional space and a small triangle at the top right corner.
      *  fbtSplitbutton - Button with a separate area with a small triangle that is only shown hot if the cursor is over it not the main button body.
      */
-    enum FlatButtonTypes {
+    enum ToolButtonTypes {
             fbtPushbutton, fbtCheckbutton, fbtCheckRadiobutton, fbtRadiobutton, fbtDropdownButton, fbtSplitbutton,
 #ifdef DESIGNING
             fbtCount = 6
@@ -115,12 +115,12 @@ namespace NLIBNS
         bodsNormal, bodsHovered, bodsSecondaryHovered, bodsPressed, bodsSecondaryPressed, bodsDown
     };
 
-    class FlatButton : public Control
+    class ToolButton : public Control
     {
     private:
         typedef Control base;
 
-        FlatButtonTypes type;
+        ToolButtonTypes type;
         bool flat;
         bool down; // Call the OnDownChanged event after changing this value.
         int groupindex;
@@ -141,10 +141,10 @@ namespace NLIBNS
         ControlImage *image;
 
         void PopButtons(bool thistoo); // Sets all buttons within the same group to down = false. Except this one if thistoo is false.
-        void UpdateButtonTypes(FlatButtonTypes newtype); // Sets all buttons within the same group to a new type. Usually to switch between fbtCheckRadiobutton and fbtRadiobutton.
+        void UpdateButtonTypes(ToolButtonTypes newtype); // Sets all buttons within the same group to a new type. Usually to switch between fbtCheckRadiobutton and fbtRadiobutton.
         bool DownInGroup(); // Returns true when there is another button with the same groupindex that is down.
         int UnusedIndex(); // Returns a groupindex that is 1 higher than the current highest.
-        FlatButtonTypes GroupType(); // The type of other FlatButtons with the same groupindex as this one.
+        ToolButtonTypes GroupType(); // The type of other ToolButtons with the same groupindex as this one.
     protected:
         virtual void CreateClassParams(ClassParams &params);
 
@@ -170,14 +170,14 @@ namespace NLIBNS
 
         virtual void ChangeNotify(Object *object, int changetype);
 
-        virtual ~FlatButton();
+        virtual ~ToolButton();
     public:
 #ifdef DESIGNING
         virtual Size DesignSize();
         static void EnumerateProperties(DesignSerializer *serializer);
 #endif 
 
-        FlatButton();
+        ToolButton();
 
         Rect ButtonRect(); // Client rectangle excluding the right part of a split button.
         Rect SplitRect(); // Rectangle fro the right part of a split button in client coordinates.
@@ -187,8 +187,8 @@ namespace NLIBNS
 
         bool Down();
         void SetDown(bool newdown);
-        FlatButtonTypes Type();
-        void SetType(FlatButtonTypes newtype);
+        ToolButtonTypes Type();
+        void SetType(ToolButtonTypes newtype);
 
         int GroupIndex();
         void SetGroupIndex(int newindex);

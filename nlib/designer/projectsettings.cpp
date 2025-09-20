@@ -99,19 +99,19 @@ void TfrmProjSettings::InitializeFormAndControls() /* Control initialization fun
     lbForms->SetTabOrder(3);
     lbForms->SetParent(TabPage1);
 
-    btnFormUp = new FlatButton();
+    btnFormUp = new ToolButton();
     btnFormUp->SetBounds(Rect(511, 9, 533, 32));
     btnFormUp->SetTabOrder(4);
     btnFormUp->SetImagePosition(bipCenter);
     btnFormUp->SetParent(TabPage1);
 
-    btnFormDown = new FlatButton();
+    btnFormDown = new ToolButton();
     btnFormDown->SetBounds(Rect(511, 33, 533, 56));
     btnFormDown->SetTabOrder(5);
     btnFormDown->SetImagePosition(bipCenter);
     btnFormDown->SetParent(TabPage1);
 
-    btnFormDel = new FlatButton();
+    btnFormDel = new ToolButton();
     btnFormDel->SetBounds(Rect(511, 94, 533, 117));
     btnFormDel->SetTabOrder(6);
     btnFormDel->SetImagePosition(bipCenter);

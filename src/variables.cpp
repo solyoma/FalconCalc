@@ -108,7 +108,7 @@ void TfrmVariables::InitializeFormAndControls() /* Control initialization functi
 	sgBuiltin->SetSmoothHorzScroll(true);
 	sgBuiltin->SetParent(tcVars);
 
-	btnDelVar = new nlib::FlatButton();
+	btnDelVar = new nlib::ToolButton();
 	btnDelVar->SetBounds(nlib::Rect(444, 48, 467, 70));
 	btnDelVar->SetAnchors(nlib::caTop | nlib::caRight);
 	btnDelVar->SetTabOrder(1);
@@ -116,7 +116,7 @@ void TfrmVariables::InitializeFormAndControls() /* Control initialization functi
 	btnDelVar->SetFlat(false);
 	btnDelVar->SetParent(this);
 
-	btnClear = new nlib::FlatButton();
+	btnClear = new nlib::ToolButton();
 	btnClear->SetBounds(nlib::Rect(444, 76, 467, 98));
 	btnClear->SetAnchors(nlib::caTop | nlib::caRight);
 	btnClear->SetTabOrder(2);

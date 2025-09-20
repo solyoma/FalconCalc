@@ -160,7 +160,7 @@ namespace NLIBNS
 
 
 #ifdef DESIGNING
-    ValuePair<FlatButtonTypes> FlatButtonTypeStrings[] = { 
+    ValuePair<ToolButtonTypes> ToolButtonTypeStrings[] = { 
         VALUEPAIR(fbtCheckbutton),
         VALUEPAIR(fbtCheckRadiobutton),
         VALUEPAIR(fbtPushbutton),
@@ -185,38 +185,38 @@ namespace NLIBNS
         VALUEPAIR(bcpTop),
     };
 
-    Size FlatButton::DesignSize()
+    Size ToolButton::DesignSize()
     {
         return BaseToPixel(50, 14);
     }
 
-    void FlatButton::EnumerateProperties(DesignSerializer *serializer)
+    void ToolButton::EnumerateProperties(DesignSerializer *serializer)
     {
         base::EnumerateProperties(serializer);
         serializer->Find<BoolDesignProperty<Control>>(L"AcceptInput")->SetDefault(false);
         //serializer->Find<BoolDesignProperty<Control>>(L"ParentBackground")->SetDefault(true);
         serializer->Find<ColorDesignProperty<Control>>(L"Color")->SetDefault(clBtnFace);
-        serializer->Add(L"Image", new ControlImageDesignProperty<FlatButton>(L"Image", L"Appearance", &FlatButton::Image));
-        serializer->Add(L"SetCancel", new BoolDesignProperty<FlatButton>(L"Cancel", L"Behavior", &FlatButton::Cancel, &FlatButton::SetCancel))->SetDefault(false);
-        serializer->Add(L"SetType", new FlatButtonTypesDesignProperty<FlatButton>(L"Type", L"Behavior", &FlatButton::Type, &FlatButton::SetType))->SetDefault(fbtPushbutton);
-        serializer->Add(L"SetImagePosition", new ButtonImagePositionsDesignProperty<FlatButton>(L"ImagePosition", L"Appearance", &FlatButton::ImagePosition, &FlatButton::SetImagePosition))->SetDefault(bipLeft);
-        serializer->Add(L"SetContentPosition", new ButtonContentPositionsDesignProperty<FlatButton>(L"ContentPosition", L"Appearance", &FlatButton::ContentPosition, &FlatButton::SetContentPosition))->SetDefault(bcpCenter);
-        serializer->Add(L"SetDown", new BoolDesignProperty<FlatButton>(L"Down", L"Behavior", &FlatButton::Down, &FlatButton::SetDown))->SetDefault(false);
-        serializer->Add(L"SetGroupIndex", new IntDesignProperty<FlatButton>(L"GroupIndex", L"Behavior", &FlatButton::GroupIndex, &FlatButton::SetGroupIndex))->SetDefault(0);
-        serializer->Add(L"SetFlat", new BoolDesignProperty<FlatButton>(L"Flat", L"Appearance", &FlatButton::Flat, &FlatButton::SetFlat))->SetDefault(true);
-        serializer->Add(L"SetMargin", new IntDesignProperty<FlatButton>(L"Margin", L"Appearance", &FlatButton::Margin, &FlatButton::SetMargin))->SetDefault(-1);
-        serializer->Add(L"SetSpacing", new IntDesignProperty<FlatButton>(L"Spacing", L"Appearance", &FlatButton::Spacing, &FlatButton::SetSpacing))->SetDefault(-1);
-        serializer->Add(L"SetShowText", new BoolDesignProperty<FlatButton>(L"ShowText", L"Appearance", &FlatButton::ShowText, &FlatButton::SetShowText))->SetDefault(true);
+        serializer->Add(L"Image", new ControlImageDesignProperty<ToolButton>(L"Image", L"Appearance", &ToolButton::Image));
+        serializer->Add(L"SetCancel", new BoolDesignProperty<ToolButton>(L"Cancel", L"Behavior", &ToolButton::Cancel, &ToolButton::SetCancel))->SetDefault(false);
+        serializer->Add(L"SetType", new ToolButtonTypesDesignProperty<ToolButton>(L"Type", L"Behavior", &ToolButton::Type, &ToolButton::SetType))->SetDefault(fbtPushbutton);
+        serializer->Add(L"SetImagePosition", new ButtonImagePositionsDesignProperty<ToolButton>(L"ImagePosition", L"Appearance", &ToolButton::ImagePosition, &ToolButton::SetImagePosition))->SetDefault(bipLeft);
+        serializer->Add(L"SetContentPosition", new ButtonContentPositionsDesignProperty<ToolButton>(L"ContentPosition", L"Appearance", &ToolButton::ContentPosition, &ToolButton::SetContentPosition))->SetDefault(bcpCenter);
+        serializer->Add(L"SetDown", new BoolDesignProperty<ToolButton>(L"Down", L"Behavior", &ToolButton::Down, &ToolButton::SetDown))->SetDefault(false);
+        serializer->Add(L"SetGroupIndex", new IntDesignProperty<ToolButton>(L"GroupIndex", L"Behavior", &ToolButton::GroupIndex, &ToolButton::SetGroupIndex))->SetDefault(0);
+        serializer->Add(L"SetFlat", new BoolDesignProperty<ToolButton>(L"Flat", L"Appearance", &ToolButton::Flat, &ToolButton::SetFlat))->SetDefault(true);
+        serializer->Add(L"SetMargin", new IntDesignProperty<ToolButton>(L"Margin", L"Appearance", &ToolButton::Margin, &ToolButton::SetMargin))->SetDefault(-1);
+        serializer->Add(L"SetSpacing", new IntDesignProperty<ToolButton>(L"Spacing", L"Appearance", &ToolButton::Spacing, &ToolButton::SetSpacing))->SetDefault(-1);
+        serializer->Add(L"SetShowText", new BoolDesignProperty<ToolButton>(L"ShowText", L"Appearance", &ToolButton::ShowText, &ToolButton::SetShowText))->SetDefault(true);
 
-        serializer->AddEvent<FlatButton, NotifyEvent>(L"OnClick", L"Control");
-        serializer->AddEvent<FlatButton, NotifyEvent>(L"OnSplitClick", L"Control");
-        serializer->AddEvent<FlatButton, NotifyEvent>(L"OnDownChanged", L"Control");
-        serializer->AddEvent<FlatButton, ButtonMeasureSplitSizeEvent>(L"OnMeasureSplitSize", L"Drawing");
-        serializer->AddEvent<FlatButton, ButtonOwnerDrawEvent>(L"OnPaint", L"Drawing");
+        serializer->AddEvent<ToolButton, NotifyEvent>(L"OnClick", L"Control");
+        serializer->AddEvent<ToolButton, NotifyEvent>(L"OnSplitClick", L"Control");
+        serializer->AddEvent<ToolButton, NotifyEvent>(L"OnDownChanged", L"Control");
+        serializer->AddEvent<ToolButton, ButtonMeasureSplitSizeEvent>(L"OnMeasureSplitSize", L"Drawing");
+        serializer->AddEvent<ToolButton, ButtonOwnerDrawEvent>(L"OnPaint", L"Drawing");
     }
 #endif
 
-    FlatButton::FlatButton() :
+    ToolButton::ToolButton() :
             type(fbtPushbutton), flat(true), down(false), groupindex(0), hovered(false), splithovered(false), pressed(false),
             showtext(true), imagepos(bipLeft), contentpos(bcpCenter), margin(-1), spacing(-1), showfocus(false), accelvisible(false),
             cancel(false), image(NULL)
@@ -230,18 +230,18 @@ namespace NLIBNS
         controlstyle << csInTabOrder;
     }
 
-    FlatButton::~FlatButton()
+    ToolButton::~ToolButton()
     {
         image->Destroy();
     }
 
-    void FlatButton::CreateClassParams(ClassParams &params)
+    void ToolButton::CreateClassParams(ClassParams &params)
     {
         base::CreateClassParams(params);
         params.style << csVRedraw << csHRedraw;
     }
 
-    LRESULT FlatButton::WindowProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
+    LRESULT ToolButton::WindowProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
     {
         switch (uMsg)
         {
@@ -271,7 +271,7 @@ namespace NLIBNS
         return base::WindowProc(uMsg, wParam, lParam);
     }
 
-    void FlatButton::EraseBackground()
+    void ToolButton::EraseBackground()
     {
         if (!flat && !themes->AppThemed())
             return;// true;
@@ -292,7 +292,7 @@ namespace NLIBNS
         //return true;
     }
 
-    void FlatButton::Resizing()
+    void ToolButton::Resizing()
     {
         base::Resizing();
 
@@ -300,7 +300,7 @@ namespace NLIBNS
         //    Invalidate();
     }
 
-    void FlatButton::Paint(const Rect &updaterect)
+    void ToolButton::Paint(const Rect &updaterect)
     {
         Rect r = ClientRect();
 
@@ -409,19 +409,19 @@ namespace NLIBNS
         //skip = false;
     }
 
-    void FlatButton::GainFocus(HWND otherwindow)
+    void ToolButton::GainFocus(HWND otherwindow)
     {
         Invalidate();
         base::GainFocus(otherwindow);
     }
 
-    void FlatButton::LoseFocus(HWND otherwindow)
+    void ToolButton::LoseFocus(HWND otherwindow)
     {
         Invalidate();
         base::LoseFocus(otherwindow);
     }
 
-    void FlatButton::KeyPush(WORD &keycode, WCHAR &key, VirtualKeyStateSet vkeys)
+    void ToolButton::KeyPush(WORD &keycode, WCHAR &key, VirtualKeyStateSet vkeys)
     {
         if (key == L' ' && Focused())
             Click();
@@ -429,7 +429,7 @@ namespace NLIBNS
         base::KeyPush(keycode, key, vkeys);
     }
 
-    void FlatButton::CaptureChanged()
+    void ToolButton::CaptureChanged()
     {
         if (pressed)
         {
@@ -438,14 +438,14 @@ namespace NLIBNS
         }
     }
 
-    void FlatButton::MouseEnter()
+    void ToolButton::MouseEnter()
     {
         base::MouseEnter();
         //hovered = true;
         //Invalidate();
     }
 
-    void FlatButton::MouseLeave()
+    void ToolButton::MouseLeave()
     {
         base::MouseLeave();
 
@@ -454,7 +454,7 @@ namespace NLIBNS
         Invalidate();
     }
 
-    void FlatButton::MouseMove(short x, short y, VirtualKeyStateSet vkeys)
+    void ToolButton::MouseMove(short x, short y, VirtualKeyStateSet vkeys)
     {
         Rect r = ClientRect();
         int s = type == fbtSplitbutton ? SplitWidth() : 0;
@@ -474,7 +474,7 @@ namespace NLIBNS
         base::MouseMove(x, y, vkeys);
     }
 
-    void FlatButton::MouseDown(short x, short y, MouseButtons button, VirtualKeyStateSet vkeys)
+    void ToolButton::MouseDown(short x, short y, MouseButtons button, VirtualKeyStateSet vkeys)
     {
         if (button == mbLeft && (!vkeys.contains(vksDouble) || (type != fbtRadiobutton && type != fbtCheckRadiobutton) || !down))
         {
@@ -499,7 +499,7 @@ namespace NLIBNS
         base::MouseDown(x, y, button, vkeys);
     }
 
-    void FlatButton::MouseUp(short x, short y, MouseButtons button, VirtualKeyStateSet vkeys)
+    void ToolButton::MouseUp(short x, short y, MouseButtons button, VirtualKeyStateSet vkeys)
     {
         if (button == mbLeft && pressed)
         {
@@ -528,7 +528,7 @@ namespace NLIBNS
         base::MouseUp(x, y, button, vkeys);
     }
 
-    Rect FlatButton::ButtonRect()
+    Rect ToolButton::ButtonRect()
     {
         Rect r = ClientRect();
         if (type != fbtSplitbutton)
@@ -537,7 +537,7 @@ namespace NLIBNS
         return r;
     }
 
-    Rect FlatButton::SplitRect()
+    Rect ToolButton::SplitRect()
     {
         if (type != fbtSplitbutton)
             return Rect();
@@ -546,7 +546,7 @@ namespace NLIBNS
         return r;
     }
 
-    int FlatButton::SplitWidth()
+    int ToolButton::SplitWidth()
     {
         if (type != fbtSplitbutton && type != fbtDropdownButton)
             return 0;
@@ -557,7 +557,7 @@ namespace NLIBNS
         return result;
     }
 
-    void FlatButton::PopButtons(bool thistoo)
+    void ToolButton::PopButtons(bool thistoo)
     {
         Control *cc = Parent();
         if (!cc)
@@ -565,7 +565,7 @@ namespace NLIBNS
 
         for (int ix = 0; ix < cc->ControlCount(); ++ix)
         {
-            FlatButton *btn = dynamic_cast<FlatButton*>(cc->Controls(ix));
+            ToolButton *btn = dynamic_cast<ToolButton*>(cc->Controls(ix));
             if (!btn || (btn == this && !thistoo) || !btn->Enabled() || btn->groupindex != groupindex || btn->type != type)
                 continue;
             if (btn->down)
@@ -582,7 +582,7 @@ namespace NLIBNS
         }
     }
 
-    void FlatButton::UpdateButtonTypes(FlatButtonTypes newtype)
+    void ToolButton::UpdateButtonTypes(ToolButtonTypes newtype)
     {
         Control *cc = Parent();
         if (!cc)
@@ -590,7 +590,7 @@ namespace NLIBNS
 
         for (int ix = 0; ix < cc->ControlCount(); ++ix)
         {
-            FlatButton *btn = dynamic_cast<FlatButton*>(cc->Controls(ix));
+            ToolButton *btn = dynamic_cast<ToolButton*>(cc->Controls(ix));
             if (!btn || btn == this || btn->groupindex != groupindex || (btn->type != fbtCheckRadiobutton && btn->type != fbtRadiobutton))
                 continue;
             btn->type = newtype;
@@ -601,7 +601,7 @@ namespace NLIBNS
         }
     }
 
-    bool FlatButton::DownInGroup()
+    bool ToolButton::DownInGroup()
     {
         Control *cc = Parent();
         if (!cc)
@@ -609,7 +609,7 @@ namespace NLIBNS
 
         for (int ix = 0; ix < cc->ControlCount(); ++ix)
         {
-            FlatButton *btn = dynamic_cast<FlatButton*>(cc->Controls(ix));
+            ToolButton *btn = dynamic_cast<ToolButton*>(cc->Controls(ix));
             if (!btn || btn == this || btn->groupindex != groupindex || (btn->type != fbtCheckRadiobutton && btn->type != fbtRadiobutton))
                 continue;
             if (btn->down)
@@ -618,7 +618,7 @@ namespace NLIBNS
         return false;
     }
 
-    int FlatButton::UnusedIndex()
+    int ToolButton::UnusedIndex()
     {
         int highest = -1;
         Control *cc = Parent();
@@ -627,7 +627,7 @@ namespace NLIBNS
 
         for (int ix = 0; ix < cc->ControlCount(); ++ix)
         {
-            FlatButton *btn = dynamic_cast<FlatButton*>(cc->Controls(ix));
+            ToolButton *btn = dynamic_cast<ToolButton*>(cc->Controls(ix));
             if (!btn || btn == this || (btn->type != fbtCheckRadiobutton && btn->type != fbtRadiobutton))
                 continue;
             highest = max(highest, btn->groupindex);
@@ -635,7 +635,7 @@ namespace NLIBNS
         return highest + 1;
     }
 
-    FlatButtonTypes FlatButton::GroupType()
+    ToolButtonTypes ToolButton::GroupType()
     {
         Control *cc = Parent();
         if (!cc)
@@ -643,7 +643,7 @@ namespace NLIBNS
 
         for (int ix = 0; ix < cc->ControlCount(); ++ix)
         {
-            FlatButton *btn = dynamic_cast<FlatButton*>(cc->Controls(ix));
+            ToolButton *btn = dynamic_cast<ToolButton*>(cc->Controls(ix));
             if (!btn || btn == this || btn->groupindex != groupindex || (btn->type != fbtCheckRadiobutton && btn->type != fbtRadiobutton))
                 continue;
             return btn->type;
@@ -651,12 +651,12 @@ namespace NLIBNS
         return type;
     }
 
-    bool FlatButton::Down()
+    bool ToolButton::Down()
     {
         return down;
     }
 
-    void FlatButton::SetDown(bool newdown)
+    void ToolButton::SetDown(bool newdown)
     {
         if (down == newdown || type == fbtPushbutton || type == fbtDropdownButton || type == fbtSplitbutton || (type == fbtRadiobutton && !newdown))
             return;
@@ -668,12 +668,12 @@ namespace NLIBNS
             OnDownChanged(this, EventParameters());
     }
 
-    FlatButtonTypes FlatButton::Type()
+    ToolButtonTypes ToolButton::Type()
     {
         return type;
     }
 
-    void FlatButton::SetType(FlatButtonTypes newtype)
+    void ToolButton::SetType(ToolButtonTypes newtype)
     {
         if (type == newtype)
             return;
@@ -726,12 +726,12 @@ namespace NLIBNS
         Invalidate();
     }
 
-    int FlatButton::GroupIndex()
+    int ToolButton::GroupIndex()
     {
         return groupindex;
     }
 
-    void FlatButton::SetGroupIndex(int newindex)
+    void ToolButton::SetGroupIndex(int newindex)
     {
         if (groupindex == newindex)
             return;
@@ -754,12 +754,12 @@ namespace NLIBNS
         }
     }
 
-    bool FlatButton::Flat()
+    bool ToolButton::Flat()
     {
         return flat;
     }
 
-    void FlatButton::SetFlat(bool newflat)
+    void ToolButton::SetFlat(bool newflat)
     {
         if (flat == newflat)
             return;
@@ -768,17 +768,17 @@ namespace NLIBNS
             Invalidate();
     }
 
-    ControlImage* FlatButton::Image()
+    ControlImage* ToolButton::Image()
     {
         return image;
     }
 
-    bool FlatButton::ShowText()
+    bool ToolButton::ShowText()
     {
         return showtext;
     }
 
-    void FlatButton::SetShowText(bool newshowtext)
+    void ToolButton::SetShowText(bool newshowtext)
     {
         if (showtext == newshowtext)
             return;
@@ -787,12 +787,12 @@ namespace NLIBNS
         Invalidate();
     }
 
-    ButtonImagePositions FlatButton::ImagePosition()
+    ButtonImagePositions ToolButton::ImagePosition()
     {
         return imagepos;
     }
 
-    void FlatButton::SetImagePosition(ButtonImagePositions newpos)
+    void ToolButton::SetImagePosition(ButtonImagePositions newpos)
     {
         if (imagepos == newpos)
             return;
@@ -801,12 +801,12 @@ namespace NLIBNS
         Invalidate();
     }
 
-    ButtonContentPositions FlatButton::ContentPosition()
+    ButtonContentPositions ToolButton::ContentPosition()
     {
         return contentpos;
     }
 
-    void FlatButton::SetContentPosition(ButtonContentPositions newpos)
+    void ToolButton::SetContentPosition(ButtonContentPositions newpos)
     {
         if (contentpos == newpos)
             return;
@@ -815,12 +815,12 @@ namespace NLIBNS
         Invalidate();
     }
 
-    int FlatButton::Margin()
+    int ToolButton::Margin()
     {
         return margin;
     }
 
-    void FlatButton::SetMargin(int newmargin)
+    void ToolButton::SetMargin(int newmargin)
     {
         if (margin == newmargin)
             return;
@@ -829,12 +829,12 @@ namespace NLIBNS
         Invalidate();
     }
 
-    int FlatButton::Spacing()
+    int ToolButton::Spacing()
     {
         return spacing;
     }
 
-    void FlatButton::SetSpacing(int newspacing)
+    void ToolButton::SetSpacing(int newspacing)
     {
         if (spacing == newspacing)
             return;
@@ -843,7 +843,7 @@ namespace NLIBNS
         Invalidate();
     }
 
-    void FlatButton::SetImageLayout(ButtonImagePositions newpos, int newmargin, int newspacing)
+    void ToolButton::SetImageLayout(ButtonImagePositions newpos, int newmargin, int newspacing)
     {
         if (imagepos == newpos && margin == newmargin && spacing == newspacing)
             return;
@@ -855,29 +855,29 @@ namespace NLIBNS
         Invalidate();
     }
 
-    bool FlatButton::Cancel()
+    bool ToolButton::Cancel()
     {
         return cancel;
     }
 
-    void FlatButton::SetCancel(bool newcancel)
+    void ToolButton::SetCancel(bool newcancel)
     {
         cancel = newcancel;
     }
 
-    void FlatButton::Click()
+    void ToolButton::Click()
     {
         if (OnClick)
             OnClick(this, EventParameters());
     }
 
-    void FlatButton::SplitClick()
+    void ToolButton::SplitClick()
     {
         if (OnSplitClick)
             OnSplitClick(this, EventParameters());
     }
 
-    void FlatButton::ChangeNotify(Object *object, int changetype)
+    void ToolButton::ChangeNotify(Object *object, int changetype)
     {
         base::ChangeNotify(object, changetype);
         if (object == image)

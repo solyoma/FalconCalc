@@ -33,7 +33,7 @@ void TfrmHistory::InitializeFormAndControls() /* Control initialization function
 	lstHistory->SetItemHeight(14);
 	lstHistory->SetParent(this);
 
-	btnDelete = new nlib::FlatButton();
+	btnDelete = new nlib::ToolButton();
 	btnDelete->SetBounds(nlib::Rect(445, 8, 468, 30));
 	btnDelete->SetAnchors(nlib::caTop | nlib::caRight);
 	btnDelete->SetTabOrder(1);
@@ -48,7 +48,7 @@ void TfrmHistory::InitializeFormAndControls() /* Control initialization function
 	btnDelete->SetFlat(false);
 	btnDelete->SetParent(this);
 
-	btnClear = new nlib::FlatButton();
+	btnClear = new nlib::ToolButton();
 	btnClear->SetBounds(nlib::Rect(445, 36, 468, 58));
 	btnClear->SetAnchors(nlib::caTop | nlib::caRight);
 	btnClear->SetTabOrder(2);

@@ -133,7 +133,7 @@ namespace NLIBNS
         btnOk->OnClick = CreateEvent(this, &TransparentColorPickerDialog::TransparentColorPicker::okbtnclick);
         btnOk->SetParent(this);
 
-        btnHand = new FlatButton();
+        btnHand = new ToolButton();
         btnHand->SetBounds(Rect(2, 4, 25, 27));
         btnHand->SetText(L"");
         //btnHand->GetFont()->SetFamily(L"Segoe UI");
@@ -144,7 +144,7 @@ namespace NLIBNS
         btnHand->Image()->SetImageIndex(1);
         btnHand->SetParent(this);
 
-        btnPick = new FlatButton();
+        btnPick = new ToolButton();
         btnPick->SetBounds(Rect(2, 28, 25, 51));
         btnPick->SetText(L"");
         //btnPick->GetFont()->SetFamily(L"Segoe UI");
@@ -156,7 +156,7 @@ namespace NLIBNS
         btnPick->Image()->SetImageIndex(0);
         btnPick->SetParent(this);
 
-        btnPlus = new FlatButton();
+        btnPlus = new ToolButton();
         btnPlus->SetBounds(Rect(2, 57, 25, 80));
         btnPlus->SetText(L"");
         //btnPlus->GetFont()->SetFamily(L"Segoe UI");
@@ -167,7 +167,7 @@ namespace NLIBNS
         btnPlus->OnClick = CreateEvent(this, &TransparentColorPickerDialog::TransparentColorPicker::plusbtnclick);
         btnPlus->SetParent(this);
 
-        btnMinus = new FlatButton();
+        btnMinus = new ToolButton();
         btnMinus->SetBounds(Rect(2, 81, 25, 104));
         btnMinus->SetText(L"");
         //btnMinus->GetFont()->SetFamily(L"Segoe UI");
@@ -1217,7 +1217,7 @@ namespace NLIBNS
         lbItems->OnDrawItem = CreateEvent(this, &self::lbitemsdraw);
         lbItems->OnKeyPush = CreateEvent(this, &self::lbitemskeypush);
 
-        fbUp = new FlatButton();
+        fbUp = new ToolButton();
         fbUp->SetBounds(Rect(195, 32, 220, 57));
         fbUp->SetTabOrder(1);
         fbUp->SetParent(this);
@@ -1227,7 +1227,7 @@ namespace NLIBNS
         fbUp->Image()->SetImageIndex(5);
         fbUp->OnMouseDown = CreateEvent(this, &self::fbupdownmousedown);
 
-        fbDown = new FlatButton();
+        fbDown = new ToolButton();
         fbDown->SetBounds(Rect(195, 60, 220, 85));
         fbDown->SetTabOrder(2);
         fbDown->SetParent(this);
@@ -1237,7 +1237,7 @@ namespace NLIBNS
         fbDown->Image()->SetImageIndex(6);
         fbDown->OnMouseDown = CreateEvent(this, &self::fbupdownmousedown);
 
-        fbAdd = new FlatButton();
+        fbAdd = new ToolButton();
         fbAdd->SetBounds(Rect(9, 5, 34, 30));
         fbAdd->SetTabOrder(3);
         fbAdd->SetParent(this);
@@ -1246,7 +1246,7 @@ namespace NLIBNS
         fbAdd->Image()->SetImageIndex(2);
         fbAdd->OnClick = CreateEvent(this, &self::fbaddclick);
 
-        fbAddSub = new FlatButton();
+        fbAddSub = new ToolButton();
         fbAddSub->SetBounds(Rect(36, 5, 61, 30));
         fbAddSub->SetTabOrder(4);
         fbAddSub->SetParent(this);
@@ -1255,7 +1255,7 @@ namespace NLIBNS
         fbAddSub->Image()->SetImageIndex(4);
         fbAddSub->OnClick = CreateEvent(this, &self::fbaddsubclick);
 
-        fbDelete = new FlatButton();
+        fbDelete = new ToolButton();
         fbDelete->SetBounds(Rect(167, 5, 192, 30));
         fbDelete->SetTabOrder(5);
         fbDelete->SetParent(this);
@@ -1291,7 +1291,7 @@ namespace NLIBNS
         pEvents->SetInnerBorderStyle(pbsNone);
         pEvents->SetParent(tpEvents);
 
-        fbPropAbc = new FlatButton();
+        fbPropAbc = new ToolButton();
         fbPropAbc->SetBounds(Rect(2, 1, 27, 26));
         fbPropAbc->SetTabOrder(0);
         fbPropAbc->SetGroupIndex(1);
@@ -1303,7 +1303,7 @@ namespace NLIBNS
         fbPropAbc->OnClick = CreateEvent(this, &self::fbabcclick);
         fbPropAbc->SetParent(pProp);
 
-        fbPropCat = new FlatButton();
+        fbPropCat = new ToolButton();
         fbPropCat->SetBounds(Rect(29, 1, 54, 26));
         fbPropCat->SetTabOrder(1);
         fbPropCat->SetGroupIndex(1);
@@ -1315,7 +1315,7 @@ namespace NLIBNS
         fbPropCat->OnClick = CreateEvent(this, &self::fbabcclick);
         fbPropCat->SetParent(pProp);
 
-        fbEventAbc = new FlatButton();
+        fbEventAbc = new ToolButton();
         fbEventAbc->SetBounds(Rect(2, 1, 27, 26));
         fbEventAbc->SetTabOrder(0);
         fbEventAbc->SetGroupIndex(1);
@@ -1327,7 +1327,7 @@ namespace NLIBNS
         fbEventAbc->OnClick = CreateEvent(this, &self::fbabcclick);
         fbEventAbc->SetParent(pEvents);
 
-        fbEventCat = new FlatButton();
+        fbEventCat = new ToolButton();
         fbEventCat->SetBounds(Rect(29, 1, 54, 26));
         fbEventCat->SetTabOrder(1);
         fbEventCat->SetGroupIndex(1);
@@ -1481,7 +1481,7 @@ namespace NLIBNS
 
     void PropertyEditorDialog::PropertyEditorForm::fbabcclick(void *sender, EventParameters param)
     {
-        FlatButton *fb = (FlatButton*)sender;
+        ToolButton *fb = (ToolButton*)sender;
         lbProp->Sort(fb->Tag() == 1);
         lbEvents->Sort(fb->Tag() == 1);
         fbPropAbc->SetDown(fb->Tag() == 0);
@@ -1497,7 +1497,7 @@ namespace NLIBNS
 
         MouseRepeat(fbUp->OnMouseDown, (Control*)sender, param);
 
-        int dif = ((FlatButton*)sender)->Tag();
+        int dif = ((ToolButton*)sender)->Tag();
 
         int sel = lbItems->ItemIndex();
         int pos = sel;
@@ -1812,7 +1812,7 @@ namespace NLIBNS
     //    sgFilters->SetColumnDrag(true);
     //#endif
 
-        btnUp = new FlatButton();
+        btnUp = new ToolButton();
         btnUp->SetBounds(Rect(375, 7, 400, 32));
         btnUp->SetAnchors(caTop | caRight);
         btnUp->SetTabOrder(1);
@@ -1822,7 +1822,7 @@ namespace NLIBNS
         btnUp->Image()->SetImageIndex(5);
         btnUp->OnClick = CreateEvent(this, &self::btnupclick);
 
-        btnDown = new FlatButton();
+        btnDown = new ToolButton();
         btnDown->SetBounds(Rect(375, 33, 400, 58));
         btnDown->SetAnchors(caTop | caRight);
         btnDown->SetTabOrder(2);
@@ -1832,7 +1832,7 @@ namespace NLIBNS
         btnDown->Image()->SetImageIndex(6);
         btnDown->OnClick = CreateEvent(this, &self::btndownclick);
 
-        btnDel = new FlatButton();
+        btnDel = new ToolButton();
         btnDel->SetBounds(Rect(375, 59, 400, 84));
         btnDel->SetAnchors(caTop | caRight);
         btnDel->SetTabOrder(3);

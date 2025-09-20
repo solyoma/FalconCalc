@@ -19,8 +19,8 @@ N_PUBLIC: /* Designer generated list of public members. Do not edit by hand. */
 	nlib::StringGrid *sgUser;
 	nlib::Panel *pBuiltin;
 	nlib::StringGrid *sgBuiltin;
-	nlib::FlatButton *btnDelVar;
-	nlib::FlatButton *btnClear;
+	nlib::ToolButton *btnDelVar;
+	nlib::ToolButton *btnClear;
 	nlib::Button *btnCancel;
 	nlib::Button *btnSave;
 

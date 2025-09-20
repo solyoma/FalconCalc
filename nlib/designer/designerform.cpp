@@ -4044,8 +4044,8 @@ namespace NLIBNS
         //    c = new Panel();
         //else if (ctype == typeid(Paintbox))
         //    c = new Paintbox();
-        //else if (ctype == typeid(FlatButton))
-        //    c = new FlatButton();
+        //else if (ctype == typeid(ToolButton))
+        //    c = new ToolButton();
         //else if (ctype == typeid(Label))
         //    c = new Label();
         //else if (ctype == typeid(Bevel))
@@ -7884,7 +7884,7 @@ namespace NLIBNS
         SetShowText(false);
         Hide();
         SetParent(owner);
-        button = new FlatButton();
+        button = new ToolButton();
         button->SetBounds(RectS(2 * Scaling, 2 * Scaling, (NVControlHeight - 4) * Scaling, (NVControlHeight - 4) * Scaling));
         button->Image()->SetImages(owner->controlbuttons->Images());
         button->Image()->SetImageIndex(ImageIndexByTypeInfo(typeid(*control->PropertyOwner())));
@@ -7925,7 +7925,7 @@ namespace NLIBNS
 
     void DesignContainerForm::PlaceholderControl::buttonclick(void *sender, EventParameters param)
     {
-        if (((FlatButton*)sender)->Down())
+        if (((ToolButton*)sender)->Down())
             owner->PressButton(this);
         else
             owner->UnpressButton(this);

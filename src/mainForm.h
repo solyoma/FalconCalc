@@ -69,14 +69,14 @@ N_PUBLIC: /* Designer generated list of public members. Do not edit by hand. */
 	nlib::MenuItem* miHelp;
 	nlib::MenuItem* miAbout;
 	nlib::MenuItem* miGenHelp;
-	nlib::FlatButton* btnOpenHexOptions;
-	nlib::FlatButton* btnOpenDecOptions;
+	nlib::ToolButton* btnOpenHexOptions;
+	nlib::ToolButton* btnOpenDecOptions;
 	nlib::Panel* pToolbar;
-	nlib::FlatButton* tbExit;
+	nlib::ToolButton* tbExit;
 	nlib::Bevel* Bevel1;
-	nlib::FlatButton* tbHistory;
-	nlib::FlatButton* tbCopy;
-	nlib::FlatButton* tbPaste;
+	nlib::ToolButton* tbHistory;
+	nlib::ToolButton* tbCopy;
+	nlib::ToolButton* tbPaste;
 	nlib::Combobox* cbInfix;
 	nlib::Groupbox* gbResults;
 	nlib::Button* btnDecimal;
@@ -119,10 +119,10 @@ N_PUBLIC: /* Designer generated list of public members. Do not edit by hand. */
 	nlib::Checkbox* chkHexPrefix;
 	nlib::Label* Label1;
 	nlib::Edit* edtChars;
-	nlib::FlatButton* btnFont;
-	nlib::FlatButton* btnCloseDecOptions;
-	nlib::FlatButton* btnCloseHexOptions;
-	nlib::FlatButton* btnClearInfix;
+	nlib::ToolButton* btnFont;
+	nlib::ToolButton* btnCloseDecOptions;
+	nlib::ToolButton* btnCloseHexOptions;
+	nlib::ToolButton* btnClearInfix;
 
 	void miExitClick(void* sender, nlib::EventParameters param);
 	void miCopyClick(void* sender, nlib::EventParameters param);

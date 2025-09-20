@@ -598,7 +598,7 @@ namespace NLIBNS
     };
 
     class NonVisualControl;
-    class FlatButton;
+    class ToolButton;
     // Form holding non-visual control placeholder panels, i.e. dialogs or image lists.
     class DesignContainerForm : public DesignFormBase
     {
@@ -628,7 +628,7 @@ namespace NLIBNS
         public:
             PlaceholderControl(DesignContainerForm *owner, NonVisualControl *control);
 
-            FlatButton *button;
+            ToolButton *button;
 
             NonVisualControl* GetControl();
 

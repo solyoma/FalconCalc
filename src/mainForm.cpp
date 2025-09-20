@@ -202,7 +202,7 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	miGenHelp->SetShortcut(L"F1");
 	mnuMain->SetParent(this);
 
-	btnOpenHexOptions = new nlib::FlatButton();
+	btnOpenHexOptions = new nlib::ToolButton();
 	btnOpenHexOptions->SetBounds(nlib::Rect(14, 311, 242, 323));
 	btnOpenHexOptions->SetText(lt.GetTranslationFor(FCT_HEXOPTSOPENER));
 	btnOpenHexOptions->SetVisible(false);
@@ -212,7 +212,7 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	btnOpenHexOptions->SetTabOrder(10);
 	btnOpenHexOptions->SetParent(this);
 
-	btnOpenDecOptions = new nlib::FlatButton();
+	btnOpenDecOptions = new nlib::ToolButton();
 	btnOpenDecOptions->SetBounds(nlib::Rect(14, 175, 242, 187));
 	btnOpenDecOptions->SetText(lt.GetTranslationFor(FCT_DECOPTSOPENER));
 	btnOpenDecOptions->SetVisible(false);
@@ -229,7 +229,7 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	pToolbar->SetInnerBorderStyle(nlib::pbsNone);
 	pToolbar->SetParent(this);
 
-	tbExit = new nlib::FlatButton();
+	tbExit = new nlib::ToolButton();
 	tbExit->SetBounds(nlib::Rect(0, 0, 23, 23));
 	tbExit->GetFont().SetFamily(L"Tahoma");
 	tbExit->GetFont().SetSize(10);
@@ -242,7 +242,7 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	Bevel1->SetShape(nlib::bstLeftLine);
 	Bevel1->SetParent(pToolbar);
 
-	tbHistory = new nlib::FlatButton();
+	tbHistory = new nlib::ToolButton();
 	tbHistory->SetBounds(nlib::Rect(31, 0, 54, 23));
 	tbHistory->GetFont().SetFamily(L"Tahoma");
 	tbHistory->GetFont().SetSize(10);
@@ -250,7 +250,7 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	tbHistory->SetTabOrder(1);
 	tbHistory->SetParent(pToolbar);
 
-	tbCopy = new nlib::FlatButton();
+	tbCopy = new nlib::ToolButton();
 	tbCopy->SetBounds(nlib::Rect(55, 0, 78, 23));
 	tbCopy->GetFont().SetFamily(L"Tahoma");
 	tbCopy->GetFont().SetSize(10);
@@ -258,7 +258,7 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	tbCopy->SetTabOrder(2);
 	tbCopy->SetParent(pToolbar);
 
-	tbPaste = new nlib::FlatButton();
+	tbPaste = new nlib::ToolButton();
 	tbPaste->SetBounds(nlib::Rect(79, 0, 102, 23));
 	tbPaste->SetEnabled(false);
 	tbPaste->GetFont().SetFamily(L"Tahoma");
@@ -278,7 +278,7 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 
 	cbInfix->SetWantedKeyTypes(wkOthers | wkArrows | wkEnter);
 
-	btnClearInfix = new nlib::FlatButton();
+	btnClearInfix = new nlib::ToolButton();
 	btnClearInfix->SetBounds(nlib::Rect(492, 29, 513, 50));
 	btnClearInfix->GetFont().SetFamily(L"Tahoma");
 	btnClearInfix->GetFont().SetSize(10);
@@ -677,7 +677,7 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	edtChars->SetReadOnly(true);
 	edtChars->SetParent(this);
 
-	btnFont = new nlib::FlatButton();
+	btnFont = new nlib::ToolButton();
 	btnFont->SetBounds(nlib::Rect(440, 175, 508, 198));
 	btnFont->SetText(lt.GetTranslationFor(FCT_FONT));
 	btnFont->GetFont().SetFamily(L"Tahoma");
@@ -688,7 +688,7 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	btnFont->SetFlat(false);
 	btnFont->SetParent(this);
 
-	btnCloseDecOptions = new nlib::FlatButton();
+	btnCloseDecOptions = new nlib::ToolButton();
 	btnCloseDecOptions->SetBounds(nlib::Rect(14, 175, 242, 187));
 	btnCloseDecOptions->SetText(L"-------------------------------------------");
 	btnCloseDecOptions->GetFont().SetFamily(L"Tahoma");
@@ -697,7 +697,7 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	btnCloseDecOptions->SetTabOrder(7);
 	btnCloseDecOptions->SetParent(this);
 
-	btnCloseHexOptions = new nlib::FlatButton();
+	btnCloseHexOptions = new nlib::ToolButton();
 	btnCloseHexOptions->SetBounds(nlib::Rect(14, 311, 242, 323));
 	btnCloseHexOptions->SetText(L"-------------------------------------------");
 	btnCloseHexOptions->GetFont().SetFamily(L"Tahoma");

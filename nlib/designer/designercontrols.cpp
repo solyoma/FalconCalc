@@ -128,7 +128,7 @@ void ButtonContainer::AddButton(const type_info &type)
     //if (rows == 0)
     //    rows = 1;
 
-    FlatButton *fb = new FlatButton();
+    ToolButton *fb = new ToolButton();
     buttons.push_back(fb);
 
     fb->Hide();
@@ -267,7 +267,7 @@ void ButtonContainer::SetImageIndex(int buttonindex, int imageindex)
 
 void ButtonContainer::btnclick(void *sender, EventParameters param)
 {
-    FlatButton *fb = (FlatButton*)sender;
+    ToolButton *fb = (ToolButton*)sender;
     owner->ButtonClicked(fb);
 }
 
@@ -275,19 +275,19 @@ void ButtonContainer::btndblclick(void *sender, MouseButtonParameters param)
 {
     DesignForm *frm = dynamic_cast<DesignForm*>(designer->ActiveForm());
     if (frm)
-        frm->PlaceControl(*(const type_info*)((FlatButton*)sender)->Tag());
+        frm->PlaceControl(*(const type_info*)((ToolButton*)sender)->Tag());
     else
     {
         DesignContainerForm *cfrm = dynamic_cast<DesignContainerForm*>(designer->ActiveForm());
         if (cfrm)
-            cfrm->PlaceControl(*(const type_info*)((FlatButton*)sender)->Tag());
+            cfrm->PlaceControl(*(const type_info*)((ToolButton*)sender)->Tag());
     }
 
 }
 
-FlatButton* ButtonContainer::FindButton(int id)
+ToolButton* ButtonContainer::FindButton(int id)
 {
-    auto it = std::find_if(buttons.begin(), buttons.end(), [id](FlatButton *fb) { return fb->Tag() == id; });
+    auto it = std::find_if(buttons.begin(), buttons.end(), [id](ToolButton *fb) { return fb->Tag() == id; });
     if (it == buttons.end())
         return nullptr;
     return *it;
@@ -403,7 +403,7 @@ void ButtonPanel::MeasureControlArea(Rect &clientrect)
     clientrect.top = -VPos();
 }
 
-void ButtonPanel::ButtonClicked(FlatButton *fb)
+void ButtonPanel::ButtonClicked(ToolButton *fb)
 {
     if (lastfb != fb || (lastfb == fb && !fb->Down()))
     {
@@ -460,7 +460,7 @@ void ButtonPanel::PressButton(int id)
 
     for (auto it = containers.begin(); it != containers.end(); ++it)
     {
-        FlatButton *fb = (*it)->FindButton(id);
+        ToolButton *fb = (*it)->FindButton(id);
         if (fb)
         {
             if (OnUnpressButton)
@@ -888,7 +888,7 @@ void PropertyData::DrawListItem(DrawItemParameters param)
 //---------------------------------------------
 
 
-PropertyListbox::PropertyListbox(PropertyListType listtype, FlatButton *abcbutton, FlatButton *catbutton) :
+PropertyListbox::PropertyListbox(PropertyListType listtype, ToolButton *abcbutton, ToolButton *catbutton) :
         listtype(listtype), showcat(false), colw(0.45f), colsizing(false), mousex(-1), mousey(-1), actionpos(-1),
         checkdown(false), checkhover(false), checkrow(-1), editchange(false), editdeleting(false),
 
@@ -911,7 +911,7 @@ PropertyListbox::PropertyListbox(PropertyListType listtype, FlatButton *abcbutto
     editor->OnDblClick = CreateEvent(this, &PropertyListbox::editordblclick);
     editor->OnDialogCode = CreateEvent(this, &PropertyListbox::editordlgcode);
 
-    button = new FlatButton();
+    button = new ToolButton();
     button->Hide();
     button->SetDoubleBuffered(true);
     button->SetFlat(false);

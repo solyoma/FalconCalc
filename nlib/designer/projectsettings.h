@@ -49,9 +49,9 @@ N_PUBLIC: /* Designer generated list of public members. Do not edit by hand. */
     TabPage *TabPage1;
     Edit *edProjName;
     Listbox *lbForms;
-    FlatButton *btnFormUp;
-    FlatButton *btnFormDown;
-    FlatButton *btnFormDel;
+    ToolButton *btnFormUp;
+    ToolButton *btnFormDown;
+    ToolButton *btnFormDel;
     Checkbox *cbFormCreate;
     TabPage *TabPage2;
     Edit *edPath;

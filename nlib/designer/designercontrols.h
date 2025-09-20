@@ -29,7 +29,7 @@ private:
 
     ButtonPanel *owner;
 
-    std::vector<FlatButton*> buttons;
+    std::vector<ToolButton*> buttons;
 
     bool open;
 
@@ -49,7 +49,7 @@ private:
     //void LayoutButtons(int width);
     //void Update();
 
-    FlatButton* FindButton(int id);
+    ToolButton* FindButton(int id);
 
 
     // Event functions:
@@ -91,8 +91,8 @@ private:
 
     void ContentUpdated();
 
-    FlatButton *lastfb; // The last button pressed.
-    void ButtonClicked(FlatButton *fb);
+    ToolButton *lastfb; // The last button pressed.
+    void ButtonClicked(ToolButton *fb);
 
     NonVisualControl *nvcontrol;
     NotifyEvent OnUnpressButton;
@@ -302,7 +302,7 @@ private:
     bool editchange; // The text is being changed while matching it to one result in the list of a property.
     bool editdeleting; // The text is modified after pressing the delete or backspace buttons. Make sure we don't autocomplete the text.
 
-    FlatButton *button;
+    ToolButton *button;
 
     PropertyChoiceForm *listform;
 
@@ -370,8 +370,8 @@ protected:
     void QSort(int l, int r, std::vector< std::vector<int> > &poslist);
     bool QSortCmp(int p1, int p2); // Returns true if d1 is larger than d2 (that is there is a need to swap).
 
-    FlatButton *btnAbc; // The button for sorting the property list alphabetically.
-    FlatButton *btnCat; // The button for sorting the property list by category.
+    ToolButton *btnAbc; // The button for sorting the property list alphabetically.
+    ToolButton *btnCat; // The button for sorting the property list by category.
 
     PopupMenu *pmProp; // Popup menu for properties and events in the list box.
     // General menu items in the popup menu.
@@ -396,7 +396,7 @@ protected:
 
     virtual ~PropertyListbox();
 public:
-    PropertyListbox(PropertyListType listtype, FlatButton *abcbutton, FlatButton *catbutton);
+    PropertyListbox(PropertyListType listtype, ToolButton *abcbutton, ToolButton *catbutton);
     virtual void Destroy();
 
     void SetProperties(Object *propowner); // Set the object whose properties will be listed in the listbox. The parentform is the form which will be marked as modified when a property is changed.

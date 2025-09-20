@@ -15,8 +15,8 @@ public:
 
 N_PUBLIC: /* Designer generated list of public members. Do not edit by hand. */
 	nlib::Listbox *lstHistory;
-	nlib::FlatButton *btnDelete;
-	nlib::FlatButton *btnClear;
+	nlib::ToolButton *btnDelete;
+	nlib::ToolButton *btnClear;
 	nlib::Checkbox *chkSorted;
 	nlib::Button *btnCancel;
 
