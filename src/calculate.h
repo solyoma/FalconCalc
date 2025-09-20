@@ -524,8 +524,7 @@ namespace FalconCalc
 	class LittleEngine
 	{
     public:
-        enum class ResultType { rtNumber, rtDefinition, rtInvalid};
-        enum class ResValid { rvOk, rvInvalid, rvDef };            // validity of result: OK, invalid, function, etc definition
+        enum class ResultType {rtUndef, rtNumber, rtDefinition, rtInvalid};
 
         static size_t builtInFuncCount; // built in functions are set up
 
@@ -534,14 +533,13 @@ namespace FalconCalc
         SmartString infix;
         TokenVec tvPostfix;
         RealNumber calcResult; // store result of calculation
-        ResultType resultType = ResultType::rtNumber;
+        ResultType resultType = ResultType::rtUndef;
 
         static VariableTable variables;
         static BuiltinFuncTable builtinFunctions;
         static FunctionTable functions;
 
         SmartString ssNameOfDatFile;
-        ResValid resultValid = ResValid::rvOk;
         bool clean;                             // no changes to variables or functions?
     private:
 

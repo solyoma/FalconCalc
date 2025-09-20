@@ -95,11 +95,11 @@ static _LanguageTexts_private __texts[] = {
  { FCT_CLOSE,           L"C&lose", L"Be&zárás"},
  { FCT_ABOUT,		    	L"&About",							L"&Névjegy" },
  { FCT_ANGLEF,				L"Angles in",						L"Szögek formátuma" },
- { FCT_APPEND,				L"Paste &After expression",			L"&Adat hozzáragasztás" },
+ { FCT_APPEND,				L"Paste &After expression",			L"Beillessztés a &végére" },
  { FCT_BIN,				 	L"&Binary",							L"&Bináris" },
  { FCT_BYTES,				L"As B&ytes",						L"Bájtként" },
  { FCT_CHARFONT,			L"&Font For 'As String...' Display...",
-                            L"&Betű a 'Szöveges megjelenítéshez..." },
+                            L"&Betű a 'Szöveges megjelenítéshez'..." },
  { FCT_CLEARHIST, 			L"C&lear History",					L"Előzmények &törlése" },
  { FCT_COPYBIN,				L"Copy &Binary",					L"&Bináris érték vágólapra" },
  { FCT_COPYDEC,				L"Copy &Decimal",					L"&Decimális érték vágólapra"},
@@ -107,7 +107,7 @@ static _LanguageTexts_private __texts[] = {
  { FCT_COPYHEX,				L"Copy He&xadecimal",				L"He&xadecimális érték vágólapra" },
  { FCT_COPYOCT,				L"Copy &Octal",						L"&Oktális érték vágólapra" },
  { FCT_COPYTEXT,			L"Copy &Formula",					L"&Képlet vágólapra" },
- { FCT_DATA,				L"&Data...",						L"&Adat..." },
+ { FCT_DATA,				L"&User data",						L"Sa&ját adat" },
  { FCT_DDIGITS,				L"&Decimal digits:",				L"&Tizedesjegyek:" },
  { FCT_DEC,				 	L"Deci&mal",						L"Deci&mális" },
  { FCT_DECOPTS,			 	L"Decimal options",					L"Decimalális opciók" },
@@ -136,7 +136,7 @@ static _LanguageTexts_private __texts[] = {
                             L"─────Hexadecimális opciók─────" },
  { FCT_HEXPREFIX,		    L"0x p&refix",						L"0&x elöl" },
  { FCT_HISTOPTS,			L"Histor&y Options...",				L"Előzmé&ny beállítások..." },
- { FCT_HISTORY,				L"H&istory",						L"E&lőzmények" },
+// { FCT_HISTORY,				L"H&istory",						L"E&lőzmények" },
  { FCT_HTML,				L"HT&ML",							L"HT&ML" },
  { FCT_LANGUAGE,		    L"&Language",					    L"&Nyelv"},
  { FCT_LITTLEE,				L"&Little endian",					L"&Little endian" },
@@ -238,7 +238,7 @@ static _LanguageTexts_private __texts[] = {
  { FCT_LOCALE1,			L"The locale determines the character used for a decimal point, the ordering of the characters"
                          " and the correspondance bewtween upper and lowercase letters. Variable and function names may"
                          " contain accented or special letters in your locale that are not present in other locales and vice-versa.", 
-                        L"A nyelvi környezet határozza meg a tizedes pont karakterét, a karakterek sorrendjét és a kis- és nagybetűk"
+                        L"A nyelvi környezet határozza meg a tizedes jel karaktert )pont, vagy vessző), a karakterek sorrendjét és a kis- és nagybetűk"
                          " megfeleltetését. A változó és függvénynevek tartalmazhatnak ékezetes vagy speciális karaktereket az adott "
                          "nyelvi környezetben, amelyek más nyelvi környezetben nem találhatók meg és fordítva."},
  { FCT_LOCALE2,			L"Locale names usually consist of two lowercase and two uppercase letters separated by an underscore character"

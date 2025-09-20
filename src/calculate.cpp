@@ -1030,7 +1030,7 @@ bool LittleEngine::_VariableAssignment(const SmartString &expr, unsigned &pos, T
     v.tokenVec = if2pf.tvPostfix;
     v.dirty = false;
     if (v.tokenVec.size() != 1)      // variables must have a single value
-        throw(FCT_SYNTAX_ERROR);
+        trigger.Raise(FCT_SYNTAX_ERROR);
     if (v.tokenVec.size() == 1 && (v.tokenVec[0].Type() == tknNumber))  // The value already calculated
         v.value = v.tokenVec[0].Value();    // and v.dirty remains false
     else
@@ -1442,14 +1442,18 @@ RealNumber LittleEngine::Calculate()
 
         return _CalcPostfix(tvPostfix);
     }
-    catch(...)
+    catch(TextIDs id)
     {
-      ;  // TO_DO : error handling
       resultType = ResultType::rtInvalid;
 	  stack.clear();
-	  throw;	// re-throw if not handled
+	  trigger.Raise(id);
     }
-    return RealNumber::RN_0;
+    catch (...)
+    {
+        ;  // TO_DO : error handling
+	  throw; // unknown: re-throw
+    }
+        return RealNumber::RN_0;
 }
 
 /*========================================================
@@ -1731,7 +1735,7 @@ void Trigger::SetLanguage(Language lang)
 
 void Trigger::Raise(TextIDs tids)
 {
-	lengine->resultValid = LittleEngine::ResValid::rvInvalid;
+	lengine->resultType = LittleEngine::ResultType::rtInvalid;
 	throw tids;
 }
 

@@ -56,7 +56,7 @@ N_PUBLIC: /* Designer generated list of public members. Do not edit by hand. */
 	nlib::MenuItem* miView;
 	nlib::MenuItem* miShowDecOpts;
 	nlib::MenuItem* miShowHexOpts;
-	nlib::MenuItem* miHistory;
+	nlib::MenuItem* separator3a;
 	nlib::MenuItem* miShowHist;
 	nlib::MenuItem* separator3;
 	nlib::MenuItem* miHistOpts;

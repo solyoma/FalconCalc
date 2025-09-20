@@ -163,6 +163,8 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	miAppend = miEdit->Add(lt.GetTranslationFor(FCT_APPEND));
 	miAppend->SetShortcut(L"Ctrl+Shift+V");
 	separator1 = miEdit->Add(L"-");
+	miShowHist = miEdit->Add(lt.GetTranslationFor(FCT_SHOWHIST));
+	separator3a = miEdit->Add(L"-");
 	mnuEditCopy = miEdit->Add(lt.GetTranslationFor(FCT_EDITCOPY));
 	miCopyDecimal = mnuEditCopy->Add(lt.GetTranslationFor(FCT_COPYDEC));
 	miCopyHexadecimal = mnuEditCopy->Add(lt.GetTranslationFor(FCT_COPYHEX));
@@ -185,8 +187,6 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	miShowDecOpts->SetShortcutText(L"Ctrl+D");
 	miShowHexOpts = miView->Add(lt.GetTranslationFor(FCT_SHOWHEXOPTS));
 	miShowHexOpts->SetShortcut(L"Ctrl+X");
-	miHistory = mnuMain->Add(lt.GetTranslationFor(FCT_HISTORY));
-	miShowHist = miHistory->Add(lt.GetTranslationFor(FCT_SHOWHIST));
 	miShowHist->SetShortcut(L"Alt+3");
 	mnuOptions = mnuMain->Add(lt.GetTranslationFor(FCT_OPTIONS));
 	miLanguage = mnuOptions->Add(lt.GetTranslationFor(FCT_LANGUAGE));
@@ -799,6 +799,8 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	tbExit->OnClick = CreateEvent(this, &TfrmMain::tbExitClick);
 	tbHistory->OnClick = CreateEvent(this, &TfrmMain::tbHistoryClick);
 	tbPaste->OnClick = CreateEvent(this, &TfrmMain::tbPasteClick);
+
+	SetActiveControl(cbInfix);
 }
 
 /*=============================================================
@@ -870,7 +872,6 @@ void TfrmMain::_SetupForLanguage()
 	miGenHelp->SetText(lt.GetTranslationFor(FCT_GENHELP));
 	miHelp->SetText(lt.GetTranslationFor(FCT_HELP));
 	miHistOpts->SetText(lt.GetTranslationFor(FCT_HISTOPTS));
-	miHistory->SetText(lt.GetTranslationFor(FCT_HISTORY));
 	miLanguage->SetText(lt.GetTranslationFor(FCT_LANGUAGE));
 	miLocale->SetText(lt.GetTranslationFor(FCT_LOCALE));
 	miPaste->SetText(lt.GetTranslationFor(FCT_PASTEEXPR));
@@ -1526,7 +1527,7 @@ void TfrmMain::cbInfixKeyDown(void* sender, nlib::KeyParameters param)
 	_watchdog = 0;   // reset counter
 	if (cbInfix->Text().empty())
 		return;
-	lengine->resultValid = LittleEngine::ResValid::rvOk;
+	lengine->resultType = LittleEngine::ResultType::rtUndef;
 
 	if (param.keycode == VK_RETURN)
 		_AddToHistory(cbInfix->Text());
@@ -1992,7 +1993,7 @@ void TfrmMain::_AddToHistory(wstring text)
 	if (_minCharLength >= ss.length())	// do not add to short strings
 		return;
 
-	if (lengine->resultValid != LittleEngine::ResValid::rvOk)
+	if (lengine->resultType == LittleEngine::ResultType::rtInvalid || lengine->resultType == LittleEngine::ResultType::rtUndef)
 	{
 		_watchdog = 0;
 		return;
