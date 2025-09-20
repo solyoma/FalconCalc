@@ -1345,6 +1345,8 @@ void TfrmMain::btnFontClick(void *sender, nlib::EventParameters param)
 void TfrmMain::btnClearInfixClick(void* sender, nlib::EventParameters param)
 {
 	cbInfix->SetText(L"");
+	lengine->infix = L"";
+	_ShowResults();
 }
 
 void TfrmMain::pnlDecPaint(void *sender, nlib::PaintParameters param)
@@ -1391,7 +1393,7 @@ void TfrmMain::_GetVirtualDisplaySize()
 
 void TfrmMain::_ShowResults()	// from lengine
 {
-    if(cbInfix->Text().empty())
+    if(lengine->infix.empty())
     {
 		_ShowMessageOnAllPanels(L"");
         return;
