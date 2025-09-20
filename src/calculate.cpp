@@ -37,7 +37,7 @@ int __CRTDECL  _matherr (_Inout_ struct _exception *a)
         {
 #ifdef _MSC_VER
 #else
-            throw "overflow error"_ss;
+            throw FCT_OVERFLOW;
 #endif
         }
     }
@@ -45,7 +45,7 @@ int __CRTDECL  _matherr (_Inout_ struct _exception *a)
     {
 #ifdef _MSC_VER
 #else
-        throw "domain error"_ss;
+        throw FCT_DOMAIN_ERROR;
 #endif
     }
     return 1;
@@ -1025,10 +1025,12 @@ bool LittleEngine::_VariableAssignment(const SmartString &expr, unsigned &pos, T
             break;
     }
 
-    LittleEngine if2pf(*this);      // functions and variables are the same for all engines
+    LittleEngine if2pf(*this);      // functions and variables are common for all engines
     if2pf._InfixToPostFix(v.body);
     v.tokenVec = if2pf.tvPostfix;
     v.dirty = false;
+    if (v.tokenVec.size() != 1)      // variables must have a single value
+        throw(FCT_SYNTAX_ERROR);
     if (v.tokenVec.size() == 1 && (v.tokenVec[0].Type() == tknNumber))  // The value already calculated
         v.value = v.tokenVec[0].Value();    // and v.dirty remains false
     else

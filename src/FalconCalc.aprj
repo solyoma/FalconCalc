@@ -42,6 +42,59 @@
             }
         }
 
+        type PopupMenu
+        {
+            Name = "pmCopy"
+            AccessLevel = "alPublic"
+
+            subtype Items : MenuItem
+            {
+                Name = "miCopyDec"
+                AccessLevel = "alPublic"
+                Text = "Copy &Decimal"
+                event OnClick = "miCopyDecClick"
+            }
+
+            subtype Items : MenuItem
+            {
+                Name = "miCopyHex"
+                AccessLevel = "alPublic"
+                Text = "Copy He&xadecimal"
+                event OnClick = "miCopyHexClick"
+            }
+
+            subtype Items : MenuItem
+            {
+                Name = "miCopyOct"
+                AccessLevel = "alPublic"
+                Text = "Copy &Octal"
+                event OnClick = "miCopyOctClick"
+            }
+
+            subtype Items : MenuItem
+            {
+                Name = "miCopyBin"
+                AccessLevel = "alPublic"
+                Text = "Copy &Binary"
+                event OnClick = "miCopyBinClick"
+            }
+
+            subtype Items : MenuItem
+            {
+                Name = "miCopySep"
+                AccessLevel = "alPublic"
+                Text = "-"
+            }
+
+            subtype Items : MenuItem
+            {
+                Name = "miCopyText"
+                AccessLevel = "alPublic"
+                Text = "Copy &Formula"
+                event OnClick = "miCopyClick"
+            }
+        }
+
         type Menubar
         {
             Name = "mnuMain"
@@ -287,59 +340,6 @@
                     Shortcut = "F1"
                     event OnClick = "miGenHelpClick"
                 }
-            }
-        }
-
-        type PopupMenu
-        {
-            Name = "pmCopy"
-            AccessLevel = "alPublic"
-
-            subtype Items : MenuItem
-            {
-                Name = "miCopyDec"
-                AccessLevel = "alPublic"
-                Text = "Copy &Decimal"
-                event OnClick = "miCopyDecClick"
-            }
-
-            subtype Items : MenuItem
-            {
-                Name = "miCopyHex"
-                AccessLevel = "alPublic"
-                Text = "Copy He&xadecimal"
-                event OnClick = "miCopyHexClick"
-            }
-
-            subtype Items : MenuItem
-            {
-                Name = "miCopyOct"
-                AccessLevel = "alPublic"
-                Text = "Copy &Octal"
-                event OnClick = "miCopyOctClick"
-            }
-
-            subtype Items : MenuItem
-            {
-                Name = "miCopyBin"
-                AccessLevel = "alPublic"
-                Text = "Copy &Binary"
-                event OnClick = "miCopyBinClick"
-            }
-
-            subtype Items : MenuItem
-            {
-                Name = "miCopySep"
-                AccessLevel = "alPublic"
-                Text = "-"
-            }
-
-            subtype Items : MenuItem
-            {
-                Name = "miCopyText"
-                AccessLevel = "alPublic"
-                Text = "Copy &Formula"
-                event OnClick = "miCopyClick"
             }
         }
 
@@ -1515,7 +1515,7 @@
         ShowPosition = "fspActiveMonitorCenter"
         BorderStyle = "fbsSingle"
         UnitName = "histopt"
-        DesignVisible = "True"
+        DesignVisible = "False"
         LastExportedName = "frmHistOptions"
         LastExportedEvents = "3500340037007C00789CAD93FD0A823014C5CF73F55F64505414F804CE44A335C3AF087AF8CE661FA24B370899DCDDFBDB3973DE0954505820E23B4602C958E2C4F88C07C46855995860C66789867545FE40BAE0B8705E7114283F4A7BAE1BEAF7B33EBA098E9CAD0DA1730D09890DE33B02E4B8B1E24A757DDB9ADD3346C67D865C5730DBDDF9EF8ACF37B52A73D4CCE5548B0C3FF41923FCFD02CEAFCC6616277BCDFF3FEDC82B6C0D99BEF432D35DA921DCB97F78DBBB649A73ED93562FE4C969C5EF19DA7DA73957DFF7AD95CCE8FA8AABCA5E3FBA30EE67FC04C0C0D906"
         CreationOrder = "2"
@@ -1763,13 +1763,18 @@
             Top = "8"
             Width = "23"
             Height = "22"
+            Text = "–"
             Anchors = "caTop, caRight"
-            TabOrder = "1"
-            class Image
+            class Font
             {
-                Bitmap = "0A00440045004C004500540045002E0042004D00500076010000020080800000789C554F310AC3300C54A05B97423FD0B163214328040CDDFB1A433CCA7FE8E4D778F0DADF74E8E89E2CB9C1679F95D3C991FC786E13356CE015BC802770A2831AF0CF47E588D836C5A841163E989972CEC8D4B6A9560DB22485631E5135DC2CBF84BF46B1E87B4A2F75022338D304ED11AD7EEEFFEDBAC3EDBE33BF9866D56BD18A2FA3A3FBAC6FA024E9878E61D41ED77BFDC2367FB1F9FD38FFF09E1D3F10346429"
-                StateCount = "2"
+                Family = "Tahoma"
+                Color = "clRed"
+                Size = "18"
             }
+            ParentFont = "False"
+            Color = "255, 0, 0"
+            ParentColor = "False"
+            TabOrder = "1"
             ImagePosition = "bipCenter"
             Flat = "False"
             event OnClick = "btnDeleteClick"
@@ -2534,7 +2539,7 @@
         BorderStyle = "fbsDialog"
         BorderButtons = "fbbSystemMenu"
         UnitName = "frmLocale"
-        DesignVisible = "True"
+        DesignVisible = "False"
         LastExportedName = "frmLocale"
         LastExportedEvents = "3100360030007C00789C958DD10A40501044CF777995271E942F70D907E11252CAC79B2829146D53BBF7CCDC714C783272668C90868A829A15F74AFCBE3B024DB4532F6F2AE720B5BA2769603C7F09F5EE953625EF1D6FF44F8F51EA4AE894CD95336269A1173739BE7AAE9D074D4FFAD4BC01E8DB3FBA"
         CreationOrder = "7"

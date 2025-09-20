@@ -37,6 +37,13 @@ void TfrmHistory::InitializeFormAndControls() /* Control initialization function
 	btnDelete->SetBounds(nlib::Rect(445, 8, 468, 30));
 	btnDelete->SetAnchors(nlib::caTop | nlib::caRight);
 	btnDelete->SetTabOrder(1);
+	btnDelete->GetFont().SetFamily(L"Tahoma");
+	btnDelete->GetFont().SetColor(nlib::clRed);
+	btnDelete->GetFont().SetSize(18);
+	btnDelete->SetParentFont(false);
+	btnDelete->SetColor(nlib::Color(255, 0, 0));
+	btnDelete->SetParentColor(false);
+	btnDelete->SetTabOrder(1);
 	btnDelete->SetImagePosition(nlib::bipCenter);
 	btnDelete->SetFlat(false);
 	btnDelete->SetParent(this);
@@ -59,6 +66,7 @@ void TfrmHistory::InitializeFormAndControls() /* Control initialization function
 	btnCancel = new nlib::Button();
 	btnCancel->SetBounds(nlib::Rect(446, 145, 521, 168));
 	btnCancel->SetText(L"&Dismiss");
+	btnDelete->SetText(L"–");
 	btnCancel->SetAnchors(nlib::caRight | nlib::caBottom);
 	btnCancel->GetFont().SetFamily(L"Tahoma");
 	btnCancel->GetFont().SetSize(10);
@@ -68,8 +76,6 @@ void TfrmHistory::InitializeFormAndControls() /* Control initialization function
 	btnCancel->SetTabOrder(4);
 	btnCancel->SetParent(this);
 
-	btnDelete->Image()->SetBitmap(new nlib::Bitmap(NULL, MAKEINTRESOURCE(28681)));
-	btnDelete->Image()->SetStateCount(2);
 	btnClear->Image()->SetBitmap(new nlib::Bitmap(NULL, MAKEINTRESOURCE(28682)));
 
 	OnKeyPress = CreateEvent(this, &TfrmHistory::FormKeyPress);

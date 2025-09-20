@@ -617,7 +617,7 @@ namespace NLIBNS
 
         void SetLines(const std::vector<std::wstring> &newlines);
         void GetLines(std::vector<std::wstring> &out) const;
-        int IndexOf(std::wstring& str);     // SA
+        int IndexOf(std::wstring& str) const;     // SA
     };
 
     enum ListControlNotifications { 

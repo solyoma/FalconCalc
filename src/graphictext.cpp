@@ -4,6 +4,7 @@
 #include <fstream>
 
 #include "graphictext.h"
+#include "translations.h"
 
 namespace sa
 {
@@ -36,8 +37,8 @@ namespace sa
 bool TextSection::ProcessBrace(int &pos)
 {
 	bool Result = Process(pos, false);		// any number of letters
-	if(text[pos] != '}')
-		throw  "syntax error: missing '}'";
+	if (text[pos] != '}')
+		throw  FCT_MISSING_BRACE; // "syntax error: missing '}'";
 	return Result && ((unsigned)++pos < text.length());	// skip closing brace
 }
 
@@ -145,7 +146,7 @@ bool TextSection::Process(int &pos, bool isSingleLetter)
 ERR:
 	delete upper;
 	delete lower;
-	throw "syntax error";
+	throw FCT_SYNTAX_ERROR;
 }
 
 static int _GetIndexFontSize(int size) // relative to size

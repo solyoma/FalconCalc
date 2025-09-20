@@ -2804,16 +2804,13 @@ namespace NLIBNS
     }
 
     // Function added by SA
-    int ControlElemList::IndexOf(std::wstring& str)
+    // items are usually not in 'list', but must be retrieved 
+    int ControlElemList::IndexOf(std::wstring& str) const
     {
-        using MyPair = std::pair<std::wstring, void*>;
-        using MyList = std::vector<MyPair>;
-        using MyIter = MyList::iterator;
-
-        MyPair key(str, nullptr);
-
-        MyIter iter = std::find_if(list.begin(), list.end(), [&](const MyPair arg) {return arg.first == str; });
-        return iter == list.end() ? -1: (iter -list.begin());
+        for (int ix = 0; ix < Count(); ++ix)
+            if (Text(ix) == str)
+                return ix;
+        return -1;
     }
 
     void ControlElemList::SetLines(const std::vector<std::wstring> &newlines)
