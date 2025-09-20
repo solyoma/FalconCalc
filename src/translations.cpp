@@ -49,8 +49,8 @@ static wchar_t* __helpTexts[2] = {
                     L"When a variable is modified the value of all dependent variables and functions are automatically changed\n"
                     L"Functions may have any number of arguments with any names that is different from the name of any built-in function or constant.\n",
     // hungarian
-    L"Minden Windowsban van egy saját számológép, ami azonban nem elég sokoldalú. A FaconCalc is egy számológép de sok különleges tulajdonsága van\n\n"
-                    L"ami miatt érdemes használni. A FalconCalc folyamatosan dolgozza fel a belé írt kifejezéseket, amelyek mind beépített, mint felhasználó\n"
+    L"Minden Windowsban van egy saját számológép, ami azonban nem elég sokoldalú. A FaconCalc is egy számológép de sok különleges\ntulajdonsága van "
+                    L"ami miatt érdemes használni.\n\nA FalconCalc folyamatosan dolgozza fel a belé írt kifejezéseket, amelyek mind beépített, mint felhasználó\n"
 	                L"által definiált állandókat és akárhány változós függvényeket használhatnak, mindezeket tetszőleges (alapból 65 jegy) pontossággal.\nűn"
                     L"Az eredményt 5 féle formában egyidejűleg mutatja: 10-es, 16-os, 8-as és 2-es számrendszerben, illetve mint egy betűsorozatot.\n\n"
                     L"A megfelelő gomb megnyomásával ezeket ezekben a formátumokban a vágólapra másolhatjuk.\n\n"
@@ -59,7 +59,7 @@ static wchar_t* __helpTexts[2] = {
                     L"  % (vagy mod - maradék), '~' bitenkénti ellentét\n\n"
                     L"Logikai műveletek:\n"
                     L"  ==, != (nem egyenlő), <, >, <=, >= (ezek eredménye 1 vagy 0)\n\n"
-                    L"Beépített függvények (a több nevűeket a perjel '/' választja el egymástól) kisbetű-nagybetú nem számít:\n\n"
+                    L"Beépített függvények (a több nevűeket a perjel '/' választja el egymástól) kisbetű-nagybetű nem számít:\n\n"
                     L"  abs(x), arcsin/asin(x), arccos/acos(x), arctan/atan(x), cos(x), cosh/ch(x), coth/cth(x), exp(x), fact(n), frac(x),\n"
                     L"  int(x), log/ln(x), log2(x), log10/lg(x), pow(base,power), root(n,x), root3(x), round(n,x), sign(x), sin(x), sinh/sh(x),\n"
                     L"  sqrt(x), tan/tg(x), trunc(x)\n\n"
@@ -241,10 +241,10 @@ static _LanguageTexts_private __texts[] = {
                          " (for example: hu_HU, en_US, de_DE). The first part (two lowercase letters) defines the language, the second"
                          " part (two uppercase letters) defines the country or region. If you set a locale that is not installed on your"
                          " system FalconCalc will try to use a similar one (for example: if you set en_GB but only en_US is installed it will use en_US).", 
-						L"A nyelvi környezet neve általában két kisbetűből és két nagybetűből áll, amelyeket aláhúzás választ el egymástól"
-                         " (például: hu_HU, en_US, de_DE). Az első rész (két kisbetű) határozza meg a nyelvet, a második rész (két nagybetű)"
-                         " pedig az országot vagy régiót. Ha olyan nyelvi környezetet állít be, amely nincs telepítve a rendszerén, a FalconCalc"
-                         " megpróbál egy hasonlót használni (például: ha az en_GB-t állítja be, de csak az en_US van telepítve, akkor az en_US-t fogja használni)." },
+	 // WARNING: if I further split this Hungarian string into parts, the compiler gives a warning and the runtime 
+     // will show ? characters instead of ő and ű!
+						L"A nyelvi környezet neve általában két kisbetűből és két nagybetűből áll, amelyeket aláhúzás választ el egymástól (például: hu_HU, en_US, de_DE). Az első rész (két kisbetű) határozza meg a nyelvet, a második rész (két nagybetű) pedig az országot vagy régiót."
+                         " Ha olyan nyelvi környezetet állít be, amely nincs telepítve a rendszerén, a FalconCalc megpróbál egy hasonlót használni (például: ha az en_GB-t állítja be, de csak az en_US van telepítve, akkor az en_US-t fogja használni)." },
  { FCT_CURNAMELABEL,    L"Name of current locale:", L"A jelenlegi nyelvi környezet:" },
  { FCT_NEWNAMELABEL,    L"Name of new locale:",     L"Az új nyelvi környezet:" },
      // history options
@@ -256,7 +256,7 @@ static _LanguageTexts_private __texts[] = {
  { FCT_HHMMSS,					L"(HH:MM:SS)",L"(ÓÓ:PP:MP)" },
  { FCT_HISTMINLENGTHLABEL,		L"&Min. length to save:",L"&Megjegyzendő minimális hossz:"   },
  { FCT_HISTMINLENGTHTIP,		L"Expressions shorter than this will not be remembered", L"Csak ennél hosszabb kifejezéseket jegyez meg"   },
- { FCT_HISTMINLENGTHSAVEALL,	L"(0: all)",	L"(0: mindet)"  },
+ { FCT_HISTMINLENGTHSAVEALL,	L"(0: all)",	L"(0: bármi)"  },
  { FCT_HISTSORTED,				L"Sorted",	L"Sorbarendezés"    },
  { FCT_HISTAUTOSAVELABEL,		L"Automatically save history",L"Automatikusan mentse az előzményeket"   },
  { FCT_HISTCLEAR,               L"&Discard history", L"Elő&zmények eldobása" },

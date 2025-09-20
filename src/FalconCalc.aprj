@@ -1531,7 +1531,7 @@
             Top = "179"
             Width = "75"
             Height = "23"
-            Text = "Ok"
+            Text = "O&k"
             Anchors = "caRight, caBottom"
             TabOrder = "0"
             event OnClick = "btnOkClick"
@@ -1545,7 +1545,7 @@
             Top = "203"
             Width = "75"
             Height = "23"
-            Text = "Cancel"
+            Text = "&Cancel"
             Anchors = "caRight, caBottom"
             TabOrder = "1"
             Cancel = "True"
@@ -1679,19 +1679,6 @@
                 TooltipText = "Expressions shorter than this will not be remembered"
             }
 
-            type FlatButton
-            {
-                Name = "btnClearHist"
-                AccessLevel = "alPublic"
-                Left = "224"
-                Top = "118"
-                Width = "99"
-                Height = "23"
-                Text = "&Discard history"
-                TabOrder = "5"
-                event OnClick = "btnClearHistClick"
-            }
-
             type Checkbox
             {
                 Name = "chkSort"
@@ -1701,7 +1688,7 @@
                 Width = "80"
                 Height = "16"
                 Text = "&Sorted"
-                TabOrder = "6"
+                TabOrder = "5"
                 event OnClick = "chkSortClick"
             }
 
@@ -1714,6 +1701,18 @@
                 Width = "63"
                 Height = "14"
                 Text = "(0: save all)"
+            }
+
+            type Checkbox
+            {
+                Name = "Checkbox1"
+                AccessLevel = "alPublic"
+                Left = "224"
+                Top = "120"
+                Width = "152"
+                Height = "16"
+                Text = "Előzmények eldobása"
+                TabOrder = "6"
             }
         }
     }
