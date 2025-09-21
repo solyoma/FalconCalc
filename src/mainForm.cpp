@@ -247,7 +247,6 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	tbHistory->GetFont().SetFamily(L"Tahoma");
 	tbHistory->GetFont().SetSize(10);
 	tbHistory->SetParentFont(false);
-	tbHistory->SetTabOrder(1);
 	tbHistory->SetParent(pToolbar);
 
 	tbCopy = new nlib::ToolButton();
@@ -255,7 +254,6 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	tbCopy->GetFont().SetFamily(L"Tahoma");
 	tbCopy->GetFont().SetSize(10);
 	tbCopy->SetParentFont(false);
-	tbCopy->SetTabOrder(2);
 	tbCopy->SetParent(pToolbar);
 
 	tbPaste = new nlib::ToolButton();
@@ -264,7 +262,6 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	tbPaste->GetFont().SetFamily(L"Tahoma");
 	tbPaste->GetFont().SetSize(10);
 	tbPaste->SetParentFont(false);
-	tbPaste->SetTabOrder(3);
 	tbPaste->SetParent(pToolbar);
 
 	cbInfix = new nlib::Combobox();
@@ -295,7 +292,6 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	gbResults->GetFont().SetFamily(L"Tahoma");
 	gbResults->GetFont().SetSize(10);
 	gbResults->SetParentFont(false);
-	gbResults->SetTabOrder(2);
 	gbResults->SetParent(this);
 
 	btnDecimal = new nlib::Button();
@@ -317,15 +313,15 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	btnOctal->SetTag(2);
 	btnOctal->SetBounds(nlib::Rect(2, 67, 81, 90));
 	btnOctal->SetText(lt.GetTranslationFor(FCT_OCT));
-	btnOctal->SetTabOrder(4);
+	btnOctal->SetTabOrder(3);
 	btnOctal->SetTooltipText(lt.GetTranslationFor(FCT_TIPOCT));
 	btnOctal->SetParent(gbResults);
 
 	btnBinary = new nlib::Button();
-	btnBinary->SetTag(3);
+	btnBinary->SetTag(4);
 	btnBinary->SetBounds(nlib::Rect(2, 94, 81, 117));
 	btnBinary->SetText(lt.GetTranslationFor(FCT_BIN));
-	btnBinary->SetTabOrder(6);
+	btnBinary->SetTabOrder(4);
 	btnBinary->SetTooltipText(lt.GetTranslationFor(FCT_TIPBIN));
 	btnBinary->SetParent(gbResults);
 
@@ -336,7 +332,6 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	pnlDec->GetFont().SetCharacterSet(nlib::fcsAnsi);
 	pnlDec->GetFont().SetOutputQuality(nlib::foqDraft);
 	pnlDec->SetParentFont(false);
-	pnlDec->SetTabOrder(0);
 	pnlDec->SetShowText(false);
 	pnlDec->SetInnerBorderStyle(nlib::pbsSunken);
 	pnlDec->SetTextAlignment(nlib::taRight);
@@ -347,7 +342,6 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	pnlHex->GetFont().SetFamily(L"Arial");
 	pnlHex->GetFont().SetSize(10);
 	pnlHex->SetParentFont(false);
-	pnlHex->SetTabOrder(3);
 	pnlHex->SetInnerBorderStyle(nlib::pbsSunken);
 	pnlHex->SetTextAlignment(nlib::taRight);
 	pnlHex->SetParent(gbResults);
@@ -357,7 +351,6 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	pnlOct->GetFont().SetFamily(L"Arial");
 	pnlOct->GetFont().SetSize(10);
 	pnlOct->SetParentFont(false);
-	pnlOct->SetTabOrder(5);
 	pnlOct->SetInnerBorderStyle(nlib::pbsSunken);
 	pnlOct->SetTextAlignment(nlib::taRight);
 	pnlOct->SetParent(gbResults);
@@ -367,14 +360,12 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	pnlBin->GetFont().SetFamily(L"Arial");
 	pnlBin->GetFont().SetSize(10);
 	pnlBin->SetParentFont(false);
-	pnlBin->SetTabOrder(7);
 	pnlBin->SetInnerBorderStyle(nlib::pbsSunken);
 	pnlBin->SetTextAlignment(nlib::taRight);
 	pnlBin->SetParent(gbResults);
 
 	pnlDecOpt = new nlib::Panel();
 	pnlDecOpt->SetBounds(nlib::Rect(8, 191, 513, 301));
-	pnlDecOpt->SetTabOrder(3);
 	pnlDecOpt->SetInnerBorderStyle(nlib::pbsNone);
 	pnlDecOpt->SetParent(this);
 
@@ -385,23 +376,22 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	gbDecOptions->GetFont().SetFamily(L"Tahoma");
 	gbDecOptions->GetFont().SetSize(10);
 	gbDecOptions->SetParentFont(false);
-	gbDecOptions->SetTabOrder(0);
 	gbDecOptions->SetParent(pnlDecOpt);
 
-	chkSep = new nlib::Checkbox();
-	chkSep->SetBounds(nlib::Rect(8, 16, 165, 33));
-	chkSep->SetText(lt.GetTranslationFor(FCT_THOUSAND));
-	chkSep->GetFont().SetFamily(L"Tahoma");
-	chkSep->GetFont().SetSize(10);
-	chkSep->SetParentFont(false);
-	chkSep->SetTabOrder(0);
-	chkSep->SetState(nlib::csChecked);
-	chkSep->SetParent(gbDecOptions);
+	chkThousandSep = new nlib::Checkbox();
+	chkThousandSep->SetBounds(nlib::Rect(8, 16, 165, 33));
+	chkThousandSep->SetText(lt.GetTranslationFor(FCT_THOUSAND));
+	chkThousandSep->GetFont().SetFamily(L"Tahoma");
+	chkThousandSep->GetFont().SetSize(10);
+	chkThousandSep->SetParentFont(false);
+	chkThousandSep->SetTabOrder(5);
+	chkThousandSep->SetState(nlib::csChecked);
+	chkThousandSep->SetParent(gbDecOptions);
 
 	chkDecDelim = new nlib::Checkbox();
 	chkDecDelim->SetBounds(nlib::Rect(8, 33, 160, 47));
 	chkDecDelim->SetText(lt.GetTranslationFor(FCT_DECSEP));
-	chkDecDelim->SetTabOrder(6);
+	chkDecDelim->SetTabOrder(7);
 	chkDecDelim->SetParent(gbDecOptions);
 
 	cbThousandSep = new nlib::Combobox();
@@ -410,7 +400,7 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	cbThousandSep->GetFont().SetFamily(L"Tahoma");
 	cbThousandSep->GetFont().SetSize(10);
 	cbThousandSep->SetParentFont(false);
-	cbThousandSep->SetTabOrder(1);
+	cbThousandSep->SetTabOrder(6);
 	cbThousandSep->SetType(nlib::ctDropdownList);
 	cbThousandSep->Items().Add(L"spc");
 	cbThousandSep->Items().Add(L",");
@@ -423,7 +413,7 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	chkSci->SetBounds(nlib::Rect(8, 48, 158, 62));
 	chkSci->SetText(lt.GetTranslationFor(FCT_SCI));
 	chkSci->GetFont().SetFamily(L"Tahoma");
-	chkSci->GetFont().SetSize(10);
+	chkSci->GetFont().SetSize(8);
 	chkSci->SetParentFont(false);
 	chkSci->SetTabOrder(2);
 	chkSci->SetParent(gbDecOptions);
@@ -434,7 +424,7 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	chkEng->GetFont().SetFamily(L"Tahoma");
 	chkEng->GetFont().SetSize(10);
 	chkEng->SetParentFont(false);
-	chkEng->SetTabOrder(3);
+	chkEng->SetTabOrder(9);
 	chkEng->SetParent(gbDecOptions);
 
 	chkDecDigits = new nlib::Checkbox();
@@ -443,7 +433,7 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	chkDecDigits->GetFont().SetFamily(L"Tahoma");
 	chkDecDigits->GetFont().SetSize(10);
 	chkDecDigits->SetParentFont(false);
-	chkDecDigits->SetTabOrder(4);
+	chkDecDigits->SetTabOrder(10);
 	chkDecDigits->SetParent(gbDecOptions);
 
 	spnDecDigits = new nlib::Edit();
@@ -452,7 +442,7 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	spnDecDigits->GetFont().SetFamily(L"Tahoma");
 	spnDecDigits->GetFont().SetSize(10);
 	spnDecDigits->SetParentFont(false);
-	spnDecDigits->SetTabOrder(5);
+	spnDecDigits->SetTabOrder(11);
 	spnDecDigits->SetParent(gbDecOptions);
 
 	UpDownDecDigits = new nlib::UpDown();
@@ -467,7 +457,6 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	gbAngleUnit->GetFont().SetFamily(L"Tahoma");
 	gbAngleUnit->GetFont().SetSize(10);
 	gbAngleUnit->SetParentFont(false);
-	gbAngleUnit->SetTabOrder(1);
 	gbAngleUnit->SetParent(pnlDecOpt);
 
 	rdDeg = new nlib::Radiobox();
@@ -475,7 +464,7 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	rdDeg->SetBounds(nlib::Rect(11, 19, 59, 35));
 	rdDeg->SetText(lt.GetTranslationFor(FCT_DEG));
 	rdDeg->GetFont().SetFamily(L"Tahoma");
-	rdDeg->GetFont().SetSize(10);
+	rdDeg->GetFont().SetSize(12);
 	rdDeg->SetParentFont(false);
 	rdDeg->SetTabOrder(0);
 	rdDeg->SetTooltipText(lt.GetTranslationFor(FCT_TIPDEG));
@@ -487,7 +476,7 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	rdRad->SetBounds(nlib::Rect(59, 19, 114, 35));
 	rdRad->SetText(lt.GetTranslationFor(FCT_RAD));
 	rdRad->GetFont().SetFamily(L"Tahoma");
-	rdRad->GetFont().SetSize(10);
+	rdRad->GetFont().SetSize(13);
 	rdRad->SetParentFont(false);
 	rdRad->SetTabOrder(1);
 	rdRad->SetTooltipText(lt.GetTranslationFor(FCT_TIPRAD));
@@ -500,7 +489,7 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	rdGrad->GetFont().SetFamily(L"Tahoma");
 	rdGrad->GetFont().SetSize(10);
 	rdGrad->SetParentFont(false);
-	rdGrad->SetTabOrder(2);
+	rdGrad->SetTabOrder(14);
 	rdGrad->SetTooltipText(lt.GetTranslationFor(FCT_TIPGRAD));
 	rdGrad->SetParent(gbAngleUnit);
 
@@ -509,7 +498,7 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	rdTurn->SetTag(3);
 	rdTurn->SetBounds(nlib::Rect(184, 19, 248, 37));
 	rdTurn->SetText(lt.GetTranslationFor(FCT_TURN));
-	rdTurn->SetTabOrder(3);
+	rdTurn->SetTabOrder(15);
 	rdTurn->SetTooltipText(lt.GetTranslationFor(FCT_TIPTURN));
 	rdTurn->SetParent(gbAngleUnit);
 
@@ -520,7 +509,6 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	gbDisplayFormat->GetFont().SetFamily(L"Tahoma");
 	gbDisplayFormat->GetFont().SetSize(10);
 	gbDisplayFormat->SetParentFont(false);
-	gbDisplayFormat->SetTabOrder(2);
 	gbDisplayFormat->SetParent(pnlDecOpt);
 
 	rdNormal = new nlib::Radiobox();
@@ -529,7 +517,7 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	rdNormal->GetFont().SetFamily(L"Tahoma");
 	rdNormal->GetFont().SetSize(10);
 	rdNormal->SetParentFont(false);
-	rdNormal->SetTabOrder(0);
+	rdNormal->SetTabOrder(16);
 	rdNormal->SetChecked(true);
 	rdNormal->SetTooltipText(lt.GetTranslationFor(FCT_TIPDPOV));
 	rdNormal->SetParent(gbDisplayFormat);
@@ -541,7 +529,7 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	rdHtml->GetFont().SetFamily(L"Tahoma");
 	rdHtml->GetFont().SetSize(10);
 	rdHtml->SetParentFont(false);
-	rdHtml->SetTabOrder(1);
+	rdHtml->SetTabOrder(17);
 	rdHtml->SetTooltipText(lt.GetTranslationFor(FCT_TIPDHTML));
 	rdHtml->SetParent(gbDisplayFormat);
 
@@ -552,7 +540,7 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	rdTex->GetFont().SetFamily(L"Tahoma");
 	rdTex->GetFont().SetSize(10);
 	rdTex->SetParentFont(false);
-	rdTex->SetTabOrder(2);
+	rdTex->SetTabOrder(18);
 	rdTex->SetTooltipText(lt.GetTranslationFor(FCT_TIPDTEX));
 	rdTex->SetParent(gbDisplayFormat);
 
@@ -560,13 +548,12 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	rdNone->SetTag(3);
 	rdNone->SetBounds(nlib::Rect(198, 20, 238, 36));
 	rdNone->SetText(L"E");
-	rdNone->SetTabOrder(3);
+	rdNone->SetTabOrder(19);
 	rdNone->SetTooltipText(lt.GetTranslationFor(FCT_TIPDE));
 	rdNone->SetParent(gbDisplayFormat);
 
 	pnlHexOpt = new nlib::Panel();
 	pnlHexOpt->SetBounds(nlib::Rect(8, 325, 515, 407));
-	pnlHexOpt->SetTabOrder(4);
 	pnlHexOpt->SetInnerBorderStyle(nlib::pbsNone);
 	pnlHexOpt->SetParent(this);
 
@@ -577,7 +564,6 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	gbHexOptions->GetFont().SetFamily(L"Tahoma");
 	gbHexOptions->GetFont().SetSize(10);
 	gbHexOptions->SetParentFont(false);
-	gbHexOptions->SetTabOrder(0);
 	gbHexOptions->SetParent(pnlHexOpt);
 
 	chkMinus = new nlib::Checkbox();
@@ -586,7 +572,7 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	chkMinus->GetFont().SetFamily(L"Tahoma");
 	chkMinus->GetFont().SetSize(10);
 	chkMinus->SetParentFont(false);
-	chkMinus->SetTabOrder(0);
+	chkMinus->SetTabOrder(20);
 	chkMinus->SetTooltipText(lt.GetTranslationFor(FCT_TIPNEGH));
 	chkMinus->SetParent(gbHexOptions);
 
@@ -599,12 +585,12 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 
 	chkLittleEndian = new nlib::Checkbox();
 	chkLittleEndian->SetTag(6);
-	chkLittleEndian->SetBounds(nlib::Rect(360, 52, 446, 69));
+	chkLittleEndian->SetBounds(nlib::Rect(360, 52, 496, 69));
 	chkLittleEndian->SetText(lt.GetTranslationFor(FCT_LITTLEE));
 	chkLittleEndian->GetFont().SetFamily(L"Tahoma");
 	chkLittleEndian->GetFont().SetSize(10);
 	chkLittleEndian->SetParentFont(false);
-	chkLittleEndian->SetTabOrder(1);
+	chkLittleEndian->SetTabOrder(21);
 	chkLittleEndian->SetTooltipText(lt.GetTranslationFor(FCT_TIPINT));
 	chkLittleEndian->SetParent(gbHexOptions);
 
@@ -615,7 +601,7 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	chkBytes->GetFont().SetFamily(L"Tahoma");
 	chkBytes->GetFont().SetSize(10);
 	chkBytes->SetParentFont(false);
-	chkBytes->SetTabOrder(2);
+	chkBytes->SetTabOrder(22);
 	chkBytes->SetParent(gbHexOptions);
 
 	chkWords = new nlib::Checkbox();
@@ -625,38 +611,38 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	chkWords->GetFont().SetFamily(L"Tahoma");
 	chkWords->GetFont().SetSize(10);
 	chkWords->SetParentFont(false);
-	chkWords->SetTabOrder(3);
+	chkWords->SetTabOrder(23);
 	chkWords->SetParent(gbHexOptions);
 
 	chkDWords = new nlib::Checkbox();
 	chkDWords->SetTag(3);
-	chkDWords->SetBounds(nlib::Rect(116, 52, 202, 69));
+	chkDWords->SetBounds(nlib::Rect(116, 52, 212, 69));
 	chkDWords->SetText(lt.GetTranslationFor(FCT_DWORDS));
 	chkDWords->GetFont().SetFamily(L"Tahoma");
 	chkDWords->GetFont().SetSize(10);
 	chkDWords->SetParentFont(false);
-	chkDWords->SetTabOrder(4);
+	chkDWords->SetTabOrder(24);
 	chkDWords->SetParent(gbHexOptions);
 
 	chkIEEESingle = new nlib::Checkbox();
 	chkIEEESingle->SetTag(4);
-	chkIEEESingle->SetBounds(nlib::Rect(203, 18, 321, 35));
+	chkIEEESingle->SetBounds(nlib::Rect(213, 18, 331, 35));
 	chkIEEESingle->SetText(lt.GetTranslationFor(FCT_SINGLE));
 	chkIEEESingle->GetFont().SetFamily(L"Tahoma");
 	chkIEEESingle->GetFont().SetSize(10);
 	chkIEEESingle->SetParentFont(false);
-	chkIEEESingle->SetTabOrder(5);
+	chkIEEESingle->SetTabOrder(25);
 	chkIEEESingle->SetTooltipText(lt.GetTranslationFor(FCT_TIPSP));
 	chkIEEESingle->SetParent(gbHexOptions);
 
 	chkIEEEDouble = new nlib::Checkbox();
 	chkIEEEDouble->SetTag(5);
-	chkIEEEDouble->SetBounds(nlib::Rect(203, 35, 321, 52));
+	chkIEEEDouble->SetBounds(nlib::Rect(213, 35, 331, 52));
 	chkIEEEDouble->SetText(lt.GetTranslationFor(FCT_DOUBLE));
 	chkIEEEDouble->GetFont().SetFamily(L"Tahoma");
 	chkIEEEDouble->GetFont().SetSize(10);
 	chkIEEEDouble->SetParentFont(false);
-	chkIEEEDouble->SetTabOrder(6);
+	chkIEEEDouble->SetTabOrder(26);
 	chkIEEEDouble->SetTooltipText(lt.GetTranslationFor(FCT_TIPDP));
 	chkIEEEDouble->SetParent(gbHexOptions);
 
@@ -673,7 +659,7 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	edtChars->GetFont().SetFamily(L"Calibri");
 	edtChars->GetFont().SetSize(11);
 	edtChars->SetParentFont(false);
-	edtChars->SetTabOrder(5);
+	edtChars->SetTabOrder(27);
 	edtChars->SetReadOnly(true);
 	edtChars->SetParent(this);
 
@@ -683,7 +669,7 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	btnFont->GetFont().SetFamily(L"Tahoma");
 	btnFont->GetFont().SetSize(10);
 	btnFont->SetParentFont(false);
-	btnFont->SetTabOrder(6);
+	btnFont->SetTabOrder(28);
 	btnFont->SetAcceptInput(true);
 	btnFont->SetFlat(false);
 	btnFont->SetParent(this);
@@ -756,7 +742,7 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	chkLittleEndian->OnClick = CreateEvent(this, &TfrmMain::chkLittleEndianClick);
 	chkMinus->OnClick = CreateEvent(this, &TfrmMain::chkMinusClick);
 	chkSci->OnClick = CreateEvent(this, &TfrmMain::chkSciClick);
-	chkSep->OnClick = CreateEvent(this, &TfrmMain::chkSepClick);
+	chkThousandSep->OnClick = CreateEvent(this, &TfrmMain::chkSepClick);
 	chkWords->OnClick = CreateEvent(this, &TfrmMain::chkAsWordsClick);
 	miAbout->OnClick = CreateEvent(this, &TfrmMain::miAboutClick);
 	miAppend->OnClick = CreateEvent(this, &TfrmMain::miAppendClick);
@@ -800,6 +786,9 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	tbHistory->OnClick = CreateEvent(this, &TfrmMain::tbHistoryClick);
 	tbPaste->OnClick = CreateEvent(this, &TfrmMain::tbPasteClick);
 
+	OnKeyUp = CreateEvent(this, &TfrmMain::KeyUpOverride);
+	SetKeyPreview(true);	// so the form gets the keyboard messages first
+
 	SetActiveControl(cbInfix);
 }
 
@@ -841,7 +830,7 @@ void TfrmMain::_SetupForLanguage()
 	chkMinus->SetText(lt.GetTranslationFor(FCT_HEXMIN));
 	chkMinus->SetTooltipText(lt.GetTranslationFor(FCT_TIPNEGH));
 	chkSci->SetText(lt.GetTranslationFor(FCT_SCI));
-	chkSep->SetText(lt.GetTranslationFor(FCT_THOUSAND));
+	chkThousandSep->SetText(lt.GetTranslationFor(FCT_THOUSAND));
 	chkWords->SetText(lt.GetTranslationFor(FCT_WORDS));
 	gbAngleUnit->SetText(lt.GetTranslationFor(FCT_ANGLEF));
 	gbDecOptions->SetText(lt.GetTranslationFor(FCT_DECOPTS));
@@ -913,7 +902,7 @@ bool TfrmMain::_SaveState(SmartString name)
 	fs << MAINFORMAT<< (int)lengine->displayFormat.mainFormat << "\n";
 
 	//int u = UpDown1->Position() + (chkDecDigits->Checked() ? 0x100 : 0); // 0x100: checked state. must use Position as num_digits may be -1
-	std::string wsep = (chkSep->Checked() ? "1" : "0") + (std::to_string(cbThousandSep->ItemIndex()));
+	std::string wsep = (chkThousandSep->Checked() ? "1" : "0") + (std::to_string(cbThousandSep->ItemIndex()));
 	fs << DECFORMAT<< lengine->displayFormat.decDigits << "|" << (int)lengine->displayFormat.expFormat
 	   << "|" << wsep <<  "|" << (int)lengine->displayFormat.useFractionSeparator
 	   << "|" << (int)lengine->AngleUnit() << "\n";
@@ -1034,14 +1023,14 @@ bool TfrmMain::_LoadState(SmartString name)
 			if (!data[3].empty())	// can only be '.', ',' and space
 			{
 				if (data[3][0] == L'1')
-					chkSep->SetChecked(true);
+					chkThousandSep->SetChecked(true);
 				else if (data[3][1] == u'0')
 					cbThousandSep->SetItemIndex(0);
 				else if (data[3][1] == u'1')
 					cbThousandSep->SetItemIndex(1);
 				else if (data[3][1] == u'2')
 					cbThousandSep->SetItemIndex(2);
-				if (chkSep->Checked())
+				if (chkThousandSep->Checked())
 					lengine->displayFormat.strThousandSeparator = SmartString(cbThousandSep->ItemIndex() > 0 ? cbThousandSep->Text()[0] : ' ');
 			}
 					// 4: fraction separator
@@ -1527,6 +1516,7 @@ void TfrmMain::cbInfixTextChanged(void *sender, nlib::EventParameters param)
 void TfrmMain::cbInfixKeyDown(void* sender, nlib::KeyParameters param)
 {
 	_watchdog = 0;   // reset counter
+
 	if (cbInfix->Text().empty())
 		return;
 	lengine->resultType = LittleEngine::ResultType::rtUndef;
@@ -1619,7 +1609,7 @@ void TfrmMain::chkSciClick(void *sender, nlib::EventParameters param)
 
 void TfrmMain::chkSepClick(void *sender, nlib::EventParameters param)
 {
-    bool b = chkSep->Checked();
+    bool b = chkThousandSep->Checked();
     cbThousandSep->SetEnabled(b);
 	if (b && cbThousandSep->ItemIndex() >= 0)
 	{
@@ -2148,6 +2138,21 @@ void TfrmMain::miSetLocale(void* sender, nlib::EventParameters param)
 		}
 	}
 
+}
+
+void TfrmMain::KeyUpOverride(void* sender, nlib::KeyParameters param)
+{
+	if (param.keycode == VK_ESCAPE)
+	{
+		static bool show = true;
+		if (show)
+		{
+			ModalResults res = ShowMessageBox(L"FalconCalc will be minimized to the taskbar.", L"falconCalc - Warning", mbOk, nlib::miInformation);
+			show = false;
+			ShowWindow(Handle(), SW_MINIMIZE);
+		}
+		return;
+	}
 }
 
 void TfrmMain::StartMove(void *sender, nlib::EventParameters param)

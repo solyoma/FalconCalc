@@ -526,7 +526,7 @@ void FalconCalcQt::on_btnStringFont_clicked()
 
 void FalconCalcQt::on_cbThousandSep_currentIndexChanged(int newIndex)
 {
-	if (ui.chkSep->isChecked())
+	if (ui.chkThousandSep->isChecked())
 	{
 		lengine->displayFormat.strThousandSeparator = SmartString(newIndex > 0 ? ui.cbThousandSep->currentText()[0].unicode() : ' ');
 		if (lengine->displayFormat.strThousandSeparator == SmartString('s'))	// 'space'
@@ -983,14 +983,14 @@ bool FalconCalcQt::_LoadState(QString name)
 				if (!data[3].isEmpty())	// can only be '.', ',' and space
 				{
 					if (data[3][0] == L'1')
-						ui.chkSep->setChecked(true);
+						ui.chkThousandSep->setChecked(true);
 					else if (data[3][1] == L'0')
 						ui.cbThousandSep->setCurrentIndex(0);
 					else if (data[3][1] == L'1')
 						ui.cbThousandSep->setCurrentIndex(1);
 					else if (data[3][1] == L'2')
 						ui.cbThousandSep->setCurrentIndex(2);
-					if (ui.chkSep->isChecked())
+					if (ui.chkThousandSep->isChecked())
 						lengine->displayFormat.strThousandSeparator = SmartString(ui.cbThousandSep->currentIndex() > 0 ? ui.cbThousandSep->currentText()[0].unicode() : ' ');
 				}
 				// 4: fraction separator
@@ -1188,7 +1188,7 @@ bool FalconCalcQt::_SaveState(QString name)
 	ofs << MAINFORMAT << "=" << (int)lengine->displayFormat.mainFormat << "\n";
 
 	//int u = UpDown1->Position() + (chkDecDigits->Checked() ? 0x100 : 0); // 0x100: checked state. must use Position as num_digits may be -1
-	QString wsep = (ui.chkSep->isChecked() ? "1" : "0") + QString().setNum(ui.cbThousandSep->currentIndex());
+	QString wsep = (ui.chkThousandSep->isChecked() ? "1" : "0") + QString().setNum(ui.cbThousandSep->currentIndex());
 	ofs << DECFORMAT << "=" << lengine->displayFormat.decDigits << "|" << (int)lengine->displayFormat.expFormat
 		<< "|" << wsep << "|" << (int)lengine->displayFormat.useFractionSeparator
 		<< "|" << (int)lengine->AngleUnit() << "\n";

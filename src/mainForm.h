@@ -89,7 +89,7 @@ N_PUBLIC: /* Designer generated list of public members. Do not edit by hand. */
 	nlib::Panel* pnlBin;
 	nlib::Panel* pnlDecOpt;
 	nlib::Groupbox* gbDecOptions;
-	nlib::Checkbox* chkSep;
+	nlib::Checkbox* chkThousandSep;
 	nlib::Combobox* cbThousandSep;
 	nlib::Checkbox* chkSci;
 	nlib::Checkbox* chkEng;
@@ -184,6 +184,8 @@ N_PUBLIC: /* Designer generated list of public members. Do not edit by hand. */
 	void miSetEnClick(void* sender, nlib::EventParameters param);
 	void miSetHunClick(void* sender, nlib::EventParameters param);
 	void miSetLocale(void* sender, nlib::EventParameters param);
+public:
+	void KeyUpOverride(void* sender, nlib::KeyParameters param);
 protected:
 	virtual ~TfrmMain(); /* Don't make public. Call Destroy() to delete the object. */
 	virtual LRESULT WindowProc(UINT wMessage, WPARAM w,LPARAM l) override;
