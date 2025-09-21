@@ -185,7 +185,7 @@ N_PUBLIC: /* Designer generated list of public members. Do not edit by hand. */
 	void miSetHunClick(void* sender, nlib::EventParameters param);
 	void miSetLocale(void* sender, nlib::EventParameters param);
 public:
-	void KeyUpOverride(void* sender, nlib::KeyParameters param);
+	// void KeyUpOverride(void* sender, nlib::KeyParameters param);
 protected:
 	virtual ~TfrmMain(); /* Don't make public. Call Destroy() to delete the object. */
 	virtual LRESULT WindowProc(UINT wMessage, WPARAM w,LPARAM l) override;

@@ -413,7 +413,7 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	chkSci->SetBounds(nlib::Rect(8, 48, 158, 62));
 	chkSci->SetText(lt.GetTranslationFor(FCT_SCI));
 	chkSci->GetFont().SetFamily(L"Tahoma");
-	chkSci->GetFont().SetSize(8);
+	chkSci->GetFont().SetSize(10);
 	chkSci->SetParentFont(false);
 	chkSci->SetTabOrder(2);
 	chkSci->SetParent(gbDecOptions);
@@ -786,7 +786,7 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	tbHistory->OnClick = CreateEvent(this, &TfrmMain::tbHistoryClick);
 	tbPaste->OnClick = CreateEvent(this, &TfrmMain::tbPasteClick);
 
-	OnKeyUp = CreateEvent(this, &TfrmMain::KeyUpOverride);
+//	OnKeyUp = CreateEvent(this, &TfrmMain::KeyUpOverride);
 	SetKeyPreview(true);	// so the form gets the keyboard messages first
 
 	SetActiveControl(cbInfix);
@@ -1523,6 +1523,10 @@ void TfrmMain::cbInfixKeyDown(void* sender, nlib::KeyParameters param)
 
 	if (param.keycode == VK_RETURN)
 		_AddToHistory(cbInfix->Text());
+	else if (param.keycode == VK_ESCAPE)
+	{
+		btnClearInfixClick(nullptr, nlib::EventParameters());
+	}
 	else if (param.keycode != VK_RIGHT && param.keycode != VK_LEFT && param.keycode != VK_UP && param.keycode != VK_DOWN &&
 		param.keycode != VK_TAB)
 	{
@@ -2140,6 +2144,7 @@ void TfrmMain::miSetLocale(void* sender, nlib::EventParameters param)
 
 }
 
+#if 0
 void TfrmMain::KeyUpOverride(void* sender, nlib::KeyParameters param)
 {
 	if (param.keycode == VK_ESCAPE)
@@ -2154,6 +2159,7 @@ void TfrmMain::KeyUpOverride(void* sender, nlib::KeyParameters param)
 		return;
 	}
 }
+#endif
 
 void TfrmMain::StartMove(void *sender, nlib::EventParameters param)
 {
