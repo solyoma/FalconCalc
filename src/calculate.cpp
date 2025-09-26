@@ -659,7 +659,7 @@ void LittleEngine::_HandleUnknown(Token *tok)
 			stack.popto(tvPostfix);
 		}
 		if(stack.empty () )
-			trigger.Raise(EEC_EITHER_THE_SEPARATOR_WAS_MISPLACED_OR_PARENTHESIS_WERE_MISMATCHED);
+			trigger.Raise(EEC_SEPARATOR_DECPOINT_BRACE_MISMATCH);
 	}
 }
 

@@ -90,9 +90,13 @@ VariablesFunctionsDialog::VariablesFunctionsDialog(int initialTabIndex, QWidget*
 VariablesFunctionsDialog::~VariablesFunctionsDialog()
 {
 	delete _pUserFuncsMap		;
+	_pUserFuncsMap = nullptr;
 	delete _pUserFuncsInMap	;
+	_pUserFuncsInMap = nullptr;
 	delete _pUserVarsMap		;
+	_pUserVarsMap = nullptr;
 	delete _pUserVarsInMap	;
+	_pUserVarsInMap = nullptr;
 	emit SignalVarFuncClose();
 }
 
@@ -332,7 +336,7 @@ void VariablesFunctionsDialog::_FillUserFuncTable()
 		_AddCellText(ui.tblUserFuncs, row, 2, f.unit.toQString());
 		_AddCellText(ui.tblUserFuncs, row, 3, f.desc.toQString());
 	}
-	_pUserFuncsInMap = _pUserFuncsMap;
+	*_pUserFuncsInMap = *_pUserFuncsMap;
 }
 
 void VariablesFunctionsDialog::_FillFuncTables()   
@@ -346,17 +350,18 @@ void VariablesFunctionsDialog::_FillBuiltinVarTable()
 	QString qs;
 	LongNumber::ConstantsMap builtIns;
 	ui.tblBuiltinVars->setRowCount(builtIns.size());
-	int row = 0;
 	DisplayFormat df;
 	df.nFormatSwitchFracLength = 3;
 	df.nFormatSwitchIntLength = 15;
 	df.strThousandSeparator = " ";
+	int row = 0;
 	for (auto &bi: builtIns)
 	{
 		_AddCellText(ui.tblBuiltinVars, row, 0, bi.second->name.toQString());
 		_AddCellText(ui.tblBuiltinVars, row, 1, bi.second->value.ToDecimalString(df).toQString());
 		_AddCellText(ui.tblBuiltinVars, row, 2, bi.second->unit.toQString());
 		_AddCellText(ui.tblBuiltinVars, row, 3, bi.second->desc.toQString());
+		++row;
 	}
 }
 
@@ -376,7 +381,7 @@ void VariablesFunctionsDialog::_FillUserVarTable()
 		_AddCellText(ui.tblUserVars, row, 2, v.unit.toQString());
 		_AddCellText(ui.tblUserVars, row, 3, v.desc.toQString());
 	}
-	_pUserVarsInMap = _pUserVarsMap;
+	*_pUserVarsInMap = *_pUserVarsMap;
 
 }
 

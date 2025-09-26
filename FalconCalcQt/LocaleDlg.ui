@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>400</width>
-    <height>266</height>
+    <height>270</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -19,7 +19,7 @@
   <property name="minimumSize">
    <size>
     <width>400</width>
-    <height>266</height>
+    <height>270</height>
    </size>
   </property>
   <property name="maximumSize">
@@ -41,7 +41,7 @@
       <enum>QFrame::Sunken</enum>
      </property>
      <property name="text">
-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;The &lt;span style=&quot; font-style:italic;&quot;&gt;locale&lt;/span&gt; determines the character used for a decimal point, the ordering of the characters and the correspondance bewtween upper and lowercase letters. Variable and function names may contain accented or special letters in your locale that are not present in other locales and vice-versa. Here you can select a locale different from the one used by the system and the language selected.&lt;/p&gt;&lt;p&gt;Locale names usually consist of two lowercase and two uppercase letters separated by an underscore character (for example: hu_HU, en_US, de_DE). The first part (two lowercase letters) defines the language, the second part (two uppercase letters) defines the country or region. If you set a locale that is not installed on your system FalconCalc will try to use a similar one (for example: if you set en_GB but only en_US is installed it will use en_US).&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;The &lt;span style=&quot; font-style:italic;&quot;&gt;locale&lt;/span&gt; determines the character used for a decimal point, the ordering of the characters and the correspondance bewtween upper and lowercase letters. Variable and function names may contain accented or special letters in your locale that are not present in other locales and vice-versa. Here you can select a locale different from the one used by the system and the language selected.&lt;/p&gt;&lt;p&gt;Locale names usually consist of two lowercase and two uppercase letters separated by an underscore character (for example: hu_HU, en_US, de_DE). The first part (two lowercase letters) defines the language, the second part (two uppercase letters) defines the country or region. If you set a locale that is not installed on your system FalconCalc will try to use a similar one (for example: if you set en_GB but only en_US is installed it will use en_US).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
      <property name="wordWrap">
       <bool>true</bool>

@@ -32,7 +32,7 @@ static QString _errors[] =
     /* EEC_FUNCTION_MISSING_OPENING_BRACE */	QApplication::tr("Function missing opening brace"),
     /* EEC_FUNCTION_DEFINITION_MISSING_RIGHT_BRACE */QApplication::tr("Function definition missing right brace"),
     /* EEC_EXPRESSION_ERROR */				    QApplication::tr("Expression error"),
-    /* EEC_EITHER_THE_SEPARATOR_WAS_MISPLACED_OR_PARENTHESIS_WERE_MISMATCHED */		QApplication::tr("Either the separator was misplaced or parenthesis were mismatched"),
+    /* EEC_SEPARATOR_DECPOINT_BRACE_MISMATCH */		QApplication::tr("Separator or decimal character or parenthesis mismatch"),
     /* EEC_DIVISON_BY_0 */				        QApplication::tr("Divison by 0"),
     /* EEC_CLOSING_QUOTE_NOT_FOUND */			QApplication::tr("Closing quote not found"),
     /* EEC_BUILTIN_VARIABLES_CANNOT_BE_REDEFINED */QApplication::tr("Builtin variables cannot be redefined"),
