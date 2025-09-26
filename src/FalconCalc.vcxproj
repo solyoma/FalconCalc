@@ -110,6 +110,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="calculate.cpp" />
+    <ClCompile Include="EngineErrors.cpp" />
     <ClCompile Include="frmLocale.cpp" />
     <ClCompile Include="LongNumber.cpp" />
     <ClCompile Include="about.cpp" />

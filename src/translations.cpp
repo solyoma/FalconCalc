@@ -239,6 +239,7 @@ static _LanguageTexts_private __texts[] = {
 
 static _ErrorTexts_private __errorTexts[] = {
  // error messages
+ { EEC_NO_ERROR,                                L"Result:",             L"Eredmény:" },
  { EEC_VARIABLE_DEFINITION_MISSING,             L"Variable definition missing",L"A változó definíciója hiányzik" },
  { EEC_UNKNOWN_FUNCTION_IN_EXPRESSION,	        L"Unknown function in expression",				L"Ismeretlen függvény a képletben"},
  { EEC_SYNTAX_ERROR,					        L"Syntax error",			L"Hibás szintaxis"},

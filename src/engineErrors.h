@@ -2,6 +2,10 @@
 #ifndef _ENGINEERRORS_H
 	#define _ENGINEERRORS_H
 
+#ifdef QTSA_PROJECT
+    #include <QString>
+#endif
+
 enum EngineErrorCodes {
     EEC_NO_ERROR = 0,
     EEC_VARIABLE_DEFINITION_MISSING,
@@ -34,9 +38,13 @@ enum EngineErrorCodes {
     EEC_CLOSING_QUOTE_NOT_FOUND,
     EEC_BUILTIN_VARIABLES_CANNOT_BE_REDEFINED,
     EEC_BUILTIN_FUNCTIONS_CANNOT_BE_REDEFINED,
+    EEC_UNKNOWN_ERROR,                                 // no error text for this code!
+    EEC_TOP                                            // stop code, all definitions are below this
 };
 
-
+#ifdef QTSA_PROJECT
+    QString EngineErrorString(EngineErrorCodes eec);
+#endif
 
 
 

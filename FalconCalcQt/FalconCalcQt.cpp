@@ -30,6 +30,7 @@ using namespace FalconCalc;
 #include "HelpDialog.h"
 #include "FCSettings.h"
 #include "schemes.h"
+#include "LocaleDlg.h"
 
 //#ifdef NothingImportant
 #ifdef _DEBUG
@@ -361,10 +362,17 @@ void FalconCalcQt::on_actionDec_triggered()
 {
     on_btnOpenCloseDecOptions_clicked();
 }
+
 void FalconCalcQt::on_actionSetLocale_triggered()
 {
-
+	LocaleDlg* pdlg = new LocaleDlg(this);
+	if(pdlg->exec())
+	{
+		setLocale(pdlg->GetNewLocale());
+	}
+	delete pdlg;
 }
+
 void FalconCalcQt::on_actionSystemMode_triggered()
 {
 	_actScheme = Scheme::schSystem;
@@ -417,13 +425,13 @@ void FalconCalcQt::on_cbInfix_currentTextChanged(const QString& newText)
 	{
 		lengine->infix = newText;
 		RealNumber res = lengine->Calculate();
-		ui.lblResults->setText(tr("Result:"));
-		_ShowResults();
+		_SetResultLabelText(EEC_NO_ERROR);
 	}
-	catch (...)
+	catch (EngineErrorCodes eec)
 	{
-
+		_SetResultLabelText(eec);
 	}
+	_ShowResults();
 	--_busy;
 }
 
@@ -686,6 +694,15 @@ void FalconCalcQt::_PlaceWidget(QWidget& w, Placement pm)
 	w.move(xw, yw);
 }
 
+void FalconCalcQt::_SetResultLabelText(EngineErrorCodes eec)
+{
+	ui.lblResults->setText(EngineErrorString(eec) );
+	QString clr;
+	if (eec != EEC_NO_ERROR)
+		clr = "color:red";
+	ui.lblResults->setStyleSheet(clr);
+}
+
 void FalconCalcQt::_SetHexDisplFomatForFlags()
 {
 	// defaults:
@@ -801,17 +818,12 @@ void FalconCalcQt::on_edtInfix_textChanged(const QString& newText)
 		{
 			lengine->infix.FromQString(newText);
 			RealNumber res = lengine->Calculate();
-			ui.lblResults->setText("Results");
+			_SetResultLabelText(EEC_NO_ERROR);
 			_ShowResults();
 		}
-		catch (std::wstring ws)
-		{
-			ui.lblResults->setText(SmartString(ws).toQString());
-			_ShowMessageOnAllPanels("???");
-		}
-		//catch (Trigger_Type tt)
+		//catch (std::wstring ws)
 		//{
-		//	ui.lblResults->setText(triggerMap[tt].toQString());
+		//	_SetResultLabelText(EEC_UNKNOWN_ERROR, SmartString(ws).toQString());
 		//	_ShowMessageOnAllPanels("???");
 		//}
 		catch (...)

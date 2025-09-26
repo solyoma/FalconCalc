@@ -67,6 +67,12 @@
     <ClCompile Include="schemes.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="LocaleDlg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\EngineErrors.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\calculate.h">
@@ -82,6 +88,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="schemes.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\EngineErrors.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -101,6 +110,9 @@
     <QtUic Include="AboutDialog.ui">
       <Filter>Form Files</Filter>
     </QtUic>
+    <QtUic Include="LocaleDlg.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="HistoryDialog.h">
@@ -116,6 +128,9 @@
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="AboutDialog.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="LocaleDlg.h">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>

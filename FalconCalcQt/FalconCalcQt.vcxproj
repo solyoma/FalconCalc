@@ -107,6 +107,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\src\EngineErrors.cpp" />
     <ClCompile Include="FCSettings.cpp" />
     <ClCompile Include="HelpDialog.cpp">
       <DynamicSource Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">input</DynamicSource>
@@ -115,10 +116,12 @@
       <QtMocFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(Filename).moc</QtMocFileName>
     </ClCompile>
     <ClCompile Include="HistoryOptions.cpp" />
+    <ClCompile Include="LocaleDlg.cpp" />
     <ClCompile Include="schemes.cpp" />
     <ClCompile Include="VariablesFunctionsDialog.cpp" />
     <QtRcc Include="FalconCalcQt.qrc" />
     <QtUic Include="AboutDialog.ui" />
+    <QtUic Include="LocaleDlg.ui" />
     <QtUic Include="HelpDialog.ui" />
     <QtUic Include="HistoryOptions.ui" />
     <QtUic Include="VariablesFunctionsDialog.ui" />
@@ -134,10 +137,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\calculate.h" />
+    <ClInclude Include="..\src\EngineErrors.h" />
     <ClInclude Include="..\src\LongNumber.h" />
     <ClInclude Include="..\src\SmartString.h" />
     <QtMoc Include="AboutDialog.h" />
     <ClInclude Include="FCSettings.h" />
+    <QtMoc Include="LocaleDlg.h" />
     <ClInclude Include="schemes.h" />
     <QtMoc Include="HelpDialog.h" />
     <QtMoc Include="HistoryOptions.h" />

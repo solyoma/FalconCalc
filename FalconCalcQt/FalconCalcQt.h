@@ -7,6 +7,9 @@
 #include <QTimer>
 
 #include "schemes.h"
+
+#include "EngineErrors.h"
+
 #include "HelpDialog.h"
 
 namespace FalconCalc {
@@ -163,6 +166,7 @@ private: // functions
 
     enum class Placement {pmTop,pmRight,pmBottom,pmLeft};
     void _PlaceWidget(QWidget &widget, Placement pm);   // relative to the main window
+    void _SetResultLabelText(EngineErrorCodes eec);
 
 private slots:
     void _watchdogTimerSlot();

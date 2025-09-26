@@ -745,13 +745,13 @@
           </font>
          </property>
          <property name="frameShape">
-          <enum>QFrame::StyledPanel</enum>
+          <enum>QFrame::WinPanel</enum>
          </property>
          <property name="frameShadow">
           <enum>QFrame::Sunken</enum>
          </property>
          <property name="lineWidth">
-          <number>6</number>
+          <number>3</number>
          </property>
          <property name="text">
           <string>???</string>
@@ -804,13 +804,13 @@
           </font>
          </property>
          <property name="frameShape">
-          <enum>QFrame::StyledPanel</enum>
+          <enum>QFrame::WinPanel</enum>
          </property>
          <property name="frameShadow">
           <enum>QFrame::Sunken</enum>
          </property>
          <property name="lineWidth">
-          <number>6</number>
+          <number>3</number>
          </property>
          <property name="text">
           <string>???</string>
@@ -863,13 +863,13 @@
           </font>
          </property>
          <property name="frameShape">
-          <enum>QFrame::StyledPanel</enum>
+          <enum>QFrame::WinPanel</enum>
          </property>
          <property name="frameShadow">
           <enum>QFrame::Sunken</enum>
          </property>
          <property name="lineWidth">
-          <number>6</number>
+          <number>3</number>
          </property>
          <property name="text">
           <string>???</string>
@@ -922,13 +922,13 @@
           </font>
          </property>
          <property name="frameShape">
-          <enum>QFrame::StyledPanel</enum>
+          <enum>QFrame::WinPanel</enum>
          </property>
          <property name="frameShadow">
           <enum>QFrame::Sunken</enum>
          </property>
          <property name="lineWidth">
-          <number>6</number>
+          <number>3</number>
          </property>
          <property name="text">
           <string>???</string>
@@ -1012,7 +1012,7 @@
     </property>
     <widget class="QMenu" name="mnuData">
      <property name="title">
-      <string>&amp;Data...</string>
+      <string>User &amp;Data...</string>
      </property>
      <addaction name="actionEditVars"/>
      <addaction name="actionEditFunc"/>
@@ -1021,17 +1021,12 @@
     <addaction name="actionPaste"/>
     <addaction name="actionPasteAfter"/>
     <addaction name="separator"/>
+    <addaction name="actionEditHist"/>
+    <addaction name="separator"/>
     <addaction name="mnuData"/>
     <addaction name="separator"/>
-   </widget>
-   <widget class="QMenu" name="mnuHistory">
-    <property name="title">
-     <string>Histor&amp;y</string>
-    </property>
-    <addaction name="actionEditHist"/>
-    <addaction name="actionHistOptions"/>
-    <addaction name="separator"/>
     <addaction name="actionClearHistory"/>
+    <addaction name="separator"/>
    </widget>
    <widget class="QMenu" name="mnuOptions">
     <property name="title">
@@ -1047,7 +1042,18 @@
      <addaction name="actionBlackMode"/>
      <addaction name="actionBlueMode"/>
     </widget>
+    <widget class="QMenu" name="menu_Language">
+     <property name="title">
+      <string>&amp;Language</string>
+     </property>
+     <addaction name="actionEnglish"/>
+     <addaction name="actionHungarian"/>
+    </widget>
+    <addaction name="menu_Language"/>
     <addaction name="actionSetLocale"/>
+    <addaction name="separator"/>
+    <addaction name="actionHistOptions"/>
+    <addaction name="separator"/>
     <addaction name="actionSelectFont"/>
     <addaction name="menuStyle"/>
    </widget>
@@ -1067,7 +1073,6 @@
    </widget>
    <addaction name="mnuFile"/>
    <addaction name="mnuEdit"/>
-   <addaction name="mnuHistory"/>
    <addaction name="mnuView"/>
    <addaction name="mnuOptions"/>
    <addaction name="mnuHelp"/>
@@ -1249,6 +1254,30 @@
    </property>
    <property name="text">
     <string>Blac&amp;k</string>
+   </property>
+  </action>
+  <action name="action">
+   <property name="text">
+    <string>-</string>
+   </property>
+  </action>
+  <action name="actionEnglish">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;English</string>
+   </property>
+  </action>
+  <action name="actionHungarian">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Hungarian</string>
    </property>
   </action>
  </widget>
