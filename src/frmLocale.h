@@ -21,7 +21,7 @@ N_PUBLIC: /* Designer generated list of public members. Do not edit by hand. */
 
 	void btnSaveClick(void *sender, nlib::EventParameters param);
 	void btnCancelClick(void *sender, nlib::EventParameters param);
-	void edtLocaleKeypress(void* sender, nlib::KeyPressParameters param);
+	void edtLocaleTextChanged(void* sender, nlib::EventParameters param);
 protected:
 	virtual ~TfrmLocale(); /* Don't make public. Call Destroy() to delete the object. */
 N_PROTECTED: /* Designer generated list of protected members. Do not edit by hand. */

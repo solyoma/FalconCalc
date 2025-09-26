@@ -81,7 +81,7 @@ void TfrmLocale::InitializeFormAndControls() /* Control initialization function 
 
 	btnCancel->OnClick = CreateEvent(this, &TfrmLocale::btnCancelClick);
 	btnSave->OnClick = CreateEvent(this, &TfrmLocale::btnSaveClick);
-	edtLocale->OnKeyPress = CreateEvent(this, &TfrmLocale::edtLocaleKeypress);
+	edtLocale->OnTextChanged = CreateEvent(this, &TfrmLocale::edtLocaleTextChanged);
 }
 
 TfrmLocale::TfrmLocale()
@@ -124,7 +124,7 @@ void TfrmLocale::btnCancelClick(void *sender, nlib::EventParameters param)
 	SetModalResult(nlib::mrCancel);
 }
 
-void TfrmLocale::edtLocaleKeypress(void* sender, nlib::KeyPressParameters param)
+void TfrmLocale::edtLocaleTextChanged(void* sender, nlib::EventParameters param)
 {
 	std::wstring ws = edtLocale->Text();
 	btnSave->SetEnabled(ws != _wsLocName);
