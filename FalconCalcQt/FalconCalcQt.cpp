@@ -1267,14 +1267,19 @@ void FalconCalcQt::_AddToHistory(QString infix)
 	}
 	// no it's an expression, may be a definition, we don't care
 	int n;
-	if ((n = _slHistory.indexOf(infix)) >= 0)
+	if((n = ui.cbInfix->findText(infix)) < 0)	// not already in combobox?
+		ui.cbInfix->insertItem(0, infix);		// add it at the top
+	while (_maxHistDepth && (int)_maxHistDepth < ui.cbInfix->count())		 // 0: unlimited
+		ui.cbInfix->removeItem(ui.cbInfix->count() - 1);
+
+	if ((n = _slHistory.indexOf(infix)) >= 0)	// found in history?
 	{
 		if (n == 0)							// already at top
 			return;							// nothing to do
 		_slHistory.removeAt(n);				// not at top delete expression from inside
 	}
 	_slHistory.push_front(infix);			 // new line to the top
-	while ((int)_maxHistDepth < _slHistory.size())
+	while (_maxHistDepth && (int)_maxHistDepth < _slHistory.size())		 // 0: unlimited
 		_slHistory.pop_back();
 		
 	if (_historySorted)

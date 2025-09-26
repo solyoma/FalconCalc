@@ -1988,7 +1988,7 @@ void TfrmMain::_AddToHistory(wstring text)
 	SmartString ss(text);
 	ss.Trim();
 
-	if (_minCharLength >= ss.length())	// do not add to short strings
+	if (_minCharLength >= ss.length())	// do not add too short strings
 		return;
 
 	if (lengine->resultType == LittleEngine::ResultType::rtInvalid || lengine->resultType == LittleEngine::ResultType::rtUndef)
