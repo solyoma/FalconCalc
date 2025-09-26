@@ -110,6 +110,9 @@
     <ClInclude Include="translations.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="EngineErrors.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="nresource.rc">

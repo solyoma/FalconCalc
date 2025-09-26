@@ -64,6 +64,8 @@ private slots:
     void on_actionBlackMode_triggered();
     void on_actionBlueMode_triggered();
 
+	void on_cbInfix_currentTextChanged(const QString& newText);
+
     void on_btnBinary_clicked();
     void on_btnDecimal_clicked();
     void on_btnHexaDecimal_clicked();
@@ -71,6 +73,7 @@ private slots:
     void on_btnOpenCloseDecOptions_clicked();
     void on_btnOpenCloseHexOptions_clicked();
     void on_btnStringFont_clicked();
+    void on_btnClearInfix_clicked();
 
     void on_cbThousandSep_currentIndexChanged(int newIndex);
 

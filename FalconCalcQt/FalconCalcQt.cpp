@@ -47,7 +47,7 @@ static void __SaveStyle(QString styleName)
 #endif
 //#endif
 
-FalconCalc::LittleEngine* lengine = nullptr;
+// in calulat.h/cpp : FalconCalc::LittleEngine* lengine = nullptr;
 
 QString STATE_VER_STRING = QStringLiteral("FalconCalc State File V1.0");
 
@@ -136,7 +136,7 @@ void FalconCalcQt::showEvent(QShowEvent * event)
 	if (isVisible())
 	{
 		_bAlreadyShown = true;
-		ui.edtInfix->setFocus();
+		ui.cbInfix->setFocus();
 	}
 }
 
@@ -190,9 +190,9 @@ void FalconCalcQt::moveEvent(QMoveEvent* e)
 
 void FalconCalcQt::on_actionPasteAfter_triggered()
 {
-	QString qs = ui.edtInfix->text()+QGuiApplication::clipboard()->text();
-	ui.edtInfix->setText(qs);
-	ui.edtInfix->setFocus();
+	QString qs = ui.cbInfix->currentText()+QGuiApplication::clipboard()->text();
+	ui.cbInfix->setCurrentText(qs);
+	ui.cbInfix->setFocus();
 }
 
 void FalconCalcQt::_SlotHistClosing()
@@ -233,7 +233,7 @@ void FalconCalcQt::on_actionEditHist_triggered()
 	}
 	this->activateWindow();		// get the focus back
 	this->raise();
-	ui.edtInfix->setFocus();
+	ui.cbInfix->setFocus();
 }
 
 void FalconCalcQt::_SlotVarsFuncsClosing()
@@ -297,7 +297,7 @@ void FalconCalcQt::_EditVarsCommon(int which)
 	}
 	this->activateWindow();		// get the focus back
 	this->raise();
-	ui.edtInfix->setFocus();
+	ui.cbInfix->setFocus();
 }
 
 void FalconCalcQt::on_actionEditVars_triggered()
@@ -399,6 +399,34 @@ void FalconCalcQt::on_actionBlueMode_triggered()
 	ui.actionBlueMode->setChecked(true);
 	//__SaveStyle("blue");
 }
+
+void FalconCalcQt::on_cbInfix_currentTextChanged(const QString& newText)
+{
+	if (_busy)
+		return;
+	++_busy;
+	if(newText.isEmpty())
+	{
+		ui.cbInfix->setCurrentIndex(-1);
+		ui.cbInfix->setFocus();
+		_ShowMessageOnAllPanels("");
+		--_busy;
+		return;
+	}
+	try 
+	{
+		lengine->infix = newText;
+		RealNumber res = lengine->Calculate();
+		ui.lblResults->setText(tr("Result:"));
+		_ShowResults();
+	}
+	catch (...)
+	{
+
+	}
+	--_busy;
+}
+
 void FalconCalcQt::on_actionSelectFont_triggered()
 {
     on_btnStringFont_clicked();
@@ -421,7 +449,7 @@ void FalconCalcQt::on_actionAbout_triggered()
 void FalconCalcQt::on_btnBinary_clicked()
 {
 	_clipBoard->setText(ui.lblBin->text());
-	ui.edtInfix->setFocus();
+	ui.cbInfix->setFocus();
 }
 void FalconCalcQt::on_btnDecimal_clicked()	   // decimal display chaged
 {
@@ -440,17 +468,17 @@ void FalconCalcQt::on_btnDecimal_clicked()	   // decimal display chaged
 		text.remove(pos, 12); // "</sup>"
 	}
 	_clipBoard->setText(text);
-	ui.edtInfix->setFocus();
+	ui.cbInfix->setFocus();
 }
 void FalconCalcQt::on_btnHexaDecimal_clicked()
 {
 	_clipBoard->setText(ui.lblHex->text());
-	ui.edtInfix->setFocus();
+	ui.cbInfix->setFocus();
 }
 void FalconCalcQt::on_btnOctal_clicked()
 {
 	_clipBoard->setText(ui.lblOct->text());
-	ui.edtInfix->setFocus();
+	ui.cbInfix->setFocus();
 }
 void FalconCalcQt::on_btnOpenCloseDecOptions_clicked()
 {
@@ -522,6 +550,12 @@ void FalconCalcQt::on_btnOpenCloseHexOptions_clicked()
 void FalconCalcQt::on_btnStringFont_clicked()
 {
 	ui.lblChars->setFont(QFontDialog::getFont(0, ui.lblChars->font(), this));
+}
+
+void FalconCalcQt::on_btnClearInfix_clicked()
+{
+	ui.cbInfix->setCurrentIndex(-1);
+	ui.cbInfix->setFocus();
 }
 
 void FalconCalcQt::on_cbThousandSep_currentIndexChanged(int newIndex)
@@ -604,6 +638,7 @@ void FalconCalcQt::_LoadHistory()
 				;
 			}
 			_slHistory.push_back(s);
+			ui.cbInfix->addItem(s);
 		}
 	}
 }
@@ -774,11 +809,11 @@ void FalconCalcQt::on_edtInfix_textChanged(const QString& newText)
 			ui.lblResults->setText(SmartString(ws).toQString());
 			_ShowMessageOnAllPanels("???");
 		}
-		catch (Trigger_Type tt)
-		{
-			ui.lblResults->setText(triggerMap[tt].toQString());
-			_ShowMessageOnAllPanels("???");
-		}
+		//catch (Trigger_Type tt)
+		//{
+		//	ui.lblResults->setText(triggerMap[tt].toQString());
+		//	_ShowMessageOnAllPanels("???");
+		//}
 		catch (...)
 		{
 			_ShowMessageOnAllPanels("???");
@@ -797,7 +832,7 @@ void FalconCalcQt::on_rbDeg_toggled(bool b)
 		return;
 	lengine->displayFormat.angUnit = LongNumber::AngularUnit::auDeg;
 	_ShowResults();
-	ui.edtInfix->setFocus();
+	ui.cbInfix->setFocus();
 }
 void FalconCalcQt::on_rbRad_toggled(bool b)
 {
@@ -805,7 +840,7 @@ void FalconCalcQt::on_rbRad_toggled(bool b)
 		return;
 	lengine->displayFormat.angUnit = LongNumber::AngularUnit::auRad;
 	_ShowResults();
-	ui.edtInfix->setFocus();
+	ui.cbInfix->setFocus();
 }
 void FalconCalcQt::on_rbGrad_toggled(bool b)
 {
@@ -813,7 +848,7 @@ void FalconCalcQt::on_rbGrad_toggled(bool b)
 		return;
 	lengine->displayFormat.angUnit = LongNumber::AngularUnit::auGrad;
 	_ShowResults();
-	ui.edtInfix->setFocus();
+	ui.cbInfix->setFocus();
 }
 void FalconCalcQt::on_rbTurns_toggled(bool b)
 {
@@ -821,7 +856,7 @@ void FalconCalcQt::on_rbTurns_toggled(bool b)
 		return;
 	lengine->displayFormat.angUnit = LongNumber::AngularUnit::auTurn;
 	_ShowResults();
-	ui.edtInfix->setFocus();
+	ui.cbInfix->setFocus();
 }
 void FalconCalcQt::on_rbNormal_toggled(bool b)
 {
@@ -829,7 +864,7 @@ void FalconCalcQt::on_rbNormal_toggled(bool b)
 		return;
 	lengine->displayFormat.expFormat = ExpFormat::rnsfGraph;
 	_ShowResults();
-	ui.edtInfix->setFocus();
+	ui.cbInfix->setFocus();
 }
 void FalconCalcQt::on_rbHtml_toggled(bool b)
 {
@@ -837,7 +872,7 @@ void FalconCalcQt::on_rbHtml_toggled(bool b)
 		return;
 	lengine->displayFormat.expFormat = ExpFormat::rnsfSciHTML;
 	_ShowResults();
-	ui.edtInfix->setFocus();
+	ui.cbInfix->setFocus();
 }
 void FalconCalcQt::on_rbTex_toggled(bool b)
 {
@@ -845,7 +880,7 @@ void FalconCalcQt::on_rbTex_toggled(bool b)
 		return;
 	lengine->displayFormat.expFormat = ExpFormat::rnsfSciTeX;
 	_ShowResults();
-	ui.edtInfix->setFocus();
+	ui.cbInfix->setFocus();
 }
 void FalconCalcQt::on_rbNone_toggled(bool b)
 {
@@ -853,7 +888,7 @@ void FalconCalcQt::on_rbNone_toggled(bool b)
 		return;
 	lengine->displayFormat.expFormat = ExpFormat::rnsfE;
 	_ShowResults();
-	ui.edtInfix->setFocus();
+	ui.cbInfix->setFocus();
 }
 
 void FalconCalcQt::on_spnDecDigits_valueChanged(int val)
@@ -1212,8 +1247,8 @@ bool FalconCalcQt::_SaveState(QString name)
 			if (col != 3)
 				ofs << "|";
 		}
-	if (!ui.edtInfix->text().isEmpty())
-		ofs << LAST << ui.edtInfix->text() << "\n";
+	if (!ui.cbInfix->currentText().isEmpty())
+		ofs << LAST << ui.cbInfix->currentText() << "\n";
 	return true;
 }
 
@@ -1239,7 +1274,7 @@ void FalconCalcQt::_AddToHistory(QString infix)
 		_slHistory.removeAt(n);				// not at top delete expression from inside
 	}
 	_slHistory.push_front(infix);			 // new line to the top
-	while ((int)_maxHistDepth >= _slHistory.size())
+	while ((int)_maxHistDepth < _slHistory.size())
 		_slHistory.pop_back();
 		
 	if (_historySorted)
@@ -1255,7 +1290,7 @@ void FalconCalcQt::_AddToHistory(QString infix)
 
 void FalconCalcQt::_ShowResults()
 {
-	if (ui.edtInfix->text().isEmpty() || lengine->resultType == LittleEngine::ResultType::rtInvalid)
+	if (ui.cbInfix->currentText().isEmpty() || lengine->resultType == LittleEngine::ResultType::rtInvalid)
 		_ShowMessageOnAllPanels("???");
 	else if(lengine->resultType == LittleEngine::ResultType::rtDefinition)
 		_ShowMessageOnAllPanels("Definition");
@@ -1281,7 +1316,7 @@ void FalconCalcQt::_ShowResults()
 		ui.lblBin->setText(lengine->ResultAsBinString().toQString());
 		ui.lblChars->setText(lengine->ResultAsCharString().toQString());
 	}
-	ui.edtInfix->setFocus();
+	ui.cbInfix->setFocus();
 }
 
 void FalconCalcQt::_ShowMessageOnAllPanels(QString s)
@@ -1296,15 +1331,15 @@ void FalconCalcQt::_SlotDataFromHistory(QString qs)
 {
 	if (qs.isEmpty())
 		return;
-	ui.edtInfix->setText(qs);
-	ui.edtInfix->setFocus();
+	ui.cbInfix->setCurrentText(qs);
+	ui.cbInfix->setFocus();
 }
 
 void FalconCalcQt::_watchdogTimerSlot()
 {
 	if (_added)
 		return;
-	_AddToHistory(ui.edtInfix->text());
+	_AddToHistory(ui.cbInfix->currentText());
 }
 
 

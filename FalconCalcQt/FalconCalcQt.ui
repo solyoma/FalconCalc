@@ -7,19 +7,19 @@
     <x>0</x>
     <y>0</y>
     <width>522</width>
-    <height>480</height>
+    <height>460</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
     <width>522</width>
-    <height>480</height>
+    <height>460</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
     <width>522</width>
-    <height>480</height>
+    <height>460</height>
    </size>
   </property>
   <property name="font">
@@ -53,8 +53,628 @@
      <number>3</number>
     </property>
     <property name="verticalSpacing">
-     <number>3</number>
+     <number>2</number>
     </property>
+    <item row="5" column="1">
+     <spacer name="horizontalSpacer">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>236</width>
+        <height>20</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+    <item row="1" column="0">
+     <widget class="QLabel" name="lblResults">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">border:0;margin:0</string>
+      </property>
+      <property name="text">
+       <string>Results:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="0">
+     <widget class="QPushButton" name="btnOpenCloseDecOptions">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>16777215</width>
+        <height>24</height>
+       </size>
+      </property>
+      <property name="text">
+       <string>▼--------------Decimal options-------------</string>
+      </property>
+      <property name="flat">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="1">
+     <spacer name="horizontalSpacer_2">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>236</width>
+        <height>20</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+    <item row="5" column="0">
+     <widget class="QPushButton" name="btnOpenCloseHexOptions">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>16777215</width>
+        <height>24</height>
+       </size>
+      </property>
+      <property name="text">
+       <string>▼----------Hexadecimal Options-----------</string>
+      </property>
+      <property name="flat">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+    <item row="4" column="0" colspan="2">
+     <widget class="QWidget" name="frmDecimal" native="true">
+      <property name="maximumSize">
+       <size>
+        <width>16777215</width>
+        <height>144</height>
+       </size>
+      </property>
+      <layout class="QHBoxLayout" name="horizontalLayout_4">
+       <property name="spacing">
+        <number>2</number>
+       </property>
+       <property name="leftMargin">
+        <number>2</number>
+       </property>
+       <property name="topMargin">
+        <number>2</number>
+       </property>
+       <property name="rightMargin">
+        <number>2</number>
+       </property>
+       <property name="bottomMargin">
+        <number>2</number>
+       </property>
+       <item>
+        <widget class="QGroupBox" name="gbDecOptions">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>130</height>
+          </size>
+         </property>
+         <layout class="QGridLayout" name="gridLayout">
+          <property name="leftMargin">
+           <number>2</number>
+          </property>
+          <property name="topMargin">
+           <number>2</number>
+          </property>
+          <property name="rightMargin">
+           <number>2</number>
+          </property>
+          <property name="bottomMargin">
+           <number>2</number>
+          </property>
+          <property name="horizontalSpacing">
+           <number>2</number>
+          </property>
+          <property name="verticalSpacing">
+           <number>1</number>
+          </property>
+          <item row="4" column="0">
+           <widget class="QCheckBox" name="chkSci">
+            <property name="text">
+             <string>Scientific format</string>
+            </property>
+           </widget>
+          </item>
+          <item row="8" column="0">
+           <widget class="QCheckBox" name="chkDecDigits">
+            <property name="text">
+             <string>Decimal digits:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0">
+           <widget class="QCheckBox" name="chkThousandSep">
+            <property name="text">
+             <string>use Thousand separator:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0" rowspan="3">
+           <widget class="QCheckBox" name="chkDecDelim">
+            <property name="text">
+             <string>Use decimal separator</string>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="0" rowspan="3">
+           <widget class="QCheckBox" name="chkEng">
+            <property name="text">
+             <string>Engineering format</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QComboBox" name="cbThousandSep">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <item>
+             <property name="text">
+              <string>Space</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>,</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>.</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+          <item row="8" column="1">
+           <widget class="QSpinBox" name="spnDecDigits">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1" rowspan="5">
+           <spacer name="verticalSpacer">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>61</width>
+              <height>58</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QWidget" name="widget" native="true">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>130</height>
+          </size>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout">
+          <property name="spacing">
+           <number>1</number>
+          </property>
+          <property name="leftMargin">
+           <number>6</number>
+          </property>
+          <property name="topMargin">
+           <number>2</number>
+          </property>
+          <property name="rightMargin">
+           <number>6</number>
+          </property>
+          <property name="bottomMargin">
+           <number>2</number>
+          </property>
+          <item>
+           <widget class="QGroupBox" name="gbTextOptions">
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">QGroupBox::title { subcontrol-position:top left}</string>
+            </property>
+            <property name="title">
+             <string>As string</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+            </property>
+            <layout class="QHBoxLayout" name="horizontalLayout">
+             <property name="spacing">
+              <number>1</number>
+             </property>
+             <property name="leftMargin">
+              <number>2</number>
+             </property>
+             <property name="topMargin">
+              <number>2</number>
+             </property>
+             <property name="rightMargin">
+              <number>2</number>
+             </property>
+             <property name="bottomMargin">
+              <number>2</number>
+             </property>
+             <item>
+              <widget class="QLabel" name="lblChars">
+               <property name="maximumSize">
+                <size>
+                 <width>16777215</width>
+                 <height>20</height>
+                </size>
+               </property>
+               <property name="frameShape">
+                <enum>QFrame::NoFrame</enum>
+               </property>
+               <property name="text">
+                <string/>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="btnStringFont">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>20</height>
+                </size>
+               </property>
+               <property name="text">
+                <string>&amp;Font...</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item>
+           <widget class="QGroupBox" name="gbAngleUnit">
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>41</height>
+             </size>
+            </property>
+            <property name="title">
+             <string>Angles in</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignHCenter|Qt::AlignTop</set>
+            </property>
+            <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="10,10,10,15">
+             <property name="spacing">
+              <number>2</number>
+             </property>
+             <property name="leftMargin">
+              <number>2</number>
+             </property>
+             <property name="topMargin">
+              <number>2</number>
+             </property>
+             <property name="rightMargin">
+              <number>2</number>
+             </property>
+             <property name="bottomMargin">
+              <number>2</number>
+             </property>
+             <item>
+              <widget class="QRadioButton" name="rbDeg">
+               <property name="text">
+                <string>De&amp;g</string>
+               </property>
+               <property name="checked">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QRadioButton" name="rbRad">
+               <property name="text">
+                <string>&amp;Rad</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QRadioButton" name="rbGrad">
+               <property name="text">
+                <string>&amp;Grad</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QRadioButton" name="rbTurns">
+               <property name="text">
+                <string>&amp;Turns</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item>
+           <widget class="QGroupBox" name="gbDisplayFormat">
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>41</height>
+             </size>
+            </property>
+            <property name="title">
+             <string>Display</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignHCenter|Qt::AlignTop</set>
+            </property>
+            <property name="flat">
+             <bool>true</bool>
+            </property>
+            <layout class="QHBoxLayout" name="horizontalLayout_2">
+             <property name="leftMargin">
+              <number>2</number>
+             </property>
+             <property name="topMargin">
+              <number>2</number>
+             </property>
+             <property name="rightMargin">
+              <number>2</number>
+             </property>
+             <property name="bottomMargin">
+              <number>2</number>
+             </property>
+             <item>
+              <widget class="QRadioButton" name="rbNormal">
+               <property name="font">
+                <font>
+                 <family>Tahoma</family>
+                 <pointsize>10</pointsize>
+                </font>
+               </property>
+               <property name="text">
+                <string>Norm&amp;al</string>
+               </property>
+               <property name="checked">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QRadioButton" name="rbHtml">
+               <property name="text">
+                <string>HT&amp;ML</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QRadioButton" name="rbTex">
+               <property name="text">
+                <string>&amp;TeX</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QRadioButton" name="rbNone">
+               <property name="text">
+                <string>E</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item row="6" column="0" colspan="2">
+     <widget class="QGroupBox" name="gbHexOptions">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>16777215</width>
+        <height>68</height>
+       </size>
+      </property>
+      <property name="title">
+       <string/>
+      </property>
+      <layout class="QGridLayout" name="gridLayout_4" columnstretch="10,10,15,10">
+       <property name="leftMargin">
+        <number>2</number>
+       </property>
+       <property name="topMargin">
+        <number>2</number>
+       </property>
+       <property name="rightMargin">
+        <number>2</number>
+       </property>
+       <property name="bottomMargin">
+        <number>2</number>
+       </property>
+       <property name="horizontalSpacing">
+        <number>2</number>
+       </property>
+       <item row="0" column="1" rowspan="2">
+        <widget class="QWidget" name="widget_2" native="true">
+         <property name="styleSheet">
+          <string notr="true"/>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_2">
+          <property name="leftMargin">
+           <number>2</number>
+          </property>
+          <property name="topMargin">
+           <number>2</number>
+          </property>
+          <property name="rightMargin">
+           <number>2</number>
+          </property>
+          <property name="bottomMargin">
+           <number>2</number>
+          </property>
+          <item>
+           <widget class="QCheckBox" name="chkBytes">
+            <property name="text">
+             <string>As B&amp;ytes</string>
+            </property>
+            <property name="autoExclusive">
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="chkWords">
+            <property name="text">
+             <string>As &amp;Words</string>
+            </property>
+            <property name="autoExclusive">
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="chkDWords">
+            <property name="text">
+             <string>As D&amp;words</string>
+            </property>
+            <property name="autoExclusive">
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QCheckBox" name="chkHexPrefix">
+         <property name="text">
+          <string>0x prefix</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="0">
+        <widget class="QCheckBox" name="chkMinus">
+         <property name="text">
+          <string>Minus sign</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="3">
+        <widget class="QCheckBox" name="chkLittleEndian">
+         <property name="text">
+          <string>&amp;Little endian</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="2" rowspan="2">
+        <widget class="QWidget" name="widget_3" native="true">
+         <property name="styleSheet">
+          <string notr="true"/>
+         </property>
+         <widget class="QCheckBox" name="chkIEEEDouble">
+          <property name="geometry">
+           <rect>
+            <x>5</x>
+            <y>28</y>
+            <width>148</width>
+            <height>19</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>As IEEE &amp;754 double</string>
+          </property>
+          <property name="autoExclusive">
+           <bool>false</bool>
+          </property>
+         </widget>
+         <widget class="QCheckBox" name="chkIEEESingle">
+          <property name="geometry">
+           <rect>
+            <x>5</x>
+            <y>7</y>
+            <width>143</width>
+            <height>19</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>As IEEE &amp;754 single</string>
+          </property>
+          <property name="autoExclusive">
+           <bool>false</bool>
+          </property>
+         </widget>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
     <item row="2" column="0" colspan="2">
      <widget class="QGroupBox" name="grpResults">
       <property name="sizePolicy">
@@ -321,607 +941,52 @@
       </layout>
      </widget>
     </item>
-    <item row="4" column="0" colspan="2">
-     <widget class="QWidget" name="frmDecimal" native="true">
-      <property name="maximumSize">
+    <item row="0" column="0" colspan="2">
+     <widget class="QWidget" name="widget_4" native="true">
+      <property name="minimumSize">
        <size>
-        <width>16777215</width>
-        <height>144</height>
+        <width>0</width>
+        <height>0</height>
        </size>
       </property>
-      <layout class="QHBoxLayout" name="horizontalLayout_4">
+      <layout class="QHBoxLayout" name="horizontalLayout_5">
        <property name="spacing">
-        <number>2</number>
+        <number>1</number>
        </property>
        <property name="leftMargin">
-        <number>2</number>
+        <number>1</number>
        </property>
        <property name="topMargin">
-        <number>2</number>
+        <number>1</number>
        </property>
        <property name="rightMargin">
-        <number>2</number>
+        <number>1</number>
        </property>
        <property name="bottomMargin">
-        <number>2</number>
+        <number>1</number>
        </property>
        <item>
-        <widget class="QGroupBox" name="gbDecOptions">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>16777215</width>
-           <height>130</height>
-          </size>
-         </property>
-         <layout class="QGridLayout" name="gridLayout">
-          <property name="leftMargin">
-           <number>2</number>
-          </property>
-          <property name="topMargin">
-           <number>2</number>
-          </property>
-          <property name="rightMargin">
-           <number>2</number>
-          </property>
-          <property name="bottomMargin">
-           <number>2</number>
-          </property>
-          <property name="spacing">
-           <number>2</number>
-          </property>
-          <item row="4" column="0">
-           <widget class="QCheckBox" name="chkSci">
-            <property name="text">
-             <string>Scientific format</string>
-            </property>
-           </widget>
-          </item>
-          <item row="8" column="0">
-           <widget class="QCheckBox" name="chkDecDigits">
-            <property name="text">
-             <string>Decimal digits:</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="0">
-           <widget class="QCheckBox" name="chkThousandSep">
-            <property name="text">
-             <string>use Thousand separator:</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="0" rowspan="3">
-           <widget class="QCheckBox" name="chkDecDelim">
-            <property name="text">
-             <string>Use decimal separator</string>
-            </property>
-           </widget>
-          </item>
-          <item row="5" column="0" rowspan="3">
-           <widget class="QCheckBox" name="chkEng">
-            <property name="text">
-             <string>Engineering format</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="1">
-           <widget class="QComboBox" name="cbThousandSep">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <item>
-             <property name="text">
-              <string>Space</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>,</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>.</string>
-             </property>
-            </item>
-           </widget>
-          </item>
-          <item row="8" column="1">
-           <widget class="QSpinBox" name="spnDecDigits">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="1" rowspan="5">
-           <spacer name="verticalSpacer">
-            <property name="orientation">
-             <enum>Qt::Vertical</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>61</width>
-              <height>58</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item>
-        <widget class="QWidget" name="widget" native="true">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>16777215</width>
-           <height>130</height>
-          </size>
-         </property>
-         <layout class="QVBoxLayout" name="verticalLayout">
-          <property name="spacing">
-           <number>2</number>
-          </property>
-          <property name="leftMargin">
-           <number>6</number>
-          </property>
-          <property name="topMargin">
-           <number>2</number>
-          </property>
-          <property name="rightMargin">
-           <number>6</number>
-          </property>
-          <property name="bottomMargin">
-           <number>2</number>
-          </property>
-          <item>
-           <widget class="QGroupBox" name="gbTextOptions">
-            <property name="styleSheet">
-             <string notr="true">QGroupBox::title { subcontrol-position:top left}</string>
-            </property>
-            <property name="title">
-             <string>As string</string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
-            </property>
-            <layout class="QHBoxLayout" name="horizontalLayout">
-             <property name="spacing">
-              <number>2</number>
-             </property>
-             <property name="leftMargin">
-              <number>2</number>
-             </property>
-             <property name="topMargin">
-              <number>2</number>
-             </property>
-             <property name="rightMargin">
-              <number>2</number>
-             </property>
-             <property name="bottomMargin">
-              <number>2</number>
-             </property>
-             <item>
-              <widget class="QLabel" name="lblChars">
-               <property name="frameShape">
-                <enum>QFrame::NoFrame</enum>
-               </property>
-               <property name="text">
-                <string/>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QPushButton" name="btnStringFont">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="text">
-                <string>&amp;Font...</string>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </widget>
-          </item>
-          <item>
-           <widget class="QGroupBox" name="gbAngleUnit">
-            <property name="title">
-             <string>Angles in</string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignHCenter|Qt::AlignTop</set>
-            </property>
-            <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="10,10,10,15">
-             <property name="spacing">
-              <number>2</number>
-             </property>
-             <property name="leftMargin">
-              <number>2</number>
-             </property>
-             <property name="topMargin">
-              <number>2</number>
-             </property>
-             <property name="rightMargin">
-              <number>2</number>
-             </property>
-             <property name="bottomMargin">
-              <number>2</number>
-             </property>
-             <item>
-              <widget class="QRadioButton" name="rbDeg">
-               <property name="text">
-                <string>De&amp;g</string>
-               </property>
-               <property name="checked">
-                <bool>true</bool>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QRadioButton" name="rbRad">
-               <property name="text">
-                <string>&amp;Rad</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QRadioButton" name="rbGrad">
-               <property name="text">
-                <string>&amp;Grad</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QRadioButton" name="rbTurns">
-               <property name="text">
-                <string>&amp;Turns</string>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </widget>
-          </item>
-          <item>
-           <widget class="QGroupBox" name="gbDisplayFormat">
-            <property name="title">
-             <string>Display</string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignHCenter|Qt::AlignTop</set>
-            </property>
-            <property name="flat">
-             <bool>true</bool>
-            </property>
-            <layout class="QHBoxLayout" name="horizontalLayout_2">
-             <property name="leftMargin">
-              <number>2</number>
-             </property>
-             <property name="topMargin">
-              <number>2</number>
-             </property>
-             <property name="rightMargin">
-              <number>2</number>
-             </property>
-             <property name="bottomMargin">
-              <number>2</number>
-             </property>
-             <item>
-              <widget class="QRadioButton" name="rbNormal">
-               <property name="font">
-                <font>
-                 <family>Tahoma</family>
-                 <pointsize>10</pointsize>
-                </font>
-               </property>
-               <property name="text">
-                <string>Norm&amp;al</string>
-               </property>
-               <property name="checked">
-                <bool>true</bool>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QRadioButton" name="rbHtml">
-               <property name="text">
-                <string>HT&amp;ML</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QRadioButton" name="rbTex">
-               <property name="text">
-                <string>&amp;TeX</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QRadioButton" name="rbNone">
-               <property name="text">
-                <string>E</string>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-    </item>
-    <item row="5" column="0">
-     <widget class="QPushButton" name="btnOpenCloseHexOptions">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>16777215</width>
-        <height>24</height>
-       </size>
-      </property>
-      <property name="text">
-       <string>▼----------Hexadecimal Options-----------</string>
-      </property>
-      <property name="flat">
-       <bool>true</bool>
-      </property>
-     </widget>
-    </item>
-    <item row="3" column="1">
-     <spacer name="horizontalSpacer_2">
-      <property name="orientation">
-       <enum>Qt::Horizontal</enum>
-      </property>
-      <property name="sizeHint" stdset="0">
-       <size>
-        <width>236</width>
-        <height>20</height>
-       </size>
-      </property>
-     </spacer>
-    </item>
-    <item row="6" column="0" colspan="2">
-     <widget class="QGroupBox" name="gbHexOptions">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>16777215</width>
-        <height>68</height>
-       </size>
-      </property>
-      <property name="title">
-       <string/>
-      </property>
-      <layout class="QGridLayout" name="gridLayout_4" columnstretch="10,10,15,10">
-       <property name="leftMargin">
-        <number>2</number>
-       </property>
-       <property name="topMargin">
-        <number>2</number>
-       </property>
-       <property name="rightMargin">
-        <number>2</number>
-       </property>
-       <property name="bottomMargin">
-        <number>2</number>
-       </property>
-       <property name="horizontalSpacing">
-        <number>2</number>
-       </property>
-       <item row="0" column="1" rowspan="2">
-        <widget class="QWidget" name="widget_2" native="true">
-         <property name="styleSheet">
-          <string notr="true"/>
-         </property>
-         <layout class="QVBoxLayout" name="verticalLayout_2">
-          <property name="leftMargin">
-           <number>2</number>
-          </property>
-          <property name="topMargin">
-           <number>2</number>
-          </property>
-          <property name="rightMargin">
-           <number>2</number>
-          </property>
-          <property name="bottomMargin">
-           <number>2</number>
-          </property>
-          <item>
-           <widget class="QCheckBox" name="chkBytes">
-            <property name="text">
-             <string>As B&amp;ytes</string>
-            </property>
-            <property name="autoExclusive">
-             <bool>false</bool>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QCheckBox" name="chkWords">
-            <property name="text">
-             <string>As &amp;Words</string>
-            </property>
-            <property name="autoExclusive">
-             <bool>false</bool>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QCheckBox" name="chkDWords">
-            <property name="text">
-             <string>As D&amp;words</string>
-            </property>
-            <property name="autoExclusive">
-             <bool>false</bool>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item row="1" column="0">
-        <widget class="QCheckBox" name="chkHexPrefix">
-         <property name="text">
-          <string>0x prefix</string>
-         </property>
-         <property name="checked">
+        <widget class="QComboBox" name="cbInfix">
+         <property name="editable">
           <bool>true</bool>
          </property>
+         <property name="placeholderText">
+          <string>Enter formula here</string>
+         </property>
         </widget>
        </item>
-       <item row="0" column="0">
-        <widget class="QCheckBox" name="chkMinus">
+       <item>
+        <widget class="QToolButton" name="btnClearInfix">
          <property name="text">
-          <string>Minus sign</string>
+          <string/>
          </property>
-        </widget>
-       </item>
-       <item row="0" column="3">
-        <widget class="QCheckBox" name="chkLittleEndian">
-         <property name="text">
-          <string>&amp;Little endian</string>
+         <property name="icon">
+          <iconset resource="FalconCalcQt.qrc">
+           <normaloff>:/FalconCalcQt/Resources/btndel-gray.png</normaloff>:/FalconCalcQt/Resources/btndel-gray.png</iconset>
          </property>
-        </widget>
-       </item>
-       <item row="0" column="2" rowspan="2">
-        <widget class="QWidget" name="widget_3" native="true">
-         <property name="styleSheet">
-          <string notr="true"/>
-         </property>
-         <widget class="QCheckBox" name="chkIEEEDouble">
-          <property name="geometry">
-           <rect>
-            <x>5</x>
-            <y>28</y>
-            <width>148</width>
-            <height>19</height>
-           </rect>
-          </property>
-          <property name="text">
-           <string>As IEEE &amp;754 double</string>
-          </property>
-          <property name="autoExclusive">
-           <bool>false</bool>
-          </property>
-         </widget>
-         <widget class="QCheckBox" name="chkIEEESingle">
-          <property name="geometry">
-           <rect>
-            <x>5</x>
-            <y>7</y>
-            <width>143</width>
-            <height>19</height>
-           </rect>
-          </property>
-          <property name="text">
-           <string>As IEEE &amp;754 single</string>
-          </property>
-          <property name="autoExclusive">
-           <bool>false</bool>
-          </property>
-         </widget>
         </widget>
        </item>
       </layout>
-     </widget>
-    </item>
-    <item row="5" column="1">
-     <spacer name="horizontalSpacer">
-      <property name="orientation">
-       <enum>Qt::Horizontal</enum>
-      </property>
-      <property name="sizeHint" stdset="0">
-       <size>
-        <width>236</width>
-        <height>20</height>
-       </size>
-      </property>
-     </spacer>
-    </item>
-    <item row="1" column="0">
-     <widget class="QLabel" name="lblResults">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">border:0;margin:0</string>
-      </property>
-      <property name="text">
-       <string>Results:</string>
-      </property>
-     </widget>
-    </item>
-    <item row="0" column="0" colspan="2">
-     <widget class="QLineEdit" name="edtInfix">
-      <property name="font">
-       <font>
-        <family>Tahoma</family>
-        <pointsize>10</pointsize>
-       </font>
-      </property>
-      <property name="placeholderText">
-       <string>Enter formula here. Help: F1</string>
-      </property>
-      <property name="clearButtonEnabled">
-       <bool>true</bool>
-      </property>
-     </widget>
-    </item>
-    <item row="3" column="0">
-     <widget class="QPushButton" name="btnOpenCloseDecOptions">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>16777215</width>
-        <height>24</height>
-       </size>
-      </property>
-      <property name="text">
-       <string>▼--------------Decimal options-------------</string>
-      </property>
-      <property name="flat">
-       <bool>true</bool>
-      </property>
      </widget>
     </item>
    </layout>

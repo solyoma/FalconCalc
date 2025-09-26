@@ -1,10 +1,15 @@
 ﻿#include "translations.h"
 #include "mainForm.h"
 
-
 struct _LanguageTexts_private
 {
    TextIDs id = TextIDs::FCT_ABOUT;
+   wchar_t* texts[2];
+};
+
+struct _ErrorTexts_private
+{
+   EngineErrorCodes id = EngineErrorCodes::EEC_NO_ERROR;
    wchar_t* texts[2];
 };
 
@@ -189,42 +194,6 @@ static _LanguageTexts_private __texts[] = {
  { FCT_TURN,				L"&Turns",							L"&Ford." },
  { FCT_VIEW,				L"&View",							L"&Nézet" },
  { FCT_WORDS,	    		L"As &Words",						L"&Szóként" },
- // error messages
- { FCT_VARIABLE_DEFINITION_MISSING,             L"Variable definition missing",L"A változó definíciója hiányzik" },
- { FCT_UNKNOWN_FUNCTION_IN_EXPRESSION,	        L"Unknown function in expression",				L"Ismeretlen függvény a képletben"},
- { FCT_SYNTAX_ERROR,					        L"Syntax error",			L"Hibás szintaxis"},
- { FCT_STACK_ERROR,					            L"Stack error",				L"Stack hiba"},
- { FCT_OVERFLOW_ERROR,					        L"Overflow error",				L"Túlcsordulási hiba"},
- { FCT_DOMAIN_ERROR,					        L"Domain error",				L"Ért. tartomány hiba"},
- { FCT_MISSING_BRACE,					        L"Missing closing '}'",				L"Záró '}' hiányzik"},
- { FCT_LARGE_FOR64,					            L"Number can't fit in a 64 bit integer",				L"A szám nem hosszabb, mint 64 bit"},
- { FCT_RECURSIVE_FUNCTIONS_ARE_NOT_ALLOWED,		L"Recursive functions are not allowed",	L"Rekurzív függvény. Nem megengedett."},
- { FCT_NO_FUNCTION_ARGUMENT,					L"No function argument",				L"Nincsenek függvényparaméterek"},
- { FCT_MISSING_BINARY_NUMBER,					L"Missing binary number",				L"Hiányzó bináris szám"},
- { FCT_MISMATCHED_PARENTHESIS,					L"Mismatched parenthesis",				L"Zárójelezési hiba"},
- { FCT_INVALID_FUNCTION_DEFINITION,				L"Invalid function definition",
-                                                L"Hibás függvény definíció"},
- { FCT_INVALID_CHARACTER_IN_FUNCTION_DEFINITION,L"Invalid character in function definition",
-                                                L"Hibás karakter a függvény definícióban"},
- { FCT_ILLEGAL_OPERATOR_AT_LINE_END,			L"Illegal operator at end of expression",
-                                                L"Operátor a kifejezés végén"},
- { FCT_ILLEGAL_OCTAL_NUMBER,					L"Illegal octal number",			L"Hibás oktális szám"},
- { FCT_ILLEGAL_NUMBER_No2,					    L"Illegal number #2",				L"Hibás szám #2"},
- { FCT_ILLEGAL_NUMBER_No1,					    L"Illegal number #1",				L"Hibás szám #1"},
- { FCT_ILLEGAL_HEXADECIMAL_NUMBER,				L"Illegal hexadecimal number",		L"Hibás hexadecimális szám"},
- { FCT_ILLEGAL_CHARACTER_NUMBER,				L"Illegal character number",		L"Hibás betűk"},
- { FCT_ILLEGAL_BINARY_NUMBER,					L"Illegal binary number",           L"Nem bináris szám"},
- { FCT_ILLEGAL_AT_LINE_END,					    L"Illegal at line end",				L"Sor végén nem megengedett"},
- { FCT_FUNCTION_MISSING_OPENING_BRACE,			L"Function missing opening brace",	L"A függvény definíció nyitó zárójele hiányzik"},
- { FCT_FUNCTION_DEFINITION_MISSING_RIGHT_BRACE,	L"Function definition missing right brace", L"A függvény definíció záró zárójele hiányzik"},
- { FCT_EXPRESSION_ERROR,					    L"Expression error",				L"Hiba a kifejezésben"},
- { FCT_EITHER_THE_SEPARATOR_WAS_MISPLACED_OR_PARENTHESIS_WERE_MISMATCHED,			L"Either the separator was misplaced or parenthesis were mismatched",				                                                
-                                                                                    L"Rossz helyen van vagy egy elválasztó karakter, vagy egy zárójel"},
- { FCT_DIVISON_BY_0,					        L"Divison by 0",                    L"0-val osztás"},
- { FCT_CLOSING_QUOTE_NOT_FOUND,					L"Closing quote not found",         L"Záró idézőjel hiányzik"},
- { FCT_BUILTIN_VARIABLES_CANNOT_BE_REDEFINED,	L"Builtin variables cannot be redefined", L"Beépített változókat nem lehet átdefiniálni"},
- { FCT_BUILTIN_FUNCTIONS_CANNOT_BE_REDEFINED,	L"Builtin functions cannot be redefined", L"Beépített függvényeket nem lehet átdefiniálni"},
-// Helps
  { FCT_HELPTITLE,		L"FalconCalc Help", L"FalconCalc Súgó"},
  { FCT_ABOUTFC,			L"About FalconCalc", L"Névjegy" },
  { FCT_ABOUTLINE1,		L"A handy little calculator for everyone\n\n",                         L"Egy ügyes kis számológép, mindenkinek\n\n" },
@@ -262,11 +231,49 @@ static _LanguageTexts_private __texts[] = {
  { FCT_HISTMINLENGTHTIP,		L"Expressions shorter than this will not be remembered", L"Csak ennél hosszabb kifejezéseket jegyez meg"   },
  { FCT_HISTMINLENGTHSAVEALL,	L"(0: all)",	L"(0: bármi)"  },
  { FCT_HISTSORTED,				L"Sorted",	L"Sorbarendezés"    },
+// Helps
  { FCT_HISTAUTOSAVELABEL,		L"Automatically save history",L"Automatikusan mentse az előzményeket"   },
  { FCT_HISTCLEAR,               L"&Discard history", L"Elő&zmények eldobása" },
 
 };
 
+static _ErrorTexts_private __errorTexts[] = {
+ // error messages
+ { EEC_VARIABLE_DEFINITION_MISSING,             L"Variable definition missing",L"A változó definíciója hiányzik" },
+ { EEC_UNKNOWN_FUNCTION_IN_EXPRESSION,	        L"Unknown function in expression",				L"Ismeretlen függvény a képletben"},
+ { EEC_SYNTAX_ERROR,					        L"Syntax error",			L"Hibás szintaxis"},
+ { EEC_STACK_ERROR,					            L"Stack error",				L"Stack hiba"},
+ { EEC_OVERFLOW_ERROR,					        L"Overflow error",				L"Túlcsordulási hiba"},
+ { EEC_DOMAIN_ERROR,					        L"Domain error",				L"Ért. tartomány hiba"},
+ { EEC_MISSING_BRACE,					        L"Missing closing '}'",				L"Záró '}' hiányzik"},
+ { EEC_LARGE_FOR64,					            L"Number can't fit in a 64 bit integer",				L"A szám nem hosszabb, mint 64 bit"},
+ { EEC_RECURSIVE_FUNCTIONS_ARE_NOT_ALLOWED,		L"Recursive functions are not allowed",	L"Rekurzív függvény. Nem megengedett."},
+ { EEC_NO_FUNCTION_ARGUMENT,					L"No function argument",				L"Nincsenek függvényparaméterek"},
+ { EEC_MISSING_BINARY_NUMBER,					L"Missing binary number",				L"Hiányzó bináris szám"},
+ { EEC_MISMATCHED_PARENTHESIS,					L"Mismatched parenthesis",				L"Zárójelezési hiba"},
+ { EEC_INVALID_FUNCTION_DEFINITION,				L"Invalid function definition",
+                                                L"Hibás függvény definíció"},
+ { EEC_INVALID_CHARACTER_IN_FUNCTION_DEFINITION,L"Invalid character in function definition",
+                                                L"Hibás karakter a függvény definícióban"},
+ { EEC_ILLEGAL_OPERATOR_AT_LINE_END,			L"Illegal operator at end of expression",
+                                                L"Operátor a kifejezés végén"},
+ { EEC_ILLEGAL_OCTAL_NUMBER,					L"Illegal octal number",			L"Hibás oktális szám"},
+ { EEC_ILLEGAL_NUMBER_No2,					    L"Illegal number #2",				L"Hibás szám #2"},
+ { EEC_ILLEGAL_NUMBER_No1,					    L"Illegal number #1",				L"Hibás szám #1"},
+ { EEC_ILLEGAL_HEXADECIMAL_NUMBER,				L"Illegal hexadecimal number",		L"Hibás hexadecimális szám"},
+ { EEC_ILLEGAL_CHARACTER_NUMBER,				L"Illegal character number",		L"Hibás betűk"},
+ { EEC_ILLEGAL_BINARY_NUMBER,					L"Illegal binary number",           L"Nem bináris szám"},
+ { EEC_ILLEGAL_AT_LINE_END,					    L"Illegal at line end",				L"Sor végén nem megengedett"},
+ { EEC_FUNCTION_MISSING_OPENING_BRACE,			L"Function missing opening brace",	L"A függvény definíció nyitó zárójele hiányzik"},
+ { EEC_FUNCTION_DEFINITION_MISSING_RIGHT_BRACE,	L"Function definition missing right brace", L"A függvény definíció záró zárójele hiányzik"},
+ { EEC_EXPRESSION_ERROR,					    L"Expression error",				L"Hiba a kifejezésben"},
+ { EEC_EITHER_THE_SEPARATOR_WAS_MISPLACED_OR_PARENTHESIS_WERE_MISMATCHED,			L"Either the separator was misplaced or parenthesis were mismatched",				                                                
+                                                                                    L"Rossz helyen van vagy egy elválasztó karakter, vagy egy zárójel"},
+ { EEC_DIVISON_BY_0,					        L"Divison by 0",                    L"0-val osztás"},
+ { EEC_CLOSING_QUOTE_NOT_FOUND,					L"Closing quote not found",         L"Záró idézőjel hiányzik"},
+ { EEC_BUILTIN_VARIABLES_CANNOT_BE_REDEFINED,	L"Builtin variables cannot be redefined", L"Beépített változókat nem lehet átdefiniálni"},
+ { EEC_BUILTIN_FUNCTIONS_CANNOT_BE_REDEFINED,	L"Builtin functions cannot be redefined", L"Beépített függvényeket nem lehet átdefiniálni"},
+};
 
 wchar_t* LanguageTexts::GetHelpText() const
 {
@@ -288,6 +295,25 @@ wchar_t* LanguageTexts::GetTranslationFor(TextIDs id) const
     {
         if (__texts[i].id == id)
             return __texts[i].texts[nLang];
+    }
+    return L"";
+}
+
+wchar_t* LanguageTexts::GetTranslationFor(EngineErrorCodes id) const
+{
+    int nLang = (int)_lang;
+    if (nLang < 0)
+        nLang = 0;
+    if (!((int)id >= 0 && (int)id < sizeof(__errorTexts) / sizeof(__errorTexts[0])))
+        return L"";
+    if (__errorTexts[(int)id].id == id)
+        return __errorTexts[(int)id].texts[nLang];
+
+    // search for the id
+    for (size_t i = 0; i < sizeof(__errorTexts) / sizeof(__errorTexts[0]); i++)
+    {
+        if (__errorTexts[i].id == id)
+            return __errorTexts[i].texts[nLang];
     }
     return L"";
 }

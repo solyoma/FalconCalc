@@ -464,7 +464,7 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	rdDeg->SetBounds(nlib::Rect(11, 19, 59, 35));
 	rdDeg->SetText(lt.GetTranslationFor(FCT_DEG));
 	rdDeg->GetFont().SetFamily(L"Tahoma");
-	rdDeg->GetFont().SetSize(12);
+	rdDeg->GetFont().SetSize(10);
 	rdDeg->SetParentFont(false);
 	rdDeg->SetTabOrder(0);
 	rdDeg->SetTooltipText(lt.GetTranslationFor(FCT_TIPDEG));
@@ -476,7 +476,7 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	rdRad->SetBounds(nlib::Rect(59, 19, 114, 35));
 	rdRad->SetText(lt.GetTranslationFor(FCT_RAD));
 	rdRad->GetFont().SetFamily(L"Tahoma");
-	rdRad->GetFont().SetSize(13);
+	rdRad->GetFont().SetSize(10);
 	rdRad->SetParentFont(false);
 	rdRad->SetTabOrder(1);
 	rdRad->SetTooltipText(lt.GetTranslationFor(FCT_TIPRAD));
@@ -1113,7 +1113,8 @@ bool TfrmMain::_LoadState(SmartString name)
 			Font f = edtChars->GetFont();
 			f.SetSize(std::stof(data[1].toUtf8String()));
 			f.SetCharacterSet(static_cast<FontCharacterSets>(std::stoi(data[2].toUtf8String())));
-			f.SetColor(std::stoul(data[3].toUtf8String()));
+			n = data[3][0] == L'#' ? 1 : 0;
+			f.SetColor(std::stoul(data[3].mid(n).toUtf8String()));
 			return true;
 		}
 		return false;
@@ -1471,6 +1472,7 @@ void TfrmMain::_CBInfixChanged(void *pParams)
 		if(s.empty() )
 		{
 			_ShowMessageOnAllPanels(L"");
+			--_busy;
 			return;
 		}
 
@@ -1490,7 +1492,7 @@ void TfrmMain::_CBInfixChanged(void *pParams)
         gbResults->SetText(s);
         _ShowMessageOnAllPanels(L"???");
     }
-    catch(TextIDs tt)
+    catch(EngineErrorCodes tt)
     {
         gbResults->SetText(lt.GetTranslationFor(tt));
         _ShowMessageOnAllPanels(L"???");

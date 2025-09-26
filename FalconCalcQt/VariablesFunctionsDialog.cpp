@@ -1,10 +1,6 @@
 #include <QStack>
 #include <QPair>
 
-#include "SmartString.h"
-using namespace SmString;
-#include "LongNumber.h"
-using namespace LongNumber;
 #include "calculate.h"
 
 using namespace FalconCalc;

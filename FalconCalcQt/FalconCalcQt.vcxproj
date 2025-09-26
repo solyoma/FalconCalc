@@ -68,6 +68,8 @@
     <ClCompile>
       <AdditionalIncludeDirectories>..\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>QTSA_PROJECT;$(Qt_DEFINES_);%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessToFile>false</PreprocessToFile>
+      <ShowIncludes>false</ShowIncludes>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">

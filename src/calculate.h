@@ -1,3 +1,4 @@
+#pragma once
 #ifndef calculateH
  #define calculateH
 
@@ -17,12 +18,18 @@
 
 #include <cmath>
 
-#include "translations.h"
+#include "SmartString.h"
+using namespace SmString;
+#include "LongNumber.h"
+using namespace LongNumber;
+
+#include "EngineErrors.h"
 
 #ifndef QTSA_PROJECT
     #include "stdafx_lc.h"
     // always use 'using namespace SmString;' and 'using namespace LongNumber;'
     // before including this
+    #include "translations.h"
 #endif
 
 bool IsAlpha(wchar_t ch, std::locale loc);    // needed for names in one locale when working in another locale
@@ -31,7 +38,6 @@ bool IsAlnum(wchar_t ch, std::locale loc);    // needed for names in one locale 
 
 namespace FalconCalc
 {
-
     extern SCharT argSeparator;
 
     extern const SCharT schCommentDelimiter;
@@ -176,11 +182,21 @@ namespace FalconCalc
     class Trigger
     {  
     public:
-        Trigger() { SetLanguage(Language::en); }
+#ifdef QTSA_PROJECT
+        Trigger() { }
+#else
+        Trigger() 
+        { 
+            SetLanguage(Language::en); 
+        }
         void SetLanguage(Language lang);
-        void Raise(TextIDs tids);    // sets error state into global 'lengine'
+        //void Raise(TextIDs tids);    // sets error state into global 'lengine'
+#endif
+        void Raise(EngineErrorCodes tids);    // sets error state into global 'lengine'
+#ifndef QTSA_PROJECT
     private:
         Language _lang;
+#endif
     };
     extern Trigger trigger;
 

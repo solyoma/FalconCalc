@@ -2,6 +2,8 @@
 // multi language support for calculator
 // currently only english and hungarian
 
+#include "EngineErrors.h"
+
 enum Language { none = -1, en = 0, hu = 1 };		// 0: english, 1: hungarian
 
 enum TextIDs {
@@ -91,36 +93,6 @@ enum TextIDs {
 	FCT_VIEW				,
 	FCT_WORDS				,
 
-	FCT_VARIABLE_DEFINITION_MISSING,
-	FCT_UNKNOWN_FUNCTION_IN_EXPRESSION,
-	FCT_SYNTAX_ERROR,
-	FCT_STACK_ERROR,
-	FCT_OVERFLOW_ERROR,
-	FCT_DOMAIN_ERROR,
-	FCT_MISSING_BRACE,
-	FCT_LARGE_FOR64,
-	FCT_RECURSIVE_FUNCTIONS_ARE_NOT_ALLOWED,
-	FCT_NO_FUNCTION_ARGUMENT,
-	FCT_MISSING_BINARY_NUMBER,
-	FCT_MISMATCHED_PARENTHESIS,
-	FCT_INVALID_FUNCTION_DEFINITION,
-	FCT_INVALID_CHARACTER_IN_FUNCTION_DEFINITION,
-	FCT_ILLEGAL_OPERATOR_AT_LINE_END,
-	FCT_ILLEGAL_OCTAL_NUMBER,
-	FCT_ILLEGAL_NUMBER_No2,
-	FCT_ILLEGAL_NUMBER_No1,
-	FCT_ILLEGAL_HEXADECIMAL_NUMBER,
-	FCT_ILLEGAL_CHARACTER_NUMBER,
-	FCT_ILLEGAL_BINARY_NUMBER,
-	FCT_ILLEGAL_AT_LINE_END,
-	FCT_FUNCTION_MISSING_OPENING_BRACE,
-	FCT_FUNCTION_DEFINITION_MISSING_RIGHT_BRACE,
-	FCT_EXPRESSION_ERROR,
-	FCT_EITHER_THE_SEPARATOR_WAS_MISPLACED_OR_PARENTHESIS_WERE_MISMATCHED,
-	FCT_DIVISON_BY_0,
-	FCT_CLOSING_QUOTE_NOT_FOUND,
-	FCT_BUILTIN_VARIABLES_CANNOT_BE_REDEFINED,
-	FCT_BUILTIN_FUNCTIONS_CANNOT_BE_REDEFINED,
 
 	FCT_HELPTITLE,		// L"FalconCalc Help"
 
@@ -154,6 +126,7 @@ enum TextIDs {
 		FCT_HISTSORTED,				// L"Sorted",	L"Sorbarendezés"
 		FCT_HISTAUTOSAVELABEL,		// L"Automatically save history",L"Automatikusan mentse az előzményeket"
 		FCT_HISTCLEAR,				// L"&Discard history", L"Elő&zmények eldobása"
+		FCT_LAST
 };
 
 class LanguageTexts
@@ -165,6 +138,7 @@ public:
 											// false: already OK
 	wchar_t* GetHelpText() const;		// returns the help text in the current language
 	wchar_t* GetTranslationFor(TextIDs id) const; // returns the text in the current language
+	wchar_t* GetTranslationFor(EngineErrorCodes id) const; // returns the text in the current language
 private:
 	Language _lang= Language::none;
 };

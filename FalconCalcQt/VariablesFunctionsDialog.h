@@ -6,10 +6,11 @@
 #include <QStack>			// for undo
 #include <QPair>
 
-#include "ui_VariablesFunctionsDialog.h"
-
 #include "SmartString.h"
+#include "LongNumber.h"
 #include "calculate.h"
+
+#include "ui_VariablesFunctionsDialog.h"
 
 namespace FalconCalc {
 	enum WindowSide;

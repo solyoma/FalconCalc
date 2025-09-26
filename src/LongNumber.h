@@ -11,15 +11,15 @@
 
 
 namespace LongNumber {
-	//using namespace SmString;				// SmartString.h
-	extern const SCharT chZero;				// = (SCharT)'0';
-	extern const SCharT chOne;				// = (SCharT)'1';
+	//using namespace SmString;				// SmString::SmartString.h
+	extern const SmString::SCharT chZero;				// = (SmString::SCharT)'0';
+	extern const SmString::SCharT chOne;				// = (SmString::SCharT)'1';
 	constexpr const size_t MaxAllowedDigits = 65;	// !!! Modify this  - no number string can have more digits than this + LengthOverflow
 	constexpr const size_t LengthOverFlow = 2;		// add this to the _maxLength of a RealNumber to get the real maximum string length
 	constexpr const size_t TrigAccuracy = 58;		// max this many digits used for trigonometric functions
 
-	extern const SmartString NAN_STR;
-	extern const SmartString INF_STR;
+	extern const SmString::SmartString NAN_STR;
+	extern const SmString::SmartString INF_STR;
 
 #ifdef max
 	#undef max
@@ -118,7 +118,7 @@ namespace LongNumber {
 												//		right aligned, otherwise it is left aligned. 
 												//	the displayed number is determined by 'decDigits' and this
 		SignOption signOption = SignOption::soNormal;
-		SmartString strThousandSeparator;		// for decimal format. Empty: no separator
+		SmString::SmartString strThousandSeparator;		// for decimal format. Empty: no separator
 		bool useFractionSeparator = false;		// when true use a space character
 		size_t nFormatSwitchIntLength = 40,		// for decimal display: if the exponent is
 												// larger than this 
@@ -211,8 +211,8 @@ namespace LongNumber {
 
 	using LDouble = long double;
 
-	SCharT ByteToMyCharT(uint16_t digit);
-	uint16_t MyCharTToByte(SCharT ch);
+	SmString::SCharT ByteToMyCharT(uint16_t digit);
+	uint16_t MyCharTToByte(SmString::SCharT ch);
 
 	/*=============================================================
 	 * REAL_NUMBERS are arbitrary long floating point numbers
@@ -252,7 +252,7 @@ namespace LongNumber {
 	{					// first part of private members: *second part after the public ones
 	private:
 		int _sign = 1;				// number sign: +1 or -1
-		SmartString _numberString;	// normalized (original or calculated) number as string
+		SmString::SmartString _numberString;	// normalized (original or calculated) number as string
 		int _exponent = 0;	// ((10's exponent of number) + 1). If positive # of integer digits
 		// for calculations the number is used in normalized form
 		// example: 12345.678E-9 => mantissa: 0.12345678, 10's exponent: -5 (=-9+4), stored as: 
@@ -280,15 +280,15 @@ namespace LongNumber {
 			_GetDecPoint();
 			_isNormalized = true;
 		}
-		explicit RealNumber(const UTF8String& s) : RealNumber(SmartString(s)) {}
-		explicit RealNumber(const std::wstring& ws) : RealNumber(SmartString(ws)) {}
-		explicit RealNumber(const SmartString& s) : _numberString(s), _exponent(0)
+		explicit RealNumber(const SmString::UTF8String& s) : RealNumber(SmString::SmartString(s)) {}
+		explicit RealNumber(const std::wstring& ws) : RealNumber(SmString::SmartString(ws)) {}
+		explicit RealNumber(const SmString::SmartString& s) : _numberString(s), _exponent(0)
 		{
 			_GetDecPoint();
 			_FromNumberString();
 		}
 		// next constructor: digits has no decimal point or sign or exponent$
-		explicit RealNumber(const SmartString& digits, int sign, int exponent) :
+		explicit RealNumber(const SmString::SmartString& digits, int sign, int exponent) :
 			_sign(sign), _numberString(digits), _exponent(exponent)
 		{
 			_GetDecPoint();
@@ -308,7 +308,7 @@ namespace LongNumber {
 	public:
 		// static functions
 		static size_t MaxLength() { return _maxLength; }
-		static SCharT DecPoint() { return _decPoint; }
+		static SmString::SCharT DecPoint() { return _decPoint; }
 		static inline void SetMaxExponent(size_t maxExp)
 		{
 			_maxExponent = maxExp;
@@ -324,7 +324,7 @@ namespace LongNumber {
 	public:	// operators
 		RealNumber operator=(const RealNumber& rn);
 		RealNumber operator=(RealNumber&& rn) noexcept;
-		RealNumber operator=(const SmartString& rn);
+		RealNumber operator=(const SmString::SmartString& rn);
 		RealNumber operator=(double value);
 		RealNumber operator+() const		// unary +
 		{
@@ -405,7 +405,7 @@ namespace LongNumber {
 
 		RealNumber Pow(const RealNumber& power) const;
 
-		constexpr const SmartString& Mantissa() const { return _numberString; } // a.k.a. significand
+		constexpr const SmString::SmartString& Mantissa() const { return _numberString; } // a.k.a. significand
 		constexpr int Exponent() const	// real 10's exponent, 0: 10^0-1, 1 : 10^1 = 10
 		{
 			return _exponent - 1;
@@ -418,17 +418,17 @@ namespace LongNumber {
 		RealNumber RoundedToDigits(int toThisManySignificantDigits	,int cntIntDigits=-1) const;  // rounds _numberString in copy
 		RealNumber RoundToDigits(int toThisManySignificantDigits	,int cntIntDigits=-1);		    // rounds _numberString in the number itself
 
-		SmartString ToBinaryString(const DisplayFormat& format);
-		SmartString ToOctalString(const DisplayFormat& format);
-		SmartString ToHexString(const DisplayFormat& format);
-		SmartString ToDecimalString(const DisplayFormat& format);
-		// SmartString ToTextString(const DisplayFormat& format, TextFormat textFormat);
-		SmartString ToSmartString() const;
-		UTF8String  toUtf8String() const;	   // because Qt uses this type of function names
+		SmString::SmartString ToBinaryString(const DisplayFormat& format);
+		SmString::SmartString ToOctalString(const DisplayFormat& format);
+		SmString::SmartString ToHexString(const DisplayFormat& format);
+		SmString::SmartString ToDecimalString(const DisplayFormat& format);
+		// SmString::SmartString ToTextString(const DisplayFormat& format, TextFormat textFormat);
+		SmString::SmartString ToSmartString() const;
+		SmString::UTF8String  toUtf8String() const;	   // because Qt uses this type of function names
 		std::wstring ToWideString() const;
 
-		SmartString ToString(const DisplayFormat& format);
-		SmartString ToString()					// format as decimal string with default settings
+		SmString::SmartString ToString(const DisplayFormat& format);
+		SmString::SmartString ToString()					// format as decimal string with default settings
 		{
 			DisplayFormat format;
 			return ToString(format);
@@ -461,18 +461,18 @@ namespace LongNumber {
 			}
 			return *this;
 		}
-		inline bool IsNaN()  const noexcept { return _numberString[0] == SCharT('N'); };
-		inline int  IsInf()  const noexcept { return _numberString[0] == SCharT('I'); };	// +Inf or -Inf
-		inline int  IsTooLong()  const noexcept { return _numberString[0] == SCharT('T'); };	// +Inf or -Inf
-		inline bool IsPure10Power() const noexcept { return _numberString == SmartString(chOne); }
+		inline bool IsNaN()  const noexcept { return _numberString[0] == SmString::SCharT('N'); };
+		inline int  IsInf()  const noexcept { return _numberString[0] == SmString::SCharT('I'); };	// +Inf or -Inf
+		inline int  IsTooLong()  const noexcept { return _numberString[0] == SmString::SCharT('T'); };	// +Inf or -Inf
+		inline bool IsPure10Power() const noexcept { return _numberString == SmString::SmartString(chOne); }
 
 		inline bool IsNull() const
 		{
-			return _numberString.empty() || (_numberString.find_first_not_of(chZero) == String::npos);
+			return _numberString.empty() || (_numberString.find_first_not_of(chZero) == SmString::String::npos);
 		}
 		inline constexpr bool IsPmOne() const noexcept  // +- 1 ?
 		{
-			return _exponent == 1 && _numberString == SmartString("1");
+			return _exponent == 1 && _numberString == SmString::SmartString("1");
 		}
 		inline bool IsInt() const noexcept
 		{
@@ -480,8 +480,8 @@ namespace LongNumber {
 		}
 		inline bool IsOdd() const noexcept
 		{
-			SCharT ch = _numberString.at(_exponent - 1);
-			return (ch == SCharT('1') || ch == SCharT('3') || ch == SCharT('5') || ch == SCharT('7') || ch == SCharT('9'));
+			SmString::SCharT ch = _numberString.at(_exponent - 1);
+			return (ch == SmString::SCharT('1') || ch == SmString::SCharT('3') || ch == SmString::SCharT('5') || ch == SmString::SCharT('7') || ch == SmString::SCharT('9'));
 		}
 		inline bool IsEven() const noexcept
 		{
@@ -498,7 +498,7 @@ namespace LongNumber {
 		int _leadingZeros = 0;			// used in operations
 		bool _isNormalized = false;
 
-		static SCharT _decPoint;	// get from locale
+		static SmString::SCharT _decPoint;	// get from locale
 		EFlagSet _eFlags;
 
 		struct _DisplData				   // friend of RealNumber
@@ -528,11 +528,11 @@ namespace LongNumber {
 			size_t	nWFractionalPart = 0;		// length of visible part of fractional digits + 1 for decimal point
 			size_t	nWDecPoint = 0;				// or 1
 
-			SmartString strExponent;
-			SmartString strRounded;				// rounded string of digits from pRn->_numberString may be empty
+			SmString::SmartString strExponent;
+			SmString::SmartString strRounded;				// rounded string of digits from pRn->_numberString may be empty
 
 			void Setup(const DisplayFormat& format, RealNumber& rN);
-			SmartString FormatExponent();		// normal: smaller numbers at upper index position, TEX: with ^, HTML with <sup>...</sup>, else Exxx
+			SmString::SmartString FormatExponent();		// normal: smaller numbers at upper index position, TEX: with ^, HTML with <sup>...</sup>, else Exxx
 
 			void FixNumberFormatAndSetExponent(); // for general format or too large/small numbers
 			int RequiredSpaceforIntegerDigits();  // calc. nWIntegerPart
@@ -568,13 +568,13 @@ namespace LongNumber {
 		RealNumber _Div(const RealNumber& divisor, RealNumber& remainder) const; // rmainder may be the same variable as divisor
 		RealNumber _LogOpWith(const RealNumber& ra, LogicalOperator lop) const;
 	private:
-		inline SCharT _CharAt(int position)  const // in _numberString from logical position
+		inline SmString::SCharT _CharAt(int position)  const // in _numberString from logical position
 		{
 			int ix = (int)_numberString.length() + _leadingZeros;
-			return (position < ix && position >= _leadingZeros) ? (SCharT)_numberString[position - _leadingZeros] : chZero;
+			return (position < ix && position >= _leadingZeros) ? (SmString::SCharT)_numberString[position - _leadingZeros] : chZero;
 		}
 
-		SmartString _AsSmartString() const;
+		SmString::SmartString _AsSmartString() const;
 
 		static void _RescaleConstants(int maxLength);
 
@@ -586,12 +586,12 @@ namespace LongNumber {
 		void _SetInf();
 		void _SetTooLong();
 								// allocates may change nIntDigits: stores the position in the result string
-		SmartString _IntegerPartToString(const SmartString &sNumber, int sign, const DisplayFormat &format, size_t &nIntDigits, size_t chunkSize, bool prefixToAllChunks) const;
-		SmartString _DecimalPartToString(const SmartString& sNumber, _DisplData &disp, size_t& nIntDigits) const;
-		SmartString _RoundNumberString(SmartString& s, int& cntIntegerDigits /* == _exponent + 1 */, int roundingPosition, int cntLeadingZeros) const;
+		SmString::SmartString _IntegerPartToString(const SmString::SmartString &sNumber, int sign, const DisplayFormat &format, size_t &nIntDigits, size_t chunkSize, bool prefixToAllChunks) const;
+		SmString::SmartString _DecimalPartToString(const SmString::SmartString& sNumber, _DisplData &disp, size_t& nIntDigits) const;
+		SmString::SmartString _RoundNumberString(SmString::SmartString& s, int& cntIntegerDigits /* == _exponent + 1 */, int roundingPosition, int cntLeadingZeros) const;
 
-		SCharT _AddDigits(SCharT digit1, SCharT digit2, int& carry) const;
-		SCharT _SubtractDigits(SCharT digit1, SCharT digit2, int& borrow) const;
+		SmString::SCharT _AddDigits(SmString::SCharT digit1, SmString::SCharT digit2, int& carry) const;
+		SmString::SCharT _SubtractDigits(SmString::SCharT digit1, SmString::SCharT digit2, int& borrow) const;
 		// these perform the additions and subtractions of pre-prepared decimal strings
 		// of possibly different length. The difference in exponents already taken into account
 		// so one of the numbers (but not these strings) may start with 0 digits at the front
@@ -602,18 +602,18 @@ namespace LongNumber {
 		void _SubtractStrings(RealNumber& minuend, RealNumber& subtrahend)const;	// always set the larger absolute value number as 'left'
 		void _MultiplyTheStrings(RealNumber& left, RealNumber& right) const;	// result will be as long as the sum of the significant digits
 		void _DivideInternal(RealNumber& left, RealNumber& right, RealNumber* pRemainder = nullptr) const;
-		void _CorrectResult(RealNumber& left, String& result, int trailingchZeros, int carry) const;
-		inline SmartString _SignString(const DisplayFormat format) const
+		void _CorrectResult(RealNumber& left, SmString::String& result, int trailingchZeros, int carry) const;
+		inline SmString::SmartString _SignString(const DisplayFormat format) const
 		{
-			return SmartString(_sign < 0 ? "-" :
+			return SmString::SmartString(_sign < 0 ? "-" :
 				(format.signOption == SignOption::soAlwaysShow ? "+" :
 					(format.signOption == SignOption::soLeaveSpaceForPositive ? " " : "")));
 		}
 
-		int _PosExpInNumberString(const DisplayFormat fmt, const SmartString& s, int fromPos) const;
+		int _PosExpInNumberString(const DisplayFormat fmt, const SmString::SmartString& s, int fromPos) const;
 
 		// conversion
-		SmartString _ToBase(int base, size_t maxNumDigits = 32) const;	// number must be smallar than the allowed digits and base must be >1 && <= 16
+		SmString::SmartString _ToBase(int base, size_t maxNumDigits = 32) const;	// number must be smallar than the allowed digits and base must be >1 && <= 16
 		// exponentiation
 		RealNumber _PowInt(const RealNumber& AnInteger) const;
 	};
@@ -683,9 +683,9 @@ namespace LongNumber {
 	{
 		friend class ConstantsMap;
 
-		SmartString name;		// used from outside
-		SmartString unit;		// e.g. kg
-		SmartString desc;		// description
+		SmString::SmartString name;		// used from outside
+		SmString::SmartString unit;		// e.g. kg
+		SmString::SmartString desc;		// description
 		RealNumber value;		// re-scaled value
 
 		Constant& operator=(const Constant& other) 
@@ -696,9 +696,9 @@ namespace LongNumber {
 			desc = other.desc; 
 			return *this; 
 		}
-		Constant& operator=(const SmartString sms) { name = sms; return *this; }
+		Constant& operator=(const SmString::SmartString sms) { name = sms; return *this; }
 		Constant& operator=(const RealNumber val) { value = val; return *this; }
-		operator const SmartString& () const { return name; }	// CAN'T use these to mdify content
+		operator const SmString::SmartString& () const { return name; }	// CAN'T use these to mdify content
 		operator const RealNumber& ()  const 
 		{ 
 			return value; 
@@ -715,7 +715,7 @@ namespace LongNumber {
 			desc.FromWideString(cdesc);
 		}
 
-		explicit Constant(const String name, const RealNumber value, const String unit, const String desc, const RealNumber* pBaseValue) :
+		explicit Constant(const SmString::String name, const RealNumber value, const SmString::String unit, const SmString::String desc, const RealNumber* pBaseValue) :
 			name(name), value(value), unit(unit), desc(desc), _pBaseValue(pBaseValue), _builtin(true), _set(true) {}
 
 		// for user defined constants (variables) definition value will be the base value
@@ -734,7 +734,7 @@ namespace LongNumber {
 				delete _pBaseValue;
 		}
 
-		explicit Constant(const String name, const RealNumber value, const String unit, const String desc) :
+		explicit Constant(const SmString::String name, const RealNumber value, const SmString::String unit, const SmString::String desc) :
 			name(name), value(value), unit(unit), desc(desc) {}
 		// for both
 		Constant(const Constant& co) : name(co.name), value(co.value), unit(co.unit), desc(co.desc), _pBaseValue(co._pBaseValue), _builtin(co._builtin), _set(co._set) {}
@@ -767,7 +767,7 @@ namespace LongNumber {
 	 * user defined constants added using the Add() function
 	 * they will be freed
 	 *------------------------------------------------------------*/
-	class  ConstantsMap : public std::map<String, Constant*>
+	class  ConstantsMap : public std::map<SmString::String, Constant*>
 	{
 	public:
 		ConstantsMap();
@@ -775,7 +775,7 @@ namespace LongNumber {
 
 		// user defined constants only
 		void Add(const wchar_t* cname, const RealNumber cvalue, const wchar_t* cunit, const wchar_t* cdesc);
-		void Add(const String cname, const RealNumber cvalue, const String cunit, const String cdesc);
+		void Add(const SmString::String cname, const RealNumber cvalue, const SmString::String cunit, const SmString::String cdesc);
 		void Rescale(int newMaxLength);
 	private:
 		void _Add(Constant& c);	// set as builtin
