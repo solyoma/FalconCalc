@@ -306,11 +306,16 @@ void VariablesFunctionsDialog::_FillBuiltinFuncTable()
 	int cntFunctions = LittleEngine::builtinFunctions.size();
 	ui.tblBuiltinFuncs->setRowCount(cntFunctions);
 
+	auto argStr = [](BuiltinFunc& f)
+		{
+			if (f.funct1) return QString("(x)");
+			return QString("(x,y)");
+		};
 	for (int row = 0; row < cntFunctions; ++row)
 	{
 		BuiltinFunc& bif = LittleEngine::builtinFunctions[row];
 
-		ptw = new ElidingTableWidgetItem(bif.name.toQString());	
+		ptw = new ElidingTableWidgetItem(bif.name.toQString() + argStr(bif));	
 		ui.tblBuiltinFuncs->setItem(row, 0, ptw);
 		ptw = new ElidingTableWidgetItem("-");
 		ui.tblBuiltinFuncs->setItem(row, 1, ptw);
@@ -331,7 +336,13 @@ void VariablesFunctionsDialog::_FillUserFuncTable()
 		Func& f = LittleEngine::functions[row];
 		rd = { f.name, f.body, f.unit, f.desc };
 		(*_pUserFuncsMap)[f.name] = rd;
-		_AddCellText(ui.tblUserFuncs, row, 0, f.name.toQString());
+		QString s = f.name.toQString()+QString("(");
+		int i;
+		for (i = 0; i < f.args.size() - 1; ++i)
+			s += f.args.at(i).toQString() + ",";
+		s += f.args.at(i).toQString() + ")";
+
+		_AddCellText(ui.tblUserFuncs, row, 0, s);
 		_AddCellText(ui.tblUserFuncs, row, 1, f.body.toQString());
 		_AddCellText(ui.tblUserFuncs, row, 2, f.unit.toQString());
 		_AddCellText(ui.tblUserFuncs, row, 3, f.desc.toQString());
