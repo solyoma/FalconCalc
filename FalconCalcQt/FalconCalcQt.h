@@ -56,8 +56,10 @@ private slots:
     void on_actionEditHist_triggered();
     void on_actionEditVars_triggered();
     void on_actionEditFunc_triggered();
+    void on_actionEnglish_triggered();
     void on_actionHex_triggered();
     void on_actionHistOptions_triggered();
+    void on_actionHungarian_triggered();
     void on_actionPasteAfter_triggered();
     void on_actionSelectFont_triggered();
     void on_actionSetLocale_triggered();
@@ -109,6 +111,8 @@ private slots:
 private:
     Ui::FalconCalcQtClass ui;
 
+	int _version=0x000900;      // version 0.9.0
+
     SEMAPHORE _busy;
     bool _decOpen = true;       // during load state before the window is shown?
     bool _hexOpen = true;       //  -"
@@ -152,8 +156,9 @@ private: // functions
 
     void _EnableMyTimer(bool enable);
 
-    bool _LoadState(QString name);
-    bool _SaveState(QString name);
+	int _GetVersion(QStringRef s) const; // from "x.y.z" to 0xXXYYZZ (0xXX = x, 0xYY = y, 0xZZ = z)
+    bool _LoadState();
+    bool _SaveState();
     void _AddToHistory(QString text);
     void _ShowResults();
     void _ShowMessageOnAllPanels(QString s);
@@ -192,3 +197,10 @@ private:
     void _SignalHistoryChanged(QStringList& hist);
 
 };
+
+extern const QString STATE_VER_STRING;
+extern const QString DAT_VER_STRING;
+extern const QString VERSION_STRING;
+extern const QString FalconCalcQt_HIST_FILE;
+extern const QString FalconCalcQt_DAT_FILE ;
+extern const QString FalconCalcQt_CFG_FILE;

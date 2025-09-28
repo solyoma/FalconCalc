@@ -46,7 +46,7 @@ void TfrmHelp::InitializeFormAndControls() /* Control initialization function ge
 
 	Label3 = new nlib::Label();
 	Label3->SetBounds(nlib::Rect(8, 72, 644, 462));
-	Label3->SetText(lt.GetHelpText());		
+	Label3->SetText(L"");
 	Label3->SetAnchors(nlib::caLeft | nlib::caTop | nlib::caRight);
 	Label3->GetFont().SetFamily(L"Tahoma");
 	Label3->GetFont().SetSize(8);

@@ -959,7 +959,7 @@ bool TfrmMain::_LoadState(SmartString name)
 			{
 				default:
 				case 0: lt.SetLanguage(Language::en);
-					miSetEn->SetChecked(false);
+					miSetEn->SetChecked(false); // no need to uncheck 'Hungarian'
 					break;
 				case 1:	lt.SetLanguage(Language::hu);
 					miSetEn->SetChecked(false);

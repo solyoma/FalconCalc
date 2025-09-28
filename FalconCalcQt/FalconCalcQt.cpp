@@ -50,7 +50,11 @@ static void __SaveStyle(QString styleName)
 
 // in calulat.h/cpp : FalconCalc::LittleEngine* lengine = nullptr;
 
-QString STATE_VER_STRING = QStringLiteral("FalconCalc State File V1.0");
+const QString STATE_VER_STRING = QStringLiteral("FalconCalc State File V");
+const QString DAT_VER_STRING = QStringLiteral("FalconCalc Config File V");
+								 // program version these must be kept synchronized
+const int VERSION_INT = 0x000900;
+const QString VERSION_STRING = QStringLiteral("0.9.0");
 
 //------------------------ FalconCalcQt --------------
 
@@ -82,7 +86,7 @@ FalconCalcQt::FalconCalcQt(QWidget *parent)  : QMainWindow(parent)
 	lengine->displayFormat.displWidth = 59;
 
 	_schemeVector = new FSchemeVector();	// with color schemes light, dark, black and blue
-	_LoadState(FCSettings::homePath + FalconCalcQt_CFG_FILE);
+	_LoadState();
 
 	_LoadHistory();
 
@@ -114,7 +118,7 @@ FalconCalcQt::FalconCalcQt(QWidget *parent)  : QMainWindow(parent)
 FalconCalcQt::~FalconCalcQt()     
 {
 	lengine->SaveUserData();
-	_SaveState(FCSettings::homePath + FalconCalcQt_CFG_FILE);
+	_SaveState();
 	_SaveHistory();
 	delete lengine;
 	delete _schemeVector;
@@ -320,6 +324,13 @@ void FalconCalcQt::on_actionClearHistory_triggered()
 			_pHist->Clear();
 	}
 }
+
+void FalconCalcQt::on_actionEnglish_triggered()
+{
+	ui.actionHungarian->setChecked(false);
+	QMessageBox::warning(this, tr("FalconCalc"), tr("Restart the program to change the language!"));
+}
+
 void FalconCalcQt::on_actionHex_triggered()
 {
     on_btnOpenCloseHexOptions_clicked();
@@ -356,6 +367,12 @@ void FalconCalcQt::on_actionHistOptions_triggered()
 		emit _StartTimer();
 	}
 	delete pHistOpt;
+}
+
+void FalconCalcQt::on_actionHungarian_triggered()
+{
+	ui.actionEnglish->setChecked(false);
+	QMessageBox::warning(this, tr("FalconCalc"), tr("Restart the program to change the language!"));
 }
 
 void FalconCalcQt::on_actionDec_triggered()
@@ -962,8 +979,20 @@ void FalconCalcQt::_EnableMyTimer(bool enable)
 		emit _StopTimer();
 }
 
-bool FalconCalcQt::_LoadState(QString name)
+int FalconCalcQt::_GetVersion(QStringRef s)	const // format "Vx.y.z
 {
+	if (s[0] != QChar('V'))
+		return _version;
+	int i1 = s.indexOf('.', 1),
+		i2 = s.indexOf('.', i1 + 1);
+	return (s.mid(1, i1 - 1).toInt() << 16) + 
+		   (s.mid(i1+1, i2-i1 - 1).toInt() << 8) + 
+		   (s.mid(i2+1).toInt());
+}
+
+bool FalconCalcQt::_LoadState()
+{
+	QString name = FCSettings::homePath + FalconCalcQt_CFG_FILE;
     QFile fcfg(name);
 	if (!fcfg.open(QIODevice::ReadOnly))
 		return false;
@@ -973,8 +1002,15 @@ bool FalconCalcQt::_LoadState(QString name)
 
     QString s;
     s = ifcfg.readLine();
-    if (s != STATE_VER_STRING)
+    if (! s.startsWith(STATE_VER_STRING) )
         return false;
+	int l = s.length(), j = STATE_VER_STRING.length();
+	if (l == 0 || j < l)
+	{
+		_version = _GetVersion(QStringRef(&s, j - 1, l - j));
+		if (_version > VERSION_INT)
+			QMessageBox::warning(this, tr("FalconCalcQt - Error"), tr("%1 is for a newer version of the program.\nThere might be problems with it.").arg(FalconCalcQt_DAT_FILE));
+	}
 
 	QStringList data;
 	int n, val = 0;
@@ -1222,8 +1258,9 @@ bool FalconCalcQt::_LoadState(QString name)
 	return true;
 }
 
-bool FalconCalcQt::_SaveState(QString name)
-{
+bool FalconCalcQt::_SaveState()
+{	
+	QString name = FCSettings::homePath + FalconCalcQt_CFG_FILE;
 	QFile f(name);
 	if (!f.open(QIODevice::WriteOnly))
 		return false;
@@ -1231,7 +1268,7 @@ bool FalconCalcQt::_SaveState(QString name)
 	QTextStream ofs(&f);
 	ofs.setCodec("UTF-8");
 
-	ofs << STATE_VER_STRING << "\n";
+	ofs << STATE_VER_STRING << VERSION_STRING << "\n";
 	ofs << MAINFORMAT << "=" << (int)lengine->displayFormat.mainFormat << "\n";
 
 	//int u = UpDown1->Position() + (chkDecDigits->Checked() ? 0x100 : 0); // 0x100: checked state. must use Position as num_digits may be -1

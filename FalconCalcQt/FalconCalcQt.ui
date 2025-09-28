@@ -68,22 +68,6 @@
       </property>
      </spacer>
     </item>
-    <item row="1" column="0">
-     <widget class="QLabel" name="lblResults">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">border:0;margin:0</string>
-      </property>
-      <property name="text">
-       <string>Results:</string>
-      </property>
-     </widget>
-    </item>
     <item row="3" column="0">
      <widget class="QPushButton" name="btnOpenCloseDecOptions">
       <property name="sizePolicy">
@@ -201,35 +185,35 @@
           <item row="4" column="0">
            <widget class="QCheckBox" name="chkSci">
             <property name="text">
-             <string>Scientific format</string>
+             <string>&amp;Scientific format</string>
             </property>
            </widget>
           </item>
           <item row="8" column="0">
            <widget class="QCheckBox" name="chkDecDigits">
             <property name="text">
-             <string>Decimal digits:</string>
+             <string>Decimal d&amp;igits:</string>
             </property>
            </widget>
           </item>
           <item row="0" column="0">
            <widget class="QCheckBox" name="chkThousandSep">
             <property name="text">
-             <string>use Thousand separator:</string>
+             <string>Use &amp;Thousand separator:</string>
             </property>
            </widget>
           </item>
           <item row="1" column="0" rowspan="3">
            <widget class="QCheckBox" name="chkDecDelim">
             <property name="text">
-             <string>Use decimal separator</string>
+             <string>Use D&amp;ecimal separator</string>
             </property>
            </widget>
           </item>
           <item row="5" column="0" rowspan="3">
            <widget class="QCheckBox" name="chkEng">
             <property name="text">
-             <string>Engineering format</string>
+             <string>&amp;Engineering format</string>
             </property>
            </widget>
           </item>
@@ -512,7 +496,7 @@
              <item>
               <widget class="QRadioButton" name="rbNone">
                <property name="text">
-                <string>E</string>
+                <string>&amp;E</string>
                </property>
               </widget>
              </item>
@@ -599,7 +583,7 @@
           <item>
            <widget class="QCheckBox" name="chkDWords">
             <property name="text">
-             <string>As D&amp;words</string>
+             <string>As &amp;Dwords</string>
             </property>
             <property name="autoExclusive">
              <bool>false</bool>
@@ -612,7 +596,7 @@
        <item row="1" column="0">
         <widget class="QCheckBox" name="chkHexPrefix">
          <property name="text">
-          <string>0x prefix</string>
+          <string>0&amp;x prefix</string>
          </property>
          <property name="checked">
           <bool>true</bool>
@@ -622,7 +606,7 @@
        <item row="0" column="0">
         <widget class="QCheckBox" name="chkMinus">
          <property name="text">
-          <string>Minus sign</string>
+          <string>M&amp;inus sign</string>
          </property>
         </widget>
        </item>
@@ -648,7 +632,7 @@
            </rect>
           </property>
           <property name="text">
-           <string>As IEEE &amp;754 double</string>
+           <string>As IEEE 7&amp;54 double</string>
           </property>
           <property name="autoExclusive">
            <bool>false</bool>
@@ -989,6 +973,22 @@
       </layout>
      </widget>
     </item>
+    <item row="1" column="0" colspan="2">
+     <widget class="QLabel" name="lblResults">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">border:0;margin:0</string>
+      </property>
+      <property name="text">
+       <string>Results:</string>
+      </property>
+     </widget>
+    </item>
    </layout>
   </widget>
   <widget class="QMenuBar" name="menuBar">
@@ -1044,7 +1044,7 @@
     </widget>
     <widget class="QMenu" name="menu_Language">
      <property name="title">
-      <string>&amp;Language</string>
+      <string>La&amp;nguage</string>
      </property>
      <addaction name="actionEnglish"/>
      <addaction name="actionHungarian"/>
@@ -1140,12 +1140,12 @@
   </action>
   <action name="actionSetLocale">
    <property name="text">
-    <string>Set Locale ...</string>
+    <string>Set &amp;Locale ...</string>
    </property>
   </action>
   <action name="actionSelectFont">
    <property name="text">
-    <string>Select Font for 'As String' Display</string>
+    <string>Select &amp;Font for 'As String' Display</string>
    </property>
   </action>
   <action name="actionHelp">
@@ -1282,6 +1282,40 @@
   </action>
  </widget>
  <layoutdefault spacing="2" margin="2"/>
+ <tabstops>
+  <tabstop>cbInfix</tabstop>
+  <tabstop>btnClearInfix</tabstop>
+  <tabstop>btnDecimal</tabstop>
+  <tabstop>btnHexaDecimal</tabstop>
+  <tabstop>btnOctal</tabstop>
+  <tabstop>btnBinary</tabstop>
+  <tabstop>btnOpenCloseDecOptions</tabstop>
+  <tabstop>chkThousandSep</tabstop>
+  <tabstop>cbThousandSep</tabstop>
+  <tabstop>chkDecDelim</tabstop>
+  <tabstop>chkSci</tabstop>
+  <tabstop>chkEng</tabstop>
+  <tabstop>chkDecDigits</tabstop>
+  <tabstop>spnDecDigits</tabstop>
+  <tabstop>btnStringFont</tabstop>
+  <tabstop>rbDeg</tabstop>
+  <tabstop>rbRad</tabstop>
+  <tabstop>rbGrad</tabstop>
+  <tabstop>rbTurns</tabstop>
+  <tabstop>rbNormal</tabstop>
+  <tabstop>rbHtml</tabstop>
+  <tabstop>rbTex</tabstop>
+  <tabstop>rbNone</tabstop>
+  <tabstop>btnOpenCloseHexOptions</tabstop>
+  <tabstop>chkMinus</tabstop>
+  <tabstop>chkHexPrefix</tabstop>
+  <tabstop>chkBytes</tabstop>
+  <tabstop>chkWords</tabstop>
+  <tabstop>chkDWords</tabstop>
+  <tabstop>chkIEEESingle</tabstop>
+  <tabstop>chkIEEEDouble</tabstop>
+  <tabstop>chkLittleEndian</tabstop>
+ </tabstops>
  <resources>
   <include location="FalconCalcQt.qrc"/>
  </resources>

@@ -25,7 +25,7 @@ static wchar_t* __helpTexts[2] = {
                     L"  +, -, *, /, ^(power), | (or 'or'), & (or 'and'), xor, << (or 'shl'=shift left), << (or 'shr'=shift right),\n"
                     L"  % (or mod - remainder), '~' bit negation\n\n"
                     L"Logical operators:\n"
-                    L"  ==, != (not equal), <, >, <=, >= (these results in 1 or 0)\n\n"
+                    L"  == (equal), != (not equal), <, >, <=, >= (these results in 1 or 0)\n\n"
                     L"Built-in functions (alternative names separated by a slash['/']):\n\n"
                     L"  abs(x), arcsin/asin(x), arccos/acos(x), arctan/atan(x), cos(x), cosh/ch(x), coth/cth(x), exp(x), fact(n), frac(x),\n"
                     L"  int(x), log/ln(x), log2(x), log10/lg(x), pow(base,power), root(n,x), root3(x), round(n,x), sign(x), sin(x), sinh/sh(x),\n"
@@ -46,24 +46,24 @@ static wchar_t* __helpTexts[2] = {
                     L"  kc  - Coulomb's constant 1/4π eps0 [N m^2/C^2], LA  - Avogadro's number [1/mol],\n"
                     L"  rf  - Earth's radius [m], rg  - molar gas constant (8.31 J/ mol K), rs - Sun's radius\n"
                     L"  u    - atomic mass unit [1]\n\n"
-                    L"Any number of user constants and functions may be defined with any valid arithmetic formula including other constants and variables:\n\n"
-                    L"Line format:   name = expression:comment:unit, where name may be a variable name or a function name like 'a(x,y)'\n\n"
+                    L"Any number of user constants and functions may be defined with any valid arithmetic formula including other constants and variables:\n"
+                    L"When a variable is modified the value of all dependent variables and functions are automatically changed\n\n"
+                    L"Functions may have any number of arguments with any names that is different from the name of any built-in function or constant.\n\n",
+                    L"Line format:   name = expression:comment:unit, where name may be a variable name or a function name with parameters\n\n"
                     L"Examples:\n"
                     L"      constR=8.31446261815324:Universal gas constant:J/K/mol\n"
                     L"      solvequad(a, b, c, s) = (-b + s * sqrt(b ^ 2 - 4 * a * c)) / 2 / a:solves the quadratic equation ax² + bx + c = 0\n\n"
-                    L"When a variable is modified the value of all dependent variables and functions are automatically changed\n"
-                    L"Functions may have any number of arguments with any names that is different from the name of any built-in function or constant.\n",
     // hungarian
     L"Minden Windowsban van egy saját számológép, ami azonban nem elég sokoldalú. A FaconCalc is egy számológép de sok különleges\ntulajdonsága van "
                     L"ami miatt érdemes használni.\n\nA FalconCalc folyamatosan dolgozza fel a belé írt kifejezéseket, amelyek mind beépített, mint felhasználó\n"
-	                L"által definiált állandókat és akárhány változós függvényeket használhatnak, mindezeket tetszőleges (alapból 65 jegy) pontossággal.\nűn"
+	                L"által definiált állandókat és akárhány változós függvényeket használhatnak, mindezeket tetszőleges (alapból 65 jegy) pontossággal.\n\n"
                     L"Az eredményt 5 féle formában egyidejűleg mutatja: 10-es, 16-os, 8-as és 2-es számrendszerben, illetve mint egy betűsorozatot.\n\n"
                     L"A megfelelő gomb megnyomásával ezeket ezekben a formátumokban a vágólapra másolhatjuk.\n\n"
-                    L"Az aritmetikai képlete az alábbi műveleteket tartalmazhatják:\n\n"
+                    L"Az aritmetikai képletek az alábbi műveleteket tartalmazhatják:\n\n"
                     L"  +, -, *, /, ^(kitevő kifejezés), | (vagy 'or'), & (vagy 'and'), xor, << (vagy 'shl'=shift left), << (vagy 'shr'=shift right),\n"
                     L"  % (vagy mod - maradék), '~' bitenkénti ellentét\n\n"
                     L"Logikai műveletek:\n"
-                    L"  ==, != (nem egyenlő), <, >, <=, >= (ezek eredménye 1 vagy 0)\n\n"
+                    L"  == (Egyenlő), != (nem egyenlő), <, >, <=, >= (ezek eredménye 1 vagy 0)\n\n"
                     L"Beépített függvények (a több nevűeket a perjel '/' választja el egymástól) kisbetű-nagybetű nem számít:\n\n"
                     L"  abs(x), arcsin/asin(x), arccos/acos(x), arctan/atan(x), cos(x), cosh/ch(x), coth/cth(x), exp(x), fact(n), frac(x),\n"
                     L"  int(x), log/ln(x), log2(x), log10/lg(x), pow(base,power), root(n,x), root3(x), round(n,x), sign(x), sin(x), sinh/sh(x),\n"
@@ -84,13 +84,15 @@ static wchar_t* __helpTexts[2] = {
                     L"  kc  - Coulomb állandó (=1/4π eps0) [N m^2/C^2], LA  - Avogadro szám [1/mol],\n"
                     L"  rf  - Föld sugara [m], RG  - moláris gázállandó (8.31 J/ mol K), Rs - a Nap sugara\n"
                     L"  u    - atomi tömegegység [1]\n\n"
-                    L"Bárhány saját állandót és függvényt definiálhatunk a beépített és addig definiáltak használatával (ha értelmezhető)\n\n."
-                    L"Ezek formátuma:   név = kifejezés:megjegyzés:egység, ahol a név egy változó, vagy egy függvény neve és a függvényparaméterek: 'a(x,y)'\n\n"
-                    L"Példák:\n"
-                    L"      constR=8.31446261815324:Universal gas constant:J/K/mol\n"
-                    L"      masod(a, b, c, s) = (-b + s * sqrt(b ^ 2 - 4 * a * c)) / 2 / az ax² + bx + c = 0 másodfokú egyenlet valós megoldásai\n\n"
-                    L"Ha egy állandó, vagy függvény átdefiniálunk a tőle függgő változók és függvények is módosulnak.\n"
+                    L"Bárhány saját állandót és függvényt definiálhatunk a beépített és addig definiáltak használatával (ha értelmezhető)\n."
+                    L"Ha egy állandó, vagy függvény átdefiniálunk a tőle függgő változók és függvények is módosulnak.\n\n"
                     L"A függvényeknek akárhány paraméterük lehet, de a nevüknek különböznie kell bármely beépített változó, vagy függvény nevétől.\n"
+
+                    L"Változo/függvény definíció formátuma:\n"
+                    L"Változó: név = kifejezés:megjegyzés:egység. Függvény:név(x,...) = kifejezés:megjegyzés:egység.\n\n"
+                    L"Példák:\n"
+                    L"      constR=8.31446261815324:Univerzális gáz állandó:J/K/mol\n"
+                    L"      másod(a, b, c, s) = (-b + s * sqrt(b ^ 2 - 4 * a * c)) / 2 / az ax² + bx + c = 0 másodfokú egyenlet valós megoldásai\n\n"
 };
 
 static _LanguageTexts_private __texts[] = {
@@ -247,7 +249,7 @@ static _ErrorTexts_private __errorTexts[] = {
  { EEC_OVERFLOW_ERROR,					        L"Overflow error",				L"Túlcsordulási hiba"},
  { EEC_DOMAIN_ERROR,					        L"Domain error",				L"Ért. tartomány hiba"},
  { EEC_MISSING_BRACE,					        L"Missing closing '}'",				L"Záró '}' hiányzik"},
- { EEC_LARGE_FOR64,					            L"Number can't fit in a 64 bit integer",				L"A szám nem hosszabb, mint 64 bit"},
+ { EEC_LARGE_FOR64,					            L"Number can't fit in a 64 bit integer",				L"A szám hosszabb, mint 64 bit"},
  { EEC_RECURSIVE_FUNCTIONS_ARE_NOT_ALLOWED,		L"Recursive functions are not allowed",	L"Rekurzív függvény. Nem megengedett."},
  { EEC_NO_FUNCTION_ARGUMENT,					L"No function argument",				L"Nincsenek függvényparaméterek"},
  { EEC_MISSING_BINARY_NUMBER,					L"Missing binary number",				L"Hiányzó bináris szám"},
@@ -257,11 +259,11 @@ static _ErrorTexts_private __errorTexts[] = {
  { EEC_INVALID_CHARACTER_IN_FUNCTION_DEFINITION,L"Invalid character in function definition",
                                                 L"Hibás karakter a függvény definícióban"},
  { EEC_ILLEGAL_OPERATOR_AT_LINE_END,			L"Illegal operator at end of expression",
-                                                L"Operátor a kifejezés végén"},
- { EEC_ILLEGAL_OCTAL_NUMBER,					L"Illegal octal number",			L"Hibás oktális szám"},
- { EEC_ILLEGAL_NUMBER_No2,					    L"Illegal number #2",				L"Hibás szám #2"},
- { EEC_ILLEGAL_NUMBER_No1,					    L"Illegal number #1",				L"Hibás szám #1"},
- { EEC_ILLEGAL_HEXADECIMAL_NUMBER,				L"Illegal hexadecimal number",		L"Hibás hexadecimális szám"},
+                                                L"M'veleti jel a kifejezés végén"},
+ { EEC_ILLEGAL_OCTAL_NUMBER,					L"Illegal octal number",			L"Nem oktális szám"},
+ { EEC_ILLEGAL_NUMBER_No2,					    L"Illegal number #2",				L"Nem szám #2"},
+ { EEC_ILLEGAL_NUMBER_No1,					    L"Illegal number #1",				L"Nem szám #1"},
+ { EEC_ILLEGAL_HEXADECIMAL_NUMBER,				L"Illegal hexadecimal number",		L"Nem hexadecimális szám"},
  { EEC_ILLEGAL_CHARACTER_NUMBER,				L"Illegal character number",		L"Hibás betűk"},
  { EEC_ILLEGAL_BINARY_NUMBER,					L"Illegal binary number",           L"Nem bináris szám"},
  { EEC_ILLEGAL_AT_LINE_END,					    L"Illegal at line end",				L"Sor végén nem megengedett"},

@@ -149,6 +149,14 @@
     <QtMoc Include="VariablesFunctionsDialog.h" />
     <QtMoc Include="HistoryDialog.h" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="translations\FalconCalcQt_en.qm" />
+    <None Include="translations\FalconCalcQt_hu.qm" />
+  </ItemGroup>
+  <ItemGroup>
+    <QtTranslation Include="translations\FalconCalcQt_en.ts" />
+    <QtTranslation Include="translations\FalconCalcQt_hu.ts" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">
     <Import Project="$(QtMsBuild)\qt.targets" />

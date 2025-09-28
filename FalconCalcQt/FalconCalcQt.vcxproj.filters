@@ -134,4 +134,20 @@
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="translations\FalconCalcQt_en.qm">
+      <Filter>Translation Files</Filter>
+    </None>
+    <None Include="translations\FalconCalcQt_hu.qm">
+      <Filter>Translation Files</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <QtTranslation Include="translations\FalconCalcQt_en.ts">
+      <Filter>Translation Files</Filter>
+    </QtTranslation>
+    <QtTranslation Include="translations\FalconCalcQt_hu.ts">
+      <Filter>Translation Files</Filter>
+    </QtTranslation>
+  </ItemGroup>
 </Project>
