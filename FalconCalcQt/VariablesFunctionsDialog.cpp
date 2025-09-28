@@ -337,7 +337,7 @@ void VariablesFunctionsDialog::_FillUserFuncTable()
 		rd = { f.name, f.body, f.unit, f.desc };
 		(*_pUserFuncsMap)[f.name] = rd;
 		QString s = f.name.toQString()+QString("(");
-		int i;
+		size_t i;
 		for (i = 0; i < f.args.size() - 1; ++i)
 			s += f.args.at(i).toQString() + ",";
 		s += f.args.at(i).toQString() + ")";
