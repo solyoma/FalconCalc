@@ -865,9 +865,9 @@ void TfrmMain::_SetupForLanguage()
 	miLanguage->SetText(lt.GetTranslationFor(FCT_LANGUAGE));
 	miLocale->SetText(lt.GetTranslationFor(FCT_LOCALE));
 	miPaste->SetText(lt.GetTranslationFor(FCT_PASTEEXPR));
-	miSetEn->SetChecked(lt.GetLanguage() == Language::en);
+	miSetEn->SetChecked(lt.GetLanguage() == AppLanguage::lanEng);
 	miSetEn->SetText(lt.GetTranslationFor(FCT_SETEN));
-	miSetHun->SetChecked(lt.GetLanguage() == Language::hu);
+	miSetHun->SetChecked(lt.GetLanguage() == AppLanguage::lanHun);
 	miSetHun->SetText(lt.GetTranslationFor(FCT_SETHUN));
 	miShowDecOpts->SetText(lt.GetTranslationFor(FCT_SHOWDECOPTS));
 	miShowHexOpts->SetText(lt.GetTranslationFor(FCT_SHOWHEXOPTS));
@@ -955,15 +955,15 @@ bool TfrmMain::_LoadState(SmartString name)
 	{
 		if (n == 2 && data[0] == LANGUAGE)	// only one field
 		{
-			int val = std::stoi(data[1].toUtf8String());
-			Language lang = (Language)val;
-			switch(val)
+			AppLanguage lang = data[1] == SmartString("hu") ? AppLanguage::lanHun : data[1] == SmartString("en") ? AppLanguage::lanEng : AppLanguage::lanNotSet;
+			lt.SetLanguage(lang);
+			switch(lang)
 			{
 				default:
-				case 0: lt.SetLanguage(Language::en);
+				case AppLanguage::lanEng: 
 					miSetEn->SetChecked(false); // no need to uncheck 'Hungarian'
 					break;
-				case 1:	lt.SetLanguage(Language::hu);
+				case AppLanguage::lanHun:	
 					miSetEn->SetChecked(false);
 					miSetHun->SetChecked(true);
 					break;
@@ -2099,13 +2099,13 @@ void TfrmMain::chkIEEESingleClick(void *sender, nlib::EventParameters param)
 
 void TfrmMain::miSetEnClick(void* sender, nlib::EventParameters param)
 {
-	if (lt.SetLanguage(Language::en))	// then set it up
+	if (lt.SetLanguage(AppLanguage::lanEng))	// then set it up
 	_SetupForLanguage();
 }
 
 void TfrmMain::miSetHunClick(void* sender, nlib::EventParameters param)
 {
-	if (lt.SetLanguage(Language::hu))	// then set it up
+	if (lt.SetLanguage(AppLanguage::lanHun))	// then set it up
 		_SetupForLanguage();
 }
 

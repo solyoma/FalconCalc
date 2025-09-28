@@ -4,6 +4,7 @@
 void MyLoadWindowIcon(nlib::Form* f);
 
 using namespace nlib;
+#include "common.h"
 #include "translations.h"
 #include "help.h"
 

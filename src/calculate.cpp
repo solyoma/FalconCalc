@@ -1731,10 +1731,8 @@ void LittleEngine::AddUserFunctions(const SmartStringVector& sv)
 }
 
 #ifndef QTSA_PROJECT
-void Trigger::SetLanguage(Language lang)
+void Trigger::SetLanguage(AppLanguage lang)
 {
-    if (_lang == lang)
-        return;
     _lang = lang;
 }
 #endif

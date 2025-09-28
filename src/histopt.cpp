@@ -6,6 +6,7 @@ using namespace nlib;
 #include "resource.h"
 void MyLoadWindowIcon(nlib::Form* f);
 
+#include "common.h"
 #include "translations.h"
 #include "histopt.h"
 

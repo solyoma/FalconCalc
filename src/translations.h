@@ -4,8 +4,6 @@
 
 #include "EngineErrors.h"
 
-enum Language { none = 0, en = 1, hu = 2 };		// 0: english, 1: hungarian
-
 enum TextIDs {
 	FCT_OK,              // L"O&k", L"&Rendben"
 	FCT_SAVE,
@@ -133,14 +131,14 @@ class LanguageTexts
 {
 public:
 	LanguageTexts();
-	constexpr Language GetLanguage() const { return _lang; }
-	bool SetLanguage(Language lang);		// true: must set menus and help text in the selected language
+	constexpr AppLanguage GetLanguage() const { return _lang; }
+	bool SetLanguage(AppLanguage lang);		// true: must set menus and help text in the selected language
 											// false: already OK
 	wchar_t* GetHelpText() const;		// returns the help text in the current language
 	wchar_t* GetTranslationFor(TextIDs id) const; // returns the text in the current language
 	wchar_t* GetTranslationFor(EngineErrorCodes id) const; // returns the text in the current language
 private:
-	Language _lang= Language::none;
+	AppLanguage _lang= AppLanguage::lanNotSet;
 };
 
 extern LanguageTexts lt;

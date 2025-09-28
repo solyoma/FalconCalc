@@ -1,4 +1,5 @@
-﻿#include "translations.h"
+﻿#include "common.h"
+#include "translations.h"
 #include "mainForm.h"
 
 struct _LanguageTexts_private
@@ -286,8 +287,11 @@ wchar_t* LanguageTexts::GetHelpText() const
 wchar_t* LanguageTexts::GetTranslationFor(TextIDs id) const
 {
     int nLang = (int)_lang;
-    if (nLang < 0)
+    if (nLang == 0)
         nLang = 0;
+    else
+        --nLang;
+
     if(!((int)id >= 0 && (int)id < sizeof(__texts)/sizeof(__texts[0])))
 		return L"";
 	if (__texts[(int)id].id == id)
@@ -305,8 +309,10 @@ wchar_t* LanguageTexts::GetTranslationFor(TextIDs id) const
 wchar_t* LanguageTexts::GetTranslationFor(EngineErrorCodes id) const
 {
     int nLang = (int)_lang;
-    if (nLang < 0)
+    if (nLang == 0)
         nLang = 0;
+    else 
+        --nLang;
     if (!((int)id >= 0 && (int)id < sizeof(__errorTexts) / sizeof(__errorTexts[0])))
         return L"";
     if (__errorTexts[(int)id].id == id)
@@ -325,9 +331,9 @@ LanguageTexts::LanguageTexts()
 {
 }
 
-bool LanguageTexts::SetLanguage(Language lang)
+bool LanguageTexts::SetLanguage(AppLanguage lang)
 {
-    if (_lang == lang || (lang != Language::en && lang != Language::hu) )
+    if (_lang == lang || (lang != AppLanguage::lanEng && lang != AppLanguage::lanHun) )
         return false;
 
     _lang = lang;

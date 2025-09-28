@@ -187,15 +187,15 @@ namespace FalconCalc
 #else
         Trigger() 
         { 
-            SetLanguage(Language::en); 
+            SetLanguage(AppLanguage::lanEng); 
         }
-        void SetLanguage(Language lang);
+        void SetLanguage(AppLanguage lang);
         //void Raise(TextIDs tids);    // sets error state into global 'lengine'
 #endif
         void Raise(EngineErrorCodes tids);    // sets error state into global 'lengine'
 #ifndef QTSA_PROJECT
     private:
-        Language _lang;
+        AppLanguage _lang;
 #endif
     };
     extern Trigger trigger;

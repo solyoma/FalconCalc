@@ -2,6 +2,7 @@
 
 using namespace nlib;
 #include "about.h"
+#include "common.h"
 #include "translations.h"
 
 TfrmAbout *frmAbout;

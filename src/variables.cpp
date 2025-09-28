@@ -11,7 +11,7 @@ using namespace SmString;
 
 using namespace LongNumber;
 
-
+#include "common.h"
 #include "calculate.h"
 
 using namespace nlib;

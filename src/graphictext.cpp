@@ -4,6 +4,7 @@
 #include <fstream>
 
 #include "graphictext.h"
+#include "common.h"
 #include "translations.h"
 
 namespace sa

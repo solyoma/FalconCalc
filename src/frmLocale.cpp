@@ -3,6 +3,7 @@
 #include "frmLocale.h"
 #include <locale>
 #include <codecvt>
+#include "common.h"
 #include "translations.h"
 
 TfrmLocale *frmLocale;
