@@ -131,6 +131,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="calculate.h" />
+    <ClInclude Include="common.h" />
     <ClInclude Include="EngineErrors.h" />
     <ClInclude Include="frmLocale.h" />
     <ClInclude Include="LongNumber.h" />

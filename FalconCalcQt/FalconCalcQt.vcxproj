@@ -137,6 +137,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\calculate.h" />
+    <ClInclude Include="..\src\common.h" />
     <ClInclude Include="..\src\EngineErrors.h" />
     <ClInclude Include="..\src\LongNumber.h" />
     <ClInclude Include="..\src\SmartString.h" />

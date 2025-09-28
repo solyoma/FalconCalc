@@ -10,6 +10,7 @@ using namespace SmString;
 #include "LongNumber.h"
 using namespace LongNumber;
 
+#include "common.h"
 #include "calculate.h"
 
 /*----------------- global engine ------------------*/
@@ -23,7 +24,10 @@ namespace FalconCalc
 
 using namespace std;
 
- auto VERSION_STRING = "FalconCalc V1.1";
+// program version, these must be kept synchronized
+ constexpr int CALC_VERSION_INT = 0x000900;
+ std::string CALC_VERSION_STRING("0.9.0");
+ std::string CALC_ID_LINE("FalconCalc Config File V");
 
  SCharT FalconCalc::argSeparator = ',';
 
@@ -1473,7 +1477,7 @@ SmartString LittleEngine::Postfix() const
      #include <stdio.h>
 #endif
 
-bool LittleEngine::SaveUserData()
+bool LittleEngine::SaveUserData(bool force)
 {
     if (clean)
         return true;
@@ -1488,7 +1492,7 @@ bool LittleEngine::SaveUserData()
     locale loc = cout.getloc();
     SmartString sLocale(loc.name());
 
-	ofs << VERSION_STRING << "\n[Locale]\nloc=" <<  sLocale.toUtf8String()
+	ofs << CALC_ID_LINE << CALC_VERSION_STRING << "\n[Locale]\nloc=" <<  sLocale.toUtf8String()
         << "\n\n[Variables]\n";
 
     if (variables.size())
@@ -1544,8 +1548,8 @@ bool LittleEngine::LoadUserData(SmartString name)
 	std::string line;
 	std::getline(in, line);
     
-	if(line.substr(0, 12) != "FalconCalc V" )
-		return false;
+	if(line.substr(0, CALC_ID_LINE.length()) != std::string(CALC_ID_LINE) )
+		return false;      // TODO check version mismatch
 
     SmartString s;
     auto __GetLine = [&]()

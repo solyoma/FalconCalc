@@ -31,6 +31,7 @@ using namespace LongNumber;
 using namespace FalconCalc;
 using namespace std;
 
+#include "common.h"
 #include "calculate.h"
 #include "resource.h"
 #include "variables.h"
@@ -39,9 +40,9 @@ using namespace std;
 Clipboard *MyClipboard;
 
 TfrmMain *frmMain;
-const SmartString FalconCalc_HIST_FILE = SmartString("FalconCalc.hist");
-const SmartString FalconCalc_DAT_FILE  = SmartString("FalconCalc.dat");
-const SmartString FalconCalc_CFG_FILE  = SmartString("FalconCalc.cfg");
+const SmartString sFalconCalc_HIST_FILE = SmartString( FalconCalc_Hist_File);
+const SmartString sFalconCalc_DAT_FILE  = SmartString(  FalconCalc_Dat_File );
+const SmartString sFalconCalc_CFG_FILE  = SmartString(FalconCalc_State_File );
 
 /*
 * Status file is a text file. its data:
@@ -897,7 +898,7 @@ bool TfrmMain::_SaveState(SmartString name)
 
      if(fs.fail())
         return false;
-    fs << STATE_VER_STRING << "\n";
+    fs << STATE_ID_STRING << VERSION_STRING << "\n";
 	fs << LANGUAGE << lt.GetLanguage() << "\n";
 	fs << MAINFORMAT<< (int)lengine->displayFormat.mainFormat << "\n";
 
@@ -941,8 +942,9 @@ bool TfrmMain::_LoadState(SmartString name)
 	char wbuf[1024];// , nam[1024];
 	fs.getline(wbuf,1023);
 
-    if(strcmp(wbuf, STATE_VER_STRING) )
+    if(strncmp(wbuf, STATE_ID_STRING, strlen(STATE_ID_STRING)) )
         return false;
+	// TODO: check version string
 
     int n, val =0;
 
@@ -1234,7 +1236,7 @@ TfrmMain::TfrmMain()
 	lengine->displayFormat.strThousandSeparator = " "_ss;
 	lengine->displayFormat.displWidth = MAX_OUTPUT_WIDTH;
 
-	lengine->ssNameOfDatFile = (UserDir() + SmartString(FalconCalc_DAT_FILE));
+	lengine->ssNameOfDatFile = (UserDir() + SmartString(FalconCalc_Dat_File));
 	try
 	{
 		lengine->LoadUserData();	// may throw because of many errors
@@ -1262,12 +1264,12 @@ TfrmMain::TfrmMain()
     _watchLimit = 5; // seconds
 	_maxHistDepth=0; // unlimited
 
-    if(!_LoadState(UserDir() + FalconCalc_CFG_FILE) )
+    if(!_LoadState(UserDir() + SmartString(FalconCalc_State_File)) )
     {
         ShowDecOptions(false);
         ShowHexOptions(false);
     }
-    slHistory.LoadFromFile(UserDir() + FalconCalc_HIST_FILE);
+    slHistory.LoadFromFile(UserDir() + SmartString(FalconCalc_Hist_File));
 		// add max 20 items from slHistory to combo box
 	for (size_t i = 0; i < slHistory.size() && i < 20; i++)
 		if (cbInfix->Text() != slHistory[i].ToWideString())
@@ -1317,8 +1319,8 @@ TfrmMain::~TfrmMain()
 void TfrmMain::Destroy()
 {
 	lengine->SaveUserData();
-    _SaveState(UserDir() + FalconCalc_CFG_FILE);
-    slHistory.SaveToFile(UserDir() + FalconCalc_HIST_FILE);
+    _SaveState(UserDir() + SmartString(FalconCalc_State_File));
+	slHistory.SaveToFile(UserDir() + SmartString( FalconCalc_Hist_File) );
 	delete lengine;
 	Form::Destroy();
 }

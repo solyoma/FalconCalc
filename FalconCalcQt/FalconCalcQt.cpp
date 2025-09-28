@@ -23,6 +23,7 @@ using namespace FalconCalc;
 
 #include "FalconCalcQt.h"
 
+#include "common.h"
 #include "AboutDialog.h"
 #include "VariablesFunctionsDialog.h"
 #include "HistoryDialog.h"
@@ -50,17 +51,16 @@ static void __SaveStyle(QString styleName)
 
 // in calulat.h/cpp : FalconCalc::LittleEngine* lengine = nullptr;
 
-const QString STATE_VER_STRING = QStringLiteral("FalconCalc State File V");
-const QString DAT_VER_STRING = QStringLiteral("FalconCalc Config File V");
+const QString STATE_VER_STRING = QString(STATE_ID_STRING);
+const QString DAT_VER_STRING = QString(DAT_ID_STRING);
 								 // program version these must be kept synchronized
-const int VERSION_INT = 0x000900;
-const QString VERSION_STRING = QStringLiteral("0.9.0");
+const QString VERSION_STRING_QT = QString(VERSION_STRING);
 
 //------------------------ FalconCalcQt --------------
 
-const QString FalconCalcQt_HIST_FILE= "FalconCalc.hist";
-const QString FalconCalcQt_DAT_FILE = "FalconCalc.dat";
-const QString FalconCalcQt_CFG_FILE = "FalconCalc.cfg";
+const QString FalconCalcQt_HIST_FILE= FalconCalc_Hist_File;
+const QString FalconCalcQt_DAT_FILE = FalconCalc_Dat_File;
+const QString FalconCalcQt_STATE_FILE = FalconCalc_State_File;
 
 FalconCalcQt::FalconCalcQt(QWidget *parent)  : QMainWindow(parent)
 {
@@ -89,7 +89,6 @@ FalconCalcQt::FalconCalcQt(QWidget *parent)  : QMainWindow(parent)
 	_LoadState();
 
 	_LoadHistory();
-
 
 	lengine->ssNameOfDatFile = SmartString(FCSettings::homePath +  FalconCalcQt_DAT_FILE);
 	try
@@ -328,6 +327,7 @@ void FalconCalcQt::on_actionClearHistory_triggered()
 void FalconCalcQt::on_actionEnglish_triggered()
 {
 	ui.actionHungarian->setChecked(false);
+	_appLanguage = AppLanguage::lanEng;
 	QMessageBox::warning(this, tr("FalconCalc"), tr("Restart the program to change the language!"));
 }
 
@@ -372,6 +372,7 @@ void FalconCalcQt::on_actionHistOptions_triggered()
 void FalconCalcQt::on_actionHungarian_triggered()
 {
 	ui.actionEnglish->setChecked(false);
+	_appLanguage = AppLanguage::lanHun;
 	QMessageBox::warning(this, tr("FalconCalc"), tr("Restart the program to change the language!"));
 }
 
@@ -928,6 +929,7 @@ void FalconCalcQt::on_spnDecDigits_valueChanged(int val)
 
 
 static const QString
+		LANGUAGE("language"),
 		MAINFORMAT("mainFormat"),
 		DECFORMAT("decFormat"),
 		HEXFORMAT("hexFormat"),
@@ -992,7 +994,7 @@ int FalconCalcQt::_GetVersion(QStringRef s)	const // format "Vx.y.z
 
 bool FalconCalcQt::_LoadState()
 {
-	QString name = FCSettings::homePath + FalconCalcQt_CFG_FILE;
+	QString name = FCSettings::homePath + FalconCalcQt_STATE_FILE;
     QFile fcfg(name);
 	if (!fcfg.open(QIODevice::ReadOnly))
 		return false;
@@ -1015,6 +1017,15 @@ bool FalconCalcQt::_LoadState()
 	QStringList data;
 	int n, val = 0;
 
+	auto language = [&]()-> bool
+		{
+			if (n == 2 && data[0] == LANGUAGE)	// only one field
+			{
+				_appLanguage = data[1] == "hu" ? AppLanguage::lanHun : data[1] == "en" ? AppLanguage::lanEng : AppLanguage::lanNotSet;
+				return true;
+			}
+			return false;
+		};
 	auto mainFormat = [&]()	-> bool // returns true if not processed, false if processed
 		{
 			if (n == 2 && data[0] == MAINFORMAT)	// only one field
@@ -1223,15 +1234,31 @@ bool FalconCalcQt::_LoadState()
 
 	while ((n = __ReadAndSplitLine(ifcfg, data)) > 0)
 	{
-		if (!mainFormat())
-			if (!decFormat())
-				if (!hexFormat())
-					if (!fontName())
-						if (!fontData())
-							if (!options())
-								if (!histOptions())
-									if (!varCols())
-										last(wsLlastInfix);
+		if (!language())
+			if (!mainFormat())
+				if (!decFormat())
+					if (!hexFormat())
+						if (!fontName())
+							if (!fontData())
+								if (!options())
+									if (!histOptions())
+										if (!varCols())
+											last(wsLlastInfix);
+	}
+
+	switch (_appLanguage)
+	{
+		case AppLanguage::lanEng: 
+//			ui.actionEnglish->setChecked(true);
+			ui.actionHungarian->setChecked(false);
+			break;
+		case AppLanguage::lanHun: 
+			ui.actionEnglish->setChecked(false);
+			ui.actionHungarian->setChecked(true);
+			break;
+
+		default:
+		case AppLanguage::lanNotSet: break;
 	}
 
 	switch (_actScheme)
@@ -1260,7 +1287,7 @@ bool FalconCalcQt::_LoadState()
 
 bool FalconCalcQt::_SaveState()
 {	
-	QString name = FCSettings::homePath + FalconCalcQt_CFG_FILE;
+	QString name = FCSettings::homePath + FalconCalcQt_STATE_FILE;
 	QFile f(name);
 	if (!f.open(QIODevice::WriteOnly))
 		return false;
@@ -1269,6 +1296,8 @@ bool FalconCalcQt::_SaveState()
 	ofs.setCodec("UTF-8");
 
 	ofs << STATE_VER_STRING << VERSION_STRING << "\n";
+	if(_appLanguage != AppLanguage::lanNotSet)
+		ofs << LANGUAGE << "=" << (_appLanguage == AppLanguage::lanHun ? "hu":"en") << "\n";
 	ofs << MAINFORMAT << "=" << (int)lengine->displayFormat.mainFormat << "\n";
 
 	//int u = UpDown1->Position() + (chkDecDigits->Checked() ? 0x100 : 0); // 0x100: checked state. must use Position as num_digits may be -1

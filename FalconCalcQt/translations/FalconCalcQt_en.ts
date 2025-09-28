@@ -22,26 +22,37 @@
 <context>
     <name>FalconCalcQt</name>
     <message>
-        <location filename="../FalconCalcQt.cpp" line="316"/>
+        <location filename="../FalconCalcQt.cpp" line="319"/>
         <source>FalconCalc - Question</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.cpp" line="316"/>
+        <location filename="../FalconCalcQt.cpp" line="319"/>
         <source>This will remove the whole of history.
 Are you sure?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.cpp" line="327"/>
-        <location filename="../FalconCalcQt.cpp" line="371"/>
+        <location filename="../FalconCalcQt.cpp" line="331"/>
+        <location filename="../FalconCalcQt.cpp" line="376"/>
         <source>FalconCalc</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.cpp" line="327"/>
-        <location filename="../FalconCalcQt.cpp" line="371"/>
+        <location filename="../FalconCalcQt.cpp" line="331"/>
+        <location filename="../FalconCalcQt.cpp" line="376"/>
         <source>Restart the program to change the language!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../FalconCalcQt.cpp" line="1014"/>
+        <source>FalconCalcQt - Error</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../FalconCalcQt.cpp" line="1014"/>
+        <source>%1 is for a newer version of the program.
+There might be problems with it.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -756,6 +767,19 @@ Are you sure?</source>
     <message>
         <location filename="../schemes.cpp" line="483"/>
         <source>System</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>QObject</name>
+    <message>
+        <location filename="../main.cpp" line="72"/>
+        <source>FalconCalcQt - Error</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../main.cpp" line="72"/>
+        <source>Cannot install language file %1</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

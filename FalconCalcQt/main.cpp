@@ -1,15 +1,19 @@
+#include <QtWidgets/QApplication>
+#include <QFile>
+#include <QDir>
+#include <QMessagebox>
+#include <QTranslator>
 #include "SmartString.h"
 using namespace SmString;
 #include "LongNumber.h"
 using namespace LongNumber;
+#include "common.h"
 #include "calculate.h"
 #include "FalconCalcQt.h"
-#include <QtWidgets/QApplication>
-#include <QFile>
-#include <QDir>
-#include <QTranslator>
 
-QString TranslateApp(QApplication &app)
+// program language and locale used are two different things.
+// both are set in the .cfg file, one as an index, the other as a name
+static QString TranslateApp(QApplication &app, QTranslator &translator)
 {
 	QDir dir(":/FalconCalcQt/translations");
 	QStringList fileNames = dir.entryList(QStringList("*.qm"), QDir::Files, QDir::Name);
@@ -25,34 +29,24 @@ QString TranslateApp(QApplication &app)
 	QString qs;
 
 	int ixLang = -1; // -1=system, else index in fileNames
-	QFile f(homePath + FalconCalcQt_DAT_FILE);
+	QFile f(homePath + QString(FalconCalc_State_File));
 	if(f.open(QIODevice::ReadOnly | QIODevice::Text))
 	{
-		qs = f.readLine().trimmed();
-		if (qs.startsWith(DAT_VER_STRING))
+		while (!f.atEnd() && !(qs = f.readLine().trimmed()).startsWith("language"))
+			;
+		if(!f.atEnd())
 		{
-			while (!(qs = f.readLine().trimmed()).isEmpty())
+			int n = qs.indexOf('=');
+			qs = qs.mid(n + 1).trimmed();	// 0: not set, 1: English, 2: Hungarian
+
+			ixLang = fileNames.indexOf("FalconCalcQt_" + qs + ".qm");
+			if (ixLang < 0)
 			{
-				if (qs == "[Locale]")	 // windows .ini format
+				for (int i = 0; i < fileNames.size(); i++) // find first which starts with "??_"
 				{
-					qs = f.readLine().trimmed();
-					int n = qs.indexOf('=');
-					if (qs.left(n) == "loc")
+					if (fileNames[i].startsWith("FalconCalcQt_" + qs.left(2)))
 					{
-						qs = qs.mid(n + 1).trimmed();	// e.g. "C" or "de" or "de_DE"
-						ixLang = fileNames.indexOf("FalconCalc_" + qs + ".qm");
-						if (ixLang < 0 && qs.length() > 2)
-						{
-							for (int i = 0; i < fileNames.size(); i++) // find first which starts with "??_"
-							{
-								if (fileNames[i].startsWith("FalconCalc_" + qs.left(2)))
-								{
-									ixLang = i;
-									break;
-								}
-							}
-							break;
-						}
+						ixLang = i;
 						break;
 					}
 				}
@@ -63,15 +57,21 @@ QString TranslateApp(QApplication &app)
 
 	if (ixLang >= 0)
 	{
-		qs = ":/FalconBoard/translations/" + fileNames[ixLang];
+		qs = ":/FalconCalcQt/translations/" + fileNames[ixLang];
 
-		QTranslator translator;
 
 		bool loaded = translator.load(qs);
 		if (loaded)
+		{
 			qs = translator.language();
-		if (loaded && qs != "C" && qs != "en_US")	 // only set when not American English
-			app.installTranslator(&translator);
+			bool res = true;
+			if (qs != "C" && qs != "en_US")	 // only set when not American English
+			{
+				res = app.installTranslator(&translator);
+				if (!res)
+					QMessageBox::warning(nullptr, QObject::tr("FalconCalcQt - Error"), QObject::tr("Cannot install language file %1").arg(fileNames[ixLang]));
+			}
+		}
 	}
 	return qs;
 }
@@ -83,7 +83,8 @@ int main(int argc, char *argv[])
 	//QString qs, qsn;
 	//qs = QLocale::system().name();
 
-	TranslateApp(a);
+	QTranslator translator;
+	TranslateApp(a, translator);
     FalconCalcQt w;
 
 	w.show();

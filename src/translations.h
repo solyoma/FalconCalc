@@ -4,7 +4,7 @@
 
 #include "EngineErrors.h"
 
-enum Language { none = -1, en = 0, hu = 1 };		// 0: english, 1: hungarian
+enum Language { none = 0, en = 1, hu = 2 };		// 0: english, 1: hungarian
 
 enum TextIDs {
 	FCT_OK,              // L"O&k", L"&Rendben"

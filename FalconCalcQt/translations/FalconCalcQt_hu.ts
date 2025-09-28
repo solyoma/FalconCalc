@@ -22,27 +22,38 @@
 <context>
     <name>FalconCalcQt</name>
     <message>
-        <location filename="../FalconCalcQt.cpp" line="316"/>
+        <location filename="../FalconCalcQt.cpp" line="319"/>
         <source>FalconCalc - Question</source>
         <translation>GalconCalc - Kérdés</translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.cpp" line="316"/>
+        <location filename="../FalconCalcQt.cpp" line="319"/>
         <source>This will remove the whole of history.
 Are you sure?</source>
         <translation>Ez az összes előzményt törli. Ezt akarod?</translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.cpp" line="327"/>
-        <location filename="../FalconCalcQt.cpp" line="371"/>
+        <location filename="../FalconCalcQt.cpp" line="331"/>
+        <location filename="../FalconCalcQt.cpp" line="376"/>
         <source>FalconCalc</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.cpp" line="327"/>
-        <location filename="../FalconCalcQt.cpp" line="371"/>
+        <location filename="../FalconCalcQt.cpp" line="331"/>
+        <location filename="../FalconCalcQt.cpp" line="376"/>
         <source>Restart the program to change the language!</source>
         <translation>A nyelv megváltoztatásához indítsd újra a programot!</translation>
+    </message>
+    <message>
+        <location filename="../FalconCalcQt.cpp" line="1014"/>
+        <source>FalconCalcQt - Error</source>
+        <translation>FalconCalcQt - Hiba</translation>
+    </message>
+    <message>
+        <location filename="../FalconCalcQt.cpp" line="1014"/>
+        <source>%1 is for a newer version of the program.
+There might be problems with it.</source>
+        <translation>A %1 file a program újabb verziójához tartozik/ Ez problémákat okozhat.</translation>
     </message>
 </context>
 <context>
@@ -816,109 +827,27 @@ Are you sure?</source>
     </message>
 </context>
 <context>
+    <name>QObject</name>
+    <message>
+        <location filename="../main.cpp" line="72"/>
+        <source>FalconCalcQt - Error</source>
+        <translation>FalconCalcQt - Hiba</translation>
+    </message>
+    <message>
+        <location filename="../main.cpp" line="72"/>
+        <source>Cannot install language file %1</source>
+        <translation>A %1 nyelvi fájl nem használható</translation>
+    </message>
+</context>
+<context>
     <name>VariablesFunctionsDialogClass</name>
     <message>
-        <location filename="../VariablesFunctionsDialog.ui" line="14"/>
-        <source>FalconCalc - Variables &amp; Functions</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../VariablesFunctionsDialog.ui" line="52"/>
-        <source>Variables</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../VariablesFunctionsDialog.ui" line="103"/>
-        <location filename="../VariablesFunctionsDialog.ui" line="318"/>
-        <source>User</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../VariablesFunctionsDialog.ui" line="142"/>
-        <location filename="../VariablesFunctionsDialog.ui" line="240"/>
-        <source>Variable</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../VariablesFunctionsDialog.ui" line="147"/>
-        <location filename="../VariablesFunctionsDialog.ui" line="245"/>
-        <source>Value</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../VariablesFunctionsDialog.ui" line="152"/>
-        <location filename="../VariablesFunctionsDialog.ui" line="250"/>
-        <location filename="../VariablesFunctionsDialog.ui" line="367"/>
-        <location filename="../VariablesFunctionsDialog.ui" line="468"/>
-        <source>Unit</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../VariablesFunctionsDialog.ui" line="157"/>
-        <location filename="../VariablesFunctionsDialog.ui" line="255"/>
-        <location filename="../VariablesFunctionsDialog.ui" line="372"/>
-        <location filename="../VariablesFunctionsDialog.ui" line="473"/>
-        <source>Comment</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../VariablesFunctionsDialog.ui" line="198"/>
-        <location filename="../VariablesFunctionsDialog.ui" line="416"/>
-        <source>Built-ins</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../VariablesFunctionsDialog.ui" line="270"/>
-        <source>Functions</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../VariablesFunctionsDialog.ui" line="357"/>
-        <location filename="../VariablesFunctionsDialog.ui" line="458"/>
-        <source>Function</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../VariablesFunctionsDialog.ui" line="362"/>
-        <location filename="../VariablesFunctionsDialog.ui" line="463"/>
-        <source>Body</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../VariablesFunctionsDialog.ui" line="538"/>
-        <source>Remove all user defineditems</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../VariablesFunctionsDialog.ui" line="541"/>
         <source>remove all</source>
-        <translation type="unfinished">Minden eldobása</translation>
+        <translation type="obsolete">Minden eldobása</translation>
     </message>
     <message>
-        <location filename="../VariablesFunctionsDialog.ui" line="552"/>
-        <location filename="../VariablesFunctionsDialog.ui" line="600"/>
-        <source>...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../VariablesFunctionsDialog.ui" line="620"/>
-        <source>Remove selected item</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../VariablesFunctionsDialog.ui" line="623"/>
         <source>remove</source>
-        <translation type="unfinished">Eltávolítás</translation>
-    </message>
-    <message>
-        <location filename="../VariablesFunctionsDialog.ui" line="659"/>
-        <source>Save</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../VariablesFunctionsDialog.ui" line="666"/>
-        <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Eltávolítás</translation>
     </message>
 </context>
 </TS>

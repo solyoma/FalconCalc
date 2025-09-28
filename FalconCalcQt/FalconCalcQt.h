@@ -6,16 +6,12 @@
 #include <QSettings>
 #include <QTimer>
 
+#include "common.h"
 #include "schemes.h"
 
 #include "EngineErrors.h"
 
 #include "HelpDialog.h"
-
-namespace FalconCalc {
-//    class RowDataMap;
-}
-
 
 struct SEMAPHORE {
     int b = 0;
@@ -26,7 +22,7 @@ struct SEMAPHORE {
 
 //---------------------------------------------------
 namespace FalconCalc {
-    enum WindowSide { wsNone, wsTop, wsRight, wsBottom, wsLeft };
+    enum WindowSide  { wsNone, wsTop, wsRight, wsBottom, wsLeft };
     class LittleEngine;
 }
 
@@ -112,6 +108,7 @@ private:
     Ui::FalconCalcQtClass ui;
 
 	int _version=0x000900;      // version 0.9.0
+	AppLanguage _appLanguage = AppLanguage::lanNotSet;
 
     SEMAPHORE _busy;
     bool _decOpen = true;       // during load state before the window is shown?
@@ -197,10 +194,3 @@ private:
     void _SignalHistoryChanged(QStringList& hist);
 
 };
-
-extern const QString STATE_VER_STRING;
-extern const QString DAT_VER_STRING;
-extern const QString VERSION_STRING;
-extern const QString FalconCalcQt_HIST_FILE;
-extern const QString FalconCalcQt_DAT_FILE ;
-extern const QString FalconCalcQt_CFG_FILE;

@@ -621,7 +621,7 @@ namespace FalconCalc
         void AddUserFunctions(const SmartStringVector &from); // from vf 0: any, 1: vars, 2: functions
 
         bool LoadUserData(SmartString name=SmartString()); // no name: uses FalconCal_DAT_FILE in user directorr
-        bool SaveUserData();
+        bool SaveUserData(bool force=false);
         bool SaveUserData(SmartString name);                // if it wasn't read and no name is given it wont be saved
         bool ResultOk() const { return calcResult.IsValid(); }
 
