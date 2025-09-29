@@ -281,7 +281,7 @@ static _ErrorTexts_private __errorTexts[] = {
 
 wchar_t* LanguageTexts::GetHelpText() const
 {
-    return __helpTexts[ (int)_lang];
+    return __helpTexts[ (int)_lang - 1];
 }
 
 wchar_t* LanguageTexts::GetTranslationFor(TextIDs id) const
