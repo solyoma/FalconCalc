@@ -6,20 +6,22 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>558</width>
-    <height>655</height>
+    <width>538</width>
+    <height>659</height>
    </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
   </property>
   <property name="windowTitle">
    <string>FalconCalc - Variables &amp; Functions</string>
   </property>
-  <property name="windowIcon">
-   <iconset resource="FalconCalcQt.qrc">
-    <normaloff>:/FalconCalcQt/Resources/program.ico</normaloff>:/FalconCalcQt/Resources/program.ico</iconset>
-  </property>
-  <layout class="QHBoxLayout" name="horizontalLayout">
+  <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="1,0">
    <property name="spacing">
-    <number>0</number>
+    <number>2</number>
    </property>
    <property name="leftMargin">
     <number>2</number>
@@ -34,45 +36,39 @@
     <number>2</number>
    </property>
    <item>
-    <widget class="QWidget" name="pnlLeft" native="true">
-     <layout class="QVBoxLayout" name="verticalLayout_2">
+    <widget class="QWidget" name="widget" native="true">
+     <layout class="QVBoxLayout" name="verticalLayout">
       <item>
        <widget class="QTabWidget" name="tabHeader">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
+        <property name="styleSheet">
+         <string notr="true">QSplitter::handle { background:gray}</string>
         </property>
         <property name="currentIndex">
-         <number>0</number>
+         <number>1</number>
         </property>
         <widget class="QWidget" name="tabVar">
          <attribute name="title">
           <string>Variables</string>
          </attribute>
-         <layout class="QVBoxLayout" name="verticalLayout_3">
+         <layout class="QVBoxLayout" name="verticalLayout_9">
+          <property name="spacing">
+           <number>1</number>
+          </property>
           <property name="leftMargin">
-           <number>2</number>
+           <number>1</number>
           </property>
           <property name="topMargin">
-           <number>2</number>
+           <number>1</number>
           </property>
           <property name="rightMargin">
-           <number>2</number>
+           <number>1</number>
           </property>
           <property name="bottomMargin">
-           <number>2</number>
+           <number>1</number>
           </property>
           <item>
-           <widget class="QWidget" name="pnlUserVars" native="true">
-            <property name="minimumSize">
-             <size>
-              <width>0</width>
-              <height>300</height>
-             </size>
-            </property>
-            <layout class="QVBoxLayout" name="verticalLayout_7">
+           <widget class="QWidget" name="pnlVariablesBackground" native="true">
+            <layout class="QVBoxLayout" name="verticalLayout_13">
              <property name="spacing">
               <number>1</number>
              </property>
@@ -89,175 +85,202 @@
               <number>1</number>
              </property>
              <item>
-              <widget class="QLabel" name="label_3">
-               <property name="font">
-                <font>
-                 <weight>75</weight>
-                 <bold>true</bold>
-                </font>
+              <widget class="QSplitter" name="splitterVar">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
                </property>
-               <property name="lineWidth">
-                <number>0</number>
+               <property name="styleSheet">
+                <string notr="true">QSplitter::handle { background:gray}</string>
                </property>
-               <property name="text">
-                <string>User</string>
+               <property name="frameShape">
+                <enum>QFrame::Box</enum>
                </property>
-               <property name="alignment">
-                <set>Qt::AlignCenter</set>
+               <property name="frameShadow">
+                <enum>QFrame::Plain</enum>
                </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QTableWidget" name="tblUserVars">
-               <property name="alternatingRowColors">
-                <bool>true</bool>
+               <property name="midLineWidth">
+                <number>5</number>
                </property>
-               <property name="selectionBehavior">
-                <enum>QAbstractItemView::SelectRows</enum>
+               <property name="orientation">
+                <enum>Qt::Vertical</enum>
                </property>
-               <property name="rowCount">
-                <number>10</number>
-               </property>
-               <property name="columnCount">
-                <number>4</number>
-               </property>
-               <attribute name="horizontalHeaderStretchLastSection">
-                <bool>true</bool>
-               </attribute>
-               <attribute name="verticalHeaderVisible">
-                <bool>false</bool>
-               </attribute>
-               <row/>
-               <row/>
-               <row/>
-               <row/>
-               <row/>
-               <row/>
-               <row/>
-               <row/>
-               <row/>
-               <row/>
-               <column>
-                <property name="text">
-                 <string>Variable</string>
-                </property>
-               </column>
-               <column>
-                <property name="text">
-                 <string>Value</string>
-                </property>
-               </column>
-               <column>
-                <property name="text">
-                 <string>Unit</string>
-                </property>
-               </column>
-               <column>
-                <property name="text">
-                 <string>Comment</string>
-                </property>
-               </column>
-              </widget>
-             </item>
-             <item>
-              <widget class="QWidget" name="pnlBuiltinVars" native="true">
-               <property name="minimumSize">
-                <size>
-                 <width>0</width>
-                 <height>300</height>
-                </size>
-               </property>
-               <layout class="QVBoxLayout" name="verticalLayout_8">
-                <property name="spacing">
-                 <number>1</number>
-                </property>
-                <property name="leftMargin">
-                 <number>1</number>
-                </property>
-                <property name="topMargin">
-                 <number>1</number>
-                </property>
-                <property name="rightMargin">
-                 <number>1</number>
-                </property>
-                <property name="bottomMargin">
-                 <number>1</number>
-                </property>
-                <item>
-                 <widget class="QLabel" name="label">
-                  <property name="font">
-                   <font>
-                    <weight>75</weight>
-                    <bold>true</bold>
-                   </font>
-                  </property>
-                  <property name="lineWidth">
-                   <number>0</number>
-                  </property>
-                  <property name="text">
-                   <string>Built-ins</string>
-                  </property>
-                  <property name="alignment">
-                   <set>Qt::AlignCenter</set>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QTableWidget" name="tblBuiltinVars">
-                  <property name="editTriggers">
-                   <set>QAbstractItemView::NoEditTriggers</set>
-                  </property>
-                  <property name="alternatingRowColors">
-                   <bool>true</bool>
-                  </property>
-                  <property name="selectionBehavior">
-                   <enum>QAbstractItemView::SelectRows</enum>
-                  </property>
-                  <property name="rowCount">
-                   <number>10</number>
-                  </property>
-                  <property name="columnCount">
-                   <number>4</number>
-                  </property>
-                  <attribute name="horizontalHeaderStretchLastSection">
-                   <bool>true</bool>
-                  </attribute>
-                  <attribute name="verticalHeaderVisible">
-                   <bool>false</bool>
-                  </attribute>
-                  <row/>
-                  <row/>
-                  <row/>
-                  <row/>
-                  <row/>
-                  <row/>
-                  <row/>
-                  <row/>
-                  <row/>
-                  <row/>
-                  <column>
-                   <property name="text">
-                    <string>Variable</string>
+               <widget class="QWidget" name="pnlUserVarBackground" native="true">
+                <layout class="QVBoxLayout" name="verticalLayout_11">
+                 <property name="leftMargin">
+                  <number>1</number>
+                 </property>
+                 <property name="rightMargin">
+                  <number>1</number>
+                 </property>
+                 <property name="bottomMargin">
+                  <number>1</number>
+                 </property>
+                 <item>
+                  <widget class="QLabel" name="lblUser">
+                   <property name="font">
+                    <font>
+                     <weight>75</weight>
+                     <bold>true</bold>
+                    </font>
                    </property>
-                  </column>
-                  <column>
-                   <property name="text">
-                    <string>Value</string>
+                   <property name="lineWidth">
+                    <number>0</number>
                    </property>
-                  </column>
-                  <column>
                    <property name="text">
-                    <string>Unit</string>
+                    <string>User</string>
                    </property>
-                  </column>
-                  <column>
+                   <property name="alignment">
+                    <set>Qt::AlignCenter</set>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QTableWidget" name="tblUserVars">
+                   <property name="styleSheet">
+                    <string notr="true"/>
+                   </property>
+                   <property name="alternatingRowColors">
+                    <bool>true</bool>
+                   </property>
+                   <property name="selectionBehavior">
+                    <enum>QAbstractItemView::SelectRows</enum>
+                   </property>
+                   <property name="rowCount">
+                    <number>10</number>
+                   </property>
+                   <property name="columnCount">
+                    <number>4</number>
+                   </property>
+                   <attribute name="horizontalHeaderStretchLastSection">
+                    <bool>true</bool>
+                   </attribute>
+                   <attribute name="verticalHeaderVisible">
+                    <bool>false</bool>
+                   </attribute>
+                   <row/>
+                   <row/>
+                   <row/>
+                   <row/>
+                   <row/>
+                   <row/>
+                   <row/>
+                   <row/>
+                   <row/>
+                   <row/>
+                   <column>
+                    <property name="text">
+                     <string>Variable</string>
+                    </property>
+                   </column>
+                   <column>
+                    <property name="text">
+                     <string>Value</string>
+                    </property>
+                   </column>
+                   <column>
+                    <property name="text">
+                     <string>Unit</string>
+                    </property>
+                   </column>
+                   <column>
+                    <property name="text">
+                     <string>Comment</string>
+                    </property>
+                   </column>
+                  </widget>
+                 </item>
+                </layout>
+               </widget>
+               <widget class="QWidget" name="pnlBuiltinVarBackground" native="true">
+                <layout class="QVBoxLayout" name="verticalLayout_12">
+                 <property name="leftMargin">
+                  <number>1</number>
+                 </property>
+                 <property name="rightMargin">
+                  <number>1</number>
+                 </property>
+                 <property name="bottomMargin">
+                  <number>1</number>
+                 </property>
+                 <item>
+                  <widget class="QLabel" name="lblBuiltin">
+                   <property name="font">
+                    <font>
+                     <weight>75</weight>
+                     <bold>true</bold>
+                    </font>
+                   </property>
+                   <property name="lineWidth">
+                    <number>0</number>
+                   </property>
                    <property name="text">
-                    <string>Comment</string>
+                    <string>Built-ins</string>
                    </property>
-                  </column>
-                 </widget>
-                </item>
-               </layout>
+                   <property name="alignment">
+                    <set>Qt::AlignCenter</set>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QTableWidget" name="tblBuiltinVars">
+                   <property name="editTriggers">
+                    <set>QAbstractItemView::NoEditTriggers</set>
+                   </property>
+                   <property name="alternatingRowColors">
+                    <bool>true</bool>
+                   </property>
+                   <property name="selectionBehavior">
+                    <enum>QAbstractItemView::SelectRows</enum>
+                   </property>
+                   <property name="rowCount">
+                    <number>10</number>
+                   </property>
+                   <property name="columnCount">
+                    <number>4</number>
+                   </property>
+                   <attribute name="horizontalHeaderStretchLastSection">
+                    <bool>true</bool>
+                   </attribute>
+                   <attribute name="verticalHeaderVisible">
+                    <bool>false</bool>
+                   </attribute>
+                   <row/>
+                   <row/>
+                   <row/>
+                   <row/>
+                   <row/>
+                   <row/>
+                   <row/>
+                   <row/>
+                   <row/>
+                   <row/>
+                   <column>
+                    <property name="text">
+                     <string>Variable</string>
+                    </property>
+                   </column>
+                   <column>
+                    <property name="text">
+                     <string>Value</string>
+                    </property>
+                   </column>
+                   <column>
+                    <property name="text">
+                     <string>Unit</string>
+                    </property>
+                   </column>
+                   <column>
+                    <property name="text">
+                     <string>Comment</string>
+                    </property>
+                   </column>
+                  </widget>
+                 </item>
+                </layout>
+               </widget>
               </widget>
              </item>
             </layout>
@@ -269,28 +292,25 @@
          <attribute name="title">
           <string>Functions</string>
          </attribute>
-         <layout class="QVBoxLayout" name="verticalLayout_4">
+         <layout class="QVBoxLayout" name="verticalLayout_10">
+          <property name="spacing">
+           <number>1</number>
+          </property>
           <property name="leftMargin">
-           <number>2</number>
+           <number>1</number>
           </property>
           <property name="topMargin">
-           <number>2</number>
+           <number>1</number>
           </property>
           <property name="rightMargin">
-           <number>2</number>
+           <number>1</number>
           </property>
           <property name="bottomMargin">
-           <number>2</number>
+           <number>1</number>
           </property>
           <item>
-           <widget class="QWidget" name="pnlUserFuncs" native="true">
-            <property name="minimumSize">
-             <size>
-              <width>0</width>
-              <height>300</height>
-             </size>
-            </property>
-            <layout class="QVBoxLayout" name="verticalLayout_6">
+           <widget class="QWidget" name="widget_5" native="true">
+            <layout class="QVBoxLayout" name="verticalLayout_16">
              <property name="spacing">
               <number>1</number>
              </property>
@@ -307,172 +327,187 @@
               <number>1</number>
              </property>
              <item>
-              <widget class="QLabel" name="label_2">
-               <property name="font">
-                <font>
-                 <weight>75</weight>
-                 <bold>true</bold>
-                </font>
-               </property>
-               <property name="text">
-                <string>User</string>
-               </property>
-               <property name="alignment">
-                <set>Qt::AlignCenter</set>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QTableWidget" name="tblUserFuncs">
-               <property name="alternatingRowColors">
-                <bool>true</bool>
-               </property>
-               <property name="selectionBehavior">
-                <enum>QAbstractItemView::SelectRows</enum>
-               </property>
-               <property name="rowCount">
-                <number>10</number>
-               </property>
-               <property name="columnCount">
-                <number>4</number>
-               </property>
-               <attribute name="horizontalHeaderStretchLastSection">
-                <bool>true</bool>
-               </attribute>
-               <attribute name="verticalHeaderVisible">
-                <bool>false</bool>
-               </attribute>
-               <row/>
-               <row/>
-               <row/>
-               <row/>
-               <row/>
-               <row/>
-               <row/>
-               <row/>
-               <row/>
-               <row/>
-               <column>
-                <property name="text">
-                 <string>Function</string>
-                </property>
-               </column>
-               <column>
-                <property name="text">
-                 <string>Body</string>
-                </property>
-               </column>
-               <column>
-                <property name="text">
-                 <string>Unit</string>
-                </property>
-               </column>
-               <column>
-                <property name="text">
-                 <string>Comment</string>
-                </property>
-               </column>
-              </widget>
-             </item>
-            </layout>
-           </widget>
-          </item>
-          <item>
-           <widget class="QWidget" name="pnlBuiltinFuncs" native="true">
-            <property name="minimumSize">
-             <size>
-              <width>0</width>
-              <height>0</height>
-             </size>
-            </property>
-            <layout class="QVBoxLayout" name="verticalLayout_5">
-             <property name="spacing">
-              <number>1</number>
-             </property>
-             <property name="leftMargin">
-              <number>1</number>
-             </property>
-             <property name="topMargin">
-              <number>1</number>
-             </property>
-             <property name="rightMargin">
-              <number>1</number>
-             </property>
-             <property name="bottomMargin">
-              <number>1</number>
-             </property>
-             <item>
-              <widget class="QLabel" name="label_4">
-               <property name="font">
-                <font>
-                 <weight>75</weight>
-                 <bold>true</bold>
-                </font>
+              <widget class="QSplitter" name="splitterFunc">
+               <property name="frameShape">
+                <enum>QFrame::Box</enum>
                </property>
                <property name="lineWidth">
-                <number>0</number>
+                <number>1</number>
                </property>
-               <property name="text">
-                <string>Built-ins</string>
+               <property name="orientation">
+                <enum>Qt::Vertical</enum>
                </property>
-               <property name="alignment">
-                <set>Qt::AlignCenter</set>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QTableWidget" name="tblBuiltinFuncs">
-               <property name="editTriggers">
-                <set>QAbstractItemView::NoEditTriggers</set>
-               </property>
-               <property name="alternatingRowColors">
-                <bool>true</bool>
-               </property>
-               <property name="selectionBehavior">
-                <enum>QAbstractItemView::SelectRows</enum>
-               </property>
-               <property name="rowCount">
-                <number>10</number>
-               </property>
-               <property name="columnCount">
+               <property name="handleWidth">
                 <number>4</number>
                </property>
-               <attribute name="horizontalHeaderStretchLastSection">
-                <bool>true</bool>
-               </attribute>
-               <attribute name="verticalHeaderVisible">
-                <bool>false</bool>
-               </attribute>
-               <row/>
-               <row/>
-               <row/>
-               <row/>
-               <row/>
-               <row/>
-               <row/>
-               <row/>
-               <row/>
-               <row/>
-               <column>
-                <property name="text">
-                 <string>Function</string>
-                </property>
-               </column>
-               <column>
-                <property name="text">
-                 <string>Body</string>
-                </property>
-               </column>
-               <column>
-                <property name="text">
-                 <string>Unit</string>
-                </property>
-               </column>
-               <column>
-                <property name="text">
-                 <string>Comment</string>
-                </property>
-               </column>
+               <widget class="QWidget" name="widget_4" native="true">
+                <layout class="QVBoxLayout" name="verticalLayout_14">
+                 <property name="leftMargin">
+                  <number>1</number>
+                 </property>
+                 <property name="rightMargin">
+                  <number>1</number>
+                 </property>
+                 <property name="bottomMargin">
+                  <number>1</number>
+                 </property>
+                 <item>
+                  <widget class="QLabel" name="label_5">
+                   <property name="font">
+                    <font>
+                     <weight>75</weight>
+                     <bold>true</bold>
+                    </font>
+                   </property>
+                   <property name="text">
+                    <string>User</string>
+                   </property>
+                   <property name="alignment">
+                    <set>Qt::AlignCenter</set>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QTableWidget" name="tblUserFuncs">
+                   <property name="alternatingRowColors">
+                    <bool>true</bool>
+                   </property>
+                   <property name="selectionBehavior">
+                    <enum>QAbstractItemView::SelectRows</enum>
+                   </property>
+                   <property name="rowCount">
+                    <number>10</number>
+                   </property>
+                   <property name="columnCount">
+                    <number>4</number>
+                   </property>
+                   <attribute name="horizontalHeaderStretchLastSection">
+                    <bool>true</bool>
+                   </attribute>
+                   <attribute name="verticalHeaderVisible">
+                    <bool>false</bool>
+                   </attribute>
+                   <row/>
+                   <row/>
+                   <row/>
+                   <row/>
+                   <row/>
+                   <row/>
+                   <row/>
+                   <row/>
+                   <row/>
+                   <row/>
+                   <column>
+                    <property name="text">
+                     <string>Function</string>
+                    </property>
+                   </column>
+                   <column>
+                    <property name="text">
+                     <string>Body</string>
+                    </property>
+                   </column>
+                   <column>
+                    <property name="text">
+                     <string>Unit</string>
+                    </property>
+                   </column>
+                   <column>
+                    <property name="text">
+                     <string>Comment</string>
+                    </property>
+                   </column>
+                  </widget>
+                 </item>
+                </layout>
+               </widget>
+               <widget class="QWidget" name="widget_6" native="true">
+                <layout class="QVBoxLayout" name="verticalLayout_15">
+                 <property name="leftMargin">
+                  <number>1</number>
+                 </property>
+                 <property name="rightMargin">
+                  <number>1</number>
+                 </property>
+                 <property name="bottomMargin">
+                  <number>1</number>
+                 </property>
+                 <item>
+                  <widget class="QLabel" name="label_6">
+                   <property name="font">
+                    <font>
+                     <weight>75</weight>
+                     <bold>true</bold>
+                    </font>
+                   </property>
+                   <property name="lineWidth">
+                    <number>0</number>
+                   </property>
+                   <property name="text">
+                    <string>Built-ins</string>
+                   </property>
+                   <property name="alignment">
+                    <set>Qt::AlignCenter</set>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QTableWidget" name="tblBuiltinFuncs">
+                   <property name="editTriggers">
+                    <set>QAbstractItemView::NoEditTriggers</set>
+                   </property>
+                   <property name="alternatingRowColors">
+                    <bool>true</bool>
+                   </property>
+                   <property name="selectionBehavior">
+                    <enum>QAbstractItemView::SelectRows</enum>
+                   </property>
+                   <property name="rowCount">
+                    <number>10</number>
+                   </property>
+                   <property name="columnCount">
+                    <number>4</number>
+                   </property>
+                   <attribute name="horizontalHeaderStretchLastSection">
+                    <bool>true</bool>
+                   </attribute>
+                   <attribute name="verticalHeaderVisible">
+                    <bool>false</bool>
+                   </attribute>
+                   <row/>
+                   <row/>
+                   <row/>
+                   <row/>
+                   <row/>
+                   <row/>
+                   <row/>
+                   <row/>
+                   <row/>
+                   <row/>
+                   <column>
+                    <property name="text">
+                     <string>Function</string>
+                    </property>
+                   </column>
+                   <column>
+                    <property name="text">
+                     <string>Body</string>
+                    </property>
+                   </column>
+                   <column>
+                    <property name="text">
+                     <string>Unit</string>
+                    </property>
+                   </column>
+                   <column>
+                    <property name="text">
+                     <string>Comment</string>
+                    </property>
+                   </column>
+                  </widget>
+                 </item>
+                </layout>
+               </widget>
               </widget>
              </item>
             </layout>
@@ -486,229 +521,184 @@
     </widget>
    </item>
    <item>
-    <widget class="QWidget" name="widget" native="true">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
+    <layout class="QVBoxLayout">
+     <property name="spacing">
+      <number>6</number>
      </property>
-     <layout class="QVBoxLayout" name="verticalLayout">
-      <property name="leftMargin">
-       <number>2</number>
-      </property>
-      <property name="rightMargin">
-       <number>2</number>
-      </property>
-      <item>
-       <layout class="QVBoxLayout">
-        <property name="spacing">
-         <number>6</number>
-        </property>
-        <property name="leftMargin">
-         <number>0</number>
-        </property>
-        <property name="topMargin">
-         <number>0</number>
-        </property>
-        <property name="rightMargin">
-         <number>0</number>
-        </property>
-        <property name="bottomMargin">
-         <number>0</number>
-        </property>
+     <property name="leftMargin">
+      <number>0</number>
+     </property>
+     <property name="topMargin">
+      <number>0</number>
+     </property>
+     <property name="rightMargin">
+      <number>0</number>
+     </property>
+     <property name="bottomMargin">
+      <number>0</number>
+     </property>
+     <item>
+      <widget class="QWidget" name="widget_3" native="true">
+       <property name="styleSheet">
+        <string notr="true"/>
+       </property>
+       <layout class="QHBoxLayout" name="horizontalLayout_4">
         <item>
-         <widget class="QWidget" name="widget_3" native="true">
-          <property name="styleSheet">
-           <string notr="true"/>
-          </property>
-          <layout class="QHBoxLayout" name="horizontalLayout_4">
-           <item>
-            <widget class="QToolButton" name="btnRemoveAll">
-             <property name="enabled">
-              <bool>false</bool>
-             </property>
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="toolTip">
-              <string>Remove all user defineditems</string>
-             </property>
-             <property name="text">
-              <string>remove all</string>
-             </property>
-             <property name="icon">
-              <iconset resource="FalconCalcQt.qrc">
-               <normaloff>:/FalconCalcQt/Resources/trashcan.png</normaloff>:/FalconCalcQt/Resources/trashcan.png</iconset>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QToolButton" name="btnUndo">
-             <property name="text">
-              <string>...</string>
-             </property>
-             <property name="icon">
-              <iconset resource="FalconCalcQt.qrc">
-               <normaloff>:/FalconCalcQt/Resources/undo-small.png</normaloff>:/FalconCalcQt/Resources/undo-small.png</iconset>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </widget>
-        </item>
-        <item>
-         <spacer name="verticalSpacer">
-          <property name="orientation">
-           <enum>Qt::Vertical</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>20</width>
-            <height>40</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-        <item>
-         <widget class="QWidget" name="widget_2" native="true">
-          <layout class="QHBoxLayout" name="horizontalLayout_2">
-           <property name="spacing">
-            <number>6</number>
-           </property>
-           <property name="leftMargin">
-            <number>2</number>
-           </property>
-           <property name="topMargin">
-            <number>2</number>
-           </property>
-           <property name="rightMargin">
-            <number>2</number>
-           </property>
-           <property name="bottomMargin">
-            <number>2</number>
-           </property>
-           <item>
-            <widget class="QToolButton" name="btnAddRow">
-             <property name="enabled">
-              <bool>true</bool>
-             </property>
-             <property name="text">
-              <string>...</string>
-             </property>
-             <property name="icon">
-              <iconset resource="FalconCalcQt.qrc">
-               <normaloff>:/FalconCalcQt/Resources/add.png</normaloff>:/FalconCalcQt/Resources/add.png</iconset>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QToolButton" name="btnRemoveRow">
-             <property name="enabled">
-              <bool>false</bool>
-             </property>
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="toolTip">
-              <string>Remove selected item</string>
-             </property>
-             <property name="text">
-              <string>remove</string>
-             </property>
-             <property name="icon">
-              <iconset resource="FalconCalcQt.qrc">
-               <normaloff>:/FalconCalcQt/Resources/minus.png</normaloff>:/FalconCalcQt/Resources/minus.png</iconset>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </widget>
-        </item>
-        <item>
-         <spacer>
-          <property name="orientation">
-           <enum>Qt::Vertical</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>20</width>
-            <height>40</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-        <item>
-         <widget class="QPushButton" name="btnSave">
+         <widget class="QToolButton" name="btnRemoveAll">
           <property name="enabled">
            <bool>false</bool>
           </property>
           <property name="sizePolicy">
-           <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
+          <property name="toolTip">
+           <string>Remove all user defineditems</string>
+          </property>
           <property name="text">
-           <string>Save</string>
+           <string>remove all</string>
+          </property>
+          <property name="icon">
+           <iconset resource="FalconCalcQt.qrc">
+            <normaloff>:/FalconCalcQt/Resources/trashcan.png</normaloff>:/FalconCalcQt/Resources/trashcan.png</iconset>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="btnCancel">
+         <widget class="QToolButton" name="btnUndo">
+          <property name="toolTip">
+           <string>Undo last operation</string>
+          </property>
           <property name="text">
-           <string>Cancel</string>
+           <string>...</string>
+          </property>
+          <property name="icon">
+           <iconset resource="FalconCalcQt.qrc">
+            <normaloff>:/FalconCalcQt/Resources/undo-small.png</normaloff>:/FalconCalcQt/Resources/undo-small.png</iconset>
           </property>
          </widget>
         </item>
        </layout>
-      </item>
-     </layout>
-    </widget>
+      </widget>
+     </item>
+     <item>
+      <spacer name="verticalSpacer">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>20</width>
+         <height>40</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QWidget" name="widget_2" native="true">
+       <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <property name="spacing">
+         <number>6</number>
+        </property>
+        <property name="leftMargin">
+         <number>2</number>
+        </property>
+        <property name="topMargin">
+         <number>2</number>
+        </property>
+        <property name="rightMargin">
+         <number>2</number>
+        </property>
+        <property name="bottomMargin">
+         <number>2</number>
+        </property>
+        <item>
+         <widget class="QToolButton" name="btnAddRow">
+          <property name="enabled">
+           <bool>true</bool>
+          </property>
+          <property name="toolTip">
+           <string>Add a new row</string>
+          </property>
+          <property name="text">
+           <string>...</string>
+          </property>
+          <property name="icon">
+           <iconset resource="FalconCalcQt.qrc">
+            <normaloff>:/FalconCalcQt/Resources/add.png</normaloff>:/FalconCalcQt/Resources/add.png</iconset>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QToolButton" name="btnRemoveRow">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="toolTip">
+           <string>Remove selected item</string>
+          </property>
+          <property name="text">
+           <string>remove</string>
+          </property>
+          <property name="icon">
+           <iconset resource="FalconCalcQt.qrc">
+            <normaloff>:/FalconCalcQt/Resources/minus.png</normaloff>:/FalconCalcQt/Resources/minus.png</iconset>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item>
+      <spacer>
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>20</width>
+         <height>40</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QPushButton" name="btnSave">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="text">
+        <string>Save</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="btnCancel">
+       <property name="text">
+        <string>Cancel</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </item>
   </layout>
  </widget>
  <resources>
   <include location="FalconCalcQt.qrc"/>
  </resources>
- <connections>
-  <connection>
-   <sender>btnSave</sender>
-   <signal>clicked()</signal>
-   <receiver>VariablesFunctionsDialogClass</receiver>
-   <slot>accept()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>351</x>
-     <y>38</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>233</x>
-     <y>29</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>btnCancel</sender>
-   <signal>clicked()</signal>
-   <receiver>VariablesFunctionsDialogClass</receiver>
-   <slot>reject()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>330</x>
-     <y>66</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>197</x>
-     <y>125</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
+ <connections/>
 </ui>

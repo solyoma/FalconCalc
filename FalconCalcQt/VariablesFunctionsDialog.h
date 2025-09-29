@@ -94,6 +94,7 @@ protected slots:
 	void on_btnRemoveAll_clicked();
 	void on_btnRemoveRow_clicked();
 	void on_btnUndo_clicked();
+	void on_btnCancel_clicked();
 	void on_btnSave_clicked();
 	void on_btnAddRow_clicked();
 	void on_tblUserVars_currentItemChanged(QTableWidgetItem* current, QTableWidgetItem* previous);

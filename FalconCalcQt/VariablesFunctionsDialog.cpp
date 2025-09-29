@@ -194,6 +194,11 @@ void VariablesFunctionsDialog::on_btnUndo_clicked()
 	ui.btnRemoveAll->setEnabled(_pActUserTable->rowCount());
 }
 
+void VariablesFunctionsDialog::on_btnCancel_clicked()
+{
+	emit SignalVarFuncClose();
+}
+
 void VariablesFunctionsDialog::on_btnSave_clicked()
 {
 	if (!_changed[0] && !_changed[1])		// should never happen (Save button not enabled)
