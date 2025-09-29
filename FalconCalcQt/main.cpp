@@ -37,7 +37,7 @@ static QString TranslateApp(QApplication &app, QTranslator &translator)
 		if(!f.atEnd())
 		{
 			int n = qs.indexOf('=');
-			qs = qs.mid(n + 1).trimmed();	// 0: not set, 1: English, 2: Hungarian
+			qs = qs.mid(n + 1).trimmed();	// missing: not set, hu': English, 'en': Hungarian
 
 			ixLang = fileNames.indexOf("FalconCalcQt_" + qs + ".qm");
 			if (ixLang < 0)

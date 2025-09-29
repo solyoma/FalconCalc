@@ -40,9 +40,6 @@ using namespace std;
 Clipboard *MyClipboard;
 
 TfrmMain *frmMain;
-const SmartString sFalconCalc_HIST_FILE = SmartString( FalconCalc_Hist_File);
-const SmartString sFalconCalc_DAT_FILE  = SmartString(  FalconCalc_Dat_File );
-const SmartString sFalconCalc_CFG_FILE  = SmartString(FalconCalc_State_File );
 
 /*
 * Status file is a text file. its data:
@@ -899,7 +896,7 @@ bool TfrmMain::_SaveState(SmartString name)
      if(fs.fail())
         return false;
     fs << STATE_ID_STRING << VERSION_STRING << "\n";
-	fs << LANGUAGE << lt.GetLanguage() << "\n";
+	fs << LANGUAGE << (lt.GetLanguage() == AppLanguage::lanHun ? "hu" : "en") << "\n";
 	fs << MAINFORMAT<< (int)lengine->displayFormat.mainFormat << "\n";
 
 	//int u = UpDown1->Position() + (chkDecDigits->Checked() ? 0x100 : 0); // 0x100: checked state. must use Position as num_digits may be -1
@@ -955,7 +952,7 @@ bool TfrmMain::_LoadState(SmartString name)
 	{
 		if (n == 2 && data[0] == LANGUAGE)	// only one field
 		{
-			AppLanguage lang = data[1] == SmartString("hu") ? AppLanguage::lanHun : data[1] == SmartString("en") ? AppLanguage::lanEng : AppLanguage::lanNotSet;
+			AppLanguage lang = data[1] == SmartString("hu") ? AppLanguage::lanHun : AppLanguage::lanEng;
 			lt.SetLanguage(lang);
 			switch(lang)
 			{
