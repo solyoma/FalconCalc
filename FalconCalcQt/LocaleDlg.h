@@ -17,6 +17,8 @@ public:
 	static int LocaleVisible;
 private:
 	Ui::LocaleDlgClass ui;
+//private slots:
+	// void on_edtLocale_textChanged(QString newText);
 };
 
 #endif

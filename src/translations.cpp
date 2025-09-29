@@ -208,19 +208,21 @@ static _LanguageTexts_private __texts[] = {
  { FCT_ABOUTLINE7,      L"This program (except NLIB) is open source (GPL3)",                           L"Ez a program az NLIB-et kivéve  Copyright (GPL3)"},
  { FCT_LOCALETITLE,		L"FalconCalc Locale", L"FalconCalc Nyelvi környezet"},
  { FCT_LOCALE1,			L"The locale determines the character used for a decimal point, the ordering of the characters"
-                         " and the correspondance bewtween upper and lowercase letters. Variable and function names may"
-                         " contain accented or special letters in your locale that are not present in other locales and vice-versa.", 
+                        L" and the correspondance bewtween upper and lowercase letters. Variable and function names may"
+                        L" contain accented or special letters in your locale that are not present in other locales and vice-versa.", 
                         L"A nyelvi környezet határozza meg a tizedes jel karaktert )pont, vagy vessző), a karakterek sorrendjét és a kis- és nagybetűk"
-                         " megfeleltetését. A változó és függvénynevek tartalmazhatnak ékezetes vagy speciális karaktereket az adott "
-                         "nyelvi környezetben, amelyek más nyelvi környezetben nem találhatók meg és fordítva."},
- { FCT_LOCALE2,			L"Locale names usually consist of two lowercase and two uppercase letters separated by an underscore character"
-                         " (for example: hu_HU, en_US, de_DE). The first part (two lowercase letters) defines the language, the second"
-                         " part (two uppercase letters) defines the country or region. If you set a locale that is not installed on your"
-                         " system FalconCalc will try to use a similar one (for example: if you set en_GB but only en_US is installed it will use en_US).", 
+                        L" megfeleltetését. A változó és függvénynevek tartalmazhatnak ékezetes vagy speciális karaktereket az adott "
+                        L"nyelvi környezetben, amelyek más nyelvi környezetben nem találhatók meg."},
+ { FCT_LOCALE2,			L"Locale names usually consist of 2, 3 or 5-8 (usually) lowercase characters which may be followed by a hyphen and one or more"
+                        L"subtags each separated by a hyphen character (for example: en-US, en-GB, hu-HU). The first part (two lowercase letters) defines"
+                        L" the language, the subtags regions and others like zh-yue-HK (same as yue-HK) for Cantonese for Hong Kong SAR. Some implementations"
+                        L" may use underscores instead of hyphens (en_US). If you set a locale that is not installed on your"
+                        L" system FalconCalc will try to use a similar one (for example: if you set en_GB but only en_US is installed it will use en_US).", 
 	 // WARNING: if I further split this Hungarian string into parts, the compiler gives a warning and the runtime 
      // will show ? characters instead of ő and ű!
-						L"A nyelvi környezet neve általában két kisbetűből és két nagybetűből áll, amelyeket aláhúzás választ el egymástól (például: hu_HU, en_US, de_DE). Az első rész (két kisbetű) határozza meg a nyelvet, a második rész (két nagybetű) pedig az országot vagy régiót."
-                         " Ha olyan nyelvi környezetet állít be, amely nincs telepítve a rendszerén, a FalconCalc megpróbál egy hasonlót használni (például: ha az en_GB-t állítja be, de csak az en_US van telepítve, akkor az en_US-t fogja használni)." },
+						L"A nyelvi környezet neve 2, 3 vagy 5-8 (általában) kisbetűből all - ez határozza meg a nyelvet-, amit kötőjel és ugyancsak kötőjellel elválasztott betűcsoportok követnek."
+                        L"Pl. hu-HU, en-US, de-DE, zh-yue-HK (ez. ugyan az mint a yue-HK). Kötőjel helyett sokszor a nem szabványos aláhúzás szerepel. "
+                        L"Speciális név a 'C' környezet, ami az en-US -hez hasonló. A nyelvi környezet és a program nyelve nem kell azonos legyen"},
  { FCT_CURNAMELABEL,    L"Name of current locale:", L"A jelenlegi nyelvi környezet:" },
  { FCT_NEWNAMELABEL,    L"Name of new locale:",     L"Az új nyelvi környezet:" },
      // history options
