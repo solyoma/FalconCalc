@@ -7,8 +7,9 @@ using namespace FalconCalc;
 
 #include "VariablesFunctionsDialog.h"
 
-constexpr int	VARIABLES = 0,
-				FUNCTIONS = 1;
+constexpr const int	VARIABLES = 0,
+					FUNCTIONS = 1,
+					MIN_ROW_COUNT = 10;
 
 const QString qsEgString = "=";
 const QString qsCommentDelimiterString = ":";
@@ -75,15 +76,10 @@ VariablesFunctionsDialog::VariablesFunctionsDialog(int initialTabIndex, QWidget*
 	/*----------------------------------------------------------*/
 
 	if (initialTabIndex)
-	{
 		_pActUserTable = ui.tblUserFuncs;
-		_pActStack = &_removedFuncRows;
-	}
 	else
-	{
 		_pActUserTable = ui.tblUserVars;
-		_pActStack = &_removedVarRows;
-	}
+
 	ui.tabHeader->setCurrentIndex(initialTabIndex);
 	_busy = false;
 }
@@ -132,67 +128,104 @@ void VariablesFunctionsDialog::moveEvent(QMoveEvent* e)
 void VariablesFunctionsDialog::on_tabHeader_currentChanged(int index)
 {
 	if (index)
-	{
 		_pActUserTable = ui.tblUserFuncs;
-		_pActStack = &_removedFuncRows;
-	}
 	else
-	{
 		_pActUserTable = ui.tblUserVars;
-		_pActStack = &_removedVarRows;
-	}
-	ui.btnRemoveAll->setEnabled(_pActUserTable->rowCount());
-	ui.btnRemoveRow->setEnabled(!_pActUserTable->selectedItems().isEmpty());
-	ui.btnUndo->setEnabled(index ? _removedFuncRows.size() : _removedVarRows.size());
+	_EnableButtons();
 	qDebug("on_tabHeader_currentChanged");
 }
 
-void VariablesFunctionsDialog::on_btnRemoveAll_clicked()
+void VariablesFunctionsDialog::on_btnRemoveAll_clicked()	// only removes rows with data
 {
-	ui.btnUndo->setEnabled(_pActUserTable->rowCount());
+	int cnt = _pActUserTable->rowCount();
+	UndoItem undoItem;
+	undoItem.table = ActualTab();
 
-	for(int r = 0; r < _pActUserTable->rowCount(); ++r)
+	for (int r = 0; r < cnt; ++r)
 	{
-		QVector<ElidingTableWidgetItem*> rowItems;
-		for (int col = 0; col < _pActUserTable->columnCount(); ++col) {
-			rowItems.append(reinterpret_cast<ElidingTableWidgetItem*>(_pActUserTable->takeItem(r, col)) );
-		}
-		_pActStack->push({ r, rowItems });
-		_pActUserTable->removeRow(r);
+		QVector<ElidingTableWidgetItem* > columnData;
+		for (int col = 0; col < _pActUserTable->columnCount(); ++col) 
+			if (!_GetItemText(_pActUserTable, r, col).isEmpty())  // only delete valid data, not empty space
+				columnData.push_back(reinterpret_cast<ElidingTableWidgetItem*>(_pActUserTable->item(r, col)));
+
+		if (columnData.size())
+			undoItem.data.push_back({ r,columnData });
+	
 	}
+	if (undoItem.IsValid())
+		_undoStack.push(undoItem);
+
+	_pActUserTable->setRowCount(0);	// clear table
+	_pActUserTable->setRowCount(MIN_ROW_COUNT);// and set empty rows
+	_EnableButtons();
 	qDebug("on_btnRemoveAll_clicked");
 }
 
-void VariablesFunctionsDialog::on_btnRemoveRow_clicked()
+void VariablesFunctionsDialog::on_btnRemoveRow_clicked() // selected rows
 {
-	int r = _pActUserTable->currentRow();	// _pActStack is set in constructor and TAB selection
+	UndoItem undoItem;
+	undoItem.table = ActualTab();
 
-	// qDebug("on_btnRemoveRow_clicked to remove row #%d", r);
-	if (r >= 0)
+	auto selection = _pActUserTable->selectedRanges();	// only single range is allowed
+
+	qDebug("on_btnRemoveRow_clicked to remove rows #%d-%d", selection.at(0).topRow(), selection.at(0).bottomRow());
+	for (int r = selection.at(0).topRow(); r <= selection.at(0).bottomRow(); ++r)
 	{
-		QVector<ElidingTableWidgetItem*> rowItems;
-		for (int col = 0; col < _pActUserTable->columnCount(); ++col) {
-			rowItems.append(reinterpret_cast<ElidingTableWidgetItem*>(_pActUserTable->takeItem(r, col)) );
+		if (!_GetItemText(_pActUserTable, r, 0).isEmpty())
+		{
+			QVector<ElidingTableWidgetItem*> columnData; // each item points to an existing ElidingTableWidgetItem
+			for (int col = 0; col < _pActUserTable->columnCount(); ++col)
+			{
+				qDebug("  item (%d, %d) = %s", r, col, _pActUserTable->item(r, col)->text().toStdString().c_str());
+				columnData.append(reinterpret_cast<ElidingTableWidgetItem*>(_pActUserTable->takeItem(r, col)));
+#ifdef DEBUG
+				QString qs = columnData[col]->data(Qt::ToolTipRole).toString();
+				qDebug("  item #%d = %s", col, qs.toStdString().c_str());
+#endif
+			}
+			undoItem.data.push_back({ r, columnData });
 		}
-		_pActStack->push({ r, rowItems });
-		_pActUserTable->removeRow(r);
-		ui.btnUndo->setEnabled(true);
 	}
+	if (undoItem.IsValid())
+	{
+		_undoStack.push(undoItem);
+		for (int r = selection.at(0).bottomRow(); r >= selection.at(0).topRow(); --r)
+			_pActUserTable->removeRow(r);
+
+		if (_pActUserTable->rowCount() < MIN_ROW_COUNT)
+			_pActUserTable->setRowCount(MIN_ROW_COUNT); // keep some empty rows
+	}
+	_EnableButtons();
 }
 
 void VariablesFunctionsDialog::on_btnUndo_clicked()
 {
-	auto lastRemoved = _pActStack->pop();
-	int rowIndex = lastRemoved.first;
-	QVector<ElidingTableWidgetItem*> rowItems = lastRemoved.second;
+	if (_undoStack.isEmpty())	// should never occur (button disabled)
+		return;
 
-	// Insert the row back at its original position
-	_pActUserTable->insertRow(rowIndex);
-	for (int col = 0; col < rowItems.size(); ++col) {
-		_pActUserTable->setItem(rowIndex, col, rowItems[col]);
+	UndoItem lastRemoved = _undoStack.pop();
+	if(lastRemoved.table != ActualTab())
+		ui.tabHeader->setCurrentIndex(lastRemoved.table);
+	int cnt = lastRemoved.data.size();
+	for(int i = 0; i < cnt; ++i)
+	{
+		int rowIndex = lastRemoved.data.at(i).first;
+		QVector<ElidingTableWidgetItem*> rowItems = lastRemoved.data.at(i).second;
+
+		// Insert the row back at its original position
+		_pActUserTable->insertRow(rowIndex);
+		for (int col = 0; col < rowItems.size(); ++col) {
+			_pActUserTable->setItem(rowIndex, col, rowItems[col]);
+		}
 	}
-	ui.btnUndo->setEnabled(_pActStack->size());
-	ui.btnRemoveAll->setEnabled(_pActUserTable->rowCount());
+	_EnableButtons();
+	if (_cntRowsWithData[ActualTab()] < _pActUserTable->rowCount())	// empty rows at end
+	{
+		_pActUserTable->setRowCount(_cntRowsWithData[ActualTab()]);
+		if (_pActUserTable->rowCount() < MIN_ROW_COUNT)
+			_pActUserTable->setRowCount(MIN_ROW_COUNT); // keep some empty rows
+	}
+
 }
 
 void VariablesFunctionsDialog::on_btnCancel_clicked()
@@ -202,9 +235,6 @@ void VariablesFunctionsDialog::on_btnCancel_clicked()
 
 void VariablesFunctionsDialog::on_btnSave_clicked()
 {
-	if (!_changed[0] && !_changed[1])		// should never happen (Save button not enabled)
-		return;
-
 	if (ActualTab() == VARIABLES)
 		_CollectFrom(VARIABLES);	// changed FUNCTIONs already collected in tcVarsTabChanged()
 	else if (ActualTab() == FUNCTIONS)
@@ -242,14 +272,31 @@ void VariablesFunctionsDialog::on_btnSave_clicked()
 
 void VariablesFunctionsDialog::on_btnAddRow_clicked()
 {
-	int row = _pActUserTable->rowCount();
-	_pActUserTable->setRowCount(row + 1);
-	for (int col = 0; col < _pActUserTable->columnCount(); ++col)
+	_GetActualDataCount(ActualTab());
+	int rowCnt = _pActUserTable->rowCount();
+	if (_cntRowsWithData[ActualTab()] == rowCnt) // then add data row
 	{
-		ElidingTableWidgetItem* pwi = new ElidingTableWidgetItem("");
-		_pActUserTable->setItem(row, col, pwi);
+		_pActUserTable->setRowCount(rowCnt + 1);
+		for (int col = 0; col < _pActUserTable->columnCount(); ++col)
+		{
+			ElidingTableWidgetItem* pwi = new ElidingTableWidgetItem("");
+			_pActUserTable->setItem(rowCnt, col, pwi);
+		}
+		qDebug("on_btnAddRow_clicked - row #%d added", rowCnt);
 	}
-	qDebug("on_btnAddRow_clicked - row #%d added", row);
+	int row = _cntRowsWithData[ActualTab()];
+	if (ActualTab())
+	{
+		ui.tblUserFuncs->selectRow(row);
+		ui.tblUserFuncs->setFocus();
+		on_tblUserFuncs_cellDoubleClicked(row, 0);
+	}
+	else
+	{
+		ui.tblUserVars->setFocus();
+		ui.tblUserVars->selectRow(row);
+		on_tblUserVars_cellDoubleClicked(_cntRowsWithData[0], 0);
+	}
 }
 
 void VariablesFunctionsDialog::on_tblUserVars_currentItemChanged(QTableWidgetItem* current, QTableWidgetItem* previous)
@@ -266,9 +313,9 @@ void VariablesFunctionsDialog::on_tblUserVars_currentItemChanged(QTableWidgetIte
 
 void VariablesFunctionsDialog::on_tblUserVars_cellDoubleClicked(int row, int col)
 {
-	QTableWidgetItem* pItem = pItem = ui.tblBuiltinFuncs->item(row, col);
+	QTableWidgetItem* pItem = pItem = ui.tblUserVars->item(row, col);
 	if (pItem)
-		ui.tblBuiltinFuncs->editItem(pItem);
+		ui.tblUserVars->editItem(pItem);
 }
 
 void VariablesFunctionsDialog::on_tblUserFuncs_currentItemChanged(QTableWidgetItem* current, QTableWidgetItem* previous)
@@ -288,8 +335,8 @@ void VariablesFunctionsDialog::on_tblUserVars_cellChanged(int row, int col)
 		return;
 	QString qsCellData = _GetItemText(ui.tblUserVars, row, col);
 	_changed[VARIABLES] = _changed[VARIABLES] || _sTmp != qsCellData;
+	_EnableButtons();
 	qDebug("on_tblUserVars_cellChanged at (%d,%d) _changed: %s", row, col,_changed ? "yes" :"no");
-	ui.btnSave->setEnabled(_changed);
 }
 
 void VariablesFunctionsDialog::on_tblUserFuncs_cellChanged(int row, int col)
@@ -299,14 +346,14 @@ void VariablesFunctionsDialog::on_tblUserFuncs_cellChanged(int row, int col)
 	
 	QString qsCellData = _GetItemText(ui.tblUserVars, row, col);
 	_changed[FUNCTIONS] = _changed[FUNCTIONS] || _sTmp != qsCellData;
-	ui.btnSave->setEnabled(_changed);
+	_EnableButtons();
 }
 
 void VariablesFunctionsDialog::on_tblUserFuncs_cellDoubleClicked(int row, int col)
 {
-	QTableWidgetItem *pItem = pItem = ui.tblBuiltinFuncs->item(row, col);
+	QTableWidgetItem *pItem = pItem = ui.tblUserFuncs->item(row, col);
 	if (pItem)
-		ui.tblBuiltinFuncs->editItem(pItem);
+		ui.tblUserFuncs->editItem(pItem);
 }
 
 
@@ -495,6 +542,40 @@ void VariablesFunctionsDialog::_CollectFrom(int table)
 			break;
 		}
 	ui.btnSave->setEnabled(_changed[0] || _changed[1]);
+}
+
+void VariablesFunctionsDialog::_EnableButtons()
+{
+	ui.btnSave->setEnabled(_changed[VARIABLES] || _changed[FUNCTIONS] || _undoStack.size());
+		
+	(void)_GetActualDataCount(-1);
+	ui.btnRemoveAll->setEnabled(_cntRowsWithData[ActualTab()]);
+
+	ui.btnRemoveRow->setEnabled(!_pActUserTable->selectedItems().isEmpty() && 
+		                        !_pActUserTable->selectedItems()[0]->text().isEmpty());
+	ui.btnUndo->setEnabled(_undoStack.size());
+
+}
+
+bool VariablesFunctionsDialog::_GetActualDataCount(int index)
+{
+	auto GetCnt = [](QTableWidget* ptw)
+		{
+			int cnt = 0;
+			for (int r = 0; r < ptw->rowCount(); ++r)
+				if (ptw->item(r, 0) != nullptr && !ptw->item(r, 0)->text().isEmpty())
+					++cnt;
+			return cnt;
+		};
+
+	if (index == VARIABLES || index < 0)
+			_cntRowsWithData[VARIABLES] = GetCnt(ui.tblUserVars);
+	if (index == FUNCTIONS || index < 0)
+			_cntRowsWithData[FUNCTIONS] = GetCnt(ui.tblUserFuncs);
+	return index == VARIABLES ?
+			_cntRowsWithData[VARIABLES] != 0:
+					index == FUNCTIONS ? _cntRowsWithData[FUNCTIONS] != 0 :
+						(_cntRowsWithData[VARIABLES] + _cntRowsWithData[FUNCTIONS]) != 0;
 }
 
 void VariablesFunctionsDialog::SlotSelectTab(int tab)

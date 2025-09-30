@@ -19,7 +19,8 @@ namespace FalconCalc {
 
 
 /*=============================================================
- * TASK   :	crete an elided text for display 
+ * TASK   :	crete an elided text only for display. 
+ *			Keeps the full text of the item intact
  * PARAMS :
  * EXPECTS:
  * GLOBALS:
@@ -78,7 +79,7 @@ public:
 	VariablesFunctionsDialog(int initialTabIndex, QWidget* parent = nullptr);
 	~VariablesFunctionsDialog();
 
-	int ActualTab() const { return ui.tabHeader->currentIndex(); }
+	inline int ActualTab() const { return ui.tabHeader->currentIndex(); }
 signals:
 	void SignalVarFuncClose();
 	void SignalTabChange(int tab);
@@ -110,14 +111,23 @@ private:
 
 	static int _colW[2][4];		// column widths
 	bool _changed[2] = { false,false };
+	int _cntRowsWithData[2] = { 0,0 }; // count of rows with data (not empty)
 	bool _busy = false;
 	QString _sTmp;	// for table cell change
 
 	int _snapPixelLimit = 30;	// pixels snap if inside this distance from, main window
 	int _snapDist = 0;			// when '_snapped' is true: distance from '_snappedToSide'
 
-	QStack<QPair<int, QVector<ElidingTableWidgetItem*>>> _removedVarRows, _removedFuncRows;
-	QStack<QPair<int, QVector<ElidingTableWidgetItem*>>>* _pActStack;
+	QTableWidget* _pActUserTable;
+	struct UndoItem
+	{
+		int table=-1; // 0: variables, 1: functions
+		QVector< QPair<int, QVector<ElidingTableWidgetItem* >>>  data; // first: row, second columns
+
+		bool IsValid() const { return table >= 0 && !data.isEmpty(); }
+	};
+	QStack<UndoItem> _undoStack;
+
 private:
 	QString _GetItemText(QTableWidget *table, int row, int col); // not const: sets _sTmp too
 	void _FillBuiltinFuncTable();
@@ -129,8 +139,9 @@ private:
 	//void _Serialize(VarFuncInfoQt *pvf=nullptr);    // user functions and variables into _vf
 	void _AddCellText(QTableWidget* ptw, int row, int col, QString text);
 	void _CollectFrom(int index);	// from index-th grid to RowDataMap
+	bool _GetActualDataCount(int index);	//0: variables, 1: functions
+	void _EnableButtons();
 private:
 	Ui::VariablesFunctionsDialogClass ui;
 
-	QTableWidget* _pActUserTable;
 };
