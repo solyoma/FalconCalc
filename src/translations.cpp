@@ -220,6 +220,7 @@ static _LanguageTexts_private __texts[] = {
                         L" system FalconCalc will try to use a similar one (for example: if you set en_GB but only en_US is installed it will use en_US).", 
 	 // WARNING: if I further split this Hungarian string into parts, the compiler gives a warning and the runtime 
      // will show ? characters instead of ő and ű!
+     // Maybe it wasnt just me leaving the L out in front of the lines<
 						L"A nyelvi környezet neve 2, 3 vagy 5-8 (általában) kisbetűből all - ez határozza meg a nyelvet-, amit kötőjel és ugyancsak kötőjellel elválasztott betűcsoportok követnek."
                         L"Pl. hu-HU, en-US, de-DE, zh-yue-HK (ez. ugyan az mint a yue-HK). Kötőjel helyett sokszor a nem szabványos aláhúzás szerepel. "
                         L"Speciális név a 'C' környezet, ami az en-US -hez hasonló. A nyelvi környezet és a program nyelve nem kell azonos legyen"},
