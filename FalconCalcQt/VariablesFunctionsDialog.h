@@ -119,6 +119,7 @@ private:
 	QStack<QPair<int, QVector<ElidingTableWidgetItem*>>> _removedVarRows, _removedFuncRows;
 	QStack<QPair<int, QVector<ElidingTableWidgetItem*>>>* _pActStack;
 private:
+	QString _GetItemText(QTableWidget *table, int row, int col); // not const: sets _sTmp too
 	void _FillBuiltinFuncTable();
 	void _FillUserFuncTable();
 	void _FillFuncTables();

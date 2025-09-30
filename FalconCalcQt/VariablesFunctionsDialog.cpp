@@ -260,12 +260,14 @@ void VariablesFunctionsDialog::on_tblUserVars_currentItemChanged(QTableWidgetIte
 		colc = current ? current->column() : -1;
 	qDebug("on_tblUserVars_currentItemChanged from (%d,%d) to (%d,%d)", rowp, colp, rowc, colc);
 	// /DEBUG
-	_sTmp = ui.tblUserVars->item(rowc, colc)->text();
+	_GetItemText(ui.tblUserVars,rowc, colc);
 }
 
 void VariablesFunctionsDialog::on_tblUserVars_cellDoubleClicked(int row, int col)
 {
-	_sTmp = ui.tblUserVars->item(row, col)->text();
+	QTableWidgetItem* pItem = pItem = ui.tblBuiltinFuncs->item(row, col);
+	if (pItem)
+		ui.tblBuiltinFuncs->editItem(pItem);
 }
 
 void VariablesFunctionsDialog::on_tblUserFuncs_currentItemChanged(QTableWidgetItem* current, QTableWidgetItem* previous)
@@ -283,7 +285,7 @@ void VariablesFunctionsDialog::on_tblUserVars_cellChanged(int row, int col)
 {
 	if (_busy)
 		return;
-	QString qsCellData = ui.tblUserVars->item(row, col)->text();
+	QString qsCellData = _GetItemText(ui.tblUserVars, row, col);
 	_changed[VARIABLES] = _changed[VARIABLES] || _sTmp != qsCellData;
 	qDebug("on_tblUserVars_cellChanged at (%d,%d) _changed: %s", row, col,_changed ? "yes" :"no");
 	ui.btnSave->setEnabled(_changed);
@@ -293,15 +295,25 @@ void VariablesFunctionsDialog::on_tblUserFuncs_cellChanged(int row, int col)
 {
 	if (_busy)
 		return;
-	QString qsCellData = ui.tblUserVars->item(row, col)->text();
+	
+	QString qsCellData = _GetItemText(ui.tblUserVars, row, col);
 	_changed[FUNCTIONS] = _changed[FUNCTIONS] || _sTmp != qsCellData;
 	ui.btnSave->setEnabled(_changed);
 }
 
 void VariablesFunctionsDialog::on_tblUserFuncs_cellDoubleClicked(int row, int col)
 {
+	QTableWidgetItem *pItem = pItem = ui.tblBuiltinFuncs->item(row, col);
+	if (pItem)
+		ui.tblBuiltinFuncs->editItem(pItem);
 }
 
+
+QString VariablesFunctionsDialog::_GetItemText(QTableWidget *table, int row, int col)
+{
+	QTableWidgetItem *pItem = pItem = table->item(row, col);
+	return (_sTmp = pItem ? pItem->text() : "");
+}
 
 void VariablesFunctionsDialog::_FillBuiltinFuncTable()
 {
@@ -462,12 +474,12 @@ void VariablesFunctionsDialog::_CollectFrom(int table)
 	pDm->clear();
 	for (int row = 1; row < ptw->rowCount(); ++row)
 	{
-		if (!ptw->item(row,0)->text().isEmpty() && !ptw->item(row, 1)->text().isEmpty())
+		if (!_GetItemText(ptw,row,0).isEmpty() && !_GetItemText(ptw, row, 1).isEmpty())
 		{
-			rd.cols[0] = SmartString(ptw->item(row, 1)->text());		// name
+			rd.cols[0] = SmartString(ptw->item(row, 0)->text());		// name
 			rd.cols[1] = SmartString(ptw->item(row, 1)->text());		// body/definition
-			rd.cols[2] = SmartString(ptw->item(row, 1)->text());		// unit
-			rd.cols[3] = SmartString(ptw->item(row, 1)->text());		// description
+			rd.cols[2] = SmartString(ptw->item(row, 2)->text());		// unit
+			rd.cols[3] = SmartString(ptw->item(row, 3)->text());		// description
 		}
 		(*pDm)[rd.cols[0]] = rd;			// actual is always set
 	}
