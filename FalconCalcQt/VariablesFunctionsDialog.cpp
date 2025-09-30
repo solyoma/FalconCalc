@@ -84,6 +84,7 @@ VariablesFunctionsDialog::VariablesFunctionsDialog(int initialTabIndex, QWidget*
 		_pActUserTable = ui.tblUserVars;
 		_pActStack = &_removedVarRows;
 	}
+	ui.tabHeader->setCurrentIndex(initialTabIndex);
 	_busy = false;
 }
 
