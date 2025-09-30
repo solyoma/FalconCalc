@@ -7,6 +7,7 @@
 using namespace SmString;
 #include "LongNumber.h"
 using namespace LongNumber;
+#include <QStyleFactory>
 #include "common.h"
 #include "calculate.h"
 #include "FalconCalcQt.h"
@@ -79,9 +80,7 @@ static QString TranslateApp(QApplication &app, QTranslator &translator)
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-
-	//QString qs, qsn;
-	//qs = QLocale::system().name();
+	a.setStyle("fusion");
 
 	QTranslator translator;
 	TranslateApp(a, translator);
