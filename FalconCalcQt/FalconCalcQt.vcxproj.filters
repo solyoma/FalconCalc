@@ -96,6 +96,9 @@
     <ClInclude Include="..\src\common.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <QtUic Include="HistoryDialog.ui">
@@ -152,5 +155,10 @@
     <QtTranslation Include="translations\FalconCalcQt_hu.ts">
       <Filter>Translation Files</Filter>
     </QtTranslation>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="FalconCal.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
   </ItemGroup>
 </Project>

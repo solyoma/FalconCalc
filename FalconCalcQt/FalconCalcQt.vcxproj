@@ -144,6 +144,7 @@
     <QtMoc Include="AboutDialog.h" />
     <ClInclude Include="FCSettings.h" />
     <QtMoc Include="LocaleDlg.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="schemes.h" />
     <QtMoc Include="HelpDialog.h" />
     <QtMoc Include="HistoryOptions.h" />
@@ -157,6 +158,9 @@
   <ItemGroup>
     <QtTranslation Include="translations\FalconCalcQt_en.ts" />
     <QtTranslation Include="translations\FalconCalcQt_hu.ts" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="FalconCal.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">
