@@ -168,7 +168,6 @@ void VariablesFunctionsDialog::on_btnRemoveRow_clicked() // selected rows
 
 	auto selection = _pActUserTable->selectedRanges();	// only single range is allowed
 
-	qDebug("on_btnRemoveRow_clicked to remove rows #%d-%d", selection.at(0).topRow(), selection.at(0).bottomRow());
 	for (int r = selection.at(0).topRow(); r <= selection.at(0).bottomRow(); ++r)
 	{
 		if (!_GetItemText(_pActUserTable, r, 0).isEmpty())
@@ -178,10 +177,6 @@ void VariablesFunctionsDialog::on_btnRemoveRow_clicked() // selected rows
 			{
 				qDebug("  item (%d, %d) = %s", r, col, _pActUserTable->item(r, col)->text().toStdString().c_str());
 				columnData.append(reinterpret_cast<ElidingTableWidgetItem*>(_pActUserTable->takeItem(r, col)));
-#ifdef DEBUG
-				QString qs = columnData[col]->data(Qt::ToolTipRole).toString();
-				qDebug("  item #%d = %s", col, qs.toStdString().c_str());
-#endif
 			}
 			undoItem.data.push_back({ r, columnData });
 		}

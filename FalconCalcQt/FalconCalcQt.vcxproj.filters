@@ -157,7 +157,7 @@
     </QtTranslation>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="FalconCal.rc">
+    <ResourceCompile Include="FalconCalcQt.rc">
       <Filter>Resource Files</Filter>
     </ResourceCompile>
   </ItemGroup>

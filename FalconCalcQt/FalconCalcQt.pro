@@ -13,10 +13,10 @@ UI_DIR += ./Debug/Ui
 RCC_DIR += ./Debug/rcc
 win32:RC_FILE = FalconCalcQt.rc
 HEADERS += \
-	..\src\calculate.h	\
-	..\src\EngineErrors.h	\
-	..\src\LongNumber.h	\
-	..\src\SmartString.h	\
+	../src/calculate.h	\
+	../src/EngineErrors.h	\
+	../src/LongNumber.h	\
+	../src/SmartString.h	\
 	AboutDialog.h	\
 	FalconCalcQt.h	\
 	FCSettings.h	\
@@ -27,10 +27,10 @@ HEADERS += \
 	schemes.h		\
 	VariablesFunctionsDialog.h
 SOURCES += \
-	..\src\calculate.cpp	\
-	..\src\EngineErrors.cpp	\
-	..\src\LongNumber.cpp	\
-	..\src\SmartString.cpp	\
+	../src/calculate.cpp	\
+	../src/EngineErrors.cpp	\
+	../src/LongNumber.cpp	\
+	../src/SmartString.cpp	\
 	FalconCalcQt.cpp         \
 	FCSettings.cpp           \
 	HelpDialog.cpp           \
@@ -51,7 +51,8 @@ FORMS += \
 	VariablesFunctionDialog.ui
 	
 RESOURCES += FalconCalcQt.qrc
-INCLUDEPATH += .
+INCLUDEPATH += .;../src
+RC_FILE += FalconCalc.rc
 QMAKE_CXXFLAGS += -std=c++17 -Wno-unused-parameter -Wno-reorder
 QT += gui widgets network
 requires(qtConfig(filedialog))

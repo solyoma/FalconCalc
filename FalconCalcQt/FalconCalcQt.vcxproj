@@ -160,7 +160,7 @@
     <QtTranslation Include="translations\FalconCalcQt_hu.ts" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="FalconCal.rc" />
+    <ResourceCompile Include="FalconCalcQt.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">
