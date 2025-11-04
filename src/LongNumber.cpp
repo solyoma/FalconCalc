@@ -78,7 +78,7 @@ SmartString ToHexByte(uint16_t byte)
 //--------------------------------------
 SCharT RealNumber::_decPoint;
 size_t RealNumber::_maxExponent = 1024;	// absolute value of largest possible exponent of 10 in number
-size_t RealNumber::_maxLength = 100;	// maximum length of string
+size_t RealNumber::_maxLength = 60;		// maximum length of number string
 
 const RealNumber RealNumber::RN_0("0"), RealNumber::RN_1("1"), RealNumber::RN_2("2"), RealNumber::RN_3("3"), RealNumber::RN_4("4"), 
 				RealNumber::RN_5("5"), RealNumber::RN_6("6"), RealNumber::RN_7("7"), RealNumber::RN_8("8"), RealNumber::RN_9("9"), RealNumber::RN_10("10"),
@@ -358,8 +358,8 @@ RealNumber& RealNumber::operator++()
 {
 	if (IsNaN() || IsInf() || IsTooLong())
 		return *this;
-	RealNumber r("1");
-	operator+=(r);
+	;
+	operator+=(RealNumber::RN_1);
 	return *this;
 }
 
@@ -1711,20 +1711,15 @@ RealNumber RealNumber::_Multiply(const RealNumber& rnOther) const
 	left._sign *= rnOther._sign;		// sign of left is OK for any combination of arguments
 								// simple cases
 
-	if (IsNaN() || ( IsNull() && !rnOther.IsInf()) )
+	if (IsNaN() || IsInf() || ( IsNull() && !rnOther.IsInf()) )
 		return left;
-	// !Nan and not (0 * inf)
-	if (rnOther.IsNaN() || (!IsInf() && rnOther.IsNull()))
-	{
-		left = rnOther;
-		return left;
-	}
+	// !Nan and not Inf and not (0 * inf)
+	if (rnOther.IsNaN() || rnOther.IsNull())
+		return rnOther;
 	// neither is Nan and not (inf * 0) or (0 * inf)
 
-	if (IsInf() || rnOther.IsInf())
+	if (rnOther.IsInf())
 	{
-		if (IsInf())
-			return left;
 		left._SetInf();
 		return left;
 	}
@@ -1732,7 +1727,7 @@ RealNumber RealNumber::_Multiply(const RealNumber& rnOther) const
 	// neither is Inf or Nan, and not (inf * 0) or (0 * inf)
 
 	bool bLeftPure10P = IsPure10Power() ? true : false;
-	if (bLeftPure10P ||rnOther.IsPure10Power())
+	if (bLeftPure10P || rnOther.IsPure10Power())
 	{
 		left._exponent += rnOther._exponent - 1;
 		if (bLeftPure10P)
@@ -2442,42 +2437,55 @@ void RealNumber::_SubtractStrings(RealNumber& minuend, RealNumber& subtrahend) c
  * GLOBALS:
  * RETURNS: none
  * REMARKS:	- the result is returned in 'left'
+ *			- number strings may have been extended with leading zeros
+ *				so that their exponents match before multiplication
  *------------------------------------------------------------*/
 void RealNumber::_MultiplyTheStrings(RealNumber& left, RealNumber& right) const
 {
-	int		ll = (int)left. Precision(),	  // total string lengths
+	int		ll = (int)left. Precision(),	  // only  the string lengths
 			lr = (int)right.Precision(),
-			l = ll + lr+1;	// max length of result string with either no leading zeros or just a single one
-						//and an ending zero byte
-						// e.g. ll = l3 = 3, 100 x 100 = 10 000, l = 5 and 999 x 999 = 998 001 l = 6 = ll+lr
+			l = ll + lr + 1;	// max length of result string with either no leading zeros or just a single one
+						// and an ending zero byte
+						// e.g. ll = l3 = 3 -> l = ll+lr = 6 max length when no 0 digit at the front
+						// e.g. 100 x 100 = 10 000	length of result:5, 1 leading 0 byte + 1 for '\0' at end 
+						//      999 x 999 = 998 001 length of result:6, 1 leading 0 byte + 1 for '\0' at end
 	unsigned chZ = chZero.Unicode();	// usually chZ = 48 (= 0x30)
 
 	/*	  Multiply from right to left starting at the most significant digit of right
-	*		   ll			lr					   algorithm: put a 0 into start at the most significant digit in 'right'
-	* 		   ____			__								  multiply the non leading zero digits of left with actual and
-	*		0007234 * 00000056
-	*       --------
-	*		000000|
-	*			  |00
-	*			  | 36170
-	*			  |  43404
-	*       ---------------
-	*		000000|0405104
-	*              -------
-	*			    result
+	* 	  algorithm: put a 0 into start at the most significant digit in 'right'
+	* 				 multiply the non leading zero digits of left with actual
+	*		  ll	lr		  res			 These are values and not characters!
+	* 		 ____	__		_______			 e.g. 7 == '7' - '0'
+	*		 7234 * 56		0000000
+	*       --------		 |
+	*		 (ll)	   *5=>	 36170
+	*                  *6=>	  43404
+	*						-------
+	* 						0405104
 	*/
 		// for speed we use a fixed size zero delimited character array for the result
-	char* res = new char[l];
-	memset(res, 0, l);	  // reserve the first digit for overflow in the multiplication
-	char digL = 0, digR = 0, digMul = 0, digOvf = 0; // digit from left, right, result digit, overflow from prev multiplication, temporary for result
+	char* res = new char[l],// buffer for result. Each byte contains a decimal number 0..9, not a character!
+		* lefts = new char[ll], // buffer for left number string converted to decimal numbers 0..9
+		* rights = new char[lr]; // buffer for right number string converted to decimal numbers 0..9
+
+	memset(res, 0, l);	  	// also sets the ending '\0' byte
+							// reserve the first digit for overflow in the multiplication
+	char digL = 0, digR = 0, 	 //digits from left, right, 
+		 digMul = 0, digOvf = 0; //result digit, overflow from prev multiplication, temporary for result
+
+	// for faster operation prepare strings to contain decimal numbers 0..9 instead of characters '0'..'9'
+	for(int i =0; i < ll; ++i)
+		lefts[i] = (char)(left._numberString[i] - chZ);
+	for(int i =0; i < lr; ++i)
+		rights[i] = (char)(right._numberString[i] - chZ);
 
 	for (int ir = 0; ir < lr; ++ir)	// index in right string from most significant digit
 	{
-		digR = (char)right._numberString[ir] - chZ;
+		digR = rights[ir];
 		digOvf = 0;
 		for (int il = ll - 1; il >= 0; --il)	// index in left string from least significant digit
 		{
-			digL = (char)left._numberString[il]- chZ;
+			digL = lefts[il];
 			digMul = digR * digL + digOvf;						// may be larger than 10	Example: 3 * 5 = 15		digMul = 0x0F
 			res[ir + il + 1] += digMul;							// this also						 9 + 15 = 24	res[ir+il] = 0x18
 			if (res[ir + il + 1] > 9)							// 
@@ -2488,7 +2496,8 @@ void RealNumber::_MultiplyTheStrings(RealNumber& left, RealNumber& right) const
 			else
 				digOvf = 0;
 		}
-		res[ir] += digOvf;	 // ignore WS Warning C6385: Reading invalid data from 'res':  the readable size is 'l' bytes, but '1' bytes may be read.
+		res[ir] += digOvf;	 // ignore WS Warning C6385: "Reading invalid data from 'res':  
+							 // the readable size is 'l' bytes, but '2' bytes may be read."
 		digOvf = 0;
 		for (int j = ir; j >= 0; --j)
 		{
@@ -2516,8 +2525,13 @@ void RealNumber::_MultiplyTheStrings(RealNumber& left, RealNumber& right) const
 	for (int i = 1; i < l-1; ++i)
 		res[i] += chZ;
 	left._numberString = res[0] ? res : res+1;
+	if(left._numberString.length() > _maxLength)
+		left.RoundToDigits(_maxLength);
+
 	if (!res[0])
 		--left._exponent;
+	delete[] lefts;
+	delete[] rights;
 	delete[] res;
 }
 
@@ -2912,18 +2926,18 @@ RealNumber exp(RealNumber power)						// e^x = e^(int(x)) x e^(frac(x))
 	RealNumber	rnIntPart = power.Int().Abs(),		    // because e^(-x) = 1/e^x and Taylor formula for e^(-x) has very slow convergence
 				rnFracPart = power.Frac().Abs(),
 				res(RealNumber::RN_1);
-	rnIntPart = e.value.Pow(rnIntPart);	// this will not call exp()	for integer powers
+	rnIntPart = e.value.Pow(rnIntPart);	// = e^(int(x)), Pow will not call exp() for integer powers
 	if (!rnFracPart.IsNull())
 	{
-		RealNumber x(rnFracPart), resp(zero), xn, fact(RealNumber::RN_1);
+		RealNumber x(rnFracPart), resp(zero), xn, factp(RealNumber::RN_1);
 		// tailor series for fractional part: e^x = 1 + sum_1^inf(x^n/n!)
-		int n = 1;			// fract^n is calculated by fract^n = x*fract, x = fract^(n-1)
+		int n = 1;			// fract^n is calculated by fract^n = fract * fract^(n-1)
 		while ((res - resp).Abs() > epsilon || n < (int)RealNumber::MaxLength())
 		{
 			resp = res;
-			res += x / fact;
+			res += x * factp;
 			x = x * rnFracPart;
-			fact = fact * RealNumber(++n);
+			factp = factp / RealNumber(++n);
 		}
 	}
 	res *= rnIntPart;

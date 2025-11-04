@@ -203,6 +203,7 @@ public:
 	SmartStringVector(const SmartString s, const SCharT ch, bool keepEmpty, bool trim);
 	SmartStringVector(const SmartString s, SmartString regex, bool keepEmpty, bool trim);
 	SmartStringVector(const SmartStringVector &sv):std::vector<SmartString>(sv) {}
+	SmartStringVector& operator=(const SmartStringVector& sv) { std::vector<SmartString>::operator=(sv); return *this; }
 
 	bool IsSorted() const { return _isSorted; }
 	bool isCaseSensitive() const { return _caseSens == SmartString::CaseSens::csCaseSensitive; }

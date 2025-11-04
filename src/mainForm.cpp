@@ -1502,13 +1502,13 @@ void TfrmMain::_CBInfixChanged(void *pParams)
     }
 	--_busy;
 }
-
+					  // called when current index changed for combo box
 void TfrmMain::cbInfixChanged(void* sender, nlib::EventParameters param)
 {
 	CBIndexChangedParams params;
 	_CBInfixChanged(&params);
 }
-
+					  // called when typing changed the text in the combobox's edit box
 void TfrmMain::cbInfixTextChanged(void *sender, nlib::EventParameters param)
 {
 	_CBInfixChanged();

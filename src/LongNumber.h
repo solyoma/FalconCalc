@@ -14,7 +14,7 @@ namespace LongNumber {
 	//using namespace SmString;				// SmString::SmartString.h
 	extern const SmString::SCharT chZero;				// = (SmString::SCharT)'0';
 	extern const SmString::SCharT chOne;				// = (SmString::SCharT)'1';
-	constexpr const size_t MaxAllowedDigits = 65;	// !!! Modify this  - no number string can have more digits than this + LengthOverflow
+	constexpr const size_t MaxAllowedDigits = 60;	// !!! Modify this  - no number string can have more digits than this + LengthOverflow
 	constexpr const size_t LengthOverFlow = 2;		// add this to the _maxLength of a RealNumber to get the real maximum string length
 	constexpr const size_t TrigAccuracy = 58;		// max this many digits used for trigonometric functions
 
@@ -287,7 +287,7 @@ namespace LongNumber {
 			_GetDecPoint();
 			_FromNumberString();
 		}
-		// next constructor: digits has no decimal point or sign or exponent$
+		// next constructor: digits has no decimal point or sign or exponent!
 		explicit RealNumber(const SmString::SmartString& digits, int sign, int exponent) :
 			_sign(sign), _numberString(digits), _exponent(exponent)
 		{
@@ -406,7 +406,7 @@ namespace LongNumber {
 		RealNumber Pow(const RealNumber& power) const;
 
 		constexpr const SmString::SmartString& Mantissa() const { return _numberString; } // a.k.a. significand
-		constexpr int Exponent() const	// real 10's exponent, 0: 10^0-1, 1 : 10^1 = 10
+		constexpr int Exponent() const	// real 10's exponent as _exponent = (real exponent of 10) + 1
 		{
 			return _exponent - 1;
 		}

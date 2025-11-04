@@ -373,8 +373,22 @@ namespace FalconCalc
         Func() {};
         Func(const Func& var) { *this = var;}
         // This constructor is used for builtins only. They never get dirty
-        Func(const SCharT *desc, const RealNumber val/*, bool isNumber = false*/) :
-                desc(desc)/*, isnumber(isNumber)*/, value(val) {}
+        Func(const SCharT *desc, const RealNumber val) :desc(desc), value(val) {}
+
+        Func &operator=(const Func& other)
+        {
+            name = other.name;
+            body = other.body;
+            desc = other.desc;
+            unit = other.unit;
+            args = other.args;
+            value = other.value;
+            tokenVec = other.tokenVec;
+            dirty = other.dirty;
+            being_processed = other.being_processed;
+			return *this;
+        }
+
         // This operator is intended to be used only by 'FuncTable'
         // Were it used outside all other variable definitions should be checked
         // and marked dirty when needed

@@ -34,6 +34,14 @@ using namespace std;
 
 #include <math.h>
 
+#ifndef _MSC_VER
+    #include <math.h>
+    #define __CRTDECL
+    #define _Inout_
+#define OVERFLOW EOVERFLOW
+#define DOMAIN EDOM
+#endif
+
 int __CRTDECL  _matherr (_Inout_ struct _exception *a)
 {
     if (a->type == OVERFLOW)
@@ -1438,8 +1446,8 @@ RealNumber LittleEngine::Calculate()
 {
     try
     {
-        if(!_InfixToPostFix(infix) ) // then variable or function definition
-        {
+        if(!_InfixToPostFix(infix) ) // into 'tvPostFix' If fails
+        {                            // then variable or function definition
             resultType = ResultType::rtDefinition;
             return calcResult;
         }
@@ -1457,7 +1465,8 @@ RealNumber LittleEngine::Calculate()
         ;  // TO_DO : error handling
 	  throw; // unknown: re-throw
     }
-        return RealNumber::RN_0;
+
+    return RealNumber::RN_0;
 }
 
 /*========================================================
