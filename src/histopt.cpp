@@ -1,4 +1,5 @@
-﻿#include "Stdafx_zoli.h"
+﻿#include "common.h"
+#include "Stdafx_zoli.h"
 #include "stdafx_lc.h"
 
 using namespace nlib;

@@ -1,4 +1,6 @@
 ﻿#include <set>
+
+#include "common.h"
 #include "stdafx_zoli.h"
 #include "stdafx_lc.h"
 #undef max

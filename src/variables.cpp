@@ -1,4 +1,6 @@
 ﻿#include <set>
+
+#include "common.h"
 #include "stdafx_zoli.h"
 #include "stdafx_lc.h"
 #include "resource.h"
@@ -11,7 +13,6 @@ using namespace SmString;
 
 using namespace LongNumber;
 
-#include "common.h"
 #include "calculate.h"
 
 using namespace nlib;

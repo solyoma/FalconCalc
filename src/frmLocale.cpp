@@ -1,9 +1,9 @@
-﻿#include "stdafx_zoli.h"
+﻿#include "common.h"
+#include "stdafx_zoli.h"
 #include "stdafx_lc.h"
 #include "frmLocale.h"
 #include <locale>
 #include <codecvt>
-#include "common.h"
 #include "translations.h"
 
 TfrmLocale *frmLocale;
