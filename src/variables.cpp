@@ -577,9 +577,22 @@ void TfrmVariables::sgUserDoubleClick(void* sender, nlib::MouseButtonParameters 
 }
 
 void TfrmVariables::sgBuiltinDoubleClick(void* sender, nlib::MouseButtonParameters param)
-{
-	frmMain->cbInfix->SetSelText(sgBuiltin->Selected().x == 0 ? sgBuiltin->String(0, sgBuiltin->Selected().y) : sgBuiltin->String(1, sgBuiltin->Selected().y));
+{				
+	std::wstring ws;
 	frmMain->cbInfix->Focus();
+	if (_activeTab == FUNCTIONS)
+	{
+		ws = sgBuiltin->String(0, sgBuiltin->Selected().y);
+		ws = ws.substr(0, ws.find('(')+1) + frmMain->cbInfix->SelText();
+		if (frmMain->cbInfix->SelText().length())
+			ws += ')';
+
+	}
+	else
+		ws = sgBuiltin->String(1, sgBuiltin->Selected().y);
+														//	  column,		row
+	frmMain->cbInfix->SetSelText(ws);
+	//frmMain->cbInfix->Focus();
 }
 
 void TfrmVariables::sgUserEditorKeyDown(void *sender, nlib::KeyParameters param)
