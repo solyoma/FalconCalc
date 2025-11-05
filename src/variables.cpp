@@ -96,7 +96,7 @@ void TfrmVariables::InitializeFormAndControls() /* Control initialization functi
 	sgBuiltin->SetRowCount(5);
 	sgBuiltin->SetFixedColCount(0);
 	sgBuiltin->SetFixedRowCount(0);
-	sgBuiltin->SetSelectionKind(nlib::gskNoSelect);
+	sgBuiltin->SetSelectionKind(nlib::gskRowSelect);
 	sgBuiltin->SetColumnsResizable(true);
 	sgBuiltin->SetColWidth(0, 88);
 	sgBuiltin->SetColWidth(1, 64);
@@ -449,6 +449,7 @@ void TfrmVariables::tcVarsTabChange(void *sender, nlib::TabChangeParameters para
 		sgBuiltin->SetRowCount(constantsMap.size());
 		int i = 0;
 		DisplayFormat df;
+		df.mainFormat = NumberFormat::rnfSci;
 		
 		for (auto &it: constantsMap)
 		{
