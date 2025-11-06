@@ -264,7 +264,7 @@ void TfrmMain::InitializeFormAndControls() /* Control initialization function ge
 	tbPaste->SetParentFont(false);
 	tbPaste->SetParent(pToolbar);
 
-	cbInfix = new nlib::Combobox();
+	cbInfix = new MyComboBox;	// new nlib::Combobox();
 	cbInfix->SetBounds(nlib::Rect(8, 29, 492, 50));
 	cbInfix->SetAnchors(nlib::caLeft | nlib::caTop);
 	cbInfix->GetFont().SetFamily(L"Calibri");

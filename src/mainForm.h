@@ -9,6 +9,32 @@
 
 constexpr const int MAX_OUTPUT_WIDTH = 58;
 
+class MyComboBox : public nlib::Combobox
+{
+	virtual LRESULT WindowProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
+	{
+		switch (uMsg)
+		{
+			case WM_KILLFOCUS:
+			case wmFocusKilled:
+				// save seelction data as windows will unselect everything on looding focus
+				SelStartAndLength(_savedSelStart, _savedSelLength);
+				break;
+			case WM_SETFOCUS:
+			case wmFormActivated:
+				// restore selection data on getting focus
+				if(_savedSelLength >= 0)
+					SetSelStartAndLength(_savedSelStart, _savedSelLength);
+				break;
+			default:
+				break;
+		}
+		return nlib::Combobox::WindowProc(uMsg, wParam, lParam);
+	}
+private:
+	int _savedSelStart=0, _savedSelLength=-1;
+};
+
 class TfrmMain : public nlib::Form
 {
 public:
@@ -77,7 +103,7 @@ N_PUBLIC: /* Designer generated list of public members. Do not edit by hand. */
 	nlib::ToolButton* tbHistory;
 	nlib::ToolButton* tbCopy;
 	nlib::ToolButton* tbPaste;
-	nlib::Combobox* cbInfix;
+	MyComboBox* cbInfix;
 	nlib::Groupbox* gbResults;
 	nlib::Button* btnDecimal;
 	nlib::Button* btnHexadecimal;

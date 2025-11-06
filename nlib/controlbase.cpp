@@ -739,7 +739,9 @@ namespace NLIBNS
     {
         LRESULT result;
 
-        // Preventing background erasing and painting at the root of the message handling because we don't want derived classes to put their hands on these messages while a child control is being painted.
+        // Preventing background erasing and painting at the root of the message handling 
+        // because we don't want derived classes to put their hands on these messages while 
+        // a child control is being painted.
         if ((uMsg == WM_ERASEBKGND || uMsg == WM_PRINTCLIENT) && controlstate.contains(csChildPainting))
         {
             if (erasechild)

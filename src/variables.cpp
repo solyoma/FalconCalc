@@ -572,27 +572,69 @@ void TfrmVariables::sgUserKeyPress(void *sender, nlib::KeyPressParameters param)
 
 void TfrmVariables::sgUserDoubleClick(void* sender, nlib::MouseButtonParameters param)
 {
-	frmMain->cbInfix->SetSelText(sgUser->Selected().x == 0 ? sgUser->String(0, sgUser->Selected().y) : sgUser->String(1, sgUser->Selected().y));
+	std::wstring wsel, ws, we, wn;	// strings selection, before, after the selection and new text
+	int start, length;
 	frmMain->cbInfix->Focus();
+
+	wsel = frmMain->cbInfix->Text();						// original full text from combo box's edit control
+															// will be replaced by just the selection
+	frmMain->cbInfix->SelStartAndLength(start, length);		// after start and length determined
+	if (start < 0)
+		start = 0;
+	wn = sgUser->String(0, sgUser->Selected().y);			 // name of function/variable from string grid
+	ws = wsel.substr(0, start);								 // text before the selection
+	we = wsel.substr(start+length);							 // text after the selection
+
+	if (length)
+		wsel = wsel.substr(start, length);					 // just the selection
+	else
+		wsel.clear();
+
+	if (_activeTab == FUNCTIONS)
+	{
+		int nbrace = wn.find('(');
+		wn = wn.substr(0, nbrace+1) + wsel;
+		if (length)
+			wn += ')';
+	}
+	// variables: just the name is inside wn
+														//	  column,		row
+	frmMain->cbInfix->SetSelText(ws+wn+we);
 }
 
 void TfrmVariables::sgBuiltinDoubleClick(void* sender, nlib::MouseButtonParameters param)
 {				
-	std::wstring ws;
+	std::wstring wsel, ws, we, wn;	// strings selection, before, after the selection and new text
+	int start, length;
 	frmMain->cbInfix->Focus();
+
+	wsel = frmMain->cbInfix->Text();						// original full text from combo box's edit control
+															// will be replaced by just the selection
+	frmMain->cbInfix->SelStartAndLength(start, length);		// after start and length determined
+	if (start < 0)
+		start = 0;
+	wn = sgBuiltin->String(0, sgBuiltin->Selected().y);		// new text: name of function/variable from string grid
+	ws = wsel.substr(0, start);								// text before the selection
+	we = wsel.substr(start+length);							// text after the selection
+
+	if (length)
+		wsel = wsel.substr(start, length);					// just the selection
+	else
+		wsel.clear();
+
 	if (_activeTab == FUNCTIONS)
 	{
-		ws = sgBuiltin->String(0, sgBuiltin->Selected().y);
-		ws = ws.substr(0, ws.find('(')+1) + frmMain->cbInfix->SelText();
-		if (frmMain->cbInfix->SelText().length())
-			ws += ')';
-
+		int nbrace = wn.find('(');
+		wn = wn.substr(0, nbrace+1) + wsel;
+		if (length)
+			wn += ')';
+		wsel.clear();
 	}
-	else
-		ws = sgBuiltin->String(1, sgBuiltin->Selected().y);
+	// variables: just the name is inside wn
 														//	  column,		row
-	frmMain->cbInfix->SetSelText(ws);
-	//frmMain->cbInfix->Focus();
+	frmMain->cbInfix->SetText(ws+wn+wsel+we);
+	frmMain->cbInfix->SetSelStartAndLength(start + wn.length(), 0);
+	frmMain->cbInfixTextChanged(this, nlib::EventParameters());
 }
 
 void TfrmVariables::sgUserEditorKeyDown(void *sender, nlib::KeyParameters param)

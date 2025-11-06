@@ -3012,7 +3012,11 @@ static inline RealNumber deg2rad(RealNumber deg)
 static bool _sinCalcOn = false;
 
 static RealNumber _sin(RealNumber r)		// sine	(RAD)	0<= r <= 2*pi =>  0 <= _sin <= 1
-{ 
+{ 	
+	if (r.IsInf())
+		r = NaN;
+	if (r.IsNaN())
+		return r;
 	// from https://github.com/nlitsme/gnubc/blob/master/bc/libmath.b
 	// Sin(x)  uses the standard series:
 	//sin(x) = x - x^3/3! + x^5/5! - x^7/7! ...
@@ -3188,6 +3192,11 @@ RealNumber csc(RealNumber r, AngularUnit angu)		// cosecant = 1/sine
 
 RealNumber cos(RealNumber r, AngularUnit angu)		// cosine
 {
+	if (r.IsInf())
+		r = NaN;
+	if (r.IsNaN())
+		return r;
+
 	RealNumber epsilon = RealNumber("1e-40");
 	const RealNumber &rn30 = RealNumber::RN_30,
 					 &rn60 = RealNumber::RN_60,	
@@ -3258,7 +3267,7 @@ RealNumber cot(RealNumber r, AngularUnit angu)		// cotangent
 RealNumber asin(RealNumber r, AngularUnit angu)		// sine
 {
 	// fast answers
-	if (r.Abs() > RealNumber::RN_1)
+	if (r.Abs() > RealNumber::RN_1 || r  == NaN || r == Inf)
 		return NaN;
 	if (r.IsNull())
 		return zero;
