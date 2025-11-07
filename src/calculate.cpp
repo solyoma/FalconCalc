@@ -1491,10 +1491,20 @@ bool LittleEngine::SaveUserData(bool force)
     if (clean)
         return true;
 
+	static bool backedUp = false;
+
+    SmString::UTF8String u8Name = ssNameOfDatFile.toUtf8String();
+	std::remove((u8Name + ".bak").c_str()); // remove old backup
+	std::rename(u8Name.c_str(), (u8Name + ".bak").c_str());
+
     std::ofstream ofs;
-	ofs.open(ssNameOfDatFile.toUtf8String(), ios_base::out);
-	if( ofs.fail() )
-			return false;
+	ofs.open(u8Name.c_str(), ios_base::out);
+    if (ofs.fail())
+    {
+		// name back to original
+	    std::rename((u8Name + ".bak").c_str(), u8Name.c_str());
+        return false;
+    }
     //std::locale locutf8(std::locale(), new std::codecvt_utf8<char16_t>);
     //ofs.imbue(locutf8);
 
@@ -1517,6 +1527,7 @@ bool LittleEngine::SaveUserData(bool force)
     //    ofs << vf.Serialize(1);
 
     ofs.close();
+    backedUp = true;
     clean = true;
     return true;
 }
@@ -1722,12 +1733,6 @@ void LittleEngine::AddUserFunctions(const SmartStringVector& sv)
 	Func f;
 	for (auto& s : sv)
 	{
-		f.name = sv[0];
-		f.body = sv[1];
-		f.unit = sv[2];
-		f.desc = sv[3];
-
-		functions[f.name] = f; // pushes back to index-th vector
 		try
 		{
 			ip._InfixToPostFix(s);

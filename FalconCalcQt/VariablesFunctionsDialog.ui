@@ -142,6 +142,9 @@
                    <property name="styleSheet">
                     <string notr="true"/>
                    </property>
+                   <property name="editTriggers">
+                    <set>QAbstractItemView::NoEditTriggers</set>
+                   </property>
                    <property name="alternatingRowColors">
                     <bool>true</bool>
                    </property>
@@ -375,6 +378,9 @@
                  </item>
                  <item>
                   <widget class="QTableWidget" name="tblUserFuncs">
+                   <property name="editTriggers">
+                    <set>QAbstractItemView::NoEditTriggers</set>
+                   </property>
                    <property name="alternatingRowColors">
                     <bool>true</bool>
                    </property>
@@ -573,7 +579,7 @@
            <string>remove all</string>
           </property>
           <property name="icon">
-           <iconset resource="FalconCalcQt.qrc">
+           <iconset>
             <normaloff>:/FalconCalcQt/Resources/trashcan.png</normaloff>:/FalconCalcQt/Resources/trashcan.png</iconset>
           </property>
          </widget>
@@ -587,7 +593,7 @@
            <string>...</string>
           </property>
           <property name="icon">
-           <iconset resource="FalconCalcQt.qrc">
+           <iconset>
             <normaloff>:/FalconCalcQt/Resources/undo-small.png</normaloff>:/FalconCalcQt/Resources/undo-small.png</iconset>
           </property>
          </widget>
@@ -638,7 +644,7 @@
            <string>...</string>
           </property>
           <property name="icon">
-           <iconset resource="FalconCalcQt.qrc">
+           <iconset>
             <normaloff>:/FalconCalcQt/Resources/add.png</normaloff>:/FalconCalcQt/Resources/add.png</iconset>
           </property>
          </widget>
@@ -661,7 +667,7 @@
            <string>remove</string>
           </property>
           <property name="icon">
-           <iconset resource="FalconCalcQt.qrc">
+           <iconset>
             <normaloff>:/FalconCalcQt/Resources/minus.png</normaloff>:/FalconCalcQt/Resources/minus.png</iconset>
           </property>
          </widget>

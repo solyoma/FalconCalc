@@ -124,6 +124,7 @@
     <QtUic Include="LocaleDlg.ui" />
     <QtUic Include="HelpDialog.ui" />
     <QtUic Include="HistoryOptions.ui" />
+    <QtUic Include="VarFuncDefDialog.ui" />
     <QtUic Include="VariablesFunctionsDialog.ui" />
     <QtUic Include="FalconCalcQt.ui" />
     <QtMoc Include="FalconCalcQt.h" />
@@ -141,6 +142,7 @@
     <ClInclude Include="..\src\EngineErrors.h" />
     <ClInclude Include="..\src\LongNumber.h" />
     <ClInclude Include="..\src\SmartString.h" />
+    <QtMoc Include="VarFuncDefDialog.h" />
     <QtMoc Include="AboutDialog.h" />
     <ClInclude Include="FCSettings.h" />
     <QtMoc Include="LocaleDlg.h" />

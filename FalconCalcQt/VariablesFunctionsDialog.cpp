@@ -5,6 +5,7 @@
 
 using namespace FalconCalc;
 
+#include "VarFuncdefDialog.h"
 #include "VariablesFunctionsDialog.h"
 
 constexpr const int	VARIABLES = 0,
@@ -301,16 +302,47 @@ void VariablesFunctionsDialog::on_tblUserVars_currentItemChanged(QTableWidgetIte
 		colp = previous ? previous->column() : -1,
 		rowc = current ? current->row() : -1,
 		colc = current ? current->column() : -1;
-	qDebug("on_tblUserVars_currentItemChanged from (%d,%d) to (%d,%d)", rowp, colp, rowc, colc);
+	//qDebug("on_tblUserVars_currentItemChanged from (%d,%d) to (%d,%d)", rowp, colp, rowc, colc);
 	// /DEBUG
 	_GetItemText(ui.tblUserVars,rowc, colc);
 }
 
+void VariablesFunctionsDialog::_UserTableEditCommon(QTableWidget* ptw, int row, int col)
+{
+	QTableWidgetItem* pItem;
+	VarFuncData vfd;  
+	if ((pItem = ptw->item(row, 0)))
+	{
+		vfd.name = _GetItemText(ptw, row, 0);
+		vfd.body = _GetItemText(ptw, row, 1);
+		vfd.unit = _GetItemText(ptw, row, 2);
+		vfd.comment = _GetItemText(ptw, row, 3);
+		vfd.isFunction = (ptw == ui.tblUserFuncs);
+		VarFuncDefDialog vfdDialog(vfd, this);
+		if(vfdDialog.exec() == QDialog::Accepted)
+		{
+			_changed[vfd.isFunction] |= (vfd.name != _GetItemText(ptw, row, 0)) ||
+										(vfd.body != _GetItemText(ptw, row, 1)) ||
+										(vfd.unit != _GetItemText(ptw, row, 2)) ||
+										(vfd.comment != _GetItemText(ptw, row, 3));
+			_AddCellText(ptw, row, 0, vfd.name);
+			_AddCellText(ptw, row, 1, vfd.body);
+			_AddCellText(ptw, row, 2, vfd.unit);
+			_AddCellText(ptw, row, 3, vfd.comment);
+
+			ui.btnSave->setEnabled(_changed[0] || _changed[1]);
+		}
+		// modify calculator data
+
+	}
+}
+
 void VariablesFunctionsDialog::on_tblUserVars_cellDoubleClicked(int row, int col)
 {
-	QTableWidgetItem* pItem = pItem = ui.tblUserVars->item(row, col);
-	if (pItem)
-		ui.tblUserVars->editItem(pItem);
+	if (col == 0) // only name column
+		_TableDoubleClickedCommon(ui.tblUserVars,row,col);
+	else
+		_UserTableEditCommon(ui.tblUserVars,row,col);
 }
 
 void VariablesFunctionsDialog::on_tblUserFuncs_currentItemChanged(QTableWidgetItem* current, QTableWidgetItem* previous)
@@ -320,7 +352,7 @@ void VariablesFunctionsDialog::on_tblUserFuncs_currentItemChanged(QTableWidgetIt
 		colp = previous ? previous->column() : -1,
 		rowc = current ? current->row() : -1,
 		colc = current ? current->column() : -1;
-	qDebug("on_tblUserFuncs_currentItemChanged from (%d,%d) to (%d,%d)", rowp, colp, rowc, colc);
+	//qDebug("on_tblUserFuncs_currentItemChanged from (%d,%d) to (%d,%d)", rowp, colp, rowc, colc);
 	// /DEBUG
 }
 
@@ -331,7 +363,7 @@ void VariablesFunctionsDialog::on_tblUserVars_cellChanged(int row, int col)
 	QString qsCellData = _GetItemText(ui.tblUserVars, row, col);
 	_changed[VARIABLES] = _changed[VARIABLES] || _sTmp != qsCellData;
 	_EnableButtons();
-	qDebug("on_tblUserVars_cellChanged at (%d,%d) _changed: %s", row, col,_changed ? "yes" :"no");
+	//qDebug("on_tblUserVars_cellChanged at (%d,%d) _changed: %s", row, col,_changed ? "yes" :"no");
 }
 
 void VariablesFunctionsDialog::on_tblUserFuncs_cellChanged(int row, int col)
@@ -346,16 +378,36 @@ void VariablesFunctionsDialog::on_tblUserFuncs_cellChanged(int row, int col)
 
 void VariablesFunctionsDialog::on_tblUserFuncs_cellDoubleClicked(int row, int col)
 {
-	QTableWidgetItem *pItem = pItem = ui.tblUserFuncs->item(row, col);
-	if (pItem)
-		ui.tblUserFuncs->editItem(pItem);
+	if (col == 0) // only name column
+		_TableDoubleClickedCommon(ui.tblUserFuncs, row, col);
+	else
+		_UserTableEditCommon(ui.tblUserFuncs,row,col);
+}
+
+void VariablesFunctionsDialog::_TableDoubleClickedCommon(QTableWidget* ptw, int row, int col)
+{
+	   QString name = _GetItemText(ptw, row, 0);
+	   if ((ptw == ui.tblBuiltinFuncs) || (ptw == ui.tblUserFuncs))
+		   name = name.mid(0, name.indexOf('(')+1); // remove arguments)
+
+	   emit SignalTableDoubleClicked(name);
+}
+
+void VariablesFunctionsDialog::on_tblBuiltinVars_cellDoubleClicked(int row, int col)
+{
+	_TableDoubleClickedCommon(ui.tblBuiltinVars, row, col);
+}
+
+void VariablesFunctionsDialog::on_tblBuiltinFuncs_cellDoubleClicked(int row, int col)
+{
+	_TableDoubleClickedCommon(ui.tblBuiltinFuncs, row, col);
 }
 
 
 QString VariablesFunctionsDialog::_GetItemText(QTableWidget *table, int row, int col)
 {
 	QTableWidgetItem *pItem = pItem = table->item(row, col);
-	return (_sTmp = pItem ? pItem->text() : "");
+	return (_sTmp = pItem ? pItem->toolTip() : "");
 }
 
 void VariablesFunctionsDialog::_FillBuiltinFuncTable()

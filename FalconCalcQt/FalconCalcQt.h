@@ -182,6 +182,8 @@ private slots:
     void _SlotVarsFuncsClosing();
     void _SlotVarFuncMoved();
     void _SlotVarTabChanged(int newTab);
+    void _SlotVarFuncTableDoubleClicked(QString& name);
+
     //void _SlotVarFuncSaved(FalconCalc::RowDataMap& vf);
 
 private: 

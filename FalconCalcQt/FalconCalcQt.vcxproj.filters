@@ -119,6 +119,9 @@
     <QtUic Include="LocaleDlg.ui">
       <Filter>Form Files</Filter>
     </QtUic>
+    <QtUic Include="VarFuncDefDialog.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="HistoryDialog.h">
@@ -137,6 +140,9 @@
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="LocaleDlg.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="VarFuncDefDialog.h">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>

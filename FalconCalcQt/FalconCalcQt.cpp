@@ -288,6 +288,7 @@ void FalconCalcQt::_EditVarsCommon(int which)
 		connect(this, &FalconCalcQt::_SignalSelectTab, _pVF, &VariablesFunctionsDialog::SlotSelectTab);
 		connect(this, &FalconCalcQt::_SignalSetColWidths, _pVF, &VariablesFunctionsDialog::SlotSetColWidths);
 		connect(_pVF, &VariablesFunctionsDialog::SignalVarFuncMoved, this, &FalconCalcQt::_SlotVarFuncMoved);
+		connect(_pVF, &VariablesFunctionsDialog::SignalTableDoubleClicked, this, &FalconCalcQt::_SlotVarFuncTableDoubleClicked);
 		//connect(_pVF, &VariablesFunctionsDialog::SignalVarFuncSaved, this, &FalconCalcQt::_SlotVarFuncSaved);
 		_actTab = which;
 		ui.actionEditFunc->setChecked(which);
@@ -1455,5 +1456,33 @@ void FalconCalcQt::_SlotHistMoved()
 void FalconCalcQt::_SlotVarTabChanged(int newTab)
 {
 	_actTab = newTab;
+}
+
+void FalconCalcQt::_SlotVarFuncTableDoubleClicked(QString& name)
+{
+	ui.cbInfix->setFocus();
+	QLineEdit* ple = ui.cbInfix->lineEdit();
+	QString qs = ple->text();
+	int cp = ple->cursorPosition();
+	int start = ple->selectionStart(), // no selection => start = -1
+		len = ple->selectionLength();
+	bool isFunc = name.endsWith('(');
+	int namelen = name.length();
+
+	if (start >= 0)		  // variables:replace selection with 'name'
+	{					  // functions: add selection to name + closing bracket
+		cp = start;
+		if (isFunc)
+		{
+			name += ui.cbInfix->lineEdit()->selectedText() + ')';
+			namelen = name.length();
+		}
+	}
+	else
+		start = cp;
+	qs = qs.left(start) + name + qs.mid(start + len);
+
+	ui.cbInfix->setCurrentText(qs);
+	ui.cbInfix->lineEdit()->setCursorPosition(cp + namelen);
 }
 

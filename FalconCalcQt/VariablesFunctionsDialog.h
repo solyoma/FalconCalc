@@ -84,6 +84,7 @@ signals:
 	void SignalVarFuncClose();
 	void SignalTabChange(int tab);
 	void SignalVarFuncMoved();
+	void SignalTableDoubleClicked(QString& name);
 public slots:
 	void SlotSelectTab(int tab);
 	void SlotSetColWidths(int which, int cw1, int cw2, int cw3, int cw4); //which:) -> user, 1->builtin
@@ -104,6 +105,8 @@ protected slots:
 	void on_tblUserFuncs_currentItemChanged(QTableWidgetItem* current, QTableWidgetItem* previous);
 	void on_tblUserFuncs_cellChanged(int row, int col);
 	void on_tblUserFuncs_cellDoubleClicked(int row, int col);
+	void on_tblBuiltinVars_cellDoubleClicked(int row, int col);
+	void on_tblBuiltinFuncs_cellDoubleClicked(int row, int col);
 private:
 	FalconCalc::LittleEngine* _lengine = nullptr;
 	FalconCalc::RowDataMap *_pUserVarsMap, *_pUserFuncsMap, *_pUserVarsInMap, *_pUserFuncsInMap;
@@ -141,6 +144,8 @@ private:
 	void _CollectFrom(int index);	// from index-th grid to RowDataMap
 	bool _GetActualDataCount(int index);	//0: variables, 1: functions
 	void _EnableButtons();
+	void _TableDoubleClickedCommon(QTableWidget* ptw, int row, int col);
+	void _UserTableEditCommon(QTableWidget* ptw, int row, int col);
 private:
 	Ui::VariablesFunctionsDialogClass ui;
 
