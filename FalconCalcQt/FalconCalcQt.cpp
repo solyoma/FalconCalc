@@ -629,7 +629,7 @@ void FalconCalcQt::on_chkSci_toggled(bool b)
 	_ShowResults();
 
 }
-void FalconCalcQt::on_chkSep_toggled(bool b)
+void FalconCalcQt::on_chkThousandSep_toggled(bool b)
 {
 	if (b)
 		on_cbThousandSep_currentIndexChanged(ui.cbThousandSep->currentIndex());
@@ -694,30 +694,47 @@ void FalconCalcQt::_PlaceWidget(QWidget& w, Placement pm)
 {
 	int xw,		// place window top left here
 		yw;		// includes border and title bar for the dialog widget
-	QScreen *actScreen = screen();
-
-	Placement pm0 = pm;
+	QScreen *actScreen = screen();	  // calls QWidget::screen() to get actual screen
 	QRect geom = frameGeometry();
-	do
-	{
-		switch (pm)
+	Placement pm0 = pm;
+
+	auto goodPlacement = [&]()->bool
 		{
-			case Placement::pmTop:
-				xw = geom.x(); yw = geom.y() - w.frameGeometry().height();
-				break;
-			case Placement::pmRight:
-				xw = geom.x() + geom.width(); yw = geom.y();
-				break;
-			case Placement::pmBottom:
-				xw = geom.x(); yw = geom.y() + geom.height();
-				break;
-			default:
-			case Placement::pmLeft:
-				xw = geom.x() - w.frameGeometry().width(); yw = geom.y();
-				break;
+			switch (pm)
+			{
+				case Placement::pmTop:
+					xw = geom.x(); yw = geom.y() - w.frameGeometry().height();
+					break;
+				case Placement::pmRight:
+					xw = geom.right()+2; yw = geom.y();
+					break;
+				case Placement::pmBottom:
+					xw = geom.x(); yw = geom.bottom();
+					break;
+				default:
+				case Placement::pmLeft:
+					xw = geom.x() - w.frameGeometry().width() - 2; yw = geom.y();
+					break;
+			}
+			return (pm == Placement::pmRight && xw + w.frameGeometry().width() <= actScreen->geometry().width() )
+					&&
+				   (pm == Placement::pmBottom && yw + w.frameGeometry().height() <= actScreen->geometry().height());
+		};
+
+	while(!goodPlacement() )
+	{
+		if( (pm0 == Placement::pmRight && pm == Placement::pmLeft)	// right was bad already, left is also wrong, so keep right
+			||	(pm0 == Placement::pmBottom && pm == Placement::pmTop) )// bottom was bad already
+		{
+			pm = pm0;
+			(void)goodPlacement();
+			break;
 		}
-		// if(xw +w.width())
-	} while (0);	// Should see if it fits screen not yet
+		if (pm0 == Placement::pmRight)
+			pm = Placement::pmLeft;
+		else if (pm0 == Placement::pmBottom)
+			pm = Placement::pmTop;
+	}
 	w.move(xw, yw);
 }
 
@@ -831,38 +848,6 @@ void FalconCalcQt::on_chkLittleEndian_toggled(bool b)
 		return;
 	__hexFlags.littleEndian = b;
 	_SetHexDisplFomatForFlags();
-}
-
-void FalconCalcQt::on_edtInfix_textChanged(const QString& newText)
-{
-	if (_busy)
-		return;
-	++_busy;
-	if (!newText.isEmpty())
-	{
-		emit _StopTimer();		
-		try
-		{
-			lengine->infix.FromQString(newText);
-			RealNumber res = lengine->Calculate();
-			_SetResultLabelText(EEC_NO_ERROR);
-			_ShowResults();
-		}
-		//catch (std::wstring ws)
-		//{
-		//	_SetResultLabelText(EEC_UNKNOWN_ERROR, SmartString(ws).toQString());
-		//	_ShowMessageOnAllPanels("???");
-		//}
-		catch (...)
-		{
-			_ShowMessageOnAllPanels("???");
-		}
-
-		_added = false;
-		emit _StartTimer();		// restart timer
-	}
-//	_ShowMessageOnAllPanels("");
-	--_busy;
 }
 
 void FalconCalcQt::on_rbDeg_toggled(bool b)

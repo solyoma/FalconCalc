@@ -2,6 +2,7 @@
 #ifndef _VARFUNCDEFDIALOG_H
 #define _VARFUNCDEFDIALOG_H
 #include <QtWidgets/QDialog>
+#include <QtWidgets/QAbstractButton>
 #include "ui_VarFuncDefDialog.h"
 
 struct VarFuncData
@@ -26,15 +27,28 @@ public:						 // vfd changed on dialog acceptance
 		ui.edtComment->setText(vfd.comment);
 		if (vfd.isFunction)
 		{
-			ui.lblName->setText (tr("&Function:"));
+			ui.lblName->setText(tr("&Function:"));
 			ui.lblValue->setText(tr("&Definition:"));
 			QString qs = vfd.name + "=" + vfd.body + " - " + vfd.comment;
-			if(!vfd.unit.isEmpty() )
+			if (!vfd.unit.isEmpty())
 				qs += vfd.unit;
 			ui.lblFDefinition->setText(qs);
 		}
-	
+		else
+			ui.lblFDefinition->setVisible(false);
+		EnableDisableOkButton();
 	}
+	void EnableDisableOkButton()
+	{
+		QString name = ui.edtName->text();
+		bool nameValid = name.indexOf('(') >= 0 && name.indexOf(')') >= 0 || (name.indexOf('(') < name.indexOf(')'));
+		ui.buttonBox->buttons()[0]->setEnabled(!name.isEmpty() && nameValid && !ui.edtValue->text().isEmpty());
+		if (_vfd.isFunction)
+		{
+			ui.lblFDefinition->setVisible(!_vfd.name.isEmpty());
+		}
+	}
+
 	void accept() override
 	{
 		_vfd.name    = ui.edtName->text();
@@ -45,9 +59,20 @@ public:						 // vfd changed on dialog acceptance
 	}
 	~VarFuncDefDialog() {}
 
+public slots:
+	void on_edtName_textChanged()
+	{
+		EnableDisableOkButton();
+	}
+	void on_edtValue_textChanged()
+	{
+		EnableDisableOkButton();
+	}
+	//void on_edtUnit_textChanged();
+	//void on_edtComment_textChanged();
 private:
 	Ui::VarFuncDefDialogClass ui;
 	VarFuncData &_vfd;
 };
 
-#endif
+#endif						   ;

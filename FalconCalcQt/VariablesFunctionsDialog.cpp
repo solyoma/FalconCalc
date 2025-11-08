@@ -124,7 +124,7 @@ void VariablesFunctionsDialog::on_tabHeader_currentChanged(int index)
 	else
 		_pActUserTable = ui.tblUserVars;
 	_EnableButtons();
-	qDebug("on_tabHeader_currentChanged");
+//	qDebug("on_tabHeader_currentChanged()");
 }
 
 void VariablesFunctionsDialog::on_btnRemoveAll_clicked()	// only removes rows with data
@@ -272,17 +272,17 @@ void VariablesFunctionsDialog::on_btnAddRow_clicked()
 		qDebug("on_btnAddRow_clicked - row #%d added", rowCnt);
 	}
 	int row = _cntRowsWithData[ActualTab()];
-	if (ActualTab())
+	if (ActualTab() ==  FUNCTIONS)
 	{
 		ui.tblUserFuncs->selectRow(row);
 		ui.tblUserFuncs->setFocus();
-		on_tblUserFuncs_cellDoubleClicked(row, 0);
+		on_tblUserFuncs_cellDoubleClicked(row, 1);
 	}
 	else
 	{
 		ui.tblUserVars->setFocus();
 		ui.tblUserVars->selectRow(row);
-		on_tblUserVars_cellDoubleClicked(_cntRowsWithData[0], 0);
+		on_tblUserVars_cellDoubleClicked(_cntRowsWithData[VARIABLES], 1);
 	}
 }
 
@@ -300,31 +300,25 @@ void VariablesFunctionsDialog::on_tblUserVars_currentItemChanged(QTableWidgetIte
 
 void VariablesFunctionsDialog::_UserTableEditCommon(QTableWidget* ptw, int row, int col)
 {
-	QTableWidgetItem* pItem;
 	VarFuncData vfd;  
-	if ((pItem = ptw->item(row, 0)))
+	vfd.name = _GetItemText(ptw, row, 0);
+	vfd.body = _GetItemText(ptw, row, 1);
+	vfd.unit = _GetItemText(ptw, row, 2);
+	vfd.comment = _GetItemText(ptw, row, 3);
+	vfd.isFunction = (ptw == ui.tblUserFuncs);
+	VarFuncDefDialog vfdDialog(vfd, this);
+	if(vfdDialog.exec() == QDialog::Accepted)
 	{
-		vfd.name = _GetItemText(ptw, row, 0);
-		vfd.body = _GetItemText(ptw, row, 1);
-		vfd.unit = _GetItemText(ptw, row, 2);
-		vfd.comment = _GetItemText(ptw, row, 3);
-		vfd.isFunction = (ptw == ui.tblUserFuncs);
-		VarFuncDefDialog vfdDialog(vfd, this);
-		if(vfdDialog.exec() == QDialog::Accepted)
-		{
-			_changed[vfd.isFunction] |= (vfd.name != _GetItemText(ptw, row, 0)) ||
-										(vfd.body != _GetItemText(ptw, row, 1)) ||
-										(vfd.unit != _GetItemText(ptw, row, 2)) ||
-										(vfd.comment != _GetItemText(ptw, row, 3));
-			_AddCellText(ptw, row, 0, vfd.name);
-			_AddCellText(ptw, row, 1, vfd.body);
-			_AddCellText(ptw, row, 2, vfd.unit);
-			_AddCellText(ptw, row, 3, vfd.comment);
+		_changed[vfd.isFunction] |= (vfd.name != _GetItemText(ptw, row, 0)) ||
+									(vfd.body != _GetItemText(ptw, row, 1)) ||
+									(vfd.unit != _GetItemText(ptw, row, 2)) ||
+									(vfd.comment != _GetItemText(ptw, row, 3));
+		_AddCellText(ptw, row, 0, vfd.name);
+		_AddCellText(ptw, row, 1, vfd.body);
+		_AddCellText(ptw, row, 2, vfd.unit);
+		_AddCellText(ptw, row, 3, vfd.comment);
 
-			ui.btnSave->setEnabled(_changed[0] || _changed[1]);
-		}
-		// modify calculator data
-
+		ui.btnSave->setEnabled(_changed[0] || _changed[1]);
 	}
 }
 

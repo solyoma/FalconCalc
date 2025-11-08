@@ -81,7 +81,7 @@ private slots:
     void on_chkDecDelim_toggled(bool b);
     void on_chkDecDigits_toggled(bool b);
     void on_chkEng_toggled(bool b);
-    void on_chkSep_toggled(bool b);
+    void on_chkThousandSep_toggled(bool b);
     void on_chkSci_toggled(bool b);
     void on_chkMinus_toggled(bool b);
     void on_chkHexPrefix_toggled(bool b);
@@ -91,8 +91,6 @@ private slots:
     void on_chkIEEESingle_toggled(bool b);
     void on_chkIEEEDouble_toggled(bool b);
     void on_chkLittleEndian_toggled(bool b);
-
-    void on_edtInfix_textChanged(const QString& newText);
 
     void on_rbDeg_toggled(bool b);
     void on_rbRad_toggled(bool b);
