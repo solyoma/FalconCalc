@@ -180,6 +180,7 @@ private slots:
     void _SlotHistMoved();
     
     void _SlotVarsFuncsClosing();
+    void _SlotVarsFuncsFinished(int result);
     void _SlotVarFuncMoved();
     void _SlotVarTabChanged(int newTab);
     void _SlotVarFuncTableDoubleClicked(QString& name);

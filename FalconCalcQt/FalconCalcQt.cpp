@@ -244,6 +244,7 @@ void FalconCalcQt::_SlotVarsFuncsClosing()
 {
 	if (_pVF)
 	{
+		disconnect(_pVF, &VariablesFunctionsDialog::finished, this, &FalconCalcQt::_SlotVarsFuncsFinished);
 		disconnect(_pVF, &VariablesFunctionsDialog::SignalVarFuncClose, this, &FalconCalcQt::_SlotVarsFuncsClosing);
 		disconnect(_pVF, &VariablesFunctionsDialog::SignalTabChange, this, &FalconCalcQt::_SlotVarTabChanged);
 		disconnect(this, &FalconCalcQt::_SignalSelectTab, _pVF, &VariablesFunctionsDialog::SlotSelectTab);
@@ -257,6 +258,11 @@ void FalconCalcQt::_SlotVarsFuncsClosing()
 	_actTab = -1;
 	ui.actionEditFunc->setChecked(false);
 	ui.actionEditVars->setChecked(false);
+}
+
+void FalconCalcQt::_SlotVarsFuncsFinished(int result)
+{
+	_SlotVarsFuncsClosing();
 }
 
 void FalconCalcQt::_SlotVarFuncMoved()
@@ -284,6 +290,7 @@ void FalconCalcQt::_EditVarsCommon(int which)
 	else
 	{
 		_pVF = new VariablesFunctionsDialog(which, this);
+		connect(_pVF, &VariablesFunctionsDialog::finished, this, &FalconCalcQt::_SlotVarsFuncsFinished);
 		connect(_pVF, &VariablesFunctionsDialog::SignalVarFuncClose, this, &FalconCalcQt::_SlotVarsFuncsClosing);
 		connect(_pVF, &VariablesFunctionsDialog::SignalTabChange, this, &FalconCalcQt::_SlotVarTabChanged);
 		connect(this, &FalconCalcQt::_SignalSelectTab, _pVF, &VariablesFunctionsDialog::SlotSelectTab);

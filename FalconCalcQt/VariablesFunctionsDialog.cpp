@@ -112,11 +112,6 @@ void VariablesFunctionsDialog::SlotSetColWidths(int which, int cw1, int cw2, int
 	setw();
 }
 
-void VariablesFunctionsDialog::closeEvent(QCloseEvent* e)
-{
-	emit SignalVarFuncClose();
-}
-
 void VariablesFunctionsDialog::moveEvent(QMoveEvent* e)
 {
 	emit SignalVarFuncMoved();

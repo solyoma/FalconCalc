@@ -79,8 +79,7 @@ public slots:
 	void SlotSelectTab(int tab);
 	void SlotSetColWidths(int which, int cw1, int cw2, int cw3, int cw4); //which:) -> user, 1->builtin
 protected:
-	void closeEvent(QCloseEvent* e);
-	void moveEvent(QMoveEvent* e);
+	void moveEvent(QMoveEvent* e) override;
 protected slots:
 	void on_tabHeader_currentChanged(int index);
 	void on_btnRemoveAll_clicked();
