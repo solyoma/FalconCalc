@@ -1,0 +1,20 @@
+FalconCalc Config File V0.9.0
+[Locale]
+#loc=hu_HU
+
+[Variables]
+a0=0.0529e-9:bohr sugár:nm
+hp=735.49875::W/LE
+megbiz=0.1+0.9*0.66:nettó szorzó
+ÁFA=1.27:ÁFA szorzó
+nettó=1/ÁFA:nettó szorzó (1/ÁFA)
+
+[Functions]
+CtoF(t) = t*9/5+32:Celsius to Fahrenheit:[F]
+FtoC(x) = (x-32)*5/9:Fahrenheit to Celsius:[C]
+ccubic(p, q) = (-q/2+sqrt((q/2)^2+(p/3)^3))^(1/3)+(-q/2-sqrt((q/2)^2-(p/3)^3))^(1/3):Cardano formula for y^3+py+q
+gamma(v) = 1/sqrt(1-v^2/c^2):gamma factor
+gauss(s, x) = exp(-x^2/2/s^2)/2/pi/s^2:Gauss distribution
+lorentz(v) = sqrt(1-v^2/c^2):Lorentz szorzó
+masod(a, b, c, s) = (-b+s*sqrt(b^2-4*a*c))/2/a:másodfokú egyenlet
+stirling(n) = (n+0.5)*ln(n)-n+0.5*ln(2pi):Stirling formula for logarithm of n!

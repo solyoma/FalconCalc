@@ -32,21 +32,7 @@ namespace FalconCalc {
 class ElidingTableWidgetItem : public QTableWidgetItem	// default elision is wrong
 {
 public:
-	ElidingTableWidgetItem(const QString& text) : QTableWidgetItem(text) {}
-
-	//void setData(int role, const QVariant& value) override {
-	//	QTableWidgetItem::setData(role, value);
-	//}
-	//QVariant data(int role) const override {
-	//	return QTableWidgetItem::data(role);
-	//}
-
-	//void setData(int role, const QVariant& value) override {
-	//	if (role == Qt::DisplayRole || role == Qt::EditRole) {
-	//		QTableWidgetItem::setData(Qt::UserRole, value); // Store full text in UserRole
-	//	}
-	//	QTableWidgetItem::setData(role, value);
-	//}
+	ElidingTableWidgetItem(const QString& text) : QTableWidgetItem(text, QTableWidgetItem::UserType) {}
 
 	QVariant data(int role) const override 
 	{
@@ -69,6 +55,10 @@ public:
 			return QTableWidgetItem::data(Qt::ToolTipRole);
 		}
 		return QTableWidgetItem::data(role);
+	}
+	QString Text() const
+	{
+		return QTableWidgetItem::data(Qt::DisplayRole).toString();
 	}
 };
 
@@ -109,7 +99,8 @@ protected slots:
 	void on_tblBuiltinFuncs_cellDoubleClicked(int row, int col);
 private:
 	FalconCalc::LittleEngine* _lengine = nullptr;
-	FalconCalc::RowDataMap *_pUserVarsMap, *_pUserFuncsMap, *_pUserVarsInMap, *_pUserFuncsInMap;
+	FalconCalc::RowDataMap *_pUserVarsMap, *_pUserFuncsMap,		// actual data
+						   *_pUserVarsInMap, *_pUserFuncsInMap; // input data (when VariablesFunctionsDialog is created)
 	int _snappedToSide = 0;	  // FalconCalc::WindowSide
 
 	static int _colW[2][4];		// column widths

@@ -23,11 +23,11 @@ VariablesFunctionsDialog::VariablesFunctionsDialog(int initialTabIndex, QWidget*
 {
 	ui.setupUi(this);
 	_busy = true;
-
-	_pUserFuncsMap = new RowDataMap();
-	_pUserFuncsInMap = new RowDataMap();
-	_pUserVarsMap = new RowDataMap();
-	_pUserVarsInMap = new RowDataMap();
+		// map									contains 
+	_pUserFuncsMap = new RowDataMap();		// actual functions
+	_pUserFuncsInMap = new RowDataMap();	// input functions
+	_pUserVarsMap = new RowDataMap();		// actual variables
+	_pUserVarsInMap = new RowDataMap();		// input  variables
 
 	_FillVarTables();
 	_FillFuncTables();
@@ -87,14 +87,10 @@ VariablesFunctionsDialog::VariablesFunctionsDialog(int initialTabIndex, QWidget*
 
 VariablesFunctionsDialog::~VariablesFunctionsDialog()
 {
-	delete _pUserFuncsMap		;
-	_pUserFuncsMap = nullptr;
-	delete _pUserFuncsInMap	;
-	_pUserFuncsInMap = nullptr;
-	delete _pUserVarsMap		;
-	_pUserVarsMap = nullptr;
-	delete _pUserVarsInMap	;
-	_pUserVarsInMap = nullptr;
+	delete _pUserFuncsMap	; _pUserFuncsMap = nullptr;
+	delete _pUserFuncsInMap	; _pUserFuncsInMap = nullptr;
+	delete _pUserVarsMap	; _pUserVarsMap = nullptr;
+	delete _pUserVarsInMap	; _pUserVarsInMap = nullptr;
 	emit SignalVarFuncClose();
 }
 
@@ -234,7 +230,7 @@ void VariablesFunctionsDialog::on_btnSave_clicked()
 	if (ActualTab() == VARIABLES)
 		_CollectFrom(VARIABLES);	// changed FUNCTIONs already collected in tcVarsTabChanged()
 	else if (ActualTab() == FUNCTIONS)
-		_CollectFrom(FUNCTIONS);	// changed VARIABLEs -"-
+		_CollectFrom(FUNCTIONS);	// changed VARIABLEs  already collected in tcVarsTabChanged()
 
 	SmartString s;
 	SmartStringVector sv;
@@ -406,8 +402,8 @@ void VariablesFunctionsDialog::on_tblBuiltinFuncs_cellDoubleClicked(int row, int
 
 QString VariablesFunctionsDialog::_GetItemText(QTableWidget *table, int row, int col)
 {
-	QTableWidgetItem *pItem = pItem = table->item(row, col);
-	return (_sTmp = pItem ? pItem->toolTip() : "");
+	QTableWidgetItem *pItem = table->item(row, col);
+	return (_sTmp = pItem ? reinterpret_cast<ElidingTableWidgetItem*>(pItem)->Text() : "");
 }
 
 void VariablesFunctionsDialog::_FillBuiltinFuncTable()
@@ -560,29 +556,33 @@ void VariablesFunctionsDialog::_AddCellText(QTableWidget* ptw, int row, int col,
 
 void VariablesFunctionsDialog::_CollectFrom(int table)
 {
-	RowDataMap  * pDmIn = table ? _pUserFuncsInMap : _pUserVarsInMap,
-				* pDm = table ? _pUserFuncsMap : _pUserVarsMap;
-	QTableWidget* ptw = table ? ui.tblUserVars : ui.tblUserFuncs;
+	RowDataMap  * pDmIn = table ?	_pUserFuncsInMap	: _pUserVarsInMap,
+				* pDm = table ?		_pUserFuncsMap		: _pUserVarsMap;
+	QTableWidget* ptw = table ?		ui.tblUserFuncs		: ui.tblUserVars;
 
 	RowData rd;
-	// collect data from table into the non-input variables
+	// collect data from table into the actual (non-input) variables
 	pDm->clear();
-	for (int row = 1; row < ptw->rowCount(); ++row)
+	auto cellText = [&](int row, int col) -> QString
+		{
+			return reinterpret_cast<ElidingTableWidgetItem*>(ptw->item(row, col))->Text();
+		};
+	for (int row = 0; row < ptw->rowCount(); ++row)
 	{
 		if (!_GetItemText(ptw,row,0).isEmpty() && !_GetItemText(ptw, row, 1).isEmpty())
-		{
-			rd.cols[0] = SmartString(ptw->item(row, 0)->text());		// name
-			rd.cols[1] = SmartString(ptw->item(row, 1)->text());		// body/definition
-			rd.cols[2] = SmartString(ptw->item(row, 2)->text());		// unit
-			rd.cols[3] = SmartString(ptw->item(row, 3)->text());		// description
+		{								// text() may be the elided text, toolTip is the whole text
+			rd.cols[0] = SmartString(cellText(row, 0));		// name
+			rd.cols[1] = SmartString(cellText(row, 1));		// body/definition
+			rd.cols[2] = SmartString(cellText(row, 2));		// unit
+			rd.cols[3] = SmartString(cellText(row, 3));		// description
+			(*pDm)[rd.cols[0]] = rd;			// actual is always set
 		}
-		(*pDm)[rd.cols[0]] = rd;			// actual is always set
 	}
 
 	// next check for changes
 	if (pDm->size() != pDmIn->size())	// data deleted or added
 		_changed[table] = true;
-	else for (int i = 1; i < pDm->size(); ++i)
+	else for (int i = 0; i < pDm->size(); ++i)
 		if ((*pDm)[i] != (*pDmIn)[i])
 		{
 			_changed[table] = true;

@@ -333,9 +333,11 @@ namespace FalconCalc
         }
         SmartString Serialize() const
         {
-            SmartString s = SmartString(name) + ssEqString + body + ssCommentDelimiterString;
-            if (!desc.empty() || !unit.empty())
+            SmartString s = SmartString(name) + ssEqString + body;
+            if (!desc.empty())
                 s += ssCommentDelimiterString + desc;
+            else if(!unit.empty())                 // but description is
+                s += ssCommentDelimiterString;
             if(!unit.empty())
                 s += ssCommentDelimiterString + unit;
 

@@ -249,7 +249,8 @@ void FalconCalcQt::_SlotVarsFuncsClosing()
 		disconnect(this, &FalconCalcQt::_SignalSelectTab, _pVF, &VariablesFunctionsDialog::SlotSelectTab);
 		disconnect(this, &FalconCalcQt::_SignalSetColWidths, _pVF, &VariablesFunctionsDialog::SlotSetColWidths);
 		disconnect(_pVF, &VariablesFunctionsDialog::SignalVarFuncMoved, this, &FalconCalcQt::_SlotVarFuncMoved);
-//		disconnect(_pVF, &VariablesFunctionsDialog::SignalVarFuncSaved, this, &FalconCalcQt::_SlotVarFuncSaved);
+		disconnect(_pVF, &VariablesFunctionsDialog::SignalTableDoubleClicked, this, &FalconCalcQt::_SlotVarFuncTableDoubleClicked);
+		//		disconnect(_pVF, &VariablesFunctionsDialog::SignalVarFuncSaved, this, &FalconCalcQt::_SlotVarFuncSaved);
 		delete _pVF;
 		_pVF = nullptr;
 	}

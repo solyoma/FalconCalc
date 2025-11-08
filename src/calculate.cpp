@@ -488,7 +488,7 @@ void Token::_GetVarOrFuncOrOperator(const SmartString &text, unsigned &pos)
 void Token::FromText(const SmartString &text, unsigned &pos)
 {
     val = 0;
-    type = tknUnknown;
+    // already set before called   type = tknUnknown;
 	locale loc = cout.getloc();
 
 	// skip whitespace
@@ -1041,12 +1041,8 @@ bool LittleEngine::_VariableAssignment(const SmartString &expr, unsigned &pos, T
     if2pf._InfixToPostFix(v.body);
     v.tokenVec = if2pf.tvPostfix;
     v.dirty = false;
-    if (v.tokenVec.size() != 1)      // variables must have a single value
-        trigger.Raise(EEC_SYNTAX_ERROR);
-    if (v.tokenVec.size() == 1 && (v.tokenVec[0].Type() == tknNumber))  // The value already calculated
-        v.value = v.tokenVec[0].Value();    // and v.dirty remains false
-    else
-        v.value = if2pf._CalcPostfix(if2pf.tvPostfix); // not yet calculated: calculate now
+         // not yet calculated: calculate now
+    v.value = if2pf._CalcPostfix(if2pf.tvPostfix);      // may throw if definition contains undefined variables/functions
 
     variables[lcName] = v;
     // mark variables whose definition contains this variable dirty
