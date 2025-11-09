@@ -126,6 +126,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="translations.cpp" />
+    <ClCompile Include="VFDefDialog.cpp" />
     <ClCompile Include="variables.cpp" />
     <ClCompile Include="wcommon.cpp" />
   </ItemGroup>
@@ -146,6 +147,7 @@
     <ClInclude Include="SmartString.h" />
     <ClInclude Include="stdafx_lc.h" />
     <ClInclude Include="translations.h" />
+    <ClInclude Include="VFDefDialog.h" />
     <ClInclude Include="variables.h" />
     <ClInclude Include="wcommon.h" />
   </ItemGroup>

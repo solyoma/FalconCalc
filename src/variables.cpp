@@ -28,6 +28,7 @@ using namespace LongNumber;
 
 #include "mainForm.h"
 #include "variables.h"
+#include "VFDefDialog.h"
 
 TfrmVariables *frmVariables;
 constexpr int	VARIABLES = 0,
@@ -76,7 +77,7 @@ void TfrmVariables::InitializeFormAndControls() /* Control initialization functi
 	sgUser->SetDefColWidth(2, 129);
 	sgUser->SetDefColWidth(3, 129);
 	sgUser->SetSmoothHorzScroll(true);
-	sgUser->SetAutoEdit(true);
+	// DEL sgUser->SetAutoEdit(false);
 	sgUser->SetTabEdited(true);
 	sgUser->SetParent(tcVars);
 
@@ -109,18 +110,30 @@ void TfrmVariables::InitializeFormAndControls() /* Control initialization functi
 	sgBuiltin->SetSmoothHorzScroll(true);
 	sgBuiltin->SetParent(tcVars);
 
-	btnDelVar = new nlib::ToolButton();
-	btnDelVar->SetBounds(nlib::Rect(444, 48, 467, 70));
-	btnDelVar->SetAnchors(nlib::caTop | nlib::caRight);
-	btnDelVar->SetTabOrder(1);
-	btnDelVar->SetImagePosition(nlib::bipCenter);
-	btnDelVar->SetFlat(false);
-	btnDelVar->SetParent(this);
+	btnAdd = new nlib::ToolButton();
+	btnAdd->SetBounds(nlib::Rect(444, 56, 476, 88));
+	btnAdd->SetAnchors(nlib::caTop | nlib::caRight);
+	btnAdd->SetTabOrder(5);
+	btnAdd->SetTooltipText(L"Append Variable/function");
+	btnAdd->SetImagePosition(nlib::bipCenter);
+	btnAdd->SetFlat(false);
+	btnAdd->SetParent(this);
+
+	btnDelete = new nlib::ToolButton();
+	btnDelete->SetBounds(nlib::Rect(484, 56, 516, 88));
+	btnDelete->SetEnabled(false);
+	btnDelete->SetAnchors(nlib::caTop | nlib::caRight);
+	btnDelete->SetTabOrder(1);
+	btnDelete->SetTooltipText(L"Remove actual line");
+	btnDelete->SetImagePosition(nlib::bipCenter);
+	btnDelete->SetFlat(false);
+	btnDelete->SetParent(this);
 
 	btnClear = new nlib::ToolButton();
-	btnClear->SetBounds(nlib::Rect(444, 76, 467, 98));
+	btnClear->SetBounds(nlib::Rect(460, 132, 492, 164));
 	btnClear->SetAnchors(nlib::caTop | nlib::caRight);
 	btnClear->SetTabOrder(2);
+	btnClear->SetTooltipText(L"Remove all user Variables or Functions");
 	btnClear->SetImagePosition(nlib::bipCenter);
 	btnClear->SetFlat(false);
 	btnClear->SetParent(this);
@@ -140,9 +153,9 @@ void TfrmVariables::InitializeFormAndControls() /* Control initialization functi
 	btnCancel->SetTabOrder(3);
 	btnCancel->SetParent(this);
 
-	btnDelVar->Image()->SetBitmap(new nlib::Bitmap(NULL, MAKEINTRESOURCE(28683)));
-	btnDelVar->Image()->SetStateCount(2);
-	btnClear->Image()->SetBitmap(new nlib::Bitmap(NULL, MAKEINTRESOURCE(28684)));
+	btnDelete->Image()->SetBitmap(new nlib::Bitmap(NULL, MAKEINTRESOURCE(28682)));
+	btnClear->Image()->SetBitmap(new nlib::Bitmap(NULL, MAKEINTRESOURCE(28683)));
+	btnAdd->Image()->SetBitmap(new nlib::Bitmap(NULL, MAKEINTRESOURCE(28684)));
 
 	OnClose = CreateEvent(this, &TfrmVariables::FormClose);
 	OnEndSizeMove = CreateEvent(this, &TfrmVariables::FormSizeMoveEnded);
@@ -161,8 +174,10 @@ void TfrmVariables::InitializeFormAndControls() /* Control initialization functi
 	sgBuiltin->OnColumnSizing = CreateEvent(this, &TfrmVariables::sgBuiltinColumnSizing);
 	sgBuiltin->OnDblClick = CreateEvent(this, &TfrmVariables::sgBuiltinDoubleClick);
 
-	btnDelVar->OnClick = CreateEvent(this, &TfrmVariables::btnDelVarClick);
+	btnAdd->OnClick = CreateEvent(this, &TfrmVariables::btnAddClick);
+	btnDelete->OnClick = CreateEvent(this, &TfrmVariables::btnDeleteClick);
 	btnClear->OnClick = CreateEvent(this, &TfrmVariables::btnClearClick);
+
 	btnCancel->OnClick = CreateEvent(this, &TfrmVariables::btnCancelClick);
 	btnSave->OnClick = CreateEvent(this, &TfrmVariables::btnSaveClick);
 }
@@ -486,7 +501,11 @@ void TfrmVariables::btnClearClick(void *sender, nlib::EventParameters param)
 	btnSave->SetEnabled(_changed[_activeTab] = true);
 }
 
-void TfrmVariables::btnDelVarClick(void *sender, nlib::EventParameters param)
+void TfrmVariables::btnAddClick(void* sender, nlib::EventParameters param)
+{
+}
+
+void TfrmVariables::btnDeleteClick(void *sender, nlib::EventParameters param)
 {
 	int n = sgUser->Selected().y;
     if(n > 0)
@@ -569,8 +588,7 @@ void TfrmVariables::sgUserKeyPress(void *sender, nlib::KeyPressParameters param)
 		frmMain->miShowHistClick(nullptr, par);
 	}
 }
-
-void TfrmVariables::sgUserDoubleClick(void* sender, nlib::MouseButtonParameters param)
+void TfrmVariables::_TableDoubleClicked(nlib::StringGrid* psg, nlib::Point cell)
 {
 	std::wstring wsel, ws, we, wn;	// strings selection, before, after the selection and new text
 	int start, length;
@@ -581,7 +599,7 @@ void TfrmVariables::sgUserDoubleClick(void* sender, nlib::MouseButtonParameters 
 	frmMain->cbInfix->SelStartAndLength(start, length);		// after start and length determined
 	if (start < 0)
 		start = 0;
-	wn = sgUser->String(0, sgUser->Selected().y);			 // name of function/variable from string grid
+	wn = psg->String(0, sgUser->Selected().y);			 // name of function/variable from string grid
 	ws = wsel.substr(0, start);								 // text before the selection
 	we = wsel.substr(start+length);							 // text after the selection
 
@@ -600,41 +618,47 @@ void TfrmVariables::sgUserDoubleClick(void* sender, nlib::MouseButtonParameters 
 	// variables: just the name is inside wn
 														//	  column,		row
 	frmMain->cbInfix->SetSelText(ws+wn+we);
+	frmMain->cbInfix->SetSelStartAndLength(start + wn.length(), 0);
+	frmMain->cbInfixTextChanged(this, nlib::EventParameters());
+}
+
+void TfrmVariables::sgUserDoubleClick(void* sender, nlib::MouseButtonParameters param)
+{
+	nlib::Point cell = sgUser->CellAt(param.x, param.y);
+	if(cell.x == 0)
+		_TableDoubleClicked(sgUser, cell);
+	else if(cell.x > 0)		// otherwise nothing to edit here
+	{						// use
+		VarFuncData vfd;
+		vfd.name		= sgUser->String(cell.y, 0);
+		vfd.body		= sgUser->String(cell.y, 1);
+		vfd.unit		= sgUser->String(cell.y, 2);
+		vfd.comment		= sgUser->String(cell.y, 3);
+		vfd.isFunction	= tcVars->SelectedTab();
+
+		TVarFuncDefDialog *pdlg =  new TVarFuncDefDialog(vfd);
+		if(pdlg->ShowModal() == nlib::ModalResults::mrOk)
+		{
+			_changed[vfd.isFunction] |= (vfd.name != sgUser->String(cell.y, 0)) ||
+				(vfd.body != sgUser->String(cell.y, 1)) ||
+				(vfd.unit != sgUser->String(cell.y, 2)) ||
+				(vfd.comment != sgUser->String(cell.y, 3));
+			if(_changed[vfd.isFunction])
+			{
+				sgUser->SetString(0, cell.y, vfd.name);
+				sgUser->SetString(1, cell.y, vfd.body);
+				sgUser->SetString(2, cell.y, vfd.unit);
+				sgUser->SetString(3, cell.y, vfd.comment);
+			}
+
+			btnSave->SetEnabled(_changed[0] || _changed[1]);
+		}
+	}
 }
 
 void TfrmVariables::sgBuiltinDoubleClick(void* sender, nlib::MouseButtonParameters param)
 {				
-	std::wstring wsel, ws, we, wn;	// strings selection, before, after the selection and new text
-	int start, length;
-	frmMain->cbInfix->Focus();
-
-	wsel = frmMain->cbInfix->Text();						// original full text from combo box's edit control
-															// will be replaced by just the selection
-	frmMain->cbInfix->SelStartAndLength(start, length);		// after start and length determined
-	if (start < 0)
-		start = 0;
-	wn = sgBuiltin->String(0, sgBuiltin->Selected().y);		// new text: name of function/variable from string grid
-	ws = wsel.substr(0, start);								// text before the selection
-	we = wsel.substr(start+length);							// text after the selection
-
-	if (length)
-		wsel = wsel.substr(start, length);					// just the selection
-	else
-		wsel.clear();
-
-	if (_activeTab == FUNCTIONS)
-	{
-		int nbrace = wn.find('(');
-		wn = wn.substr(0, nbrace+1) + wsel;
-		if (length)
-			wn += ')';
-		wsel.clear();
-	}
-	// variables: just the name is inside wn
-														//	  column,		row
-	frmMain->cbInfix->SetText(ws+wn+wsel+we);
-	frmMain->cbInfix->SetSelStartAndLength(start + wn.length(), 0);
-	frmMain->cbInfixTextChanged(this, nlib::EventParameters());
+	_TableDoubleClicked(sgBuiltin, sgBuiltin->CellAt(0, param.y));
 }
 
 void TfrmVariables::sgUserEditorKeyDown(void *sender, nlib::KeyParameters param)

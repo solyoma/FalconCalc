@@ -91,6 +91,11 @@ enum TextIDs {
 	FCT_VIEW				,
 	FCT_WORDS				,
 
+	FCT_VNDIALOGTITLE,	// L"FalconCalc - Edit variables & functions", L"FalconCalc - Szerkesztés",
+	FCT_VNDNAME,		// L"&Name:", L"&Név:"
+	FCT_VNDVALUE,		// L"&Definition:", L"&Definíció:"
+	FCT_VNDUNIT,		// L"&Unit:", L"&Mértékegység:"
+	FCT_VNDCOMMENT,		// L"&Comment:", L"&Megjegyzés:"
 
 	FCT_HELPTITLE,		// L"FalconCalc Help"
 

@@ -19,7 +19,8 @@ N_PUBLIC: /* Designer generated list of public members. Do not edit by hand. */
 	nlib::StringGrid *sgUser;
 	nlib::Panel *pBuiltin;
 	nlib::StringGrid *sgBuiltin;
-	nlib::ToolButton *btnDelVar;
+	nlib::ToolButton *btnAdd;
+	nlib::ToolButton *btnDelete;
 	nlib::ToolButton *btnClear;
 	nlib::Button *btnCancel;
 	nlib::Button *btnSave;
@@ -27,7 +28,8 @@ N_PUBLIC: /* Designer generated list of public members. Do not edit by hand. */
 	void btnSaveClick(void *sender, nlib::EventParameters param);
 	void btnCancelClick(void *sender, nlib::EventParameters param);
 	void btnClearClick(void *sender, nlib::EventParameters param);
-	void btnDelVarClick(void *sender, nlib::EventParameters param);
+	void btnAddClick(void* sender, nlib::EventParameters param);
+	void btnDeleteClick(void *sender, nlib::EventParameters param);
 	void BuiltinMouseUp(void *sender, nlib::MouseButtonParameters param);
 	void BuiltinMouseDown(void *sender, nlib::MouseButtonParameters param);
 	void BuiltinMouseMove(void *sender, nlib::MouseMoveParameters param);
@@ -60,6 +62,8 @@ private:
 
 	void _CollectFrom(int index);	// from index-th grid to RowData vector
 	void _SetupGridLayout(int tabIndex = 0);	// 0: functions, 1: variables
+
+	void _TableDoubleClicked(nlib::StringGrid* psg, nlib::Point cell);
 N_PRIVATE: /* Designer generated list of private members. Do not edit by hand. */
 	void InitializeFormAndControls(); /* Control initializations. Do not remove. */
 };

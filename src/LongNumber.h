@@ -5,6 +5,7 @@
 #include <iostream>
 #include <limits>
 #include <algorithm>
+#undef set
 #include <set>
 #include <map>
 
@@ -143,10 +144,10 @@ namespace LongNumber {
 
 	enum class EFlag {
 		// rnfOk,		OK when flags are empty
-		rnfUnderflow,
-		rnfOverflow,
-		rnfDivBy0,
-		rnfInvalid,
+		rnfUnderflow = 1,
+		rnfOverflow  = 2,
+		rnfDivBy0    = 4,
+		rnfInvalid   = 8,
 		rnfMalformed	// e.g more than 1 decimal point or exponent or invalid number for base
 	};
 

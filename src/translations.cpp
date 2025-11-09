@@ -197,6 +197,12 @@ static _LanguageTexts_private __texts[] = {
  { FCT_TURN,				L"&Turns",							L"&Ford." },
  { FCT_VIEW,				L"&View",							L"&Nézet" },
  { FCT_WORDS,	    		L"As &Words",						L"&Szóként" },
+ { FCT_VNDIALOGTITLE,	    L"FalconCalc - Edit variables & functions", L"FalconCalc - Szerkesztés"},
+ { FCT_VNDNAME,		        L"&Name:",          L"&Név:"                         },
+ { FCT_VNDVALUE,		    L"&Definition:",    L"&Definíció:"             },
+ { FCT_VNDUNIT,		        L"&Unit:",          L"&Mértékegység:"                },
+ { FCT_VNDCOMMENT,		    L"&Comment:",       L"&Megjegyzés:"               },
+
  { FCT_HELPTITLE,		L"FalconCalc Help", L"FalconCalc Súgó"},
  { FCT_ABOUTFC,			L"About FalconCalc", L"Névjegy" },
  { FCT_ABOUTLINE1,		L"A handy little calculator for everyone\n\n",                         L"Egy ügyes kis számológép, mindenkinek\n\n" },
