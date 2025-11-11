@@ -4,7 +4,7 @@ Multi language Windows scientist's and programmer's calculator featuring arbitra
 Qt based version of the calculator for multi platform (Windows, Linux, OsX) usage, with more options than the only windows version (e.g. light, dark, black, blue styles)
 # Screenshots
 
-![falconcalc1](https://github.com/user-attachments/assets/24b50146-f20c-4fcf-b2ea-e351b4cf5240")
+![falconcalc1](https://github.com/user-attachments/assets/24b50146-f20c-4fcf-b2ea-e351b4cf5240)
 ![falconcalc2](https://github.com/user-attachments/assets/d280df82-9c94-45a7-84d0-f9dd8633fbf2)
 
 # Description
