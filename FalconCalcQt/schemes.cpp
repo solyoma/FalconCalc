@@ -27,13 +27,25 @@ static void __SaveString(QString name, QString s)
 	ofs << "/* -- " << name << " -- */\n\n";
 	ofs << s << "\n";
 }
+
+static void __SaveStyle(QString styleName, FalconCalcScheme &sch)
+{
+	QFile of(styleName + ".sty");
+	of.open(QIODevice::WriteOnly);
+	QTextStream ofs(&of);
+	ofs << ((QApplication*)(QApplication::instance()))->styleSheet() << "\n";
+
+	ofs << sch.Table();
+}
 #else
 #define __SaveValues(a,b,c) 
 #define __SaveString(a) 
+#define __SaveStyle(a)
 #endif
 #endif
 
-/* If not all values are used then the arg() can skip
+/* !!!!!!!!!!!!!!!!
+	If not all values are used then the arg() can skip
    e.g. QString("%1 - %3").arg(1).arg(2).arg(3) will result in the string "1 - 2" and not "1 - 3"
 	therefore to keep the order all arguments (colors) are enumerated here 
    %1 %2 %3 %4 %5 %6 %7 %8 %9 %10 
@@ -43,14 +55,23 @@ static void __SaveString(QString name, QString s)
 static QString fcStyles = {
 R"END(
 * {
-	background-color:%1;		/* (1) background */
-	color:%2;					/* (2) color */
+	background-color:%1;			/* (1) background */
+	color:%2;						/* (2) color */
 }
         
-QMainWindow,QDialog {
-	background-color:%17;		/* (17) background */
+QDialog,
+QMainWindow {
+	background-color:%17;			/* (17) Dialog background */
 }
-/*---------------------------*/
+
+QPushButton {
+	padding:2px 4px;
+}
+
+QPushButton:flat {
+	border:1px solid %3;			/* (3) BorderColor */
+}
+
 QTabWidget::tab-bar {
     left: 5px;
 }
@@ -58,6 +79,7 @@ QTabWidget::tab-bar {
 QTabBar::tab {
     border-top-left-radius: 4px;
     border-top-right-radius: 4px;
+	border-color:%6;				/*	(6) tab border */
 	min-width: 20ex;
 	padding: 2px;
 }        
@@ -67,14 +89,6 @@ QTabBar::tab:!selected {
 /*---------------------------*/
 QToolTip {
     border-radius: 4px;
-}
-
-QPushButton:flat {
-	border:1px solid %3;
-}
-
-QPushButton {
-	padding:2px 4px;
 }
 
 QToolButton {
@@ -102,38 +116,33 @@ QSpinBox {
 	padding: 0 8px;
 }
 
-QTextEdit, 
-QSpinBox,
+QListView,
 QPushButton,
-QTreeView, 
-QListView {
+QSpinBox,
+QTextEdit, 
+QTreeView {
     border-radius: 10px;
 }
-						
-QLabel#lblChars {
-	background-color: rgba(255,255,255,0);
-}
-        
+
 /* ------------------ borders ----------------------*/   
+QGroupBox,
+QPushButton,
+QSpinBox,
+QTabWidget:pane,     
+QTabBar::tab, 
+QTextEdit, 
+QToolTip {
+    border: 2px solid %3;		/* (3)  border color */
+	border-radius:5px;
+}
+QPushButton#btnOpenCloseDecOptions,
+QPushButton#btnOpenCloseHexOptions {
+	border: none;
+}
+
 QGroupBox::title {
 	border-radius: 5px;
 	color:%16;					/* (16) bold title color */
-}
-/*QGroupBox#gbResults::title,		/ * otherwise outside VS2022 1 line padding at the top appears in these */
-/*QGroupBox#gbDecOptions::title,	 */
-/*QGroupBox#gbHexOptions::title {	 */
-/*	height: 0px;					 */
-/*}									 */
-
-QTabWidget:pane,     
-QTabBar::tab, 
-QToolTip,
-QTextEdit, 
-QGroupBox,
-QSpinBox,
-QPushButton {
-    border: 2px solid %3;		/* (3)  border color */
-	border-radius:5px;
 }
 
 QLineEdit {
@@ -155,6 +164,11 @@ QListWidget {
 QLineEdit {
 	background:%7;				/* (7)	InputBackground */ 
 }
+						
+QLabel#lblChars {
+	background: %1;				/* (1) background */
+}
+        
 QTabBar::tab,
 QTextEdit:focus, 
 QLineEdit:focus,
@@ -226,9 +240,13 @@ QMenu::item:selected {
 	background:%22;				/* (22) menu selected background*/
 	color:%23;					/* (23) menu selected foreground*/
 }
+WMenu::item::highlighted {
+	background:%20;				/* (20)	MenuHighlightBackground */
+	color:%21;					/* (21)	MenuHighlightColor */
+}
 
 QLineEdit.disabled {
-	color:%10;
+	color:%10;					/* (10) disabled foreground */
 	background:%11;				/* (11) disabled background */
 }										  
 
@@ -247,14 +265,14 @@ QPusButton:default {
 
 
 QTableWidget {
-	background:%26;				/* (26) TableWidgetBackground*/
-	color:%27;					/* (27) color */
-	alternate-background-color:%28;	/* (28) alternate background */
+	background:%24;				/* (24) TableWidgetBackground*/
+	color:%25;					/* (25) color */
+	alternate-background-color:%26;	/* (26) alternate background */
 }
 
 QHeaderView::section {
-	background:%26;
-	color:%27;
+	background:%24;				/* (24) TableWidgetBackground */
+	color:%25;					/* (25) color */
 }
 
 #lblActualElem {
@@ -291,18 +309,18 @@ static std::vector<QString> __SchemeItemNames = {
 	"MenuHighlightColor",		// %21
 	"MenuSelectedBackground",	// %22
 	"MenuSelectedColor",		// %23
-	"MenuSeparatorColor",		// %24
-	"MenuDisabled",				// %25
-	"TableWidgetBackground",	// %26
-	"TableWidgetColor",			// %27
-	"TableWidgetAlternateBackground",// %28
+	"TableWidgetBackground",	// %24
+	"TableWidgetColor",			// %25
+	"TableWidgetAlternateBackground",// %26
+	"MenuSeparatorColor",		// %27
+	"MenuDisabled",				// %28
 	"TableWidgetAlternateColor",// %29
 };
 
 static std::vector<QString> 
 	__lightV = 
 	{
-		"#E0E0E0",		// %1	Background
+		"#EEEEEE",		// %1	Background
 		"#101010",		// %2	TextColor		
 		"#A0A0A0",		// %3	BorderColor		
 		"#000000",		// %4	FocusedInput		
@@ -318,18 +336,18 @@ static std::vector<QString>
 		"#e0e0e0",		// %14	DefaultBg		
 		"#f0a91f",		// %15	WarningColor		
 		"#e28308",		// %16	BoldTitleColor
-		"qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop:0 #E0E0E0, stop:1 #FFFFFF)",			// %17 DialogBackground
+		"#E0E0E0",		// %17  DialogBackground
 		"#cce8ff",		// %18  MenuBarBackground
 		"#101010",		// %19  MenuBarColor
 		"#a0a0a0",		// %20	MenuHighlightBackground
 		"#101010",		// %21	MenuHighlightColor
 		"#90c8f6",		// %22	MenuSelectedBackground
 		"#101010",		// %23	MenuSelectedColor
-		"#101010",		// %24	MenuSeparatorColor
-		"#aaaaaa",		// %25	MenuDisabledBackground
-		"#e0e0e0",		// %26	TableWidgetBackground
-		"#000000",		// %27	TableWidgetColor
-		"#d0d0d0",		// %28	TableWidgetAlternateBackground
+		"#e0e0e0",		// %24	TableWidgetBackground
+		"#000000",		// %25	TableWidgetColor
+		"#d0d0d0",		// %26	TableWidgetAlternateBackground
+		"#101010",		// %27	MenuSeparatorColor
+		"#aaaaaa",		// %28	MenuDisabledBackground
 		"#aaaaaa",		// %29	TableWidgetAlternateColor
 	},						
 	__darkV = 				
@@ -357,11 +375,11 @@ static std::vector<QString>
 		"#000000",		// %21	MenuHighlightColor
 		"#a0a0a0",		// %22	MenuSelectedBackground
 		"#000000",		// %23	MenuSelectedColor
-		"#aaaaaa",		// %24	MenuSeparatorColor
-		"#aaaaaa",		// %25	MenuDisabledBackground
-		"#303030",		// %26	TableWidgetBackground
-		"#aaaaaa",		// %27	TableWidgetColor
-		"#505050",		// %28	TableWidgetAlternateBackground
+		"#303030",		// %24	TableWidgetBackground
+		"#aaaaaa",		// %25	TableWidgetColor
+		"#505050",		// %26	TableWidgetAlternateBackground
+		"#aaaaaa",		// %27	MenuSeparatorColor
+		"#aaaaaa",		// %28	MenuDisabledBackground
 		"#aaaaaa",		// %29	TableWidgetAlternateColor
 },
 	__blackV =
@@ -389,11 +407,11 @@ static std::vector<QString>
 		"#ffffff",		// %21	MenuHighlightColor
 		"#a0a0a0",		// %22	MenuSelectedBackground
 		"#000000",		// %23	MenuSelectedColor
-		"#aaaaaa",		// %24	MenuSeparatorColor
-		"#aaaaaa",		// %25	MenuDisabledBackground
-		"#191919",		// %26	TableWidgetBackground
-		"#aaaaaa",		// %27	TableWidgetColor
-		"#303030",		// %28	TableWidgetAlternateBackground
+		"#191919",		// %24	TableWidgetBackground
+		"#aaaaaa",		// %25	TableWidgetColor
+		"#303030",		// %26	TableWidgetAlternateBackground
+		"#aaaaaa",		// %27	MenuSeparatorColor
+		"#aaaaaa",		// %28	MenuDisabledBackground
 		"#aaaaaa",		// %29	TableWidgetAlternateColor
 },
 	__blueV = 
@@ -421,11 +439,11 @@ static std::vector<QString>
 		"#101010",		// %21	MenuHighlightColor
 		"#90c8f6",		// %22	MenuSelectedBackground
 		"#101010",		// %23	MenuSelectedColor
-		"#aaaaaa",		// %24	MenuSeparatorColor
-		"#aaaaaa",		// %25	MenuDisabledBackground
-		"#3b5876",		// %26	TableWidgetBackground
-		"#cccccc",		// %27	TableWidgetColor
-		"#476a8d",		// %28	TableWidgetAlternateBackground
+		"#3b5876",		// %24	TableWidgetBackground
+		"#cccccc",		// %25	TableWidgetColor
+		"#476a8d",		// %26	TableWidgetAlternateBackground
+		"#aaaaaa",		// %27	MenuSeparatorColor
+		"#aaaaaa",		// %28	MenuDisabledBackground
 		"#aaaaaa",		// %29	TableWidgetAlternateColor
 	};
 
@@ -587,10 +605,16 @@ Scheme FSchemeVector::PrepStyle(Scheme m)
 		{
 			int i; 
 			while ((i = s.lastIndexOf("/*")) >= 0)
-				s.remove(i, s.lastIndexOf("*/") - i + 2);
+			{
+				s.remove(i, s.lastIndexOf("*/") - i + 1);
+				if (s[0] == '\n')
+					s.remove(i, 1);
+			}
 		};
 
 	QString ss;
+	FalconCalcScheme sch( SchemeFor(m) );
+
 	if (m == Scheme::schSystem)
 	{
 		//ss = "QGroupBox#gbResults::title,\n"
@@ -602,7 +626,6 @@ Scheme FSchemeVector::PrepStyle(Scheme m)
 	}
 	else
 	{
-		FalconCalcScheme sch( SchemeFor(m) );
 
 		//__SaveString("fcStyles.str", fcStyles);
 		ss =				//		variable				
@@ -636,28 +659,24 @@ Scheme FSchemeVector::PrepStyle(Scheme m)
 			.arg(sch._values[26].second)	// %27	ListAlternateColor	
 			.arg(sch._values[27].second)	// %28	ListSelectionBackground
 			.arg(sch._values[28].second);	// %29	ListSelectionColor		   
-
+#ifndef _DEBUG
 		eraseComments(ss);
-
+#endif
 		((QApplication*)(QApplication::instance()))->setStyleSheet(ss);
 	}
-	// DEBUG
-	//{
-	//	QString s;
-	//	switch (m)
-	//	{
-	//		case Scheme::schSystem:s = "schSystem"; break;
-	//		case Scheme::schLight: s = "schLight"; break;
-	//		case Scheme::schDark:  s = "schDark"; break;
-	//		case Scheme::schBlack: s = "schBlack"; break;
-	//		case Scheme::schBlue:  s = "schBlue"; break;
-	//	}
-	//	QFile of("FalconCalc_log.txt");
-	//	of.open(QIODevice::WriteOnly | QIODevice::Append);
-	//	QTextStream ofs(&of);
-	//	ofs << "/* ------- scheme : " << s << "---------- - */ \n" << ss << "\n";
-	//}	
-	// /DEBUG
+#ifdef NothingImportant
+		QString s;
+		switch (m)
+		{
+			case Scheme::schSystem:s = "system"; break;
+			case Scheme::schLight: s = "light"; break;
+			case Scheme::schDark:  s = "dark"; break;
+			case Scheme::schBlack: s = "black"; break;
+			case Scheme::schBlue:  s = "blue"; break;
+		}
+		__SaveStyle(QString("FalconCalc_%1.sty").arg(s), sch);
+#endif
 	currentScheme = m;
 	return m;
 }
+

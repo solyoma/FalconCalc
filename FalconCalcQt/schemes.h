@@ -24,6 +24,15 @@ struct FalconCalcScheme
 
 	FalconCalcScheme(const QString sMenuTitle, std::vector<QString> names);
 	FalconCalcScheme(const QString sMenuTitle, std::vector<QString> names, std::vector<QString> values);
+
+	int Size() const { return _values.size(); }
+	QString Table() const
+	{
+		QString s = "------------color array -------\n";
+		for (size_t i = 0; i < _names.size(); ++i)
+			s += QString("%1 ").arg(i+1, 2) + _names[i] + " = " + _values[i].second + "\n";
+		return s;
+	}
 private:
 	QString _sMenuTitle;
 	std::vector<std::pair<int, QString> > _values;
