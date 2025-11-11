@@ -119,7 +119,7 @@ QGroupBox::title {
 	border-radius: 5px;
 	color:%16;					/* (16) bold title color */
 }
-/*QGroupBox#gbResults::title,		/* otherwise outside VS2022 1 line padding at the top appears in these */
+/*QGroupBox#gbResults::title,		/ * otherwise outside VS2022 1 line padding at the top appears in these */
 /*QGroupBox#gbDecOptions::title,	 */
 /*QGroupBox#gbHexOptions::title {	 */
 /*	height: 0px;					 */
