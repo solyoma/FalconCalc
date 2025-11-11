@@ -65,6 +65,9 @@ const QString FalconCalcQt_STATE_FILE = FalconCalc_State_File;
 FalconCalcQt::FalconCalcQt(QWidget *parent)  : QMainWindow(parent)
 {
     ui.setupUi(this);
+#ifdef _DEBUG
+	setWindowTitle(windowTitle() + " - Debug");
+#endif
 	FCSettings::Init();
 
 // make mode selection actions exclusive

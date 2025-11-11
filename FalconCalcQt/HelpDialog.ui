@@ -17,8 +17,8 @@
    <string>FalconCalcQt - Help</string>
   </property>
   <property name="windowIcon">
-   <iconset>
-    <normaloff>../src/program.ico</normaloff>../src/program.ico</iconset>
+   <iconset resource="FalconCalcQt.qrc">
+    <normaloff>:/FalconCalcQt/Resources/calculator.ico</normaloff>:/FalconCalcQt/Resources/calculator.ico</iconset>
   </property>
   <property name="modal">
    <bool>false</bool>

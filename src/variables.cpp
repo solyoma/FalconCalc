@@ -27,6 +27,7 @@ using namespace LongNumber;
 #include "calculate.h"
 
 #include "mainForm.h"
+#include "translations.h"
 #include "variables.h"
 #include "VFDefDialog.h"
 
@@ -41,7 +42,7 @@ void TfrmVariables::InitializeFormAndControls() /* Control initialization functi
 	/* Generated member initialization. Do not modify. */
 	SetLeft(209);
 	SetTop(509);
-	SetText(L"FalconCalc - Edit Functions/Variables");
+	SetText(lt.GetTranslationFor(FCT_VARSANDFUNCTIONS));
 	GetFont().SetFamily(L"Tahoma");
 	SetWantedKeyTypes(nlib::wkArrows | nlib::wkTab | nlib::wkEnter | nlib::wkEscape | nlib::wkOthers);
 	SetClientRect(nlib::Rect(0, 0, 528, 569));
@@ -53,9 +54,9 @@ void TfrmVariables::InitializeFormAndControls() /* Control initialization functi
 	tcVars->SetBounds(nlib::Rect(0, 0, 439, 569));
 	tcVars->SetText(L"tcVars");
 	tcVars->SetAnchors(nlib::caLeft | nlib::caTop | nlib::caRight | nlib::caBottom);
-	nlib::Tab *temp_var0086680704 = tcVars->AddTab(L"&Variables");
+	nlib::Tab *temp_var0086680704 = tcVars->AddTab(lt.GetTranslationFor(FCT_VARIABLES));
 	tcVars->SetTabOrder(VARIABLES);
-	nlib::Tab *temp_var0062653624 = tcVars->AddTab(L"&Functions");
+	nlib::Tab *temp_var0062653624 = tcVars->AddTab(lt.GetTranslationFor(FCT_FUNCTIONS));
 	temp_var0062653624->SetTag(1);
 	tcVars->SetSelectedTab(VARIABLES);
 	tcVars->SetParent(this);
@@ -114,7 +115,7 @@ void TfrmVariables::InitializeFormAndControls() /* Control initialization functi
 	btnAdd->SetBounds(nlib::Rect(444, 56, 476, 88));
 	btnAdd->SetAnchors(nlib::caTop | nlib::caRight);
 	btnAdd->SetTabOrder(5);
-	btnAdd->SetTooltipText(L"Append Variable/function");
+	btnAdd->SetTooltipText(lt.GetTranslationFor(FCT_APPENDVF));
 	btnAdd->SetImagePosition(nlib::bipCenter);
 	btnAdd->SetFlat(false);
 	btnAdd->SetParent(this);
@@ -124,7 +125,7 @@ void TfrmVariables::InitializeFormAndControls() /* Control initialization functi
 	btnDelete->SetEnabled(false);
 	btnDelete->SetAnchors(nlib::caTop | nlib::caRight);
 	btnDelete->SetTabOrder(1);
-	btnDelete->SetTooltipText(L"Remove actual line");
+	btnDelete->SetTooltipText(lt.GetTranslationFor(FCT_REMOVEVF));
 	btnDelete->SetImagePosition(nlib::bipCenter);
 	btnDelete->SetFlat(false);
 	btnDelete->SetParent(this);
@@ -133,7 +134,7 @@ void TfrmVariables::InitializeFormAndControls() /* Control initialization functi
 	btnClear->SetBounds(nlib::Rect(460, 132, 492, 164));
 	btnClear->SetAnchors(nlib::caTop | nlib::caRight);
 	btnClear->SetTabOrder(2);
-	btnClear->SetTooltipText(L"Remove all user Variables or Functions");
+	btnClear->SetTooltipText(lt.GetTranslationFor(FCT_REMOVEALLVF));
 	btnClear->SetImagePosition(nlib::bipCenter);
 	btnClear->SetFlat(false);
 	btnClear->SetParent(this);
@@ -599,7 +600,7 @@ void TfrmVariables::_TableDoubleClicked(nlib::StringGrid* psg, nlib::Point cell)
 	frmMain->cbInfix->SelStartAndLength(start, length);		// after start and length determined
 	if (start < 0)
 		start = 0;
-	wn = psg->String(0, sgUser->Selected().y);			 // name of function/variable from string grid
+	wn = psg->String(0, cell.y);			 // name of function/variable from string grid
 	ws = wsel.substr(0, start);								 // text before the selection
 	we = wsel.substr(start+length);							 // text after the selection
 
@@ -617,7 +618,7 @@ void TfrmVariables::_TableDoubleClicked(nlib::StringGrid* psg, nlib::Point cell)
 	}
 	// variables: just the name is inside wn
 														//	  column,		row
-	frmMain->cbInfix->SetSelText(ws+wn+we);
+	frmMain->cbInfix->SetText(ws+wn+we);
 	frmMain->cbInfix->SetSelStartAndLength(start + wn.length(), 0);
 	frmMain->cbInfixTextChanged(this, nlib::EventParameters());
 }
@@ -630,10 +631,10 @@ void TfrmVariables::sgUserDoubleClick(void* sender, nlib::MouseButtonParameters 
 	else if(cell.x > 0)		// otherwise nothing to edit here
 	{						// use
 		VarFuncData vfd;
-		vfd.name		= sgUser->String(cell.y, 0);
-		vfd.body		= sgUser->String(cell.y, 1);
-		vfd.unit		= sgUser->String(cell.y, 2);
-		vfd.comment		= sgUser->String(cell.y, 3);
+		vfd.name		= sgUser->String(0, cell.y);
+		vfd.body		= sgUser->String(1, cell.y);
+		vfd.unit		= sgUser->String(2, cell.y);
+		vfd.comment		= sgUser->String(3, cell.y);
 		vfd.isFunction	= tcVars->SelectedTab();
 
 		TVarFuncDefDialog *pdlg =  new TVarFuncDefDialog(vfd);

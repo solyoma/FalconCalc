@@ -1,4 +1,5 @@
-IDI_MAINICON ICON "S:\\vegyes\\FalconCalc\\src\\\\program.ico"
+#include "resource.h"
+IDI_MAINICON ICON "calculator.ico"
 
 28672 RCDATA
 {

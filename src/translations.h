@@ -36,6 +36,7 @@ enum TextIDs {
 	FCT_EDITCOPY			,
 	FCT_EDITFUNCS			,
 	FCT_EDITVARS			,
+	FCT_VARSANDFUNCTIONS,
 	FCT_ENG				,
 	FCT_EXIT				,
 	FCT_FILE				,
@@ -87,11 +88,19 @@ enum TextIDs {
 	FCT_TIPSP				,
 	FCT_TIPSPC			,
 	FCT_TIPTURN			,
-	FCT_TURN				,
-	FCT_VIEW				,
-	FCT_WORDS				,
+	FCT_TURN			,
+	FCT_VIEW			,
+	FCT_WORDS			,
 
-	FCT_VNDIALOGTITLE,	// L"FalconCalc - Edit variables & functions", L"FalconCalc - Szerkesztés",
+	FCT_VARIABLES,		// L"&Variables", L"&Változók"
+	FCT_FUNCTIONS,		// L"&Functions", L"&Függvények"
+	FCT_APPENDVF,		// L"Append Variable/function",	L"Változó vagy függvény hozzáadása"
+	FCT_REMOVEVF,		// L"Remove actual line", L"Aktuális sor törlése"
+	FCT_REMOVEALLVF,	// L"Remove all user Variables or Functions", L"Minden változó v. függvény törlése"
+
+	FCT_VNDIALOGTITLE,	// L"FalconCalc - ", L"FalconCalc - ",
+	FCT_VNDVARTITLE,	// L"Edit Variable", L"Változó szerk."
+	FCT_VNDFUNCTITLE,	// L"Edit Function", L"Függvény szerk."
 	FCT_VNDNAME,		// L"&Name:", L"&Név:"
 	FCT_VNDVALUE,		// L"&Definition:", L"&Definíció:"
 	FCT_VNDUNIT,		// L"&Unit:", L"&Mértékegység:"

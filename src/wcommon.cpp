@@ -105,10 +105,11 @@ BOOL CALLBACK EnumNamesFunc(HMODULE hModule, LPCTSTR lpType, LPTSTR lpName, LONG
 
 void MyLoadWindowIcon(nlib::Form* f)
 {
-	if (!f->IconFromResource(nullptr, MAKEINTRESOURCEW(IDI_MAINICON)))
+	if (!f->IconFromResource(GetModuleHandle(NULL), MAKEINTRESOURCEW(IDI_MAINICON)))
 	{
 		DWORD dw = GetLastError();
 #if _DEBUG
+		DebugEnumResources();
 		DebugMsg(L"IconFromResource returned false, Error code:" + std::to_wstring(dw));
 #endif
 	}

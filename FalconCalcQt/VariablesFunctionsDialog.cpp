@@ -150,7 +150,7 @@ void VariablesFunctionsDialog::on_btnRemoveAll_clicked()	// only removes rows wi
 	_pActUserTable->setRowCount(0);	// clear table
 	_pActUserTable->setRowCount(MIN_ROW_COUNT);// and set empty rows
 	_EnableButtons();
-	qDebug("on_btnRemoveAll_clicked");
+	// qDebug("on_btnRemoveAll_clicked");
 }
 
 void VariablesFunctionsDialog::on_btnRemoveRow_clicked() // selected rows
@@ -167,7 +167,7 @@ void VariablesFunctionsDialog::on_btnRemoveRow_clicked() // selected rows
 			QVector<ElidingTableWidgetItem*> columnData; // each item points to an existing ElidingTableWidgetItem
 			for (int col = 0; col < _pActUserTable->columnCount(); ++col)
 			{
-				qDebug("  item (%d, %d) = %s", r, col, _pActUserTable->item(r, col)->text().toStdString().c_str());
+				// qDebug("  item (%d, %d) = %s", r, col, _pActUserTable->item(r, col)->text().toStdString().c_str());
 				columnData.append(reinterpret_cast<ElidingTableWidgetItem*>(_pActUserTable->takeItem(r, col)));
 			}
 			undoItem.data.push_back({ r, columnData });
@@ -269,7 +269,7 @@ void VariablesFunctionsDialog::on_btnAddRow_clicked()
 			ElidingTableWidgetItem* pwi = new ElidingTableWidgetItem("");
 			_pActUserTable->setItem(rowCnt, col, pwi);
 		}
-		qDebug("on_btnAddRow_clicked - row #%d added", rowCnt);
+		// qDebug("on_btnAddRow_clicked - row #%d added", rowCnt);
 	}
 	int row = _cntRowsWithData[ActualTab()];
 	if (ActualTab() ==  FUNCTIONS)

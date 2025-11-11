@@ -1,5 +1,6 @@
 <RCC>
   <qresource prefix="/FalconCalcQt">
+    <file>Resources/calculator.ico</file>
     <file>translations/FalconCalcQt_en.qm</file>
     <file>translations/FalconCalcQt_hu.qm</file>
     <file>Resources/btndel-gray.png</file>
@@ -11,7 +12,6 @@
     <file>Resources/trashcan.png</file>
     <file>Resources/settings.png</file>
     <file>Resources/btndel.png</file>
-    <file>Resources/program.ico</file>
     <file>Resources/trash.png</file>
   </qresource>
 </RCC>

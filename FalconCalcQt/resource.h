@@ -1,5 +1,7 @@
 //{{NO_DEPENDENCIES}}
 // Microsoft Visual C++ generated include file.
+//modified by A.S.
+#define IDI_MAIN_ICON 1000
 // Used by FalconCal.rc
 
 // Next default values for new objects

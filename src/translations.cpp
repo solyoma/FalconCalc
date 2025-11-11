@@ -128,8 +128,9 @@ static _LanguageTexts_private __texts[] = {
  { FCT_DWORDS,				L"As DWo&rds",						L"&Duplaszóként" },
  { FCT_EDIT,				L"&Edit",							L"&Szerkesztés" },
  { FCT_EDITCOPY,			L"Cop&y ...",						L"&Másolás ..." },
- { FCT_EDITFUNCS, 			L"Edi User &Functions...",			L"Saját &Függvények..." },
- { FCT_EDITVARS,			L"Edit User &Variables...",			L"Saját &változók..." },
+ { FCT_EDITFUNCS, 			L"User &Functions...",  			L"Saját &Függvények..." },
+ { FCT_EDITVARS,			L"User &Variables...",  			L"Saját &változók..." },
+ { FCT_VARSANDFUNCTIONS,    L"Variables and Functions",         L"Változók és függvények"},
  { FCT_ENG,				 	L"Engeneering f&ormat",				L"Mérnöki f&ormátum" },
  { FCT_EXIT,				L"E&xit",							L"&Kilépés" },
  { FCT_FILE,				L"&File",							L"&Fájl" },
@@ -197,7 +198,17 @@ static _LanguageTexts_private __texts[] = {
  { FCT_TURN,				L"&Turns",							L"&Ford." },
  { FCT_VIEW,				L"&View",							L"&Nézet" },
  { FCT_WORDS,	    		L"As &Words",						L"&Szóként" },
- { FCT_VNDIALOGTITLE,	    L"FalconCalc - Edit variables & functions", L"FalconCalc - Szerkesztés"},
+
+ { FCT_VARIABLES,		    L"&Variables", L"&Változók" },
+ { FCT_FUNCTIONS,           L"&Functions", L"&Függvények" },
+ { FCT_APPENDVF,		    L"Append Variable/function",	L"Változó vagy függvény hozzáadása" },
+ { FCT_REMOVEVF,		    L"Remove actual line", L"Aktuális sor törlése" },
+ { FCT_REMOVEALLVF,	        L"Remove all user Variables or Functions", L"Minden változó vagy függvény törlése" },
+
+
+ { FCT_VNDIALOGTITLE,	    L"FalconCalc - ", L"FalconCalc - "},    // append FCT_VNDVAR or FCT_VNDFUNC
+ { FCT_VNDVARTITLE,	        L"Edit Variable", L"Változó szerk."},
+ { FCT_VNDFUNCTITLE,	    L"Edit Function", L"Függvény szerk."},
  { FCT_VNDNAME,		        L"&Name:",          L"&Név:"                         },
  { FCT_VNDVALUE,		    L"&Definition:",    L"&Definíció:"             },
  { FCT_VNDUNIT,		        L"&Unit:",          L"&Mértékegység:"                },

@@ -33,8 +33,6 @@ static void __SaveString(QString name, QString s)
 #endif
 #endif
 
-static QString fcStyles = {
-R"END(
 /* If not all values are used then the arg() can skip
    e.g. QString("%1 - %3").arg(1).arg(2).arg(3) will result in the string "1 - 2" and not "1 - 3"
 	therefore to keep the order all arguments (colors) are enumerated here 
@@ -42,6 +40,8 @@ R"END(
    %11 %12 %13 %14 %15 %16 %17 %18 %19 %20
    %21 %22 %23 %24 %25 %26 %27 %28 %29
 */
+static QString fcStyles = {
+R"END(
 * {
 	background-color:%1;		/* (1) background */
 	color:%2;					/* (2) color */
@@ -119,6 +119,11 @@ QGroupBox::title {
 	border-radius: 5px;
 	color:%16;					/* (16) bold title color */
 }
+/*QGroupBox#gbResults::title,		/* otherwise outside VS2022 1 line padding at the top appears in these */
+/*QGroupBox#gbDecOptions::title,	 */
+/*QGroupBox#gbHexOptions::title {	 */
+/*	height: 0px;					 */
+/*}									 */
 
 QTabWidget:pane,     
 QTabBar::tab, 
@@ -262,7 +267,7 @@ QHeaderView::section {
 };		// styles
 
 
-static std::vector<QString> __schemeNames = {
+static std::vector<QString> __SchemeItemNames = {
 	"Background",				// %1
 	"TextColor",				// %2
 	"BorderColor",				// %3
@@ -274,6 +279,7 @@ static std::vector<QString> __schemeNames = {
 	"FocusedBorder",			// %9
 	"DisabledFg",				// %10
 	"DisabledBg",				// %11
+	"ImageBackground",			// %12
 	"PressedBg",				// %13
 	"DefaultBg",				// %14
 	"WarningColor",				// %15
@@ -291,8 +297,6 @@ static std::vector<QString> __schemeNames = {
 	"TableWidgetColor",			// %27
 	"TableWidgetAlternateBackground",// %28
 	"TableWidgetAlternateColor",// %29
-
-	"ImageBackground",			// %12
 };
 
 static std::vector<QString> 
@@ -300,7 +304,7 @@ static std::vector<QString>
 	{
 		"#E0E0E0",		// %1	Background
 		"#101010",		// %2	TextColor		
-		"#808080",		// %3	BorderColor		
+		"#A0A0A0",		// %3	BorderColor		
 		"#000000",		// %4	FocusedInput		
 		"#888888",		// %5	HoverColor		
 		"#9B9B9B",		// %6	TabBorder		
@@ -425,10 +429,10 @@ static std::vector<QString>
 		"#aaaaaa",		// %29	TableWidgetAlternateColor
 	};
 
-FalconCalcScheme FSchemeVector::light("Light:Világos",  __schemeNames, __lightV);
-FalconCalcScheme FSchemeVector::dark("Dark:Sötét",		__schemeNames, __darkV);
-FalconCalcScheme FSchemeVector::black("Black:Fekete",	__schemeNames, __blackV);
-FalconCalcScheme FSchemeVector::blue("Blue:Kék",		__schemeNames, __blueV);
+FalconCalcScheme FSchemeVector::light("Light:Világos",  __SchemeItemNames, __lightV);
+FalconCalcScheme FSchemeVector::dark("Dark:Sötét",		__SchemeItemNames, __darkV);
+FalconCalcScheme FSchemeVector::black("Black:Fekete",	__SchemeItemNames, __blackV);
+FalconCalcScheme FSchemeVector::blue("Blue:Kék",		__SchemeItemNames, __blueV);
 
 FSchemeVector schemes;		// default styles: default, system, blue, dark, black
 
@@ -571,16 +575,37 @@ int FSchemeVector::IndexOf(const QString& title) // title: maybe full name inclu
 	return -1;
 }
 
+// DEBUG
+#include <QFile>
+#include <QTextStream>
+// /DEBUG
+
 Scheme FSchemeVector::PrepStyle(Scheme m)
 {
+
+	auto eraseComments = [](QString &s)
+		{
+			int i; 
+			while ((i = s.lastIndexOf("/*")) >= 0)
+				s.remove(i, s.lastIndexOf("*/") - i + 2);
+		};
+
+	QString ss;
 	if (m == Scheme::schSystem)
-		((QApplication*)(QApplication::instance()))->setStyleSheet("");
+	{
+		//ss = "QGroupBox#gbResults::title,\n"
+		//	"QGroupBox#gbDecOptions::title,\n"
+		//	"QGroupBox#gbHexOptions::title {\n"
+		//	"  height: 0px;\n" 
+		//	"}\n";
+		((QApplication*)(QApplication::instance()))->setStyleSheet(ss);
+	}
 	else
 	{
 		FalconCalcScheme sch( SchemeFor(m) );
 
 		//__SaveString("fcStyles.str", fcStyles);
-		QString ss =				//		variable				
+		ss =				//		variable				
 			QString(fcStyles)		//   index    name				
 			.arg(sch._values[ 0].second)	// %1	sBackground				
 			.arg(sch._values[ 1].second)	// %2	sTextColor				
@@ -610,12 +635,29 @@ Scheme FSchemeVector::PrepStyle(Scheme m)
 			.arg(sch._values[25].second)	// %26	ListAlternateBackground
 			.arg(sch._values[26].second)	// %27	ListAlternateColor	
 			.arg(sch._values[27].second)	// %28	ListSelectionBackground
-			.arg(sch._values[28].second);// %29	ListSelectionColor		   
+			.arg(sch._values[28].second);	// %29	ListSelectionColor		   
 
+		eraseComments(ss);
 
 		((QApplication*)(QApplication::instance()))->setStyleSheet(ss);
-//		__SaveString("ss", ss);
 	}
+	// DEBUG
+	//{
+	//	QString s;
+	//	switch (m)
+	//	{
+	//		case Scheme::schSystem:s = "schSystem"; break;
+	//		case Scheme::schLight: s = "schLight"; break;
+	//		case Scheme::schDark:  s = "schDark"; break;
+	//		case Scheme::schBlack: s = "schBlack"; break;
+	//		case Scheme::schBlue:  s = "schBlue"; break;
+	//	}
+	//	QFile of("FalconCalc_log.txt");
+	//	of.open(QIODevice::WriteOnly | QIODevice::Append);
+	//	QTextStream ofs(&of);
+	//	ofs << "/* ------- scheme : " << s << "---------- - */ \n" << ss << "\n";
+	//}	
+	// /DEBUG
 	currentScheme = m;
 	return m;
 }

@@ -1423,8 +1423,12 @@ namespace NLIBNS
     bool Form::IconFromResource(HMODULE module, const wchar_t *resname)
     {
         HRSRC res = FindResource(module, resname, RT_GROUP_ICON);
-        if (res == NULL)
-            return false;
+        if (res == NULL) // e.g. the icon resource has just a single icon
+        {
+            res = FindResource(module, resname, RT_ICON);   // single icon
+            if (!res)
+				return LoadIcon(module, resname) != NULL;
+        }
         HGLOBAL lres = LoadResource(module, res);
         if (lres == NULL)
             return false;
