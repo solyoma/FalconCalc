@@ -86,7 +86,7 @@ FalconCalcQt::FalconCalcQt(QWidget *parent)  : QMainWindow(parent)
 	lengine = new LittleEngine;
 	lengine->displayFormat.useNumberPrefix = ui.chkHexPrefix->isChecked();
 	lengine->displayFormat.strThousandSeparator = " "_ss;
-	lengine->displayFormat.displWidth = 59;
+	lengine->displayFormat.displWidth = 55;
 
 	_schemeVector = new FSchemeVector();	// with color schemes light, dark, black and blue
 	_LoadState();
@@ -593,6 +593,7 @@ void FalconCalcQt::on_btnStringFont_clicked()
 void FalconCalcQt::on_btnClearInfix_clicked()
 {
 	ui.cbInfix->setCurrentIndex(-1);
+	ui.lblResults->setText("");
 	ui.cbInfix->setFocus();
 }
 

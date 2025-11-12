@@ -77,10 +77,10 @@
       </property>
       <layout class="QHBoxLayout" name="horizontalLayout_5">
        <property name="spacing">
-        <number>2</number>
+        <number>0</number>
        </property>
        <property name="leftMargin">
-        <number>1</number>
+        <number>2</number>
        </property>
        <property name="topMargin">
         <number>1</number>
@@ -1004,7 +1004,7 @@
      <x>0</x>
      <y>0</y>
      <width>522</width>
-     <height>21</height>
+     <height>20</height>
     </rect>
    </property>
    <widget class="QMenu" name="mnuFile">
