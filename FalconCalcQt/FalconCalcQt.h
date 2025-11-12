@@ -105,7 +105,7 @@ private slots:
 private:
     Ui::FalconCalcQtClass ui;
 
-	int _version=0x000900;      // version 0.9.0
+	int _version=0x000901;      // version 0.9.1
 	AppLanguage _appLanguage = AppLanguage::lanNotSet;
 
     SEMAPHORE _busy;
