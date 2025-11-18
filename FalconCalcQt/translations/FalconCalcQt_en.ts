@@ -5,16 +5,16 @@
     <name>AboutDialogClass</name>
     <message>
         <location filename="../AboutDialog.ui" line="29"/>
-        <source>About FalconCalcQt</source>
+        <source>About FalconCalc</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../AboutDialog.ui" line="35"/>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:14pt; font-weight:600;&quot;&gt;FalconCalcQt&lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;br/&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;A handy little calculator for everyone&lt;br/&gt;(especially useful for physicist and programmers)&lt;br/&gt;Based on the arbitrary precision&lt;br/&gt;cross platform arithmetic and function library&lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:10pt; font-weight:600; font-style:italic;&quot;&gt;LongNumber&lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;by. A .Sólyom&lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;with the Qt Group&apos;s Qt (&amp;quot;cute&amp;quot;) framework&lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:10pt; font-weight:600;&quot;&gt;© A. Sólyom - 2012- &lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;This program is open source (GPL3)&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <location filename="../AboutDialog.ui" line="39"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:14pt; font-weight:600;&quot;&gt;FalconCalc&lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;Qt Version&lt;br/&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;A handy little calculator for everyone&lt;br/&gt;(especially useful for physicist and programmers)&lt;br/&gt;Based on the arbitrary precision&lt;br/&gt;cross platform arithmetic and function library&lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:10pt; font-weight:600; font-style:italic;&quot;&gt;LongNumber&lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;by. A .Sólyom&lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;with the Qt Group&apos;s Qt (&amp;quot;cute&amp;quot;) framework&lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:10pt; font-weight:600;&quot;&gt;© A. Sólyom - 2020- &lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;This program is open source (GPL3)&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../AboutDialog.ui" line="75"/>
+        <location filename="../AboutDialog.ui" line="79"/>
         <source>OK</source>
         <translation type="unfinished"></translation>
     </message>
@@ -22,35 +22,35 @@
 <context>
     <name>FalconCalcQt</name>
     <message>
-        <location filename="../FalconCalcQt.cpp" line="319"/>
+        <location filename="../FalconCalcQt.cpp" line="355"/>
         <source>FalconCalc - Question</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.cpp" line="319"/>
+        <location filename="../FalconCalcQt.cpp" line="355"/>
         <source>This will remove the whole of history.
 Are you sure?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.cpp" line="331"/>
-        <location filename="../FalconCalcQt.cpp" line="376"/>
+        <location filename="../FalconCalcQt.cpp" line="367"/>
+        <location filename="../FalconCalcQt.cpp" line="412"/>
         <source>FalconCalc</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.cpp" line="331"/>
-        <location filename="../FalconCalcQt.cpp" line="376"/>
+        <location filename="../FalconCalcQt.cpp" line="367"/>
+        <location filename="../FalconCalcQt.cpp" line="412"/>
         <source>Restart the program to change the language!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.cpp" line="1014"/>
+        <location filename="../FalconCalcQt.cpp" line="1043"/>
         <source>FalconCalcQt - Error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.cpp" line="1014"/>
+        <location filename="../FalconCalcQt.cpp" line="1043"/>
         <source>%1 is for a newer version of the program.
 There might be problems with it.</source>
         <translation type="unfinished"></translation>
@@ -59,57 +59,52 @@ There might be problems with it.</source>
 <context>
     <name>FalconCalcQtClass</name>
     <message>
-        <location filename="../FalconCalcQt.ui" line="38"/>
-        <source>FalconCalcQt</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../FalconCalcQt.ui" line="488"/>
+        <location filename="../FalconCalcQt.ui" line="491"/>
         <source>&amp;Scientific format</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="495"/>
+        <location filename="../FalconCalcQt.ui" line="498"/>
         <source>Decimal d&amp;igits:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="502"/>
+        <location filename="../FalconCalcQt.ui" line="505"/>
         <source>Use &amp;Thousand separator:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="509"/>
+        <location filename="../FalconCalcQt.ui" line="512"/>
         <source>Use D&amp;ecimal separator</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="516"/>
+        <location filename="../FalconCalcQt.ui" line="519"/>
         <source>&amp;Engineering format</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="805"/>
+        <location filename="../FalconCalcQt.ui" line="808"/>
         <source>&amp;E</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="920"/>
+        <location filename="../FalconCalcQt.ui" line="923"/>
         <source>As &amp;Dwords</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="933"/>
+        <location filename="../FalconCalcQt.ui" line="936"/>
         <source>0&amp;x prefix</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="943"/>
+        <location filename="../FalconCalcQt.ui" line="946"/>
         <source>M&amp;inus sign</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="969"/>
+        <location filename="../FalconCalcQt.ui" line="972"/>
         <source>As IEEE 7&amp;54 double</source>
         <translation type="unfinished"></translation>
     </message>
@@ -124,97 +119,97 @@ There might be problems with it.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="833"/>
+        <location filename="../FalconCalcQt.ui" line="836"/>
         <source>▼----------Hexadecimal Options-----------</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="530"/>
+        <location filename="../FalconCalcQt.ui" line="533"/>
         <source>Space</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="535"/>
+        <location filename="../FalconCalcQt.ui" line="538"/>
         <source>,</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="540"/>
+        <location filename="../FalconCalcQt.ui" line="543"/>
         <source>.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="619"/>
+        <location filename="../FalconCalcQt.ui" line="622"/>
         <source>As string</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="671"/>
+        <location filename="../FalconCalcQt.ui" line="674"/>
         <source>&amp;Font...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="687"/>
+        <location filename="../FalconCalcQt.ui" line="690"/>
         <source>Angles in</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="711"/>
+        <location filename="../FalconCalcQt.ui" line="714"/>
         <source>De&amp;g</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="721"/>
+        <location filename="../FalconCalcQt.ui" line="724"/>
         <source>&amp;Rad</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="728"/>
+        <location filename="../FalconCalcQt.ui" line="731"/>
         <source>&amp;Grad</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="735"/>
+        <location filename="../FalconCalcQt.ui" line="738"/>
         <source>&amp;Turns</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="751"/>
+        <location filename="../FalconCalcQt.ui" line="754"/>
         <source>Display</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="781"/>
+        <location filename="../FalconCalcQt.ui" line="784"/>
         <source>Norm&amp;al</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="791"/>
+        <location filename="../FalconCalcQt.ui" line="794"/>
         <source>HT&amp;ML</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="798"/>
+        <location filename="../FalconCalcQt.ui" line="801"/>
         <source>&amp;TeX</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="900"/>
+        <location filename="../FalconCalcQt.ui" line="903"/>
         <source>As B&amp;ytes</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="910"/>
+        <location filename="../FalconCalcQt.ui" line="913"/>
         <source>As &amp;Words</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="950"/>
+        <location filename="../FalconCalcQt.ui" line="953"/>
         <source>&amp;Little endian</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="985"/>
+        <location filename="../FalconCalcQt.ui" line="988"/>
         <source>As IEEE &amp;754 single</source>
         <translation type="unfinished"></translation>
     </message>
@@ -252,227 +247,232 @@ There might be problems with it.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="1009"/>
+        <location filename="../FalconCalcQt.ui" line="1012"/>
         <source>&amp;File</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="1015"/>
+        <location filename="../FalconCalcQt.ui" line="1018"/>
         <source>&amp;Edit</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="1019"/>
+        <location filename="../FalconCalcQt.ui" line="1022"/>
         <source>User &amp;Data...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="1037"/>
+        <location filename="../FalconCalcQt.ui" line="1040"/>
         <source>&amp;Options</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="1041"/>
+        <location filename="../FalconCalcQt.ui" line="1044"/>
         <source>St&amp;yle</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="1066"/>
+        <location filename="../FalconCalcQt.ui" line="1069"/>
         <source>&amp;Help</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="1073"/>
+        <location filename="../FalconCalcQt.ui" line="1076"/>
         <source>&amp;View</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="1086"/>
+        <location filename="../FalconCalcQt.ui" line="1089"/>
         <source>E&amp;xit</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="1089"/>
+        <location filename="../FalconCalcQt.ui" line="1092"/>
         <source>Alt+X</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="1094"/>
+        <location filename="../FalconCalcQt.ui" line="1097"/>
         <source>&amp;Copy expression</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="1097"/>
+        <location filename="../FalconCalcQt.ui" line="1100"/>
         <source>Ctrl+C</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="1102"/>
+        <location filename="../FalconCalcQt.ui" line="1105"/>
         <source>&amp;Paste expression</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="1105"/>
+        <location filename="../FalconCalcQt.ui" line="1108"/>
         <source>Ctrl+V</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="1110"/>
+        <location filename="../FalconCalcQt.ui" line="1113"/>
         <source>&amp;Paste &amp;After expression</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="1113"/>
+        <location filename="../FalconCalcQt.ui" line="1116"/>
         <source>Ctrl+Shift+V</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="1121"/>
+        <location filename="../FalconCalcQt.ui" line="1124"/>
         <source>Edit &amp;History...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="1124"/>
+        <location filename="../FalconCalcQt.ui" line="1127"/>
         <source>Alt+3</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="1129"/>
+        <location filename="../FalconCalcQt.ui" line="1132"/>
         <source>History &amp;Options</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="1134"/>
+        <location filename="../FalconCalcQt.ui" line="1137"/>
         <source>&amp;Clear history</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="1051"/>
+        <location filename="../FalconCalcQt.ui" line="1054"/>
         <source>La&amp;nguage</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="1139"/>
+        <location filename="../FalconCalcQt.ui" line="38"/>
+        <source>FalconCalc</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../FalconCalcQt.ui" line="1142"/>
         <source>Set &amp;Locale ...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="1144"/>
+        <location filename="../FalconCalcQt.ui" line="1147"/>
         <source>Select &amp;Font for &apos;As String&apos; Display</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="1149"/>
+        <location filename="../FalconCalcQt.ui" line="1152"/>
         <source>&amp;General Help</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="1152"/>
+        <location filename="../FalconCalcQt.ui" line="1155"/>
         <source>F1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="1157"/>
+        <location filename="../FalconCalcQt.ui" line="1160"/>
         <source>&amp;A&amp;bout</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="1162"/>
+        <location filename="../FalconCalcQt.ui" line="1165"/>
         <source>Show &amp;Decimal options</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="1165"/>
+        <location filename="../FalconCalcQt.ui" line="1168"/>
         <source>Ctrl+D</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="1170"/>
+        <location filename="../FalconCalcQt.ui" line="1173"/>
         <source>Show &amp;Hexadecimal options</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="1173"/>
+        <location filename="../FalconCalcQt.ui" line="1176"/>
         <source>Ctrl+H</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="1178"/>
+        <location filename="../FalconCalcQt.ui" line="1181"/>
         <source>Copy &amp;Decimal</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="1183"/>
+        <location filename="../FalconCalcQt.ui" line="1186"/>
         <source>Copy &amp;Hexadecimal</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="1188"/>
+        <location filename="../FalconCalcQt.ui" line="1191"/>
         <source>Copy &amp;Octal</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="1193"/>
+        <location filename="../FalconCalcQt.ui" line="1196"/>
         <source>Copy Binary</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="1198"/>
+        <location filename="../FalconCalcQt.ui" line="1201"/>
         <source>Edit user &amp;Variables</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="1201"/>
+        <location filename="../FalconCalcQt.ui" line="1204"/>
         <source>Alt+1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="1206"/>
+        <location filename="../FalconCalcQt.ui" line="1209"/>
         <source>Edit user &amp;Functions</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="1209"/>
+        <location filename="../FalconCalcQt.ui" line="1212"/>
         <source>Alt+2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="1217"/>
+        <location filename="../FalconCalcQt.ui" line="1220"/>
         <source>&amp;Light</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="1225"/>
+        <location filename="../FalconCalcQt.ui" line="1228"/>
         <source>&amp;Dark</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="1233"/>
+        <location filename="../FalconCalcQt.ui" line="1236"/>
         <source>&amp;Blue</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="1244"/>
+        <location filename="../FalconCalcQt.ui" line="1247"/>
         <source>S&amp;ystem</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="1252"/>
+        <location filename="../FalconCalcQt.ui" line="1255"/>
         <source>Blac&amp;k</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="1257"/>
+        <location filename="../FalconCalcQt.ui" line="1260"/>
         <source>-</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="1268"/>
+        <location filename="../FalconCalcQt.ui" line="1271"/>
         <source>&amp;English</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="1276"/>
+        <location filename="../FalconCalcQt.ui" line="1279"/>
         <source>&amp;Hungarian</source>
         <translation type="unfinished"></translation>
     </message>
@@ -537,7 +537,7 @@ There might be problems with it.</source>
     <name>HistoryOptionsClass</name>
     <message>
         <location filename="../HistoryOptions.ui" line="32"/>
-        <source>FalconCalcQt - History Options</source>
+        <source>FalconCalc - History Options</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -584,22 +584,22 @@ There might be problems with it.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../LocaleDlg.ui" line="44"/>
+        <location filename="../LocaleDlg.ui" line="48"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;The &lt;span style=&quot; font-style:italic;&quot;&gt;locale&lt;/span&gt; determines the character used for a decimal point, the ordering of the characters and the correspondance between upper and lowercase letters. Variable and function names may contain accented or special letters in your locale that are not present in other locales and vice-versa. Here you can select a locale different from the one used by the system and the language selected.&lt;/p&gt;&lt;p&gt;Locale names usually consist of 2, 3 or 5-8 (usually) lowercase characters which may be followed by a hyphen and one or more subtags each separated by a hyphen character (for example: en-US, en-GB, hu-HU). The first part (two lowercase letters) defines the language, the subtags regions and others like zh-yue-HK (same as yue-HK: Cantonese for Hong Kong SAR). Some implementations may use underscores instead of hyphens (en_US).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../LocaleDlg.ui" line="75"/>
+        <location filename="../LocaleDlg.ui" line="79"/>
         <source>Name of current locale:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../LocaleDlg.ui" line="82"/>
+        <location filename="../LocaleDlg.ui" line="86"/>
         <source>C</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../LocaleDlg.ui" line="89"/>
+        <location filename="../LocaleDlg.ui" line="93"/>
         <source>Name of new locale:</source>
         <translation type="unfinished"></translation>
     </message>
@@ -765,7 +765,7 @@ There might be problems with it.</source>
 <context>
     <name>QMainWindow</name>
     <message>
-        <location filename="../schemes.cpp" line="483"/>
+        <location filename="../schemes.cpp" line="513"/>
         <source>System</source>
         <translation type="unfinished"></translation>
     </message>
@@ -791,110 +791,110 @@ There might be problems with it.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../VariablesFunctionsDialog.ui" line="51"/>
+        <location filename="../VariablesFunctionsDialog.ui" line="55"/>
         <source>Variables</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../VariablesFunctionsDialog.ui" line="133"/>
-        <location filename="../VariablesFunctionsDialog.ui" line="369"/>
+        <location filename="../VariablesFunctionsDialog.ui" line="137"/>
+        <location filename="../VariablesFunctionsDialog.ui" line="376"/>
         <source>User</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../VariablesFunctionsDialog.ui" line="178"/>
-        <location filename="../VariablesFunctionsDialog.ui" line="268"/>
+        <location filename="../VariablesFunctionsDialog.ui" line="185"/>
+        <location filename="../VariablesFunctionsDialog.ui" line="275"/>
         <source>Variable</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../VariablesFunctionsDialog.ui" line="183"/>
-        <location filename="../VariablesFunctionsDialog.ui" line="273"/>
+        <location filename="../VariablesFunctionsDialog.ui" line="190"/>
+        <location filename="../VariablesFunctionsDialog.ui" line="280"/>
         <source>Value</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../VariablesFunctionsDialog.ui" line="188"/>
-        <location filename="../VariablesFunctionsDialog.ui" line="278"/>
-        <location filename="../VariablesFunctionsDialog.ui" line="421"/>
-        <location filename="../VariablesFunctionsDialog.ui" line="511"/>
+        <location filename="../VariablesFunctionsDialog.ui" line="195"/>
+        <location filename="../VariablesFunctionsDialog.ui" line="285"/>
+        <location filename="../VariablesFunctionsDialog.ui" line="431"/>
+        <location filename="../VariablesFunctionsDialog.ui" line="521"/>
         <source>Unit</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../VariablesFunctionsDialog.ui" line="193"/>
-        <location filename="../VariablesFunctionsDialog.ui" line="283"/>
-        <location filename="../VariablesFunctionsDialog.ui" line="426"/>
-        <location filename="../VariablesFunctionsDialog.ui" line="516"/>
+        <location filename="../VariablesFunctionsDialog.ui" line="200"/>
+        <location filename="../VariablesFunctionsDialog.ui" line="290"/>
+        <location filename="../VariablesFunctionsDialog.ui" line="436"/>
+        <location filename="../VariablesFunctionsDialog.ui" line="526"/>
         <source>Comment</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../VariablesFunctionsDialog.ui" line="223"/>
-        <location filename="../VariablesFunctionsDialog.ui" line="456"/>
+        <location filename="../VariablesFunctionsDialog.ui" line="230"/>
+        <location filename="../VariablesFunctionsDialog.ui" line="466"/>
         <source>Built-ins</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../VariablesFunctionsDialog.ui" line="299"/>
+        <location filename="../VariablesFunctionsDialog.ui" line="306"/>
         <source>Functions</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../VariablesFunctionsDialog.ui" line="411"/>
-        <location filename="../VariablesFunctionsDialog.ui" line="501"/>
+        <location filename="../VariablesFunctionsDialog.ui" line="421"/>
+        <location filename="../VariablesFunctionsDialog.ui" line="511"/>
         <source>Function</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../VariablesFunctionsDialog.ui" line="416"/>
-        <location filename="../VariablesFunctionsDialog.ui" line="506"/>
+        <location filename="../VariablesFunctionsDialog.ui" line="426"/>
+        <location filename="../VariablesFunctionsDialog.ui" line="516"/>
         <source>Body</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../VariablesFunctionsDialog.ui" line="570"/>
+        <location filename="../VariablesFunctionsDialog.ui" line="580"/>
         <source>Remove all user defineditems</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../VariablesFunctionsDialog.ui" line="573"/>
+        <location filename="../VariablesFunctionsDialog.ui" line="583"/>
         <source>remove all</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../VariablesFunctionsDialog.ui" line="584"/>
+        <location filename="../VariablesFunctionsDialog.ui" line="594"/>
         <source>Undo last operation</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../VariablesFunctionsDialog.ui" line="587"/>
-        <location filename="../VariablesFunctionsDialog.ui" line="638"/>
+        <location filename="../VariablesFunctionsDialog.ui" line="597"/>
+        <location filename="../VariablesFunctionsDialog.ui" line="648"/>
         <source>...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../VariablesFunctionsDialog.ui" line="635"/>
+        <location filename="../VariablesFunctionsDialog.ui" line="645"/>
         <source>Add a new row</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../VariablesFunctionsDialog.ui" line="658"/>
+        <location filename="../VariablesFunctionsDialog.ui" line="668"/>
         <source>Remove selected item</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../VariablesFunctionsDialog.ui" line="661"/>
+        <location filename="../VariablesFunctionsDialog.ui" line="671"/>
         <source>remove</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../VariablesFunctionsDialog.ui" line="697"/>
+        <location filename="../VariablesFunctionsDialog.ui" line="707"/>
         <source>Save</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../VariablesFunctionsDialog.ui" line="704"/>
+        <location filename="../VariablesFunctionsDialog.ui" line="714"/>
         <source>Cancel</source>
         <translation type="unfinished"></translation>
     </message>

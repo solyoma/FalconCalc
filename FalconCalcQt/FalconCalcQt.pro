@@ -51,7 +51,7 @@ FORMS += \
 	VariablesFunctionsDialog.ui
 	
 RESOURCES += FalconCalcQt.qrc
-% INCLUDEPATH += ../src
+INCLUDEPATH += ../src
 DEFINES += QTSA_PROJECT
 RC_FILE += FalconCalc.rc
 QMAKE_CXXFLAGS += -std=c++17 -Wno-unused-parameter -Wno-reorder
