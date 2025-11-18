@@ -472,6 +472,7 @@ void FalconCalcQt::on_cbInfix_currentTextChanged(const QString& newText)
 		ui.cbInfix->setCurrentIndex(-1);
 		ui.cbInfix->setFocus();
 		_ShowMessageOnAllPanels("");
+		_SetResultLabelText(EEC_NO_ERROR);
 		--_busy;
 		return;
 	}

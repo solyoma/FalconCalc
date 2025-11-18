@@ -194,7 +194,8 @@ public:
 };
 // literal operator for string constants like "1234"_ss
 
-const SmartString operator"" _ss(const char* ps, size_t len);
+const SmartString operator"" _ss(const char* ps, std::size_t len);
+
 
 class SmartStringVector : public std::vector<SmartString>
 {

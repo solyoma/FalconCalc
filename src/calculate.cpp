@@ -589,9 +589,9 @@ LittleEngine::LittleEngine() : clean(true)
             // they are not 'dirty' and they are 'isnumber's
        BuiltinFunc f;
 
-	   #define SET_BUILTIN_FUNC1(a,b,c)  f.name = u#a; f.desc = u#b; f.funct1  = c; f.funct2r=nullptr; f.funct2i=nullptr; builtinFunctions[#a##_ss] = f;
-	   #define SET_BUILTIN_FUNC2R(a,b,c) f.name = u#a; f.desc = u#b; f.funct2r = c; f.funct1=nullptr;  f.funct2i=nullptr; builtinFunctions[#a##_ss] = f;
-	   #define SET_BUILTIN_FUNC2I(a,b,c) f.name = u#a; f.desc = u#b; f.funct2i = c; f.funct1=nullptr;  f.funct2r=nullptr; builtinFunctions[#a##_ss] = f;
+	   #define SET_BUILTIN_FUNC1(a,b,c)  f.name = u#a; f.desc = u#b; f.funct1  = c; f.funct2r=nullptr; f.funct2i=nullptr; builtinFunctions[SmartString(#a)] = f;
+	   #define SET_BUILTIN_FUNC2R(a,b,c) f.name = u#a; f.desc = u#b; f.funct2r = c; f.funct1=nullptr;  f.funct2i=nullptr; builtinFunctions[SmartString(#a)] = f;
+	   #define SET_BUILTIN_FUNC2I(a,b,c) f.name = u#a; f.desc = u#b; f.funct2i = c; f.funct1=nullptr;  f.funct2r=nullptr; builtinFunctions[SmartString(#a)] = f;
        SET_BUILTIN_FUNC1(abs, absolute value, abs);
 
 	   f.useAngleUnitAsResult=true;
