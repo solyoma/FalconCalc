@@ -23,7 +23,11 @@
    </size>
   </property>
   <property name="windowTitle">
-   <string>FalconCal - Define Variables or Functions</string>
+   <string>FalconCalc - Define Variables or Functions</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="FalconCalcQt.qrc">
+    <normaloff>:/FalconCalcQt/Resources/calculator.ico</normaloff>:/FalconCalcQt/Resources/calculator.ico</iconset>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
@@ -103,7 +107,9 @@
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="FalconCalcQt.qrc"/>
+ </resources>
  <connections>
   <connection>
    <sender>buttonBox</sender>

@@ -276,7 +276,7 @@ namespace LongNumber {
 		}
 
 		RealNumber(const RealNumber& rn) :
-			_sign(rn._sign), _numberString(rn._numberString), _exponent(rn._exponent)
+			_sign(rn._sign), _numberString(rn._numberString), _exponent(rn._exponent),_eFlags(rn._eFlags)
 		{
 			_GetDecPoint();
 			_isNormalized = true;
@@ -381,6 +381,8 @@ namespace LongNumber {
 		}
 		RealNumber operator|(const RealNumber& other) const { return _LogOpWith(other, LogicalOperator::lopOr); }
 	public:
+		RealNumber SetError(EFlag ef) { _eFlags.insert(ef); return *this; }
+		void SetNaN();
 		bool Errors(EFlagSet* oflags = nullptr)  const
 		{
 			if (oflags)
@@ -445,6 +447,7 @@ namespace LongNumber {
 		RealNumber Div(const RealNumber& divisor, RealNumber& remainder) const { return _Div(divisor, remainder); } // remainder may be nullptr
 
 		inline EFlagSet EFlags() const { return _eFlags; }
+		inline void SetEFlag(EFlag ef) { _eFlags.insert(ef); }
 		inline constexpr int  Sign()   const { return _sign; }
 		inline constexpr bool IsPositive()   const { return _sign == 1; }
 		inline constexpr bool IsNegative()   const { return _sign == -1; }
@@ -583,7 +586,6 @@ namespace LongNumber {
 		void _ShiftSmartString(size_t byThisAmount);	// logical shift to the right when arg. is positive, real shift to the left when it is negative
 		void _ShiftSmartString(RealNumber& rn, int byThisAmount);	// to the right when arg. is positive, to the left when it is negative
 		void _SetNull();
-		void _SetNaN();
 		void _SetInf();
 		void _SetTooLong();
 								// allocates may change nIntDigits: stores the position in the result string

@@ -31,6 +31,10 @@
   <property name="windowTitle">
    <string>FalconCalc - Locale</string>
   </property>
+  <property name="windowIcon">
+   <iconset resource="FalconCalcQt.qrc">
+    <normaloff>:/FalconCalcQt/Resources/calculator.ico</normaloff>:/FalconCalcQt/Resources/calculator.ico</iconset>
+  </property>
   <layout class="QVBoxLayout" name="verticalLayout" stretch="1,0">
    <item>
     <widget class="QLabel" name="label">
@@ -114,7 +118,9 @@
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="FalconCalcQt.qrc"/>
+ </resources>
  <connections>
   <connection>
    <sender>buttonBox</sender>

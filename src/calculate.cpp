@@ -42,6 +42,7 @@ using namespace std;
 #define DOMAIN EDOM
 #endif
 
+#if 0
 int __CRTDECL  _matherr (_Inout_ struct _exception *a)
 {
     if (a->type == OVERFLOW)
@@ -62,7 +63,7 @@ int __CRTDECL  _matherr (_Inout_ struct _exception *a)
     }
     return 1;
 }
-
+#endif
 
 bool IsAlpha(wchar_t ch, std::locale loc)
 {

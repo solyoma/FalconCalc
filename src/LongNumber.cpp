@@ -300,6 +300,7 @@ RealNumber RealNumber::operator=(const RealNumber& rn)
 		_sign = rn._sign;
 		_exponent = rn._exponent;
 		_maxExponent = rn._maxExponent;
+		_eFlags = rn._eFlags;
 	}
 	return *this; 
 }
@@ -312,6 +313,7 @@ RealNumber RealNumber::operator=(RealNumber&& rn) noexcept
 		_sign = rn._sign;
 		_exponent = rn._exponent;
 		_maxExponent = rn._maxExponent;
+		_eFlags = rn._eFlags;
 		rn._SetNull();
 	}
 	return *this;
@@ -1749,7 +1751,7 @@ bool RealNumber::__HandleSpecialDivisions(RealNumber& dividend, const RealNumber
 {
 	if (dividend.IsTooLong() || divisor.IsTooLong())
 	{
-			dividend._SetNaN();
+			dividend.SetNaN();
 			return true;
 	}
 
@@ -1758,7 +1760,7 @@ bool RealNumber::__HandleSpecialDivisions(RealNumber& dividend, const RealNumber
 		dividend._eFlags.insert( EFlag::rnfDivBy0);
 		if (IsNaN() || IsNull() || IsInf())
 		{
-			dividend._SetNaN();
+			dividend.SetNaN();
 			return true;
 		}
 		dividend._SetInf();
@@ -1771,7 +1773,7 @@ bool RealNumber::__HandleSpecialDivisions(RealNumber& dividend, const RealNumber
 		return true;
 	}
 	if (divisor.IsNaN())
-	{	dividend._SetNaN();
+	{	dividend.SetNaN();
 		dividend._eFlags.insert( EFlag::rnfInvalid);
 		return true;
 	}
@@ -2017,7 +2019,7 @@ void RealNumber::_FromNumberString()
 
 	if (_numberString.empty())		// only sign character was present
 	{
-		_SetNaN();
+		SetNaN();
 		_eFlags.insert(EFlag::rnfMalformed);
 		return;
 	}
@@ -2041,7 +2043,7 @@ void RealNumber::_FromNumberString()
 			{
 				sExp = sExp.left(positionOfError);
 				_eFlags.insert(EFlag::rnfMalformed);
-				_SetNaN();
+				SetNaN();
 				return;
 			}
 			_exponent = std::stoi(sExp.toUtf8String());
@@ -2050,7 +2052,7 @@ void RealNumber::_FromNumberString()
 	{
 		positionOfError = 0;
 		_eFlags.insert(EFlag::rnfMalformed);
-		_SetNaN();
+		SetNaN();
 		return;
 	}
 
@@ -2189,7 +2191,7 @@ void RealNumber::_FromNumberString()
 		if (cntIntDigits)	// increased because of rounding
 			if (++_exponent > MaxExponent)
 			{
-				_SetNaN();
+				SetNaN();
 				_eFlags.insert(_sign > 0 ? EFlag::rnfOverflow : EFlag::rnfUnderflow);
 			}
 	}
@@ -2304,7 +2306,7 @@ void RealNumber::_SetNull()
 	_numberString = "";
 }
 
-void RealNumber::_SetNaN()
+void RealNumber::SetNaN()
 {
 	_numberString = NAN_STR;
 }
@@ -2597,7 +2599,7 @@ void RealNumber::_MultiplyTheStrings(RealNumber& left, RealNumber& right) const
 void RealNumber::_DivideInternal(RealNumber& left, RealNumber& right, RealNumber* pRemainder) const
 {	
 	if (left.IsNaN() || right.IsNaN())
-		return left._SetNaN();
+		return left.SetNaN();
 				   // simplest case for integer division and remainder
 	if (pRemainder)
 	{
@@ -2946,6 +2948,12 @@ RealNumber exp(RealNumber power)						// e^x = e^(int(x)) x e^(frac(x))
 
 RealNumber ln(RealNumber num)
 {
+	if (!num.IsValid() || num.IsNaN() || num.IsInf() || num <= zero)
+	{
+		num.SetNaN();
+		num.SetEFlag(EFlag::rnfInvalid);
+		return num;
+	}
 	if (num.Sign() < 0 || !num.IsValid() || num.IsNull())
 		return NaN;
 	if (num == RealNumber::RN_1)
@@ -2978,8 +2986,12 @@ RealNumber ln(RealNumber num)
 }								// log_base(x)
 RealNumber log(RealNumber x, RealNumber &base)	// logarithm in base 'base'
 {
-	if (base <= zero)
-		return NaN;
+	if (x.IsNaN() || x.IsInf() || base <= zero || x <= zero)
+	{
+		x.SetEFlag(EFlag::rnfInvalid);
+		x.SetNaN();
+		return x;
+	}
 	if (base == e)
 		return ln(x);
 
@@ -3267,8 +3279,12 @@ RealNumber cot(RealNumber r, AngularUnit angu)		// cotangent
 RealNumber asin(RealNumber r, AngularUnit angu)		// sine
 {
 	// fast answers
-	if (r.Abs() > RealNumber::RN_1 || r  == NaN || r == Inf)
-		return NaN;
+	if (r.Abs() > RealNumber::RN_1 || r == NaN || r == Inf)
+	{
+		r.SetError(EFlag::rnfInvalid);
+		r.SetNaN();
+		return r;
+	}
 	if (r.IsNull())
 		return zero;
 	if (r.Abs() == RealNumber::RN_1)
@@ -3283,6 +3299,12 @@ RealNumber asin(RealNumber r, AngularUnit angu)		// sine
 
 RealNumber acos(RealNumber r, AngularUnit angu)		// cosine
 {
+	if (r.Abs() > RealNumber::RN_1 || r == NaN || r == Inf)
+	{
+		r.SetError(EFlag::rnfInvalid);
+		r.SetNaN();
+		return r;
+	}
 	return RadToAu(piP2.value - asin(r, AngularUnit::auRad), angu);
 }
 
@@ -3307,7 +3329,12 @@ RealNumber atan(RealNumber r, AngularUnit angu)		// arcus tangent
 	// result must be converted to the selected units
   /* Special cases for fast answers */
 	if (r.IsNaN() || r.IsTooLong())
+	{
+		r.SetError(EFlag::rnfInvalid);
+		r.SetNaN();
 		return r;
+	}
+
 	int sign = r.Sign();
 
 		// trivial results

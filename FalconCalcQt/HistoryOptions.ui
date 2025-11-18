@@ -29,11 +29,11 @@
    </size>
   </property>
   <property name="windowTitle">
-   <string>FalconCalcQt - History Options</string>
+   <string>FalconCalc - History Options</string>
   </property>
   <property name="windowIcon">
    <iconset resource="FalconCalcQt.qrc">
-    <normaloff>:/FalconCalcQt/Resources/program.ico</normaloff>:/FalconCalcQt/Resources/program.ico</iconset>
+    <normaloff>:/FalconCalcQt/Resources/calculator.ico</normaloff>:/FalconCalcQt/Resources/calculator.ico</iconset>
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="0">

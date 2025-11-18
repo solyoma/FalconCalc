@@ -19,6 +19,10 @@
   <property name="windowTitle">
    <string>FalconCalc - Variables &amp; Functions</string>
   </property>
+  <property name="windowIcon">
+   <iconset resource="FalconCalcQt.qrc">
+    <normaloff>:/FalconCalcQt/Resources/calculator.ico</normaloff>:/FalconCalcQt/Resources/calculator.ico</iconset>
+  </property>
   <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="1,0">
    <property name="spacing">
     <number>2</number>
@@ -579,7 +583,7 @@
            <string>remove all</string>
           </property>
           <property name="icon">
-           <iconset>
+           <iconset resource="FalconCalcQt.qrc">
             <normaloff>:/FalconCalcQt/Resources/trashcan.png</normaloff>:/FalconCalcQt/Resources/trashcan.png</iconset>
           </property>
          </widget>
@@ -593,7 +597,7 @@
            <string>...</string>
           </property>
           <property name="icon">
-           <iconset>
+           <iconset resource="FalconCalcQt.qrc">
             <normaloff>:/FalconCalcQt/Resources/undo-small.png</normaloff>:/FalconCalcQt/Resources/undo-small.png</iconset>
           </property>
          </widget>
@@ -644,7 +648,7 @@
            <string>...</string>
           </property>
           <property name="icon">
-           <iconset>
+           <iconset resource="FalconCalcQt.qrc">
             <normaloff>:/FalconCalcQt/Resources/add.png</normaloff>:/FalconCalcQt/Resources/add.png</iconset>
           </property>
          </widget>
@@ -667,7 +671,7 @@
            <string>remove</string>
           </property>
           <property name="icon">
-           <iconset>
+           <iconset resource="FalconCalcQt.qrc">
             <normaloff>:/FalconCalcQt/Resources/minus.png</normaloff>:/FalconCalcQt/Resources/minus.png</iconset>
           </property>
          </widget>

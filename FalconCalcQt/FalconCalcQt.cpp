@@ -33,6 +33,13 @@ using namespace FalconCalc;
 #include "schemes.h"
 #include "LocaleDlg.h"
 
+// DEBUG
+//#ifdef _WIN32
+//	#include <windows.h>
+//	#include "resource.h"			
+//#endif
+// /DEBUG
+
 //#ifdef NothingImportant
 #ifdef _DEBUG
 #include <QFile>
@@ -137,6 +144,23 @@ void FalconCalcQt::showEvent(QShowEvent * event)
 		if (!_hexOpen)
 			on_btnOpenCloseHexOptions_clicked();
 
+// DEBUG
+//#ifdef _WIN32
+//		static bool iconSet = false;
+//		if (!iconSet) {
+//			HWND hwnd = reinterpret_cast<HWND>(this->winId());
+//			HICON hBig = reinterpret_cast<HICON>(LoadImage(GetModuleHandle(NULL),
+//				MAKEINTRESOURCE(IDI_MAIN_ICON),
+//				IMAGE_ICON, 32, 32, LR_DEFAULTCOLOR | LR_SHARED));
+//			HICON hSmall = reinterpret_cast<HICON>(LoadImage(GetModuleHandle(NULL),
+//				MAKEINTRESOURCE(IDI_MAIN_ICON),
+//				IMAGE_ICON, 16, 16, LR_DEFAULTCOLOR | LR_SHARED));
+//			if (hBig)  SendMessage(hwnd, WM_SETICON, ICON_BIG, (LPARAM)hBig);
+//			if (hSmall) SendMessage(hwnd, WM_SETICON, ICON_SMALL, (LPARAM)hSmall);
+//			iconSet = true;
+//		}
+//#endif
+// /DEBUG
 		_borderWidth = geometry().left() - pos().x(),
 		_titleBarHeight = frameGeometry().height() - geometry().height() - 2 * _borderWidth;
 	}
@@ -455,7 +479,13 @@ void FalconCalcQt::on_cbInfix_currentTextChanged(const QString& newText)
 	{
 		lengine->infix = newText;
 		RealNumber res = lengine->Calculate();
-		_SetResultLabelText(EEC_NO_ERROR);
+		EngineErrorCodes eec;
+		if (res.Errors())
+			eec = EEC_DOMAIN_ERROR;
+		else
+			eec = EEC_NO_ERROR;
+		
+		_SetResultLabelText(eec);
 	}
 	catch (EngineErrorCodes eec)
 	{

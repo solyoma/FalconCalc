@@ -15,7 +15,7 @@
   </property>
   <property name="windowIcon">
    <iconset resource="FalconCalcQt.qrc">
-    <normaloff>:/FalconCalcQt/Resources/program.ico</normaloff>:/FalconCalcQt/Resources/program.ico</iconset>
+    <normaloff>:/FalconCalcQt/Resources/calculator.ico</normaloff>:/FalconCalcQt/Resources/calculator.ico</iconset>
   </property>
   <layout class="QHBoxLayout" name="horizontalLayout">
    <property name="spacing">

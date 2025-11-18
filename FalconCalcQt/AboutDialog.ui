@@ -26,13 +26,17 @@
    </size>
   </property>
   <property name="windowTitle">
-   <string>About FalconCalcQt</string>
+   <string>About FalconCalc</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="FalconCalcQt.qrc">
+    <normaloff>:/FalconCalcQt/Resources/calculator.ico</normaloff>:/FalconCalcQt/Resources/calculator.ico</iconset>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <widget class="QLabel" name="label_2">
      <property name="text">
-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:14pt; font-weight:600;&quot;&gt;FalconCalcQt&lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;br/&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;A handy little calculator for everyone&lt;br/&gt;(especially useful for physicist and programmers)&lt;br/&gt;Based on the arbitrary precision&lt;br/&gt;cross platform arithmetic and function library&lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:10pt; font-weight:600; font-style:italic;&quot;&gt;LongNumber&lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;by. A .Sólyom&lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;with the Qt Group's Qt (&amp;quot;cute&amp;quot;) framework&lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:10pt; font-weight:600;&quot;&gt;© A. Sólyom - 2020- &lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;This program is open source (GPL3)&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:14pt; font-weight:600;&quot;&gt;FalconCalc&lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;Qt Version&lt;br/&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;A handy little calculator for everyone&lt;br/&gt;(especially useful for physicist and programmers)&lt;br/&gt;Based on the arbitrary precision&lt;br/&gt;cross platform arithmetic and function library&lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:10pt; font-weight:600; font-style:italic;&quot;&gt;LongNumber&lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;by. A .Sólyom&lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;with the Qt Group's Qt (&amp;quot;cute&amp;quot;) framework&lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:10pt; font-weight:600;&quot;&gt;© A. Sólyom - 2020- &lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;This program is open source (GPL3)&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignCenter</set>
@@ -93,7 +97,9 @@
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="FalconCalcQt.qrc"/>
+ </resources>
  <connections>
   <connection>
    <sender>okButton</sender>

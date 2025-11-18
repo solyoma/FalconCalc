@@ -35,7 +35,7 @@
    </font>
   </property>
   <property name="windowTitle">
-   <string>FalconCalcQt</string>
+   <string>FalconCalc</string>
   </property>
   <property name="windowIcon">
    <iconset resource="FalconCalcQt.qrc">
@@ -1004,7 +1004,7 @@
      <x>0</x>
      <y>0</y>
      <width>522</width>
-     <height>20</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="mnuFile">
