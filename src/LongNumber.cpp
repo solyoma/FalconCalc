@@ -1,5 +1,6 @@
 ﻿#include <cassert>
 #include <regex>
+#include <cstdint>
 
 #include "SmartString.h"
 using namespace SmString;
@@ -1433,6 +1434,14 @@ SmartString RealNumber::_AsSmartString() const
 
 	return str;
 }
+
+#ifndef LDBL_MAX
+	#define LDBL_MAX          1.7976931348623158e+308 // max positive value
+	#define LDBL_MIN          2.2250738585072014e-308 // min positive value
+	#define LLONG_MAX			9223372036854775807i64
+	#define LLONG_MIN		  (-9223372036854775807i64 - 1)
+#endif
+
 
 LDouble RealNumber::ToLongDouble()
 {
@@ -2948,7 +2957,7 @@ RealNumber exp(RealNumber power)						// e^x = e^(int(x)) x e^(frac(x))
 
 RealNumber ln(RealNumber num)
 {
-	if (!num.IsValid() || num.IsNaN() || num.IsInf() || num <= zero)
+	if (!num.IsValid() || num.Sign() < 0)	// invalid test for both NaN and Inf
 	{
 		num.SetNaN();
 		num.SetEFlag(EFlag::rnfInvalid);
@@ -3244,7 +3253,7 @@ RealNumber cos(RealNumber r, AngularUnit angu)		// cosine
 		case AngularUnit::auRad:
 			r /= twoPi.value;
 			r = r.Frac();		// 0<= r <= 1 => number of "turns"
-			// [[fallthrough]]; // From C++17
+			[[fallthrough]];	// From C++17
 		case AngularUnit::auTurn:			// full circle 1 turn
 			return cos(r * rn360);
 

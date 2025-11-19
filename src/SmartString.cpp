@@ -12,12 +12,92 @@
 
 namespace SmString {
 
+	// Portable UTF-8 <-> wide helpers (works C++14/17/20+, no Qt, no platform APIs)
+	std::wstring utf8_to_wstring(const UTF8String& s)
+	{
+		std::wstring out;
+		size_t i = 0, n = s.size();
+		while (i < n)
+		{
+			unsigned char c = static_cast<unsigned char>(s[i]);
+			uint32_t cp = 0;
+			int extra = 0;
+			if (c < 0x80) { cp = c; extra = 0; }
+			else if ((c & 0xE0) == 0xC0) { cp = c & 0x1F; extra = 1; }
+			else if ((c & 0xF0) == 0xE0) { cp = c & 0x0F; extra = 2; }
+			else if ((c & 0xF8) == 0xF0) { cp = c & 0x07; extra = 3; }
+			else { ++i; continue; } // invalid leading byte -> skip
+
+			if (i + extra >= n) break; // truncated
+
+			bool ok = true;
+			for (int j = 1; j <= extra; ++j)
+			{
+				unsigned char cc = static_cast<unsigned char>(s[i + j]);
+				if ((cc & 0xC0) != 0x80) { ok = false; break; }
+				cp = (cp << 6) | (cc & 0x3F);
+			}
+			if (!ok) { ++i; continue; }
+
+			if (sizeof(wchar_t) == 2)
+			{
+				if (cp <= 0xFFFF)
+					out.push_back(static_cast<wchar_t>(cp));
+				else
+				{
+					cp -= 0x10000;
+					wchar_t hi = static_cast<wchar_t>((cp >> 10) + 0xD800);
+					wchar_t lo = static_cast<wchar_t>((cp & 0x3FF) + 0xDC00);
+					out.push_back(hi);
+					out.push_back(lo);
+				}
+			}
+			else
+			{
+				out.push_back(static_cast<wchar_t>(cp));
+			}
+
+			i += 1 + extra;
+		}
+		return out;
+	}
+
+	UTF8String wchar_to_utf8(wchar_t wc)
+	{
+		uint32_t cp = static_cast<uint32_t>(wc);
+		UTF8String out;
+		if (cp <= 0x7F)
+		{
+			out.push_back(static_cast<char>(cp));
+		}
+		else if (cp <= 0x7FF)
+		{
+			out.push_back(static_cast<char>(0xC0 | ((cp >> 6) & 0x1F)));
+			out.push_back(static_cast<char>(0x80 | (cp & 0x3F)));
+		}
+		else if (cp <= 0xFFFF)
+		{
+			out.push_back(static_cast<char>(0xE0 | ((cp >> 12) & 0x0F)));
+			out.push_back(static_cast<char>(0x80 | ((cp >> 6) & 0x3F)));
+			out.push_back(static_cast<char>(0x80 | (cp & 0x3F)));
+		}
+		else
+		{
+			out.push_back(static_cast<char>(0xF0 | ((cp >> 18) & 0x07)));
+			out.push_back(static_cast<char>(0x80 | ((cp >> 12) & 0x3F)));
+			out.push_back(static_cast<char>(0x80 | ((cp >> 6) & 0x3F)));
+			out.push_back(static_cast<char>(0x80 | (cp & 0x3F)));
+		}
+		return out;
+	}
+
+	// other local functions
 	static bool __bCaseSens = false;
 	static int _sorter(const void* left, const void* right)
 	{
 		return __bCaseSens == SmartString::CaseSens::csCaseSensitive ?
-									(SmartString*)left < (SmartString*)right :
-									((SmartString*)left)->asLowerCase() < ((SmartString*)right)->asLowerCase();
+			(SmartString*)left < (SmartString*)right :
+			((SmartString*)left)->asLowerCase() < ((SmartString*)right)->asLowerCase();
 
 	}
 
@@ -26,7 +106,7 @@ namespace SmString {
 
 	int SCharT::_Utf8CodeLengthFrom(const UTF8String& u8str, size_t pos)
 	{
-		size_t c, siz = u8str.size(), x=(unsigned)pos;
+		size_t c, siz = u8str.size(), x = (unsigned)pos;
 		int len = -1;
 
 		if ((unsigned)pos >= siz)
@@ -65,9 +145,8 @@ namespace SmString {
 		else
 		{
 			UTF8String ustr = u8str.substr(pos, len);
-			std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
-			std::wstring wstr = converter.from_bytes(ustr);
-			_unicode = wstr[0];
+			std::wstring wstr = utf8_to_wstring(ustr);
+			_unicode = wstr.empty() ? 0 : wstr[0];
 		}
 		return len;
 	}
@@ -77,9 +156,7 @@ namespace SmString {
 		wchar_t wch = _unicode;
 		if (wch < 0x7F)
 			return UTF8String(1, char(wch));
-
-		std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
-		return  converter.to_bytes(wch);
+		return wchar_to_utf8(wch);
 	}
 
 
@@ -87,7 +164,7 @@ namespace SmString {
 	//*************************** SmartString ****************
 
 	UTF8String SmartString::toUtf8String() const
-	{								
+	{
 		UTF8String s;
 		for (size_t i = 0; i < length(); ++i)
 		{
@@ -115,7 +192,7 @@ namespace SmString {
 	{
 		QString qs;
 		qs.resize(length());
-		for (size_t i = 0; i < size(); ++i)
+		for (int i = 0; i < (int)size(); ++i)
 			qs[i] = QChar((*this)[i]);
 		return qs;
 	}
@@ -168,13 +245,13 @@ namespace SmString {
 		SmartStringVector sv;
 		size_t pos0 = 0;
 		int pos;
-		while ((pos = indexOf(ch,pos0)) >=0) 
+		while ((pos = indexOf(ch, pos0)) >= 0)
 		{
-			if((size_t)pos != pos0 || keepEmpty)
+			if ((size_t)pos != pos0 || keepEmpty)
 				sv.push_back(mid(pos0, (size_t)pos - pos0));
 			pos0 = (size_t)++pos;
 		}
-		if(pos0 < length() || (pos0 == length() && keepEmpty))
+		if (pos0 < length() || (pos0 == length() && keepEmpty))
 			sv.push_back(mid(pos0));
 
 		return sv; ;
@@ -183,7 +260,7 @@ namespace SmString {
 	SmartStringVector SmartString::SplitRegex(const SmartString regexStr, bool keepEmpty) const
 	{
 		std::wstring ws = ToWideString(),
-					 rx = regexStr.ToWideString();
+			rx = regexStr.ToWideString();
 		std::wsmatch matches;
 		std::wregex re(rx);
 		std::wsregex_token_iterator iti(ws.cbegin(), ws.cend(), re, -1);
@@ -191,10 +268,10 @@ namespace SmString {
 
 		SmartStringVector sv;
 		SmartString ss;
-		while (iti != end) 
+		while (iti != end)
 		{
 			ss = SmartString(iti->str());
-			if(ss.size() || keepEmpty)
+			if (ss.size() || keepEmpty)
 				sv.push_back(ss);
 			++iti;
 		}
@@ -207,16 +284,17 @@ namespace SmString {
 		*this = s;
 	}
 
+
 #ifdef QTSA_PROJECT
 	SmartString::SmartString(const QString& qs)
 	{
 		resize(qs.length());
-		for (size_t i = 0; i < length(); ++i)
+		for (int i = 0; i < (int)length(); ++i)
 			(*this)[i] = qs[i].unicode();
 	}
 #endif
 
-	SmartString::SmartString(const UTF8String &s)
+	SmartString::SmartString(const UTF8String& s)
 	{
 		SCharT sch;
 		int l = 0;
@@ -261,7 +339,7 @@ namespace SmString {
 #endif
 	SmartString& SmartString::operator=(const SmartString s)
 	{
-		if(this != &s)
+		if (this != &s)
 			*(String*)this = (const String&)s;
 		return *this;
 	}
@@ -316,7 +394,7 @@ namespace SmString {
 		String s;
 		if (n < length())
 			s = substr(0, n);
-		else if (fillChar >= SCharT(0) )
+		else if (fillChar >= SCharT(0))
 			s = *(String*)this + String(n - length(), fillChar);
 
 		return s;
@@ -330,7 +408,7 @@ namespace SmString {
 			n -= length();
 			return SmartString(n, fillChar) + *this;
 		}
-				// else	just get the n unicode character
+		// else	just get the n unicode character
 		return substr(n);
 	}
 
@@ -370,9 +448,9 @@ namespace SmString {
 
 		size_t limit = pos + n;	// first character after the string
 		if (limit <= length())
-			return substr(pos,n);  // xxxx xxXx
+			return substr(pos, n);  // xxxx xxXx
 
-		return substr(pos) + SmartString(limit-length(), fillChar);
+		return substr(pos) + SmartString(limit - length(), fillChar);
 	}
 	int SmartString::indexOf(const SCharT ch, size_t pos) const		// start from 'pos'
 	{
@@ -382,7 +460,7 @@ namespace SmString {
 	int SmartString::indexOf(const SmartString ns, size_t pos) const		// only first occurance
 	{
 		size_t ix = pos, len = length();
-		size_t is = 0, nslen=ns.length();
+		size_t is = 0, nslen = ns.length();
 		for (size_t i = pos; i < len && i + is < nslen; ++i)
 		{
 			if ((*this)[i] != ns[is])
@@ -401,7 +479,7 @@ namespace SmString {
 	{
 #if 1
 		std::wstring ws = mid(pos).ToWideString(),
-					 rx = regexString.ToWideString();
+			rx = regexString.ToWideString();
 		std::wsmatch matches;
 		std::wregex re(rx);
 		if (std::regex_search(ws, matches, re))
@@ -449,19 +527,19 @@ namespace SmString {
 
 // literal operator for string constants like "1234"_ss (literal operators w.o. _ at the front are not to be used)
 
-	const SmartString operator""_ss(const char* ps, size_t len) 
-	{ 
-		return SmartString(ps); 
+	const SmartString operator""_ss(const char* ps, size_t len)
+	{
+		return SmartString(ps);
 	}
 
-	SmartStringVector::SmartStringVector(const SmartString s, const SCharT ch, bool keepEmpty, bool trim=false)
+	SmartStringVector::SmartStringVector(const SmartString s, const SCharT ch, bool keepEmpty, bool trim = false)
 	{
 		*this = s.Split(ch, keepEmpty);
 		if (trim)
 			for (size_t i = 0; i < size(); ++i)
 				(*this)[i].Trim();
 	}
-	SmartStringVector::SmartStringVector(const SmartString s, SmartString regex, bool keepEmpty, bool trim=false)
+	SmartStringVector::SmartStringVector(const SmartString s, SmartString regex, bool keepEmpty, bool trim = false)
 	{
 		*this = s.SplitRegex(regex, keepEmpty);
 		if (trim)
@@ -487,13 +565,13 @@ namespace SmString {
 	bool SmartStringVector::LoadFromFile(SmartString name)
 	{
 		std::ifstream ifs(name.toUtf8String(), std::ios_base::in);
-		if(ifs.fail())
+		if (ifs.fail())
 			return false;
 		std::string line;
 		bool sorted = _isSorted;
 		sorted = false;
 		while (std::getline(ifs, line))
-			push_back(SmartString(line) );
+			push_back(SmartString(line));
 		SetSorted(sorted);	// sort if needed
 		return true;
 	}
@@ -501,7 +579,7 @@ namespace SmString {
 	bool SmartStringVector::SaveToFile(SmartString name)
 	{
 		std::ofstream ofs(name.toUtf8String(), std::ios_base::out);
-		if(ofs.fail())
+		if (ofs.fail())
 			return false;
 		for (auto& s : *this)
 			ofs << s << "\n";
@@ -529,7 +607,7 @@ namespace SmString {
 	void SmartStringVector::_Sort()
 	{		   // do not sort the first item
 		__bCaseSens = _caseSens == SmartString::csCaseSensitive;
-		qsort((void*) & this[1], size(), sizeof(SmartString), _sorter);
+		qsort((void*)&this[1], size(), sizeof(SmartString), _sorter);
 	}
 }
 // output operator
@@ -538,4 +616,3 @@ std::ostream& operator<<(std::ostream& ofs, SmString::SmartString ss)
 	ofs << ss.toUtf8String();
 	return ofs;
 }
-

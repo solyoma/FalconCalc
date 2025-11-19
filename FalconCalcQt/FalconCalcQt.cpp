@@ -1070,6 +1070,8 @@ bool FalconCalcQt::_LoadState()
 					case NumberFormat::rnfEng:
 						ui.chkEng->setChecked(true);
 						break;
+					default:
+						break;
 				}
 				--_busy;
 				return true;

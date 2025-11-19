@@ -76,36 +76,4 @@ public:
 
 extern FSchemeVector schemes;		// default styles: default, system, blue, dark, black
 
-/* QGroupBox {
-     background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                                       stop: 0 #E0E0E0, stop: 1 #FFFFFF);
-     border: 2px solid gray;
-     border-radius: 5px;
-     margin-top: 1ex; /* leave space at the top for the title * /
- }
-
- QGroupBox::title{
-	 subcontrol - origin: margin;
-	 subcontrol - position: top;
-	 padding: 0 3px;
-	*background - color: qlineargradient(x1 : 0, y1 : 0, x2 : 0, y2 : 1,
-									   stop : 0 #FF0ECE, stop: 1 #FFFFFF);
- }
-
-	 QFrame{
-		 border: 1px solid lightgray;
-		 border - radius:5px;
- }
-
-	 QLineEdit{
-		 border: 1px solid gray;
-		 border - radius:5px;
- }
-
-	 QLabelo::framel{
-		 border - radius:5px;
- }
-	 */
-
-
 #endif

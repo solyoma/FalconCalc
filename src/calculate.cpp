@@ -589,9 +589,9 @@ LittleEngine::LittleEngine() : clean(true)
             // they are not 'dirty' and they are 'isnumber's
        BuiltinFunc f;
 
-	   #define SET_BUILTIN_FUNC1(a,b,c)  f.name = u#a; f.desc = u#b; f.funct1  = c; f.funct2r=nullptr; f.funct2i=nullptr; builtinFunctions[SmartString(#a)] = f;
-	   #define SET_BUILTIN_FUNC2R(a,b,c) f.name = u#a; f.desc = u#b; f.funct2r = c; f.funct1=nullptr;  f.funct2i=nullptr; builtinFunctions[SmartString(#a)] = f;
-	   #define SET_BUILTIN_FUNC2I(a,b,c) f.name = u#a; f.desc = u#b; f.funct2i = c; f.funct1=nullptr;  f.funct2r=nullptr; builtinFunctions[SmartString(#a)] = f;
+	   #define SET_BUILTIN_FUNC1(a,b,c)  f.name = #a; f.desc = #b; f.funct1  = c; f.funct2r=nullptr; f.funct2i=nullptr; builtinFunctions[SmartString(#a)] = f;
+	   #define SET_BUILTIN_FUNC2R(a,b,c) f.name = #a; f.desc = #b; f.funct2r = c; f.funct1=nullptr;  f.funct2i=nullptr; builtinFunctions[SmartString(#a)] = f;
+	   #define SET_BUILTIN_FUNC2I(a,b,c) f.name = #a; f.desc = #b; f.funct2i = c; f.funct1=nullptr;  f.funct2r=nullptr; builtinFunctions[SmartString(#a)] = f;
        SET_BUILTIN_FUNC1(abs, absolute value, abs);
 
 	   f.useAngleUnitAsResult=true;
@@ -1026,10 +1026,10 @@ bool LittleEngine::_VariableAssignment(const SmartString &expr, unsigned &pos, T
     {
         case 3:
             v.unit = sv[2];
-            // [[fallthrough]];			// from C++17
+             [[fallthrough]];			// from C++17
         case 2:
             v.desc = sv[1];
-            // [[fallthrough]];			// from C++17
+             [[fallthrough]];			// from C++17
         case 1:
             v.body = sv[0];
             break;
@@ -1107,8 +1107,8 @@ bool LittleEngine::_VariableAssignment(const SmartString &expr, unsigned &pos, T
             f.desc = svFields[1];
             // [[fallthrough]]
         case 1:
-            // [[fallthrough]]
             f.body = svFields[0];
+            // [[fallthrough]]
             break;
         default:
             trigger.Raise(EEC_INVALID_FUNCTION_DEFINITION);

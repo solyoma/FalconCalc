@@ -98,6 +98,9 @@ public:
 };
 
 using UTF8Pos = size_t;			// when used for unicode position (no unicode character in string: same as position)
+// Portable UTF-8 <-> wide helpers (works C++14/17/20+, no Qt, no platform APIs)
+std::wstring utf8_to_wstring(const UTF8String& s);
+UTF8String wchar_to_utf8(wchar_t wc);
 
 // An UTF16 String class with some convenience functions not present in the STL
 // wchar_t's size is 16 bit in Windows and 32 bit in Linux, but this class always uses 16 bit

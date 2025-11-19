@@ -1,6 +1,6 @@
 #pragma once
 #include <QtWidgets/QDialog>
-#include <QTableWidget.h>
+#include <QTableWidget>
 #include <QStyledItemDelegate>
 
 #include <QStack>			// for undo
