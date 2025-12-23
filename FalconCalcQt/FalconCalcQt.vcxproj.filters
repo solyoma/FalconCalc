@@ -46,9 +46,6 @@
     <ClCompile Include="..\src\LongNumber.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\SmartString.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="HistoryDialog.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -81,9 +78,6 @@
     <ClInclude Include="..\src\LongNumber.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\SmartString.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="FCSettings.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -97,6 +91,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SmartStringQt.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\defines.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

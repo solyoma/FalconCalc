@@ -54,6 +54,10 @@ public:
 	{
 		return _unicode;
 	}
+	operator char() const
+	{
+		return (char)(_unicode & 0xFF);
+	}
 
 #ifdef QTSA_PROJECT
 	operator QChar()
@@ -86,7 +90,7 @@ public:
 	bool IsAlpha() const { return std::isalpha(_unicode, std::cout.getloc()); }
 
 
-	constexpr char16_t Unicode() const { return _unicode; }
+	constexpr char16_t unicode() const { return _unicode; }
 	constexpr explicit operator int() { return (int)(unsigned int)_unicode; }
 
 	UTF8String toUtf8String() const;		// because of Q, otherwise it was 'ToUtf8String()';
@@ -159,6 +163,12 @@ public:
 	int CompareWith(const SmartString ss, CaseSens caseSensitivity) const;
 
 	SCharT at(size_t pos, SCharT defch = SCharT(0) ) const;
+	SCharT operator[](size_t pos) const
+	{ 
+		if (pos < 0 || pos >= size()) 
+			return SCharT(0);
+		return  SCharT(String::operator[](pos));
+	}
 
 	SmartString left( UTF8Pos n, SCharT fillChar = SCharT(-1)) const; // may extend the string to the right
 	SmartString right(UTF8Pos n, SCharT fillChar = SCharT(-1)) const;	// may extend the string to the left
@@ -176,6 +186,7 @@ public:
 	UTF8String toUtf8String() const;
 	void FromWideString(const std::wstring& ws);
 	std::wstring ToWideString() const;
+	template <typename T> void setNum(T n) { *this = std::to_wstring(n); }
 #ifdef QTSA_PROJECT
 	void FromQString(const QString& qs);
 	QString toQString() const;

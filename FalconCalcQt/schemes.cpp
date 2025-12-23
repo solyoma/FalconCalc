@@ -127,6 +127,7 @@ QTreeView {
 }
 
 /* ------------------ borders ----------------------*/
+
 QGroupBox,
 QPushButton,
 QSpinBox,

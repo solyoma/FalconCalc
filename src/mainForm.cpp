@@ -1023,13 +1023,13 @@ bool TfrmMain::_LoadState(SmartString name)
 					// 3: thousand separator string
 			if (!data[3].empty())	// can only be '.', ',' and space
 			{
-				if (data[3][0] == L'1')
+				if (data[3][0] == SCharT('1'))
 					chkThousandSep->SetChecked(true);
-				else if (data[3][1] == u'0')
+				else if (data[3][1] == SCharT('0'))
 					cbThousandSep->SetItemIndex(0);
-				else if (data[3][1] == u'1')
+				else if (data[3][1] == SCharT('1'))
 					cbThousandSep->SetItemIndex(1);
-				else if (data[3][1] == u'2')
+				else if (data[3][1] == SCharT('2'))
 					cbThousandSep->SetItemIndex(2);
 				if (chkThousandSep->Checked())
 					lengine->displayFormat.strThousandSeparator = SmartString(cbThousandSep->ItemIndex() > 0 ? cbThousandSep->Text()[0] : ' ');
@@ -1114,7 +1114,7 @@ bool TfrmMain::_LoadState(SmartString name)
 			Font f = edtChars->GetFont();
 			f.SetSize(std::stof(data[1].toUtf8String()));
 			f.SetCharacterSet(static_cast<FontCharacterSets>(std::stoi(data[2].toUtf8String())));
-			n = data[3][0] == L'#' ? 1 : 0;
+			n = data[3][0] == SCharT('#') ? 1 : 0;
 			f.SetColor(std::stoul(data[3].mid(n).toUtf8String()));
 			return true;
 		}
@@ -1128,7 +1128,7 @@ bool TfrmMain::_LoadState(SmartString name)
 			ShowDecOptions(std::stoi(data[1].toUtf8String())!=0);
 			ShowHexOptions(std::stoi(data[2].toUtf8String())!=0);
 			rdDeg->SetChecked(false);			// default: true
-			switch (data[3].at(0).Unicode())
+			switch (data[3].at(0).unicode())
 			{
 				case '0':	rdDeg->SetChecked(true);   break;
 				case '1':	rdRad->SetChecked(true);   break;
@@ -1137,7 +1137,7 @@ bool TfrmMain::_LoadState(SmartString name)
 				default:  break;
 			}
 			rdNormal->SetChecked(false);	// default
-			switch (data[4].at(0).Unicode())
+			switch (data[4].at(0).unicode())
 			{
 				case '0':	rdNormal->SetChecked(true); break;
 				case '1':	rdHtml->SetChecked(true);  break;
@@ -1955,7 +1955,7 @@ SmartString TfrmMain::UserDir()
 {
 	static SmartString _userDir("*");
 
-	if (_userDir[0] != u'*')
+	if (_userDir[0] != SCharT('*'))
 		return _userDir;
 
 

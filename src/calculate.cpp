@@ -1,9 +1,13 @@
-﻿#ifndef QTSA_PROJECT
+﻿#include "defines.h"    // for LENGTH_TYPE
+
+#ifndef QTSA_PROJECT
     namespace nlib {}
     using namespace nlib;
+    #include "SmartString.h"
+#else
+    #include "SmartStringQt.h"
 #endif
 
-#include "SmartString.h"
 using namespace SmString;
 
 
@@ -29,7 +33,7 @@ using namespace std;
  std::string CALC_VERSION_STRING("0.9.0");
  std::string CALC_ID_LINE("FalconCalc Config File V");
 
- SCharT FalconCalc::argSeparator = ',';
+ SCharT FalconCalc::argSeparator(',');
 
 
 #include <math.h>
@@ -65,25 +69,36 @@ int __CRTDECL  _matherr (_Inout_ struct _exception *a)
 }
 #endif
 
-bool IsAlpha(wchar_t ch, std::locale loc)
+static bool IsAlpha(SCharT ch, std::locale loc)
 {
     static  const wchar_t* notCtrl = L"!+-*/_.,^%@#()=<>|\\:'\"~&";
-    if (isalpha(ch, loc))
+    if (isalpha((wchar_t)ch.unicode(), loc))
         return true;
-    if (std::iscntrl(ch, loc) || wcschr(notCtrl, ch))
+    if (std::iscntrl((wchar_t)ch.unicode(), loc) || wcschr(notCtrl, (wchar_t)ch.unicode()))
         return false;
     return true;
 }
 
-bool IsAlnum(wchar_t ch, std::locale loc)
+static bool IsAlnum(SCharT ch, std::locale loc)
 {
     static  const wchar_t* notCtrl = L"!+-*/.,^%@#()=<>|\\:'\"~&";
-    if (isalnum(ch, loc) || ch == '_')
+    if (isalnum((wchar_t)ch.unicode(), loc) || ch == SCharT('_'))
         return true;
-    if (std::iscntrl(ch, loc) || wcschr(notCtrl, ch))
+    if (std::iscntrl((wchar_t)ch.unicode(), loc) || wcschr(notCtrl, (wchar_t)ch.unicode()))
         return false;
     return true;
 }
+// DELETE
+//#ifdef QTSA_PROJECT
+//bool IsAlpha(QChar ch, std::locale loc)
+//{
+//    return IsAlpha((wchar_t)ch.unicode(), loc);
+//}
+//bool IsAlnum(QChar ch, std::locale loc)
+//{
+//    return IsAlnum((wchar_t)ch.unicode(), loc);
+//}
+//#endif
 
 
 using namespace SmString;
@@ -231,13 +246,18 @@ Class Token
  * RETURNS: pos now points after the SmartString of operator
  *         'data' is set up
   *----------------------------------------*/
-void Token::_GetOperator(const SmartString &text, unsigned &pos)
+void Token::_GetOperator(const SmartString &text, LENGTH_TYPE &pos)
 {
-	SCharT c = text[pos++],
-		  cn = SCharT(pos >= text.length() ? 0 : text[pos] );
+//#ifdef QTSA_PROJECT
+	wchar_t c = text.at(pos++).unicode(),
+		  cn = pos >= text.length() ? 0 : text.at(pos).unicode();
+//#else
+//	SCharT c = text[pos++].unicode(),
+//		  cn = SCharT(pos >= text.length() ? 0 : text[pos] );
+//#endif
 
 	SmartString s;
-	s = c;
+	s = SCharT(c);
 
 	switch(c)
 	{
@@ -245,9 +265,9 @@ void Token::_GetOperator(const SmartString &text, unsigned &pos)
 					    trigger.Raise(EEC_ILLEGAL_AT_LINE_END);
 				    switch(cn)
 				    {
-					    case '<' : name = u"<<"; break;
-					    case '=' : name = u"<="; break;
-					    default  : name = u"<";  break;
+					    case '<' : name = SmartString("<<"); break;
+					    case '=' : name = SmartString("<="); break;
+					    default  : name = SmartString("<" ); break;
 				    };
 				    break;
 	    case '>' : if(!cn) // no more character in line
@@ -286,16 +306,28 @@ void Token::_GetOperator(const SmartString &text, unsigned &pos)
     type = tknOperator;
 }
 
+static bool __IsXDigit(SCharT ch)
+{
+    locale loc = cout.getloc();
+
+    return isxdigit(ch.unicode(), loc) != 0;
+}
+static bool __IsDigit(SCharT ch)
+{
+    locale loc = cout.getloc();
+    return isdigit(ch.unicode(),loc) != 0;
+}
+
 /*==========================================
  * TASK: scans 'text' from pos for decimal digits
  *       using current locale
  * EXPECTS: 'text' and 'pos' <= text.length()
  * RETURNS: pos now points after the SmartString of digits
   *----------------------------------------*/
-void Token::_GetDecDigits(const SmartString &text, unsigned &pos)
+void Token::_GetDecDigits(const SmartString &text, LENGTH_TYPE &pos)
 {
 	locale loc = cout.getloc();
-	while(pos < text.length() && isdigit(text[pos], loc) )
+	while(pos < text.length() && __IsDigit(text.at(pos)) )
 		++pos;
 }
 
@@ -312,7 +344,7 @@ void Token::_GetDecDigits(const SmartString &text, unsigned &pos)
  * RETURNS: nothing, type and number SmartString is set in 'data' member
  *         'pos' is positioned after the number SmartString
  *-----------------------------------------------------------*/
-void Token::_GetDecimalNumber(const SmartString &text, unsigned &pos)
+void Token::_GetDecimalNumber(const SmartString &text, LENGTH_TYPE &pos)
 {
 
     const SCharT decpoint = RealNumber::DecPoint();
@@ -325,16 +357,16 @@ void Token::_GetDecimalNumber(const SmartString &text, unsigned &pos)
 	_GetDecDigits(text, pos);
 	nIntP = pos - nIntP;      // length of integer part of number
 
-	if(text[pos] == decpoint)	// decimal point: get fractions
+	if(text.at(pos) == decpoint)	// decimal point: get fractions
 	{
 		nFracP = ++pos;
 		_GetDecDigits(text, pos);
 		nFracP = pos - nFracP;
 	}
-	bool bExp = (text[pos] == 'e' || (text[pos] == 'E'));
+	bool bExp = (text.at(pos) == SCharT('e') || (text.at(pos) == SCharT('E')) );
 	if(bExp)
 	{
-		if(text[++pos] == '+' || text[pos] == '-')
+		if(text[++pos] == SCharT('+') || text[pos] == SCharT('-') )
 			++pos;
 		nExpP = pos;
 		_GetDecDigits(text, pos);
@@ -345,7 +377,7 @@ void Token::_GetDecimalNumber(const SmartString &text, unsigned &pos)
 	if( (!nIntP && ! nFracP)  || (bExp && ! nExpP))
 		trigger.Raise(EEC_ILLEGAL_NUMBER_No1);
 	type = tknNumber;
-	name = text.substr(startpos, pos - startpos);
+	name = text.mid(startpos, pos - startpos);
     val = RealNumber(name);
 }
 
@@ -355,17 +387,16 @@ void Token::_GetDecimalNumber(const SmartString &text, unsigned &pos)
  * RETURNS: nothing, type and number SmartString is set in 'data' member
  *         'pos' is positioned after the number SmartString
  *-----------------------------------------------------------*/
-void Token::_GetHexNumber(const SmartString &text, unsigned &pos)
+void Token::_GetHexNumber(const SmartString &text, LENGTH_TYPE &pos)
 {
-    unsigned startpos = pos;
+    LENGTH_TYPE startpos = pos;
     pos += 2;
-	locale loc = cout.getloc();
-	while(pos < text.length() && isxdigit(text[pos],loc) )
+	while(pos < text.length() && __IsXDigit(text[pos]) )
 		++pos;
 	if(pos == startpos+2)
 		trigger.Raise(EEC_ILLEGAL_HEXADECIMAL_NUMBER);
 	type = tknNumber;
-	name = text.substr(startpos, pos - startpos);
+	name = text.mid(startpos, pos - startpos);
     val = RealNumber(name);
 }
 
@@ -375,19 +406,18 @@ void Token::_GetHexNumber(const SmartString &text, unsigned &pos)
  * RETURNS: nothing, type and number SmartString is set in 'data' member
  *         'pos' is positioned after the number SmartString
  *-----------------------------------------------------------*/
-void Token::_GetOctNumber(const SmartString &text, unsigned &pos)
+void Token::_GetOctNumber(const SmartString &text, LENGTH_TYPE &pos)
 {
-	locale loc = cout.getloc();
-	unsigned startpos = pos++;
-	while(pos < text.length() && isdigit(text[pos],loc))
+	LENGTH_TYPE startpos = pos++;
+	while(pos < text.length() && __IsDigit(text[pos]))
 	{
-		if(text[pos] > '7')
+		if(text[pos] > SCharT('7'))
 				trigger.Raise(EEC_ILLEGAL_OCTAL_NUMBER);
 		++pos;
 	}
 	type = tknNumber;
 	if(pos != startpos+1)
-		name = text.substr(startpos, pos - startpos);
+		name = text.mid(startpos, pos - startpos);
     val = RealNumber(name);
 }
 
@@ -397,24 +427,23 @@ void Token::_GetOctNumber(const SmartString &text, unsigned &pos)
  * RETURNS: nothing, type and number SmartString is set in 'data' member
  *         'pos' is positioned after the number SmartString
  *-----------------------------------------------------------*/
-void Token::_GetBinaryNumber(const SmartString &text, unsigned &pos)
+void Token::_GetBinaryNumber(const SmartString &text, LENGTH_TYPE &pos)
 {
     auto triggerError = []()
         {
             trigger.Raise(EEC_ILLEGAL_BINARY_NUMBER);
         };
-    locale loc = cout.getloc();
-    unsigned startpos = pos++;    // skip '#'
-    while (pos < text.length() && isdigit(text[pos], loc))
+    LENGTH_TYPE startpos = pos++;    // skip '#'
+    while (pos < text.length() && __IsDigit(text[pos]))
     {
-        if (text[pos] > '1')
+        if (text[pos] > SCharT('1'))
             triggerError();
         ++pos;
     }
     type = tknNumber;
     if (pos == startpos+1)
         triggerError();
-    name = text.substr(startpos, pos - startpos);
+    name = text.mid(startpos, pos - startpos);
     val = RealNumber(name);
 }
 /*========================================================
@@ -428,15 +457,15 @@ void Token::_GetBinaryNumber(const SmartString &text, unsigned &pos)
  *          - The character SmartString is considered a BIG_ENDIAN
  *              number
  *-----------------------------------------------------------*/
-void Token::_GetNumberFromQuotedString(const SmartString &text, unsigned &pos)
+void Token::_GetNumberFromQuotedString(const SmartString &text, LENGTH_TYPE &pos)
 {
 	locale loc = cout.getloc();
-	unsigned startpos = pos;
+	LENGTH_TYPE startpos = pos;
     RealNumber lval = RealNumber::RN_0, r10k = RealNumber(0x10000);
-	while(pos < text.length() && (text[pos] != '\'' || (pos > 0 && text[pos-1] == '\\')) )
+	while(pos < text.length() && (text[pos] != SCharT('\'') || (pos > 0 && text[pos-1] == SCharT('\\'))) )
     {
 		SCharT ch = text[pos];
-        lval = lval * r10k + RealNumber(ch.Unicode()) ;
+        lval = lval * r10k + RealNumber(ch.unicode()) ;
 		++pos;
     }
 	if(pos == startpos)
@@ -462,22 +491,27 @@ void Token::_GetNumberFromQuotedString(const SmartString &text, unsigned &pos)
  *         'body' is the name of the variable/function/operator
  *         'pos' is positioned after the number SmartString
  *-----------------------------------------------------------*/
-void Token::_GetVarOrFuncOrOperator(const SmartString &text, unsigned &pos)
+void Token::_GetVarOrFuncOrOperator(const SmartString &text, LENGTH_TYPE &pos)
 {
 	locale loc = cout.getloc();
 	int startpos = pos;
-	while(pos < text.length() && (IsAlnum(text[pos],loc) || text[pos] == '_'))
+//#ifdef QTSA_PROJECT
+	wchar_t c = text.at(pos).unicode();
+//#else
+//	wchar_t c = text[pos];
+//#endif
+	while(pos < text.length() && (IsAlnum(c,loc) || c == '_'))
 		++pos;
-	SmartString s = text.substr(startpos, pos - startpos);
+	SmartString s = text.mid(startpos, pos - startpos);
     if (s.length() == 1 && s == u"π")
         s = u"pi";
 	name = s;  //  set name
-    while(pos < text.length() && isspace((wchar_t)text[pos],loc))
+    while(pos < text.length() && isspace(c,loc))
         ++pos; // skip whitespace because of function definitions
     data = MathOperator::Op(s );
 	if( data.oper != opINVALID )
 		type = tknOperator;
-	else if(pos < text.length() && text[pos] == '(') // function
+	else if(pos < text.length() && c == '(') // function
     {
 		type = tknFunction;
         ++pos;                 // skip '('
@@ -486,14 +520,14 @@ void Token::_GetVarOrFuncOrOperator(const SmartString &text, unsigned &pos)
 		type = tknVariable;
  }
 
-void Token::FromText(const SmartString &text, unsigned &pos)
+void Token::FromText(const SmartString &text, LENGTH_TYPE &pos)
 {
     val = 0;
     // already set before called   type = tknUnknown;
 	locale loc = cout.getloc();
 
 	// skip whitespace
-	unsigned len = text.length();
+	LENGTH_TYPE len = text.length();
 	if(pos >= len || text[pos] == schCommentDelimiter) 
     {
         type = tknEOL;
@@ -503,19 +537,20 @@ void Token::FromText(const SmartString &text, unsigned &pos)
     SCharT decpoint = RealNumber::DecPoint();
 	SmartString sErr = "Illegal operator"_ss;
 
-	while(pos < len && isspace((wchar_t)text[pos], loc))
-		++pos;
-	SCharT  c = text[pos++],
-			cn = (pos >= len ? SCharT(0) : SCharT(text[pos])); // look ahead
+    SCharT  c = text[pos];
+	while(pos < len && isspace(c.unicode(), loc))
+		c = text[++pos];
+
+	SCharT cn = (++pos >= len ? SCharT(0) : SCharT(text[pos])); // look ahead
     --pos;  // go back to start of token
 
     if(c == SCharT('\'') )   // character SmartString
         _GetNumberFromQuotedString(text, ++pos);
-	else if(isdigit(c,loc) || c == decpoint || c == SCharT('#'))		// token is a decimal, hexadecimal, octal or binary number
+	else if(__IsDigit(c) || c == decpoint || c == SCharT('#'))		// token is a decimal, hexadecimal, octal or binary number
 	{
-		bool bDecpF = (c == decpoint),							        // decimal point found ?
-				bHexF = (c == SCharT('0') && (cn == SCharT('x') )),		// hex number?
-				bOctF = (c == SCharT('0') && cn && isdigit(cn,loc)),
+        bool bDecpF = (c == decpoint),							        // decimal point found ?
+            bHexF = (c == SCharT('0') && (cn == SCharT('x'))),		// hex number?
+            bOctF = (c == SCharT('0') && cn != SCharT(0) && __IsDigit(cn)),
 				bBinF = (c == SCharT('#'));
 
 		if(bHexF)                       // starts with 0x and ends when any non hex. digit character found
@@ -524,13 +559,13 @@ void Token::FromText(const SmartString &text, unsigned &pos)
 			_GetOctNumber(text, pos);    // 0....
 		else if(bBinF)                  // #...
 		{
-			if(!cn) // then EOL and number is a single binary type character
+			if(cn == SCharT(0)) // then EOL and number is a single binary type character
 				trigger.Raise(EEC_MISSING_BINARY_NUMBER);
 			_GetBinaryNumber(text, pos);  // starting after the '#' type character
 		}
 		else // decimal number
 		{
-			if((!cn && bDecpF) || (bDecpF && !isdigit(cn,loc)))	// then EOL and number is a single decimal point
+			if((cn == SCharT(0) && bDecpF) || (bDecpF && !__IsDigit(cn)))	// then EOL and number is a single decimal point
 				trigger.Raise(EEC_ILLEGAL_NUMBER_No2);
 			_GetDecimalNumber(text, pos); // start at the first number/decimal point
 		}
@@ -546,7 +581,7 @@ void Token::FromText(const SmartString &text, unsigned &pos)
  *          'pos': position in 'text' where the tex of the token starts
  *           text to only contain valid characters and only lowercase letters!
  *--------------------------------------------------*/
-Token::Token( const SmartString &text, unsigned &pos) : type(tknUnknown), val(0)
+Token::Token( const SmartString &text, LENGTH_TYPE &pos) : type(tknUnknown), val(0)
 {
     FromText(text, pos);
 }
@@ -643,7 +678,7 @@ LittleEngine::LittleEngine() : clean(true)
 }
 
 
-const Token& LittleEngine::_Stack::peek(unsigned n) const
+const Token& LittleEngine::_Stack::peek(size_t n) const
 {
     if (_stack.size() < n)
         trigger.Raise(EEC_STACK_ERROR);
@@ -765,7 +800,7 @@ int LittleEngine::_InfixToPostFix(const SmartString expr)
 	locale loc = cout.getloc();
     infix.clear();
     //if( infix[  infix.length() -1] == '\n')
-    //    infix = infix.substr(0, infix.length()-1);
+    //    infix = infix.mid(0, infix.length()-1);
 	SmartString pattern = "=*^/<>!&|~%().,+-_#'"_ss;
     //                    "!+-*/_.,^%@#()=<>|\\:'\"~&"
     bool quoted = false;
@@ -776,23 +811,29 @@ int LittleEngine::_InfixToPostFix(const SmartString expr)
     // and check for missing or mixed braces
     int bc = 0;   // brace count
     SmartString::const_iterator it;
-    for(it = expr.begin(); it != expr.end() && *it != FalconCalc::schCommentDelimiter; ++it)
+    for(it = expr.begin(); it != expr.end() && SCharT(*it) != FalconCalc::schCommentDelimiter; ++it)
     {
+#ifdef QTSA_PROJECT
+        wchar_t c = (*it).unicode();
+#else
+        wchar_t c = *it;
+#endif
+
         if (!quoted)
         {
-            if (isspace(*it, loc))  // drop spaces inside
+            if (isspace(c, loc))  // drop spaces inside
                 continue;
-            if (!IsAlnum((wchar_t)*it, loc) && pattern.find_first_of(*it) == std::string::npos)
+            if (!IsAlnum(c, loc) && pattern.find_first_of(*it) == std::string::npos)
                 trigger.Raise(EEC_ILLEGAL_CHARACTER_NUMBER);
-            if (*it == u'(')
+            if (c == u'(')
                 ++bc;
-            else if (*it == u')')
+            else if (c == u')')
             {
                 if (--bc < 0)
                     trigger.Raise(EEC_MISMATCHED_PARENTHESIS);
             }
         }
-        if(*it == '\'')
+        if(c == '\'')
             quoted ^= true;
         infix.push_back(*it);   //  even quoted string don't lowercase anything here
     }
@@ -823,7 +864,7 @@ int LittleEngine::_InfixToPostFix(const SmartString expr)
      //    pi      true          *          (tknOperator)      false
      //    pi      false         pi         (tknVariable)      true
      //  EOLN
-	unsigned pos = 0;
+	LENGTH_TYPE pos = 0;
 	Token *tok = new Token(infix, pos);
 					// Shunting yard algorithm from Wikiedia (http://en.wikipedia.org/wiki/Shunting-yard_algorithm)
 	while (tok->Type() != tknEOL) // get all tokens from line
@@ -878,7 +919,7 @@ int LittleEngine::_InfixToPostFix(const SmartString expr)
                     if (!needOp)     // '!', 'not' '~', unary '-' or '+'
 				    {
 					    // check for too many '+' or '-'
-					    unsigned pn = pos; // look ahead
+					    LENGTH_TYPE pn = pos; // look ahead
 					    Token* next = new Token(infix, pn);
                                 
                         if (next->Type() == tknOperator)
@@ -998,13 +1039,18 @@ void LittleEngine::_MarkDependentVariablesDirty(const SmartString name)
  *         false if first non-whitespace character is not an equal sign
  * REMARKS: variable name already processed and in 'tok'
  *---------------------------------------------------------*/
-bool LittleEngine::_VariableAssignment(const SmartString &expr, unsigned &pos, Token *tok)
+bool LittleEngine::_VariableAssignment(const SmartString &expr, LENGTH_TYPE &pos, Token *tok)
 {
 	locale loc = cout.getloc();
 
-    while(pos < expr.length() && isspace((wchar_t)expr[pos], loc))
+    auto exch = [&]()-> wchar_t
+        {
+            return expr.at(pos).unicode();
+        };
+
+    while(pos < expr.length() && isspace(exch(), loc))
       ++pos;
-    if( pos == expr.length()  || (expr[pos] != '=' && expr[pos] != schCommentDelimiter) )
+    if( pos == expr.length()  || (expr[pos] != SCharT('=') && expr[pos] != schCommentDelimiter) )
         return false;       // not an assignment
 
     Variable v;
@@ -1071,10 +1117,10 @@ bool LittleEngine::_VariableAssignment(const SmartString &expr, unsigned &pos, T
  *          false if this is not a function assignment,
  * REMARKS: - throws exception if syntax error
  *---------------------------------------------------------*/
- bool LittleEngine::_FunctionAssignment(const SmartString& expr, unsigned& pos, Token* tok)
+ bool LittleEngine::_FunctionAssignment(const SmartString& expr, LENGTH_TYPE& pos, Token* tok)
 {
    calcResult = RealNumber::RN_0;
-   unsigned poseq = expr.find_first_of(u'=', pos);
+   LENGTH_TYPE poseq = expr.find_first_of(u'=', pos);
    if (poseq == SmartString::npos) // no equal sign, maybe a colon?
    {
        poseq = expr.find_first_of(schCommentDelimiter, pos);
@@ -1086,14 +1132,14 @@ bool LittleEngine::_VariableAssignment(const SmartString &expr, unsigned &pos, T
    if(builtinFunctions.count(lcName) )
             trigger.Raise(EEC_BUILTIN_FUNCTIONS_CANNOT_BE_REDEFINED);
     // it may have been already defined user function, but we will overwrite it with the new
-   if(expr[poseq-1] != ')')
+   if(expr[poseq-1] != SCharT(')') )
         trigger.Raise(EEC_FUNCTION_DEFINITION_MISSING_RIGHT_BRACE);
 
    Func f;
    f.name = tok->Text();
       SmartString arguments = expr.mid(pos, poseq - pos - 1);  // argument list
 
-   f.args = SmartStringVector(arguments, ',' /*argSeparator */ , false, true);
+   f.args = SmartStringVector(arguments, SCharT(',') /*argSeparator */ , false, true);
 
    SmartStringVector svFields(expr.mid(poseq+1), schCommentDelimiter, true, true);
 
@@ -1240,11 +1286,11 @@ void LittleEngine::_DoFunction(const Token &token)
     if(f.being_processed) // then recursive call
         trigger.Raise(EEC_RECURSIVE_FUNCTIONS_ARE_NOT_ALLOWED);
     vector<RealNumber> params;
-    unsigned n = f.args.size();
+    LENGTH_TYPE n = f.args.size();
         // get parameters from stack into 'params'
         // the i-th patameter will correspond to the
         // i-th argument
-    for(unsigned i = n ; i > 0; --i)  // arguments were pushed from left to right
+    for(LENGTH_TYPE i = n ; i > 0; --i)  // arguments were pushed from left to right
         params.push_back( stack.peek(i).Value() );
 
     stack.pop(n);
@@ -1252,13 +1298,13 @@ void LittleEngine::_DoFunction(const Token &token)
         // in which function parameters are replaced with their values
     TokenVec tv;
     bool allocd = false;
-    for(unsigned i = 0; i < f.tokenVec.size(); ++i)
+    for(size_t i = 0; i < f.tokenVec.size(); ++i)
     {
         Token *tok = & f.tokenVec[i];
         if(tok->Type() == tknVariable) // then if it is a parameter then
         {                              // replace it with the parameter's value
-            for(unsigned j = 0; j < f.args.size(); ++j)
-                if(tok->Text().asLowerCase() == f.args[j].asLowerCase()) // parameter
+            for(LENGTH_TYPE j = 0; j < f.args.size(); ++j)
+                if(tok->Text().asLowerCase() == SmartString(f.args[j]).asLowerCase()) // parameter
                 {
                     tok = new Token(params[j]);
                     allocd=true;
@@ -1402,7 +1448,7 @@ void LittleEngine::_DoOperator(const Token &tok)
  *-------------------------------------------------*/
 RealNumber LittleEngine::_CalcPostfix(TokenVec& tvPostfix)
 {
-    unsigned stack_cnt = stack.size();
+    LENGTH_TYPE stack_cnt = stack.size();
     TokenVec::iterator it;
     for(it = tvPostfix.begin(); it != tvPostfix.end(); ++it)
     {
@@ -1474,7 +1520,7 @@ RealNumber LittleEngine::Calculate()
 SmartString LittleEngine::Postfix() const
 {
     SmartString postfix;
-    for(unsigned i = 0; i < tvPostfix.size(); ++i)
+    for(size_t i = 0; i < tvPostfix.size(); ++i)
         postfix += tvPostfix[i].Text() + " "_ss;
     return postfix;
 }

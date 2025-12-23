@@ -1,7 +1,7 @@
 
 #include <QDir>
 #include <QFile>
-#include <QtextStream>
+#include <QTextStream>
 #include <QString>
 #include <QSettings>
 #include <QTimer>
@@ -12,7 +12,8 @@
 
 #include <vector>
 
-#include "SmartString.h"
+#include "SmartStringQt.h"
+
 using namespace SmString;
 
 #include "LongNumber.h"
@@ -653,6 +654,8 @@ void FalconCalcQt::on_chkEng_toggled(bool b)
 {
 	if (!b && ui.chkSci->isChecked())
 		return;
+	if(b && ui.chkEng->isChecked())
+		ui.chkSci->setChecked(!b);
 	lengine->displayFormat.mainFormat = b ? NumberFormat::rnfEng : NumberFormat::rnfGeneral;
 	_ShowResults();
 }
@@ -660,6 +663,8 @@ void FalconCalcQt::on_chkSci_toggled(bool b)
 {
 	if (!b && ui.chkEng->isChecked())
 		return;
+	if(b && ui.chkSci->isChecked())
+		ui.chkEng->setChecked(!b);
 	lengine->displayFormat.mainFormat = b ? NumberFormat::rnfSci : NumberFormat::rnfGeneral;
 	_ShowResults();
 
@@ -1107,19 +1112,19 @@ bool FalconCalcQt::_LoadState()
 				// 3: thousand separator string
 				if (!data[3].isEmpty())	// can only be '.', ',' and space
 				{
-					if (data[3][0] == L'1')
+					if (data[3][0] == '1')
 						ui.chkThousandSep->setChecked(true);
-					else if (data[3][1] == L'0')
+					else if (data[3][1] == '0')
 						ui.cbThousandSep->setCurrentIndex(0);
-					else if (data[3][1] == L'1')
+					else if (data[3][1] == '1')
 						ui.cbThousandSep->setCurrentIndex(1);
-					else if (data[3][1] == L'2')
+					else if (data[3][1] == '2')
 						ui.cbThousandSep->setCurrentIndex(2);
 					if (ui.chkThousandSep->isChecked())
 						lengine->displayFormat.strThousandSeparator = SmartString(ui.cbThousandSep->currentIndex() > 0 ? ui.cbThousandSep->currentText()[0].unicode() : ' ');
 				}
 				// 4: fraction separator
-				if (!data[4].isEmpty() && data[4] == L"1")
+				if (!data[4].isEmpty() && data[4] == "1")
 					ui.chkDecDelim->setChecked(true);
 				// 5: angular unit 0:
 				if (!data[5].isEmpty())

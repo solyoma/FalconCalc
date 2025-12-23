@@ -1,16 +1,20 @@
 #include <QtWidgets/QApplication>
 #include <QFile>
 #include <QDir>
-#include <QMessagebox>
+#include <QMessageBox>
 #include <QTranslator>
-#include "SmartString.h"
+#include <QStyleFactory>
+
+#include "defines.h"
+#include "common.h"
+#include "SmartStringQt.h"
 using namespace SmString;
 #include "LongNumber.h"
 using namespace LongNumber;
-#include <QStyleFactory>
-#include "common.h"
 #include "calculate.h"
 #include "FalconCalcQt.h"
+
+int SmString::SmartString::npos = -1;
 
 // program language and locale used are two different things.
 // both are set in the .cfg file, one as an index, the other as a name

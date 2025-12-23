@@ -6,14 +6,16 @@
 #include <QStack>			// for undo
 #include <QPair>
 
-#include "SmartString.h"
+#include "SmartStringQt.h"
+using namespace SmString;
 #include "LongNumber.h"
+using namespace LongNumber;
 #include "calculate.h"
 
 #include "ui_VariablesFunctionsDialog.h"
 
 namespace FalconCalc {
-	enum WindowSide;
+	enum WindowSide :int;
 	class LittleEngine;
 }
 

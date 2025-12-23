@@ -178,7 +178,7 @@ namespace SmString {
 		std::wstring ws;
 		ws.resize(length());
 		for (size_t i = 0; i < size(); ++i)
-			ws[i] = SCharT((*this)[i]).Unicode();
+			ws[i] = SCharT((*this)[i]).unicode();
 		return ws;
 	}
 
@@ -221,12 +221,12 @@ namespace SmString {
 
 	void SmartString::LTrim()
 	{
-		erase(begin(), std::find_if(begin(), end(), [](SCharT ch) {return !std::isspace((wchar_t)ch.Unicode(), std::cout.getloc()); }));
+		erase(begin(), std::find_if(begin(), end(), [](SCharT ch) {return !std::isspace((wchar_t)ch.unicode(), std::cout.getloc()); }));
 	}
 
 	void SmartString::RTrim()
 	{
-		erase(std::find_if(rbegin(), rend(), [](SCharT ch) {return !std::isspace((wchar_t)ch.Unicode(), std::cout.getloc()); }).base(), end());
+		erase(std::find_if(rbegin(), rend(), [](SCharT ch) {return !std::isspace((wchar_t)ch.unicode(), std::cout.getloc()); }).base(), end());
 	}
 
 	void SmartString::Trim()
@@ -237,7 +237,7 @@ namespace SmString {
 
 	void SmartString::RemoveWhiteSpace()
 	{
-		erase(std::remove_if(begin(), end(), [](SCharT ch) {return std::isspace((wchar_t)ch.Unicode(), std::cout.getloc()); }), end());
+		erase(std::remove_if(begin(), end(), [](SCharT ch) {return std::isspace((wchar_t)ch.unicode(), std::cout.getloc()); }), end());
 	}
 
 	SmartStringVector SmartString::Split(const SCharT ch, bool keepEmpty) const
@@ -581,7 +581,7 @@ namespace SmString {
 		std::ofstream ofs(name.toUtf8String(), std::ios_base::out);
 		if (ofs.fail())
 			return false;
-		for (auto& s : *this)
+		for (const auto& s : *this)
 			ofs << s << "\n";
 		return true;
 	}

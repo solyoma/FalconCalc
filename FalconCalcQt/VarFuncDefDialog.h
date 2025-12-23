@@ -41,7 +41,7 @@ public:						 // vfd changed on dialog acceptance
 	void EnableDisableOkButton()
 	{
 		QString name = ui.edtName->text();
-		bool nameValid = name.indexOf('(') >= 0 && name.indexOf(')') >= 0 || (name.indexOf('(') < name.indexOf(')'));
+		bool nameValid = (name.indexOf('(') >= 0) && (name.indexOf(')') >= 0) && (name.indexOf('(') < name.indexOf(')'));
 		ui.buttonBox->buttons()[0]->setEnabled(!name.isEmpty() && nameValid && !ui.edtValue->text().isEmpty());
 		if (_vfd.isFunction)
 		{
@@ -75,4 +75,4 @@ private:
 	VarFuncData &_vfd;
 };
 
-#endif						   ;
+#endif

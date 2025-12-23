@@ -22,7 +22,7 @@ struct SEMAPHORE {
 
 //---------------------------------------------------
 namespace FalconCalc {
-    enum WindowSide  { wsNone, wsTop, wsRight, wsBottom, wsLeft };
+    enum WindowSide :int { wsNone, wsTop, wsRight, wsBottom, wsLeft };
     class LittleEngine;
 }
 
@@ -121,7 +121,7 @@ private:
         // history
     bool _added=false;		    // already added to history by timer, reset by keypress
     bool _bAutoSave=false;	    // autosave history activated?
-    size_t _maxHistDepth=100;   // == 0: unlimited
+    int _maxHistDepth=100;   // == 0: unlimited
     int _minCharLength=3;	// 0: all, else # of characters below which there's no save
     bool _historySorted = false;//  if true sort history after adding item
 

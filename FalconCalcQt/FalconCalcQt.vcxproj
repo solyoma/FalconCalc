@@ -133,7 +133,6 @@
     <QtMoc Include="FalconCalcQt.h" />
     <ClCompile Include="..\src\calculate.cpp" />
     <ClCompile Include="..\src\LongNumber.cpp" />
-    <ClCompile Include="..\src\SmartString.cpp" />
     <ClCompile Include="FalconCalcQt.cpp" />
     <ClCompile Include="HistoryDialog.cpp" />
     <ClCompile Include="main.cpp" />
@@ -142,9 +141,10 @@
   <ItemGroup>
     <ClInclude Include="..\src\calculate.h" />
     <ClInclude Include="..\src\common.h" />
+    <ClInclude Include="..\src\defines.h" />
     <ClInclude Include="..\src\EngineErrors.h" />
     <ClInclude Include="..\src\LongNumber.h" />
-    <ClInclude Include="..\src\SmartString.h" />
+    <ClInclude Include="SmartStringQt.h" />
     <QtMoc Include="VarFuncDefDialog.h" />
     <QtMoc Include="AboutDialog.h" />
     <ClInclude Include="FCSettings.h" />

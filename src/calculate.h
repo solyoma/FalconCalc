@@ -18,7 +18,14 @@
 
 #include <cmath>
 
-#include "SmartString.h"
+#include "defines.h"
+
+#ifndef QTSA_PROJECT
+    #include "SmartString.h"
+#else
+    #include "SmartStringQt.h"
+#endif
+
 using namespace SmString;
 #include "LongNumber.h"
 using namespace LongNumber;
@@ -31,10 +38,6 @@ using namespace LongNumber;
     // before including this
     #include "translations.h"
 #endif
-
-bool IsAlpha(wchar_t ch, std::locale loc);    // needed for names in one locale when working in another locale
-bool IsAlnum(wchar_t ch, std::locale loc);    // needed for names in one locale when working in another locale
-
 
 namespace FalconCalc
 {
@@ -129,16 +132,16 @@ namespace FalconCalc
         LongNumber::RealNumber val;
 		OP data;
 
-		void _GetDecDigits(const SmartString &text, unsigned &pos);
-		void _GetDecimalNumber(const SmartString &text, unsigned &pos);
-		void _GetHexNumber(const SmartString &text, unsigned &pos);
-		void _GetOctNumber(const SmartString &text, unsigned &pos);
-		void _GetBinaryNumber(const SmartString &text, unsigned &pos);
-        void _GetNumberFromQuotedString(const SmartString &text, unsigned &pos);
-		void _GetVarOrFuncOrOperator(const SmartString &text, unsigned &pos);
-		void _GetOperator(const SmartString &text, unsigned &pos);
+		void _GetDecDigits(const SmartString &text, LENGTH_TYPE &pos);
+		void _GetDecimalNumber(const SmartString &text, LENGTH_TYPE &pos);
+		void _GetHexNumber(const SmartString &text, LENGTH_TYPE &pos);
+		void _GetOctNumber(const SmartString &text, LENGTH_TYPE &pos);
+		void _GetBinaryNumber(const SmartString &text, LENGTH_TYPE &pos);
+        void _GetNumberFromQuotedString(const SmartString &text, LENGTH_TYPE &pos);
+		void _GetVarOrFuncOrOperator(const SmartString &text, LENGTH_TYPE &pos);
+		void _GetOperator(const SmartString &text, LENGTH_TYPE &pos);
 	public:
-		Token(const SmartString &text, unsigned &pos);     // gets next token from 'text' starting at position 'pos'
+		Token(const SmartString &text, LENGTH_TYPE &pos);  // gets next token from 'text' starting at position 'pos'
 												           // and sets 'pos' to the first character after the token
         Token(TokenType t, SmartString b, OP d):type(t), name(b), val(RealNumber::RN_0), data(d) {}
 		Token(const Token& tk) { *this = tk; }
@@ -166,7 +169,7 @@ namespace FalconCalc
             // name is not set
         Token(RealNumber v): type(tknNumber), val(v) {}
 
-        void FromText(const SmartString& text, unsigned& pos);
+        void FromText(const SmartString& text, LENGTH_TYPE& pos);
 
 		TokenType Type() const { return type; }
         OperatorType Oper() const { return data.oper; }
@@ -333,7 +336,7 @@ namespace FalconCalc
         }
         SmartString Serialize() const
         {
-            SmartString s = SmartString(name) + ssEqString + body;
+            SmartString s(name + ssEqString + body);
             if (!desc.empty())
                 s += ssCommentDelimiterString + desc;
             else if(!unit.empty())                 // but description is
@@ -396,16 +399,17 @@ namespace FalconCalc
         // and marked dirty when needed
         inline SmartString FullNameWithArgs() const
         {
-            SmartString s = name + "("_ss;
+            SmartString s(name + "("_ss);
             if (args.size())
                 s += args[0];
-            for (size_t j = 1; j < args.size(); ++j)
+            for (size_t j = 1; j < (size_t)args.size(); ++j)  //(size_t) needed for Qt compatibility
                 s += SmartString(argSeparator) + args[j];
-            return s + ")"_ss;
+			s += ")"_ss;
+            return s;
         }
         SmartString Serialize() const
         {
-            SmartString s = FullNameWithArgs() + ssEqString + body;
+            SmartString s(FullNameWithArgs() + ssEqString + body);
             if (!desc.empty() || !unit.empty())
                 s += ssCommentDelimiterString + desc;
             if(!unit.empty())
@@ -527,7 +531,7 @@ namespace FalconCalc
             cols[2] = descr;
             cols[3] = unit;
         }
-        void clear() { cols[0] = cols[1] = cols[2] = cols[3] = u""; }
+        void clear() { cols[0] = cols[1] = cols[2] = cols[3] = ""; }
         RowData& operator=(const RowData& o)
         {
             cols[0] = o.cols[0];
@@ -594,7 +598,7 @@ namespace FalconCalc
                 return _stack.size();
             }
 
-			void pop(unsigned n=1)
+			void pop(LENGTH_TYPE n=1)
             {
                 while(n-- && !_stack.empty() )
                     _stack.pop_back();
@@ -607,14 +611,14 @@ namespace FalconCalc
 					_stack.pop_back();
 				}
 			}
-			const Token &operator[](unsigned index) const { return _stack.at(index); }
-            const Token& peek(unsigned n = 1) const; // bounds checking added
-            unsigned size() const { return _stack.size(); }
+			const Token &operator[](LENGTH_TYPE index) const { return _stack.at(index); }
+            const Token& peek(size_t n = 1) const; // bounds checking added
+            LENGTH_TYPE size() const { return _stack.size(); }
 		} stack;
 		void _HandleUnknown(Token *tok);
 
-        bool _VariableAssignment(const SmartString &expr, unsigned &pos, Token *tok);
-        bool _FunctionAssignment(const SmartString &expr, unsigned &pos, Token *tok);
+        bool _VariableAssignment(const SmartString &expr, LENGTH_TYPE &pos, Token* tok);
+        bool _FunctionAssignment(const SmartString& expr, LENGTH_TYPE &pos, Token *tok);
         void _HandleOperator(Token* tok);
         void _HandleBrace(Token* tok);
         void _MarkDependentVariablesDirty(const SmartString name); // all variables containing this 'name'

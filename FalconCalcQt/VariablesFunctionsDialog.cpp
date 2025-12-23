@@ -5,7 +5,7 @@
 
 using namespace FalconCalc;
 
-#include "VarFuncdefDialog.h"
+#include "VarFuncDefDialog.h"
 #include "VariablesFunctionsDialog.h"
 
 constexpr const int	VARIABLES = 0,
@@ -398,7 +398,7 @@ QString VariablesFunctionsDialog::_GetItemText(QTableWidget *table, int row, int
 void VariablesFunctionsDialog::_FillBuiltinFuncTable()
 {
 	ElidingTableWidgetItem* ptw;
-	size_t pos = 0, pos1 = 0;
+	int pos = 0, pos1 = 0;
 	QString qs;
 	int cntFunctions = LittleEngine::builtinFunctions.size();
 	ui.tblBuiltinFuncs->setRowCount(cntFunctions);
@@ -434,10 +434,10 @@ void VariablesFunctionsDialog::_FillUserFuncTable()
 		rd = { f.name, f.body, f.unit, f.desc };
 		(*_pUserFuncsMap)[f.name] = rd;
 		QString s = f.name.toQString()+QString("(");
-		size_t i;
+		int i;
 		for (i = 0; i < f.args.size() - 1; ++i)
-			s += f.args.at(i).toQString() + ",";
-		s += f.args.at(i).toQString() + ")";
+			s += f.args.at(i) + ",";
+		s += f.args.at(i) + ")";
 
 		_AddCellText(ui.tblUserFuncs, row, 0, s);
 		_AddCellText(ui.tblUserFuncs, row, 1, f.body.toQString());
