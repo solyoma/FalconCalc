@@ -366,7 +366,7 @@ void Token::_GetDecimalNumber(const SmartString &text, LENGTH_TYPE &pos)
 	bool bExp = (text.at(pos) == SCharT('e') || (text.at(pos) == SCharT('E')) );
 	if(bExp)
 	{
-		if(text[++pos] == SCharT('+') || text[pos] == SCharT('-') )
+		if(text.at(++pos) == SCharT('+') || text.at(pos) == SCharT('-'))
 			++pos;
 		nExpP = pos;
 		_GetDecDigits(text, pos);
@@ -495,13 +495,10 @@ void Token::_GetVarOrFuncOrOperator(const SmartString &text, LENGTH_TYPE &pos)
 {
 	locale loc = cout.getloc();
 	int startpos = pos;
-//#ifdef QTSA_PROJECT
 	wchar_t c = text.at(pos).unicode();
-//#else
-//	wchar_t c = text[pos];
-//#endif
 	while(pos < text.length() && (IsAlnum(c,loc) || c == '_'))
-		++pos;
+		c = text.at(++pos).unicode();
+
 	SmartString s = text.mid(startpos, pos - startpos);
     if (s.length() == 1 && s == u"π")
         s = u"pi";
@@ -835,7 +832,7 @@ int LittleEngine::_InfixToPostFix(const SmartString expr)
         }
         if(c == '\'')
             quoted ^= true;
-        infix.push_back(*it);   //  even quoted string don't lowercase anything here
+        infix.push_back(*it);   //  even for quoted string don't lowercase anything here
     }
     if(bc)
         trigger.Raise(EEC_MISMATCHED_PARENTHESIS);

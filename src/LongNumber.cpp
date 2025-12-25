@@ -152,6 +152,7 @@ RealNumber	zero  		(rnNull),
 			NaN 		(rnNaN),
 			Inf 		(rnInf),
 			tooLong		(rnTooLong);
+// constant names in this table must be in all lowercase and must be unique
 Constant
 	//				 name     	value		 unit				  explanation
 				// math
@@ -187,15 +188,15 @@ Constant
 			kc		{ u"kc"		, rn_kc		, u"[N m²/C²]"		, u"= 1/4πεo Coulomb constant"							, nullptr		},
 			la		{ u"la"		, rn_la		, u"[1/mol]"		, u"Avogadro constant - exact value"					, nullptr		},
 			me		{ u"em"		, rn_me		, u"[kg]"			, u"electron mass"										, nullptr		},
-			mf		{ u"mE"		, rn_mf		, u"[kg]"			, u"mass of the Earth"									, nullptr		},
+			mf		{ u"me"		, rn_mf		, u"[kg]"			, u"mass of the Earth"									, nullptr		},
 			mp		{ u"mp"		, rn_mp		, u"[kg]"			, u"proton mass"										, nullptr		},
 			ms		{ u"ms"		, rn_ms		, u"[kg]"			, u"mass of the Sun"									, nullptr		},
 			mu0		{ u"mu"		, rn_mu0	, u"[N/A²=Vs/m²]"	, u"4π*10ˉ⁷ vacuum magnetic permeability"				, nullptr		},
 			qe		{ u"qe"		, rn_qe		, u"[C]"			, u"elementary charge"									, nullptr		},
 			rfsc	{ u"rafs"	, rn_pfsc	, u"[-]"			, u"reciprocal of the fine structure constant (approx 137)", nullptr	},
-			rf		{ u"rE"		, rn_rf		, u"[m]"			, u"radius of the Earth"								, nullptr		},
+			rf		{ u"re"		, rn_rf		, u"[m]"			, u"radius of the Earth"								, nullptr		},
 			rg		{ u"rg"		, rn_rg		, u"[J/mol K]"		, u"molar gas constant R"								, nullptr		},
-			rs		{ u"rS"		, rn_rs		, u"[m]"			, u"radius of the Sun"									, nullptr		},
+			rs		{ u"rs"		, rn_rs		, u"[m]"			, u"radius of the Sun"									, nullptr		},
 			sb		{ u"sb"		, rn_sb		, u"[W/m² K⁴]"		, u"Stefan–Boltzmann constant"							, nullptr		},
 			u		{ u"u"		, rn_u		, u"[kg]"			, u"atomic mass unit (m[C12]/12)"						, nullptr		};
 
@@ -205,48 +206,48 @@ ConstantsMap constantsMap;
 
 ConstantsMap::ConstantsMap()
 {
-	_Add(e);
-	_Add(pi);
-	_Add(rpi);
-	_Add(twoPi);
-	_Add(piP2);
-	_Add(piP4);
-	_Add(rpi2);
-	_Add(sqpi);
-	_Add(sqrt2);
-	_Add(rsqrt2);
-	_Add(sqrt3);
-	_Add(sqrt3P2);
-	_Add(ln10);
-	_Add(ln2);
-	_Add(rln10);
-	_Add(rln2);
-	_Add(log2e);
-	_Add(lg10e);
-	_Add(lge);
-	_Add(fsc);
-	_Add(au);
-	_Add(c);
-	_Add(eps0);
-	_Add(G);
-	_Add(gf);
-	_Add(h);
-	_Add(hbar);
-	_Add(kb);
-	_Add(kc);
-	_Add(la);
-	_Add(me);
-	_Add(mf);
-	_Add(mp);
-	_Add(ms);
-	_Add(mu0);
-	_Add(qe);
-	_Add(rfsc);
-	_Add(rf);
-	_Add(rg);
-	_Add(rs);
-	_Add(sb);
-	_Add(u);
+	_AddBuiltIn(e);
+	_AddBuiltIn(pi);
+	_AddBuiltIn(rpi);
+	_AddBuiltIn(twoPi);
+	_AddBuiltIn(piP2);
+	_AddBuiltIn(piP4);
+	_AddBuiltIn(rpi2);
+	_AddBuiltIn(sqpi);
+	_AddBuiltIn(sqrt2);
+	_AddBuiltIn(rsqrt2);
+	_AddBuiltIn(sqrt3);
+	_AddBuiltIn(sqrt3P2);
+	_AddBuiltIn(ln10);
+	_AddBuiltIn(ln2);
+	_AddBuiltIn(rln10);
+	_AddBuiltIn(rln2);
+	_AddBuiltIn(log2e);
+	_AddBuiltIn(lg10e);
+	_AddBuiltIn(lge);
+	_AddBuiltIn(fsc);
+	_AddBuiltIn(au);
+	_AddBuiltIn(c);
+	_AddBuiltIn(eps0);
+	_AddBuiltIn(G);
+	_AddBuiltIn(gf);
+	_AddBuiltIn(h);
+	_AddBuiltIn(hbar);
+	_AddBuiltIn(kb);
+	_AddBuiltIn(kc);
+	_AddBuiltIn(la);
+	_AddBuiltIn(me);
+	_AddBuiltIn(mf);
+	_AddBuiltIn(mp);
+	_AddBuiltIn(ms);
+	_AddBuiltIn(mu0);
+	_AddBuiltIn(qe);
+	_AddBuiltIn(rfsc);
+	_AddBuiltIn(rf);
+	_AddBuiltIn(rg);
+	_AddBuiltIn(rs);
+	_AddBuiltIn(sb);
+	_AddBuiltIn(u);
 }
 
 ConstantsMap::~ConstantsMap()	 // delete new values
@@ -265,7 +266,7 @@ void ConstantsMap::Add(const String cname, const RealNumber cvalue, const String
 {
 	insert(end(), { cname, new Constant(cname, cvalue, cunit, cdesc, nullptr)});
 }
-void ConstantsMap::_Add( Constant& c)	// existing builtin constant
+void ConstantsMap::_AddBuiltIn( Constant& c)	// existing builtin constant
 {
 	c._builtin = true;
 	insert(end(), { c.name, &c });

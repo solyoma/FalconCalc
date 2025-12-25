@@ -792,7 +792,7 @@ namespace LongNumber {
 		void Add(const SmString::String cname, const RealNumber cvalue, const SmString::String cunit, const SmString::String cdesc);
 		void Rescale(int newMaxLength);
 	private:
-		void _Add(Constant& c);	// set as builtin
+		void _AddBuiltIn(Constant& c);	// set as builtin
 	};
 
 	extern ConstantsMap constantsMap;
