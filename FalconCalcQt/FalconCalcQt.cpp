@@ -488,6 +488,7 @@ void FalconCalcQt::on_cbInfix_currentTextChanged(const QString& newText)
 			eec = EEC_NO_ERROR;
 		
 		_SetResultLabelText(eec);
+		_added = false;
 	}
 	catch (EngineErrorCodes eec)
 	{
@@ -1495,8 +1496,9 @@ void FalconCalcQt::_SlotVarTabChanged(int newTab)
 
 void FalconCalcQt::_SlotVarFuncTableDoubleClicked(QString& name)
 {
-	ui.cbInfix->setFocus();
+	activateWindow();
 	QLineEdit* ple = ui.cbInfix->lineEdit();
+	ui.cbInfix->lineEdit()->setFocus();
 	QString qs = ple->text();
 	int cp = ple->cursorPosition();
 	int start = ple->selectionStart(), // no selection => start = -1

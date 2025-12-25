@@ -363,7 +363,7 @@ void VariablesFunctionsDialog::on_tblUserFuncs_cellChanged(int row, int col)
 
 void VariablesFunctionsDialog::on_tblUserFuncs_cellDoubleClicked(int row, int col)
 {
-	if (col == 0) // only name column
+	if (col == 0) // name column: copy name to cbInfix's edit box and set focus to there
 		_TableDoubleClickedCommon(ui.tblUserFuncs, row, col);
 	else
 		_UserTableEditCommon(ui.tblUserFuncs,row,col);
