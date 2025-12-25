@@ -513,7 +513,7 @@ void FalconCalcQt::on_actionHelp_triggered()
 }
 void FalconCalcQt::on_actionAbout_triggered()
 {
-	AboutDialog* pAbD = new AboutDialog(this);
+	AboutDialog* pAbD = new AboutDialog(_version, this);
 	pAbD->setAttribute(Qt::WA_DeleteOnClose);
 	pAbD->show();
 }
@@ -1369,8 +1369,9 @@ bool FalconCalcQt::_SaveState()
 
 void FalconCalcQt::_AddToHistory(QString infix)
 {
-	infix = infix.trimmed();
-	if (infix.isEmpty() || _minCharLength >= infix.length() || lengine->resultType == FalconCalc::LittleEngine::ResultType::rtInvalid)	// do not add too short strings
+	infix = infix.trimmed(); 	
+							// do not add too short strings	or invalid expressions
+	if (infix.isEmpty() || _minCharLength >= infix.length() || lengine->resultType == FalconCalc::LittleEngine::ResultType::rtInvalid)
 		return;
 
 	SmartString ssinfix(infix);

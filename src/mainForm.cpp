@@ -1,5 +1,6 @@
 ﻿#include <set>
 
+#include "version.h"
 #include "common.h"
 #include "stdafx_zoli.h"
 #include "stdafx_lc.h"

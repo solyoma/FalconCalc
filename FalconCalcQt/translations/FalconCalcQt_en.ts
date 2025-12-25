@@ -2,6 +2,14 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="en_US">
 <context>
+    <name>AboutDialog</name>
+    <message>
+        <location filename="../AboutDialog.h" line="15"/>
+        <source>Version %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>AboutDialogClass</name>
     <message>
         <location filename="../AboutDialog.ui" line="29"/>
@@ -9,12 +17,22 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../AboutDialog.ui" line="39"/>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:14pt; font-weight:600;&quot;&gt;FalconCalc&lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;Qt Version&lt;br/&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;A handy little calculator for everyone&lt;br/&gt;(especially useful for physicist and programmers)&lt;br/&gt;Based on the arbitrary precision&lt;br/&gt;cross platform arithmetic and function library&lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:10pt; font-weight:600; font-style:italic;&quot;&gt;LongNumber&lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;by. A .Sólyom&lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;with the Qt Group&apos;s Qt (&amp;quot;cute&amp;quot;) framework&lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:10pt; font-weight:600;&quot;&gt;© A. Sólyom - 2020- &lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;This program is open source (GPL3)&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <location filename="../AboutDialog.ui" line="46"/>
+        <source>FalconCalc</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../AboutDialog.ui" line="79"/>
+        <location filename="../AboutDialog.ui" line="56"/>
+        <source>Version 0.9.2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../AboutDialog.ui" line="66"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;br/&gt;Qt Version&lt;br/&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;A handy little calculator for everyone&lt;br/&gt;(especially useful for physicist and programmers)&lt;br/&gt;Based on the arbitrary precision&lt;br/&gt;cross platform arithmetic and function library&lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:10pt; font-weight:600; font-style:italic;&quot;&gt;LongNumber&lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;by. A .Sólyom&lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;with the Qt Group&apos;s Qt (&amp;quot;cute&amp;quot;) framework&lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:10pt; font-weight:600;&quot;&gt;© A. Sólyom - 2020&lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;This program is open source (GPL3)&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../AboutDialog.ui" line="106"/>
         <source>OK</source>
         <translation type="unfinished"></translation>
     </message>
@@ -22,35 +40,35 @@
 <context>
     <name>FalconCalcQt</name>
     <message>
-        <location filename="../FalconCalcQt.cpp" line="355"/>
+        <location filename="../FalconCalcQt.cpp" line="356"/>
         <source>FalconCalc - Question</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.cpp" line="355"/>
+        <location filename="../FalconCalcQt.cpp" line="356"/>
         <source>This will remove the whole of history.
 Are you sure?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.cpp" line="367"/>
-        <location filename="../FalconCalcQt.cpp" line="412"/>
+        <location filename="../FalconCalcQt.cpp" line="368"/>
+        <location filename="../FalconCalcQt.cpp" line="413"/>
         <source>FalconCalc</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.cpp" line="367"/>
-        <location filename="../FalconCalcQt.cpp" line="412"/>
+        <location filename="../FalconCalcQt.cpp" line="368"/>
+        <location filename="../FalconCalcQt.cpp" line="413"/>
         <source>Restart the program to change the language!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.cpp" line="1043"/>
+        <location filename="../FalconCalcQt.cpp" line="1049"/>
         <source>FalconCalcQt - Error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.cpp" line="1043"/>
+        <location filename="../FalconCalcQt.cpp" line="1049"/>
         <source>%1 is for a newer version of the program.
 There might be problems with it.</source>
         <translation type="unfinished"></translation>
@@ -64,22 +82,22 @@ There might be problems with it.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="498"/>
+        <location filename="../FalconCalcQt.ui" line="567"/>
         <source>Decimal d&amp;igits:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="505"/>
+        <location filename="../FalconCalcQt.ui" line="522"/>
         <source>Use &amp;Thousand separator:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="512"/>
+        <location filename="../FalconCalcQt.ui" line="498"/>
         <source>Use D&amp;ecimal separator</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="519"/>
+        <location filename="../FalconCalcQt.ui" line="515"/>
         <source>&amp;Engineering format</source>
         <translation type="unfinished"></translation>
     </message>
@@ -124,17 +142,17 @@ There might be problems with it.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="533"/>
+        <location filename="../FalconCalcQt.ui" line="536"/>
         <source>Space</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="538"/>
+        <location filename="../FalconCalcQt.ui" line="541"/>
         <source>,</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="543"/>
+        <location filename="../FalconCalcQt.ui" line="546"/>
         <source>.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -765,7 +783,7 @@ There might be problems with it.</source>
 <context>
     <name>QMainWindow</name>
     <message>
-        <location filename="../schemes.cpp" line="513"/>
+        <location filename="../schemes.cpp" line="514"/>
         <source>System</source>
         <translation type="unfinished"></translation>
     </message>
@@ -773,12 +791,12 @@ There might be problems with it.</source>
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../main.cpp" line="73"/>
+        <location filename="../main.cpp" line="77"/>
         <source>FalconCalcQt - Error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="73"/>
+        <location filename="../main.cpp" line="77"/>
         <source>Cannot install language file %1</source>
         <translation type="unfinished"></translation>
     </message>

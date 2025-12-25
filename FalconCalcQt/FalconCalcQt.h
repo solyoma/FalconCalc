@@ -6,6 +6,7 @@
 #include <QSettings>
 #include <QTimer>
 
+#include "version.h"
 #include "common.h"
 #include "schemes.h"
 
@@ -105,7 +106,7 @@ private slots:
 private:
     Ui::FalconCalcQtClass ui;
 
-	int _version=0x000901;      // version 0.9.1
+    int _version = VERSION_INT;
 	AppLanguage _appLanguage = AppLanguage::lanNotSet;
 
     SEMAPHORE _busy;

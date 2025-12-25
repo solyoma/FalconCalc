@@ -2,6 +2,14 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="hu_HU">
 <context>
+    <name>AboutDialog</name>
+    <message>
+        <location filename="../AboutDialog.h" line="15"/>
+        <source>Version %1</source>
+        <translation>%1 Verzió</translation>
+    </message>
+</context>
+<context>
     <name>AboutDialogClass</name>
     <message>
         <source>About FalconCalcQt</source>
@@ -25,12 +33,26 @@
         <translation>A FalconCalc Névjegye</translation>
     </message>
     <message>
-        <location filename="../AboutDialog.ui" line="39"/>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:14pt; font-weight:600;&quot;&gt;FalconCalc&lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;Qt Version&lt;br/&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;A handy little calculator for everyone&lt;br/&gt;(especially useful for physicist and programmers)&lt;br/&gt;Based on the arbitrary precision&lt;br/&gt;cross platform arithmetic and function library&lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:10pt; font-weight:600; font-style:italic;&quot;&gt;LongNumber&lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;by. A .Sólyom&lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;with the Qt Group&apos;s Qt (&amp;quot;cute&amp;quot;) framework&lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:10pt; font-weight:600;&quot;&gt;© A. Sólyom - 2020- &lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;This program is open source (GPL3)&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:14pt; font-weight:600;&quot;&gt;FalconCalcQt&lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;Qt Version&lt;br/&gt;&lt;br/&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;Egy ügyes kis számológép, mindenkinek&lt;br/&gt;(különösen műszakiaknak és programozóknak)&lt;br/&gt;Alapja a &lt;span style=&quot; font-size:10pt; font-weight:600; font-style:italic;&quot;&gt;LongNumber&lt;/span&gt;&apos;, multiplatform&lt;br/&gt;aritmetikai könyvtár.&lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt; © A. I. Sólyom - 2012-&lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;és a Qt Group  Qt keretrendszere&lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;Ez a program nyílt forráskódú (GPL3)&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <location filename="../AboutDialog.ui" line="46"/>
+        <source>FalconCalc</source>
+        <translation></translation>
     </message>
     <message>
-        <location filename="../AboutDialog.ui" line="79"/>
+        <location filename="../AboutDialog.ui" line="56"/>
+        <source>Version 0.9.2</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../AboutDialog.ui" line="66"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;br/&gt;Qt Version&lt;br/&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;A handy little calculator for everyone&lt;br/&gt;(especially useful for physicist and programmers)&lt;br/&gt;Based on the arbitrary precision&lt;br/&gt;cross platform arithmetic and function library&lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:10pt; font-weight:600; font-style:italic;&quot;&gt;LongNumber&lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;by. A .Sólyom&lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;with the Qt Group&apos;s Qt (&amp;quot;cute&amp;quot;) framework&lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:10pt; font-weight:600;&quot;&gt;© A. Sólyom - 2020&lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;This program is open source (GPL3)&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;br/&gt;QT verzió&lt;p align=&quot;center&quot;&gt;&lt;br/&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;Egy ügyes kis számológép, mindenkinek&lt;br/&gt;(különösen műszakiaknak és programozóknak)&lt;br/&gt;Alapja a &lt;span style=&quot; font-size:10pt; font-weight:600; font-style:italic;&quot;&gt;LongNumber&lt;/span&gt;&apos;, multiplatform&lt;br/&gt;aritmetikai könyvtár.&lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt; © Sólyom András - 2020&lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;és a Qt Group  Qt keretrendszere&lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;Ez a program nyílt forráskódú (GPL3)&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt; {14p?} {600;?} {10p?} {10p?} {600;?} {10p?} {10p?} {10p?} {600;?} {2012-26 ?} {10p?} {3)?}</translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:14pt; font-weight:600;&quot;&gt;FalconCalc&lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;Qt Version&lt;br/&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;A handy little calculator for everyone&lt;br/&gt;(especially useful for physicist and programmers)&lt;br/&gt;Based on the arbitrary precision&lt;br/&gt;cross platform arithmetic and function library&lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:10pt; font-weight:600; font-style:italic;&quot;&gt;LongNumber&lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;by. A .Sólyom&lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;with the Qt Group&apos;s Qt (&amp;quot;cute&amp;quot;) framework&lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:10pt; font-weight:600;&quot;&gt;© A. Sólyom - 2020- &lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;This program is open source (GPL3)&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="vanished">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:14pt; font-weight:600;&quot;&gt;FalconCalcQt&lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;Qt Version&lt;br/&gt;&lt;br/&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;Egy ügyes kis számológép, mindenkinek&lt;br/&gt;(különösen műszakiaknak és programozóknak)&lt;br/&gt;Alapja a &lt;span style=&quot; font-size:10pt; font-weight:600; font-style:italic;&quot;&gt;LongNumber&lt;/span&gt;&apos;, multiplatform&lt;br/&gt;aritmetikai könyvtár.&lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt; © A. I. Sólyom - 2012-&lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;és a Qt Group  Qt keretrendszere&lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;Ez a program nyílt forráskódú (GPL3)&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <location filename="../AboutDialog.ui" line="106"/>
         <source>OK</source>
         <translation>Bezárás</translation>
     </message>
@@ -38,35 +60,35 @@
 <context>
     <name>FalconCalcQt</name>
     <message>
-        <location filename="../FalconCalcQt.cpp" line="355"/>
+        <location filename="../FalconCalcQt.cpp" line="356"/>
         <source>FalconCalc - Question</source>
         <translation>GalconCalc - Kérdés</translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.cpp" line="355"/>
+        <location filename="../FalconCalcQt.cpp" line="356"/>
         <source>This will remove the whole of history.
 Are you sure?</source>
         <translation>Ez az összes előzményt törli. Ezt akarod?</translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.cpp" line="367"/>
-        <location filename="../FalconCalcQt.cpp" line="412"/>
+        <location filename="../FalconCalcQt.cpp" line="368"/>
+        <location filename="../FalconCalcQt.cpp" line="413"/>
         <source>FalconCalc</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.cpp" line="367"/>
-        <location filename="../FalconCalcQt.cpp" line="412"/>
+        <location filename="../FalconCalcQt.cpp" line="368"/>
+        <location filename="../FalconCalcQt.cpp" line="413"/>
         <source>Restart the program to change the language!</source>
         <translation>A nyelv megváltoztatásához indítsd újra a programot!</translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.cpp" line="1043"/>
+        <location filename="../FalconCalcQt.cpp" line="1049"/>
         <source>FalconCalcQt - Error</source>
         <translation>FalconCalcQt - Hiba</translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.cpp" line="1043"/>
+        <location filename="../FalconCalcQt.cpp" line="1049"/>
         <source>%1 is for a newer version of the program.
 There might be problems with it.</source>
         <translation>A %1 file a program újabb verziójához tartozik/ Ez problémákat okozhat.</translation>
@@ -80,22 +102,22 @@ There might be problems with it.</source>
         <translation>&amp;Tudományos formátum</translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="498"/>
+        <location filename="../FalconCalcQt.ui" line="567"/>
         <source>Decimal d&amp;igits:</source>
         <translation>Tizedesjegyek &amp;száma:</translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="505"/>
+        <location filename="../FalconCalcQt.ui" line="522"/>
         <source>Use &amp;Thousand separator:</source>
         <translation>E&amp;zres elválasztó:</translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="512"/>
+        <location filename="../FalconCalcQt.ui" line="498"/>
         <source>Use D&amp;ecimal separator</source>
         <translation>Tizedes &amp;rész elválasztó</translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="519"/>
+        <location filename="../FalconCalcQt.ui" line="515"/>
         <source>&amp;Engineering format</source>
         <translation>&amp;Mérnöki formátum</translation>
     </message>
@@ -160,17 +182,17 @@ There might be problems with it.</source>
         <translation type="vanished">Mérnöki formátum</translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="533"/>
+        <location filename="../FalconCalcQt.ui" line="536"/>
         <source>Space</source>
         <translation>Betúköz</translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="538"/>
+        <location filename="../FalconCalcQt.ui" line="541"/>
         <source>,</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="543"/>
+        <location filename="../FalconCalcQt.ui" line="546"/>
         <source>.</source>
         <translation></translation>
     </message>
@@ -850,7 +872,7 @@ There might be problems with it.</source>
 <context>
     <name>QMainWindow</name>
     <message>
-        <location filename="../schemes.cpp" line="513"/>
+        <location filename="../schemes.cpp" line="514"/>
         <source>System</source>
         <translation>Rendszer</translation>
     </message>
@@ -858,12 +880,12 @@ There might be problems with it.</source>
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../main.cpp" line="73"/>
+        <location filename="../main.cpp" line="77"/>
         <source>FalconCalcQt - Error</source>
         <translation>FalconCalcQt - Hiba</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="73"/>
+        <location filename="../main.cpp" line="77"/>
         <source>Cannot install language file %1</source>
         <translation>A %1 nyelvi fájl nem használható</translation>
     </message>

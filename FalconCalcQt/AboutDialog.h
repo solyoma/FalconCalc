@@ -3,14 +3,16 @@
 	#define _ABOUTDIALOG_H
 #include <QtWidgets/QDialog>
 #include "ui_AboutDialog.h"
+#include "version.h"
 
 class AboutDialog : public QDialog
 {
 	Q_OBJECT
 public:
-	AboutDialog(QWidget* parent = nullptr) : QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint)
+	AboutDialog(int version, QWidget* parent = nullptr) : QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint)
 	{
-		ui.setupUi(this);
+		ui.setupUi(this);									// e.g.	0x00 09 02;      // version 0.9.2
+		ui.lblVersion->setText(QString(tr("Version %1").arg(VERSION_STRING)) );
 	}
 	~AboutDialog() {}
 

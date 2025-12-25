@@ -149,6 +149,7 @@
     <ClInclude Include="SmartString.h" />
     <ClInclude Include="stdafx_lc.h" />
     <ClInclude Include="translations.h" />
+    <ClInclude Include="version.h" />
     <ClInclude Include="VFDefDialog.h" />
     <ClInclude Include="variables.h" />
     <ClInclude Include="wcommon.h" />
