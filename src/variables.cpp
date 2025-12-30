@@ -197,10 +197,16 @@ TfrmVariables::TfrmVariables()
 
 	_underResize = false;
 	RowData rd;
+	SmartString ss;
 	for (int i = 0; i < LittleEngine::variables.size(); ++i)
 	{
 		Variable& v = LittleEngine::variables[i];
-		rd = { v.name, v.body, v.unit, v.desc };
+		
+		if (v.IsBuiltin())
+			ss = lt.GetTranslationFor(v.binDesc);
+		else
+			ss = v.desc;
+		rd = { v.name, v.body, v.unit, ss };
 		_rvUserVars[v.name] = rd;
 	}
 	_rvUserVarsIn = _rvUserVars;

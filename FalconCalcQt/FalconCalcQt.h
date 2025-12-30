@@ -13,6 +13,7 @@
 #include "EngineErrors.h"
 
 #include "HelpDialog.h"
+// don't forget to include "#include "SmartString.h" and "LongNumber.h" before including this file!
 
 struct SEMAPHORE {
     int b = 0;
@@ -97,6 +98,7 @@ private slots:
     void on_rbRad_toggled(bool b);
     void on_rbGrad_toggled(bool b);
     void on_rbTurns_toggled(bool b);
+
     void on_rbNormal_toggled(bool b);
     void on_rbHtml_toggled(bool b);
     void on_rbTex_toggled(bool b);
@@ -159,6 +161,7 @@ private: // functions
     void _ShowResults();
     void _ShowMessageOnAllPanels(QString s);
     void _EditVarsCommon(int which);
+    void _AngUnitCommon(int au);
 
     void _SetHexDisplFomatForFlags();
 

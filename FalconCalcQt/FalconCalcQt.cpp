@@ -891,38 +891,39 @@ void FalconCalcQt::on_chkLittleEndian_toggled(bool b)
 	_SetHexDisplFomatForFlags();
 }
 
+void FalconCalcQt::_AngUnitCommon(int au)
+{
+	lengine->displayFormat.angUnit = (LongNumber::AngularUnit)au;
+	lengine->Calculate();
+	_ShowResults();
+	ui.cbInfix->setFocus();
+}
+
 void FalconCalcQt::on_rbDeg_toggled(bool b)
 {
 	if (!b)
 		return;
-	lengine->displayFormat.angUnit = LongNumber::AngularUnit::auDeg;
-	_ShowResults();
-	ui.cbInfix->setFocus();
+	_AngUnitCommon((int)LongNumber::AngularUnit::auDeg);
 }
 void FalconCalcQt::on_rbRad_toggled(bool b)
 {
 	if (!b)
 		return;
-	lengine->displayFormat.angUnit = LongNumber::AngularUnit::auRad;
-	_ShowResults();
-	ui.cbInfix->setFocus();
+	_AngUnitCommon((int)LongNumber::AngularUnit::auRad);
 }
 void FalconCalcQt::on_rbGrad_toggled(bool b)
 {
 	if (!b)
 		return;
-	lengine->displayFormat.angUnit = LongNumber::AngularUnit::auGrad;
-	_ShowResults();
-	ui.cbInfix->setFocus();
+	_AngUnitCommon((int)LongNumber::AngularUnit::auGrad);
 }
 void FalconCalcQt::on_rbTurns_toggled(bool b)
 {
 	if (!b)
 		return;
-	lengine->displayFormat.angUnit = LongNumber::AngularUnit::auTurn;
-	_ShowResults();
-	ui.cbInfix->setFocus();
+	_AngUnitCommon((int)LongNumber::AngularUnit::auTurn);
 }
+
 void FalconCalcQt::on_rbNormal_toggled(bool b)
 {
 	if (!b)

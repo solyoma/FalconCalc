@@ -213,7 +213,7 @@ namespace FalconCalc
         enum ArgTyp {atyNone, atyR, atyI, atyA}; // RealNumber, integer or AngularUnit
 
         SmartString name;               // w.o. parathesis and arguments
-        SmartString desc;
+        BuiltinDescId binDesc;
 
                 // only one of the 'func...' pointers isn't nullptr
         FUNCT1 funct1 = nullptr;        // argument: RealNumber
@@ -225,6 +225,12 @@ namespace FalconCalc
              useAngleUnitAsResult=false;// for built in inverse trigonometric functions only
 
         void clear() { funct1 = nullptr;  funct2r = nullptr; funct2i = nullptr; funct2a = nullptr; }
+
+        SmartString Description() const
+        {
+			return lt.GetTranslationFor(binDesc);
+        }
+
         RealNumber operator() (RealNumber r) 
         { 
             if (funct1) 
@@ -260,7 +266,7 @@ namespace FalconCalc
         BuiltinFunc & operator=(const BuiltinFunc & ofunc)
         {
             name = ofunc.name;
-            desc = ofunc.desc;
+            binDesc = ofunc.binDesc;
             funct1  = ofunc.funct1;
             funct2r = ofunc.funct2r;
             funct2i = ofunc.funct2i;
@@ -329,7 +335,7 @@ namespace FalconCalc
             }
         }
         explicit Variable(const String name, const RealNumber value, const String unit, const String desc) : 
-            Constant(name, value, unit, desc, nullptr) , dirty(true) 
+            Constant(name, value, unit, DSC_NoDescription, nullptr, desc) , dirty(true) 
         {}
         virtual ~Variable()
         {
@@ -529,6 +535,13 @@ namespace FalconCalc
             cols[0] = name;
             cols[1] = body;
             cols[2] = descr;
+            cols[3] = unit;
+        }
+        RowData(SmartString name, SmartString body, BuiltinDescId descId, SmartString unit)
+        {
+            cols[0] = name;
+            cols[1] = body;
+            cols[2] = lt.GetTranslationFor(descId);
             cols[3] = unit;
         }
         void clear() { cols[0] = cols[1] = cols[2] = cols[3] = ""; }

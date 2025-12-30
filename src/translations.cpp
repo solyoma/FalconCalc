@@ -14,6 +14,12 @@ struct _ErrorTexts_private
    wchar_t* texts[2];
 };
 
+struct _Descriptions_private
+{
+   BuiltinDescId id = BuiltinDescId::DSC_descriptionForE;
+   char16_t* texts[2];
+};
+
 static wchar_t* __helpTexts[2] = {
     // english
     L"Every Windows has a desktop calculator with many features but FalconCalc offers many unique features not found in them:\n\n"
@@ -101,163 +107,211 @@ static _LanguageTexts_private __texts[] = {
  { FCT_SAVE ,		    L"&Save", L"&Mentés" },
  { FCT_CANCEL,          L"Cance&l", L"E&lvet"},
  { FCT_CLOSE,           L"C&lose", L"Be&zárás"},
- { FCT_ABOUT,		    	L"&About",							L"&Névjegy" },
- { FCT_ANGLEF,				L"Angles in",						L"Szögek formátuma" },
- { FCT_APPEND,				L"Paste &After expression",			L"Beillessztés a &végére" },
- { FCT_BIN,				 	L"&Binary",							L"&Bináris" },
- { FCT_BYTES,				L"As B&ytes",						L"Bájtként" },
- { FCT_CHARFONT,			L"&Font For 'As String...' Display...",
-                            L"&Betű a 'Szöveges megjelenítéshez'..." },
- { FCT_CLEARHIST, 			L"C&lear History",					L"Előzmények &törlése" },
- { FCT_COPYBIN,				L"Copy &Binary",					L"&Bináris érték vágólapra" },
- { FCT_COPYDEC,				L"Copy &Decimal",					L"&Decimális érték vágólapra"},
- { FCT_COPYEXPR,			L"&Copy expression",				L"&Kifejezés vágólapra" },
- { FCT_COPYHEX,				L"Copy He&xadecimal",				L"He&xadecimális érték vágólapra" },
- { FCT_COPYOCT,				L"Copy &Octal",						L"&Oktális érték vágólapra" },
- { FCT_COPYTEXT,			L"Copy &Formula",					L"&Képlet vágólapra" },
- { FCT_DATA,				L"&User data",						L"Sa&ját adat" },
- { FCT_DDIGITS,				L"&Decimal digits:",				L"&Tizedesjegyek:" },
- { FCT_DEC,				 	L"Deci&mal",						L"Deci&mális" },
- { FCT_DECOPTS,			 	L"Decimal options",					L"Decimalális opciók" },
- { FCT_DECOPTSOPENER,		L"──────Decimal options────────",
-                            L"──────Decimális opciók───────" },
- { FCT_DECSEP,				L"&Use decimal separator",			L"Tizedes elválasztó" },
- { FCT_DEG,				 	L"De&g",							L"&Fok" },
- { FCT_DISPLAS,				L"Display as",						L"Mutasd mint" },
- { FCT_DOUBLE,				L"As IEE 7&54 double",				L"IEE 7&54 dupla" },
- { FCT_DWORDS,				L"As DWo&rds",						L"&Duplaszóként" },
- { FCT_EDIT,				L"&Edit",							L"&Szerkesztés" },
- { FCT_EDITCOPY,			L"Cop&y ...",						L"&Másolás ..." },
- { FCT_EDITFUNCS, 			L"User &Functions...",  			L"Saját &Függvények..." },
- { FCT_EDITVARS,			L"User &Variables...",  			L"Saját &változók..." },
- { FCT_VARSANDFUNCTIONS,    L"Variables and Functions",         L"Változók és függvények"},
- { FCT_ENG,				 	L"Engeneering f&ormat",				L"Mérnöki f&ormátum" },
- { FCT_EXIT,				L"E&xit",							L"&Kilépés" },
- { FCT_FILE,				L"&File",							L"&Fájl" },
- { FCT_FONT,				L"&Font...",						L"&Betű..." },
- { FCT_GENHELP,				L"&General Help",					L"Á&ltalános súgó" },
- { FCT_GRAD,				L"&Grad",							L"&Grad" },
- { FCT_HELP,				L"&Help",							L"S&úgó" },
- { FCT_HEX,				 	L"He&xadecimal",					L"He&xadec." },
- { FCT_HEXMIN,				L"Mi&nus sign",						L"E&lőjel" },
- { FCT_HEXOPTS,				L"Hexadecimal Options",				L"Hexadecimális Opciók" },
- { FCT_HEXOPTSOPENER,		L"─────Hexadecimal options──────",
-                            L"─────Hexadecimális opciók─────" },
- { FCT_HEXPREFIX,		    L"0x p&refix",						L"0&x elöl" },
- { FCT_HISTOPTS,			L"Histor&y Options...",				L"Előzmé&ny beállítások..." },
-// { FCT_HISTORY,				L"H&istory",						L"E&lőzmények" },
- { FCT_HTML,				L"HT&ML",							L"HT&ML" },
- { FCT_LANGUAGE,		    L"&Language",					    L"&Nyelv"},
- { FCT_LITTLEE,				L"&Little endian",					L"&fordított sorrend" },
- { FCT_LOCALE,				L"Set Locale...",					L"Nyelvi környezet..." },
- { FCT_NORMAL,				L"Norm&al",							L"Normál" },
- { FCT_OCT,				 	L"O&ctal",							L"O&ctális" },
- { FCT_OPTIONS,				L"&Options",						L"&Lehetőségek" },
- { FCT_PASTEEXPR,			L"&Paste expression",				L"Kifejezés &beillesztése" },
- { FCT_RAD,				 	L"&Rad",							L"&Rad" },
- { FCT_RESULT,				L"Result:",							L"Eredmény:" },
- { FCT_SCI,				 	L"&Scientific format",				L"&Tudományos formátum" },
- { FCT_SETEN,		        L"&English",					    L"&Angol"},
- { FCT_SETHUN,		        L"&Hungarian",					    L"&Magyar"},
- { FCT_SHOWDECOPTS,			L"Show &Decimal Options",			L"&Decimálos opciók" },
- { FCT_SHOWHEXOPTS,			L"Show Hexadecimal  Options",		L"&Hexadecimális Opciók" },
- { FCT_SHOWHIST,			L"Edit &History",					L"Előzmények &szerk." },
- { FCT_SINGLE,				L"As IEE &754 single",				L"IEE &754" },
- { FCT_STRING,				L"As String:",						L"Szöveg:" },
- { FCT_TEX,				 	L"&TeX",							L"&TeX" },
- { FCT_THOUSAND,			L"Use thousand se&parator:",		L"Ezres el&választó:" },
- { FCT_TIPBIN  ,            L"Copy binary number to clipboard", L"Bináris szám másolása" },
- { FCT_TIPDE   ,            L"10's exponent displayed as 'Ex'", L"Kitevő 'E' formátumban" },
- { FCT_TIPDEC  ,            L"Copy decimal number to clipboard",                                        
-                            L"Decimális szám másolása" },
- { FCT_TIPDEG  ,            L"Degrees",
-                            L"Fok (°)" },
- { FCT_TIPDHTML,            L"'a.aaExx' displayed as a.aa×10<sup>xx</sup>",
-                            L"'a.aaExx' megjelenítés: a.aa×<sup>xx</sup>" },
- { FCT_TIPDP   ,            L"Double precision floating point format",
-                            L"Dupla pontos lebegőpontos számformátum" },
- { FCT_TIPDPOV ,            L"'a.aExx' displayed with 10's power",  
-                            L"'a.aExx' az xx 10-es kitevőt felső indexben mutatja" },
- { FCT_TIPDTEX ,            L"'a.aExx' displayed as TeX expression a.a×10^{xx}",
-                            L"'a.aExx' TeX formátumban: 10^{xx} mutatja" },
- { FCT_TIPGRAD ,            L"360° = 400 grad",
-                            L"360° = 400 grad" },
- { FCT_TIPHEX  ,            L"Copy hexadec. number to clipboard",
-                            L"Hexadecimális szám másolása" },
- { FCT_TIPINT  ,            L"Left to right order of bytes from least significant to most significant (Intel ordering)",
-                            L"A legkisebb helyiértékű számjegyek baloldalon (Intel féle)" },
- { FCT_TIPNEGH ,            L"For HEX, OCT, and BIN: Absolute value of negative numbers are shown with a minus sign",
-                            L"Hexadec. oktális és bináris negatív számok abszolút értékének mutatása előjellel" },
- { FCT_TIPOCT  ,            L"Copy octal number to clipboard",                                          
-                            L"Oktális szám vágólapra" },
- { FCT_TIPRAD  ,            L"Radians",                         L"Radián" },
- { FCT_TIPSP   ,            L"Single precision floating point format",                            
-                            L"Szimpla pontos lebegőpontos számformátum" },
- { FCT_TIPSPC  ,            L"spc",                             L"betűköz" },
- { FCT_TIPTURN ,            L"1 turn = 360°",                   L"1 Fordulat = 360°" },
- { FCT_TURN,				L"&Turns",							L"&Ford." },
- { FCT_VIEW,				L"&View",							L"&Nézet" },
- { FCT_WORDS,	    		L"As &Words",						L"&Szóként" },
+ { FCT_ABOUT,		    L"&About",							L"&Névjegy" },
+ { FCT_ANGLEF,			L"Angles in",						L"Szögek formátuma" },
+ { FCT_APPEND,			L"Paste &After expression",			L"Beillessztés a &végére" },
+ { FCT_BIN,				L"&Binary",							L"&Bináris" },
+ { FCT_BYTES,			L"As B&ytes",						L"Bájtként" },
+ { FCT_CHARFONT,		L"&Font For 'As String...' Display...",
+                        L"&Betű a 'Szöveges megjelenítéshez'..." },
+ { FCT_CLEARHIST, 		L"C&lear History",					L"Előzmények &törlése" },
+ { FCT_COPYBIN,			L"Copy &Binary",					L"&Bináris érték vágólapra" },
+ { FCT_COPYDEC,			L"Copy &Decimal",					L"&Decimális érték vágólapra"},
+ { FCT_COPYEXPR,		L"&Copy expression",				L"&Kifejezés vágólapra" },
+ { FCT_COPYHEX,			L"Copy He&xadecimal",				L"He&xadecimális érték vágólapra" },
+ { FCT_COPYOCT,			L"Copy &Octal",						L"&Oktális érték vágólapra" },
+ { FCT_COPYTEXT,		L"Copy &Formula",					L"&Képlet vágólapra" },
+ { FCT_DATA,			L"&User data",						L"Sa&ját adat" },
+ { FCT_DDIGITS,			L"&Decimal digits:",				L"&Tizedesjegyek:" },
+ { FCT_DEC,				L"Deci&mal",						L"Deci&mális" },
+ { FCT_DECOPTS,			L"Decimal options",					L"Decimalális opciók" },
+ { FCT_DECOPTSOPENER,	L"──────Decimal options────────",
+                        L"──────Decimális opciók───────" },
+ { FCT_DECSEP,			L"&Use decimal separator",			L"Tizedes elválasztó" },
+ { FCT_DEG,					L"De&g",							L"&Fok" },
+ { FCT_DISPLAS,			L"Display as",						L"Mutasd mint" },
+ { FCT_DOUBLE,			L"As IEE 7&54 double",				L"IEE 7&54 dupla" },
+ { FCT_DWORDS,			L"As DWo&rds",						L"&Duplaszóként" },
+ { FCT_EDIT,			L"&Edit",							L"&Szerkesztés" },
+ { FCT_EDITCOPY,		L"Cop&y ...",						L"&Másolás ..." },
+ { FCT_EDITFUNCS, 		L"User &Functions...",  			L"Saját &Függvények..." },
+ { FCT_EDITVARS,		L"User &Variables...",  			L"Saját &változók..." },
+ { FCT_VARSANDFUNCTIONS,L"Variables and Functions",         L"Változók és függvények"},
+ { FCT_ENG,				L"Engeneering f&ormat",				L"Mérnöki f&ormátum" },
+ { FCT_EXIT,			L"E&xit",							L"&Kilépés" },
+ { FCT_FILE,			L"&File",							L"&Fájl" },
+ { FCT_FONT,			L"&Font...",						L"&Betű..." },
+ { FCT_GENHELP,			L"&General Help",					L"Á&ltalános súgó" },
+ { FCT_GRAD,			L"&Grad",							L"&Grad" },
+ { FCT_HELP,			L"&Help",							L"S&úgó" },
+ { FCT_HEX,				L"He&xadecimal",					L"He&xadec." },
+ { FCT_HEXMIN,			L"Mi&nus sign",						L"E&lőjel" },
+ { FCT_HEXOPTS,			L"Hexadecimal Options",				L"Hexadecimális Opciók" },
+ { FCT_HEXOPTSOPENER,	L"─────Hexadecimal options──────",
+                        L"─────Hexadecimális opciók─────" },
+ { FCT_HEXPREFIX,		L"0x p&refix",						L"0&x elöl" },
+ { FCT_HISTOPTS,		L"Histor&y Options...",				L"Előzmé&ny beállítások..." },
+ // { FCT_HISTORY,		    L"H&istory",						L"E&lőzmények" },
+  { FCT_HTML,			L"HT&ML",							L"HT&ML" },
+  { FCT_LANGUAGE,		L"&Language",					    L"&Nyelv"},
+  { FCT_LITTLEE,			L"&Little endian",					L"&fordított sorrend" },
+  { FCT_LOCALE,			L"Set Locale...",					L"Nyelvi környezet..." },
+  { FCT_NORMAL,			L"Norm&al",							L"Normál" },
+  { FCT_OCT,				L"O&ctal",							L"O&ctális" },
+  { FCT_OPTIONS,			L"&Options",						L"&Lehetőségek" },
+  { FCT_PASTEEXPR,		L"&Paste expression",				L"Kifejezés &beillesztése" },
+  { FCT_RAD,				L"&Rad",							L"&Rad" },
+  { FCT_RESULT,			L"Result:",							L"Eredmény:" },
+  { FCT_SCI,				L"&Scientific format",				L"&Tudományos formátum" },
+  { FCT_SETEN,		    L"&English",					    L"&Angol"},
+  { FCT_SETHUN,		     L"&Hungarian",					    L"&Magyar"},
+  { FCT_SHOWDECOPTS,		L"Show &Decimal Options",			L"&Decimálos opciók" },
+  { FCT_SHOWHEXOPTS,		L"Show Hexadecimal  Options",		L"&Hexadecimális Opciók" },
+  { FCT_SHOWHIST,		L"Edit &History",					L"Előzmények &szerk." },
+  { FCT_SINGLE,			L"As IEE &754 single",				L"IEE &754" },
+  { FCT_STRING,			L"As String:",						L"Szöveg:" },
+  { FCT_TEX,				L"&TeX",							L"&TeX" },
+  { FCT_THOUSAND,		L"Use thousand se&parator:",		L"Ezres el&választó:" },
+  { FCT_TIPBIN  ,        L"Copy binary number to clipboard", L"Bináris szám másolása" },
+  { FCT_TIPDE   ,        L"10's exponent displayed as 'Ex'", L"Kitevő 'E' formátumban" },
+  { FCT_TIPDEC  ,        L"Copy decimal number to clipboard",
+                         L"Decimális szám másolása" },
+  { FCT_TIPDEG  ,        L"Degrees",
+                         L"Fok (°)" },
+  { FCT_TIPDHTML,        L"'a.aaExx' displayed as a.aa×10<sup>xx</sup>",
+                         L"'a.aaExx' megjelenítés: a.aa×<sup>xx</sup>" },
+  { FCT_TIPDP   ,        L"Double precision floating point format",
+                         L"Dupla pontos lebegőpontos számformátum" },
+  { FCT_TIPDPOV ,        L"'a.aExx' displayed with 10's power",
+                         L"'a.aExx' az xx 10-es kitevőt felső indexben mutatja" },
+  { FCT_TIPDTEX ,        L"'a.aExx' displayed as TeX expression a.a×10^{xx}",
+                         L"'a.aExx' TeX formátumban: 10^{xx} mutatja" },
+  { FCT_TIPGRAD ,        L"360° = 400 grad",
+                         L"360° = 400 grad" },
+  { FCT_TIPHEX  ,        L"Copy hexadec. number to clipboard",
+                         L"Hexadecimális szám másolása" },
+  { FCT_TIPINT  ,        L"Left to right order of bytes from least significant to most significant (Intel ordering)",
+                         L"A legkisebb helyiértékű számjegyek baloldalon (Intel féle)" },
+  { FCT_TIPNEGH ,        L"For HEX, OCT, and BIN: Absolute value of negative numbers are shown with a minus sign",
+                         L"Hexadec. oktális és bináris negatív számok abszolút értékének mutatása előjellel" },
+  { FCT_TIPOCT  ,        L"Copy octal number to clipboard",
+                         L"Oktális szám vágólapra" },
+  { FCT_TIPRAD  ,        L"Radians",                         L"Radián" },
+  { FCT_TIPSP   ,        L"Single precision floating point format",
+                         L"Szimpla pontos lebegőpontos számformátum" },
+  { FCT_TIPSPC  ,        L"spc",                             L"betűköz" },
+  { FCT_TIPTURN ,        L"1 turn = 360°",                   L"1 Fordulat = 360°" },
+  { FCT_TURN,			L"&Turns",							L"&Ford." },
+  { FCT_VIEW,			L"&View",							L"&Nézet" },
+  { FCT_WORDS,	    	L"As &Words",						L"&Szóként" },
 
- { FCT_VARIABLES,		    L"&Variables", L"&Változók" },
- { FCT_FUNCTIONS,           L"&Functions", L"&Függvények" },
- { FCT_APPENDVF,		    L"Append Variable/function",	L"Változó vagy függvény hozzáadása" },
- { FCT_REMOVEVF,		    L"Remove actual line", L"Aktuális sor törlése" },
- { FCT_REMOVEALLVF,	        L"Remove all user Variables or Functions", L"Minden változó vagy függvény törlése" },
+  { FCT_VARIABLES,		L"&Variables", L"&Változók" },
+  { FCT_FUNCTIONS,       L"&Functions", L"&Függvények" },
+  { FCT_APPENDVF,		L"Append Variable/function",	L"Változó vagy függvény hozzáadása" },
+  { FCT_REMOVEVF,		L"Remove actual line", L"Aktuális sor törlése" },
+  { FCT_REMOVEALLVF,	    L"Remove all user Variables or Functions", L"Minden változó vagy függvény törlése" },
 
 
- { FCT_VNDIALOGTITLE,	    L"FalconCalc - ", L"FalconCalc - "},    // append FCT_VNDVAR or FCT_VNDFUNC
- { FCT_VNDVARTITLE,	        L"Edit Variable", L"Változó szerk."},
- { FCT_VNDFUNCTITLE,	    L"Edit Function", L"Függvény szerk."},
- { FCT_VNDNAME,		        L"&Name:",          L"&Név:"                         },
- { FCT_VNDVALUE,		    L"&Definition:",    L"&Definíció:"             },
- { FCT_VNDUNIT,		        L"&Unit:",          L"&Mértékegység:"                },
- { FCT_VNDCOMMENT,		    L"&Comment:",       L"&Megjegyzés:"               },
+  { FCT_VNDIALOGTITLE,	L"FalconCalc - ", L"FalconCalc - "},    // append FCT_VNDVAR or FCT_VNDFUNC
+  { FCT_VNDVARTITLE,	    L"Edit Variable", L"Változó szerk."},
+  { FCT_VNDFUNCTITLE,	L"Edit Function", L"Függvény szerk."},
+  { FCT_VNDNAME,		    L"&Name:",          L"&Név:"                         },
+  { FCT_VNDVALUE,		L"&Definition:",    L"&Definíció:"             },
+  { FCT_VNDUNIT,		    L"&Unit:",          L"&Mértékegység:"                },
+  { FCT_VNDCOMMENT,		L"&Comment:",       L"&Megjegyzés:"               },
 
- { FCT_HELPTITLE,		L"FalconCalc Help", L"FalconCalc Súgó"},
- { FCT_ABOUTFC,			L"About FalconCalc", L"Névjegy" },
- { FCT_ABOUTLINE1,		L"A handy little calculator for everyone\n\n",                         L"Egy ügyes kis számológép, mindenkinek\n\n" },
- { FCT_ABOUTLINE2,      L"(especially useful for physicists and programmers)",                         L"(különösen műszakiaknak és programozóknak)"},
- { FCT_ABOUTLINE3,      L"Based on the 'LongNumber' cross platform",                                   L"Alapja a 'LongNumber', multiplatform"},
- { FCT_ABOUTLINE4,      L"arithmetic library of A. Sólyom",                                            L"aritmetikai könyvtár © Sólyom. A."},
- { FCT_ABOUTLINE5,      L"and", L"és"},
- { FCT_ABOUTLINE6,      L"the NLIB library © Zoltán. Sólyom",                                          L"Zoltán Sólyom NLIB © könyvtára"},
- { FCT_ABOUTLINE7,      L"This program (except NLIB) is open source (GPL3)",                           L"Ez a program az NLIB-et kivéve  Copyright (GPL3)"},
- { FCT_LOCALETITLE,		L"FalconCalc Locale", L"FalconCalc Nyelvi környezet"},
- { FCT_LOCALE1,			L"The locale determines the character used for a decimal point, the ordering of the characters"
-                        L" and the correspondance bewtween upper and lowercase letters. Variable and function names may"
-                        L" contain accented or special letters in your locale that are not present in other locales and vice-versa.", 
-                        L"A nyelvi környezet határozza meg a tizedes jel karaktert )pont, vagy vessző), a karakterek sorrendjét és a kis- és nagybetűk"
-                        L" megfeleltetését. A változó és függvénynevek tartalmazhatnak ékezetes vagy speciális karaktereket az adott "
-                        L"nyelvi környezetben, amelyek más nyelvi környezetben nem találhatók meg."},
- { FCT_LOCALE2,			L"Locale names usually consist of 2, 3 or 5-8 (usually) lowercase characters which may be followed by a hyphen and one or more"
-                        L"subtags each separated by a hyphen character (for example: en-US, en-GB, hu-HU). The first part (two lowercase letters) defines"
-                        L" the language, the subtags regions and others like zh-yue-HK (same as yue-HK) for Cantonese for Hong Kong SAR. Some implementations"
-                        L" may use underscores instead of hyphens (en_US). If you set a locale that is not installed on your"
-                        L" system FalconCalc will try to use a similar one (for example: if you set en_GB but only en_US is installed it will use en_US).", 
-	 // WARNING: if I further split this Hungarian string into parts, the compiler gives a warning and the runtime 
-     // will show ? characters instead of ő and ű!
-     // Maybe it wasnt just me leaving the L out in front of the lines<
-						L"A nyelvi környezet neve 2, 3 vagy 5-8 (általában) kisbetűből all - ez határozza meg a nyelvet-, amit kötőjel és ugyancsak kötőjellel elválasztott betűcsoportok követnek."
-                        L"Pl. hu-HU, en-US, de-DE, zh-yue-HK (ez. ugyan az mint a yue-HK). Kötőjel helyett sokszor a nem szabványos aláhúzás szerepel. "
-                        L"Speciális név a 'C' környezet, ami az en-US -hez hasonló. A nyelvi környezet és a program nyelve nem kell azonos legyen"},
- { FCT_CURNAMELABEL,    L"Name of current locale:", L"A jelenlegi nyelvi környezet:" },
- { FCT_NEWNAMELABEL,    L"Name of new locale:",     L"Az új nyelvi környezet:" },
-     // history options
- { FCT_HISTOPTS_TITLE,			L"FalconCalc - History options", L"FalconCalc - Előzmények beállításai" },
- { FCT_MAXHISTDEPTH,			L"Maximum history &depth:",L"Maximum megjegyzettek száma:"  },
- { FCT_MAXHISTDEPTHTIP,		    L"Set the maximum number of expressions kept in the history", L"Ennyi előzmény kifejezést jegyez meg"   },
- { FCT_AUTOSAVE,				L"Sa&ve after this interval:", L"Automatikus mentés ideje:" },
- { FCT_AUTOSAVETIP,			    L"When unchecked, no history will be saved", L"Ha nincs bejelölve az előzményeket nem jegyzi meg"   },
- { FCT_HHMMSS,					L"(HH:MM:SS)",L"(ÓÓ:PP:MP)" },
- { FCT_HISTMINLENGTHLABEL,		L"&Min. length to save:",L"&Megjegyzendő minimális hossz:"   },
- { FCT_HISTMINLENGTHTIP,		L"Expressions shorter than this will not be remembered", L"Csak ennél hosszabb kifejezéseket jegyez meg"   },
- { FCT_HISTMINLENGTHSAVEALL,	L"(0: all)",	L"(0: bármi)"  },
- { FCT_HISTSORTED,				L"Sorted",	L"Sorbarendezés"    },
+  { FCT_HELPTITLE,		L"FalconCalc Help", L"FalconCalc Súgó"},
+  { FCT_ABOUTFC,			L"About FalconCalc", L"Névjegy" },
+  { FCT_ABOUTLINE1,		L"A handy little calculator for everyone\n\n",                         L"Egy ügyes kis számológép, mindenkinek\n\n" },
+  { FCT_ABOUTLINE2,      L"(especially useful for physicists and programmers)",                         L"(különösen műszakiaknak és programozóknak)"},
+  { FCT_ABOUTLINE3,      L"Based on the 'LongNumber' cross platform",                                   L"Alapja a 'LongNumber', multiplatform"},
+  { FCT_ABOUTLINE4,      L"arithmetic library of A. Sólyom",                                            L"aritmetikai könyvtár © Sólyom. A."},
+  { FCT_ABOUTLINE5,      L"and", L"és"},
+  { FCT_ABOUTLINE6,      L"the NLIB library © Zoltán. Sólyom",                                          L"Zoltán Sólyom NLIB © könyvtára"},
+  { FCT_ABOUTLINE7,      L"This program (except NLIB) is open source (GPL3)",                           L"Ez a program az NLIB-et kivéve  Copyright (GPL3)"},
+  { FCT_LOCALETITLE,		L"FalconCalc Locale", L"FalconCalc Nyelvi környezet"},
+  { FCT_LOCALE1,			L"The locale determines the character used for a decimal point, the ordering of the characters"
+                         L" and the correspondance bewtween upper and lowercase letters. Variable and function names may"
+                         L" contain accented or special letters in your locale that are not present in other locales and vice-versa.",
+                         L"A nyelvi környezet határozza meg a tizedes jel karaktert )pont, vagy vessző), a karakterek sorrendjét és a kis- és nagybetűk"
+                         L" megfeleltetését. A változó és függvénynevek tartalmazhatnak ékezetes vagy speciális karaktereket az adott "
+                         L"nyelvi környezetben, amelyek más nyelvi környezetben nem találhatók meg."},
+  { FCT_LOCALE2,			L"Locale names usually consist of 2, 3 or 5-8 (usually) lowercase characters which may be followed by a hyphen and one or more"
+                         L"subtags each separated by a hyphen character (for example: en-US, en-GB, hu-HU). The first part (two lowercase letters) defines"
+                         L" the language, the subtags regions and others like zh-yue-HK (same as yue-HK) for Cantonese for Hong Kong SAR. Some implementations"
+                         L" may use underscores instead of hyphens (en_US). If you set a locale that is not installed on your"
+                         L" system FalconCalc will try to use a similar one (for example: if you set en_GB but only en_US is installed it will use en_US).",
+    // WARNING: if I further split this Hungarian string into parts, the compiler gives a warning and the runtime 
+    // will show ? characters instead of ő and ű!
+    // Maybe it wasnt just me leaving the L out in front of the lines<
+                       L"A nyelvi környezet neve 2, 3 vagy 5-8 (általában) kisbetűből all - ez határozza meg a nyelvet-, amit kötőjel és ugyancsak kötőjellel elválasztott betűcsoportok követnek."
+                       L"Pl. hu-HU, en-US, de-DE, zh-yue-HK (ez. ugyan az mint a yue-HK). Kötőjel helyett sokszor a nem szabványos aláhúzás szerepel. "
+                       L"Speciális név a 'C' környezet, ami az en-US -hez hasonló. A nyelvi környezet és a program nyelve nem kell azonos legyen"},
+  { FCT_CURNAMELABEL,    L"Name of current locale:", L"A jelenlegi nyelvi környezet:" },
+  { FCT_NEWNAMELABEL,    L"Name of new locale:",     L"Az új nyelvi környezet:" },
+// history options
+  { FCT_HISTOPTS_TITLE,			L"FalconCalc - History options", L"FalconCalc - Előzmények beállításai" },
+  { FCT_MAXHISTDEPTH,			L"Maximum history &depth:",L"Maximum megjegyzettek száma:"  },
+  { FCT_MAXHISTDEPTHTIP,		    L"Set the maximum number of expressions kept in the history", L"Ennyi előzmény kifejezést jegyez meg"   },
+  { FCT_AUTOSAVE,				L"Sa&ve after this interval:", L"Automatikus mentés ideje:" },
+  { FCT_AUTOSAVETIP,			    L"When unchecked, no history will be saved", L"Ha nincs bejelölve az előzményeket nem jegyzi meg"   },
+  { FCT_HHMMSS,					L"(HH:MM:SS)",L"(ÓÓ:PP:MP)" },
+  { FCT_HISTMINLENGTHLABEL,		L"&Min. length to save:",L"&Megjegyzendő minimális hossz:"   },
+  { FCT_HISTMINLENGTHTIP,		L"Expressions shorter than this will not be remembered", L"Csak ennél hosszabb kifejezéseket jegyez meg"   },
+  { FCT_HISTMINLENGTHSAVEALL,	L"(0: all)",	L"(0: bármi)"  },
+  { FCT_HISTSORTED,				L"Sorted",	L"Sorbarendezés"    },
 // Helps
- { FCT_HISTAUTOSAVELABEL,		L"Automatically save history",L"Automatikusan mentse az előzményeket"   },
- { FCT_HISTCLEAR,               L"&Discard history", L"Elő&zmények eldobása" },
+  { FCT_HISTAUTOSAVELABEL,		L"Automatically save history",L"Automatikusan mentse az előzményeket"   },
+  { FCT_HISTCLEAR,               L"&Discard history", L"Elő&zmények eldobása" },
+};
 
+static _Descriptions_private __descriptions[] = {
+    // descriptions of constants
+    // mathematical constants
+ { DSC_descriptionForE,	         u"Euler's number"								,   u""},
+ { DSC_descriptionForPi,	     u"π - half the circumference of a unit circle" ,   u""},
+ { DSC_descriptionForRpi,	     u"1/π"                                         ,   u""},
+ { DSC_descriptionForTwoPi,	     u"2π"											,   u""},
+ { DSC_descriptionForPiP2,	     u"π/2"											,   u""},
+ { DSC_descriptionForPiP4,	     u"π/4"                                         ,   u""},
+ { DSC_descriptionForRpi2,	     u"2/π"                                         ,   u""},
+ { DSC_descriptionForSqpi,	     u"√π"                                          ,   u""},
+ { DSC_descriptionForSqrt2,	     u"√2"											,   u""},
+ { DSC_descriptionForRsqrt2,	 u"1/√2"									    ,   u""},
+ { DSC_descriptionForSqrt3,	     u"√3"											,   u""},
+ { DSC_descriptionForSqrt3P2,	 u"sqrt3P2"                                     ,   u""},
+ { DSC_descriptionForLn10,	     u"natural logarithm of 10"                     ,   u""},
+ { DSC_descriptionForLn2,	     u"natural logarithm of 2 "                     ,   u""},
+ { DSC_descriptionForRln10,	     u"1/ln(10)"									,   u""},	
+ { DSC_descriptionForRln2,	     u"1/ln(2)"										,   u""},	
+ { DSC_descriptionForLog2e,	     u"base 2 logarithm of e"                       ,   u""},
+ { DSC_descriptionForLg10e,	     u"base 10 logarithm of e"                      ,   u""},
+ { DSC_descriptionForLge,	     u"base 10 logarithm of e"                      ,   u""},
+ // physics 					
+ { DSC_descriptionForFsc,	     u"fine-structure constant (about 1/137)"		,   u""},	
+ { DSC_descriptionForAu,	     u"astronomical unit (exact value)"				,   u""},	
+ { DSC_descriptionForC,	         u"speed of light in vacuum (exact value)"		,   u""},		
+ { DSC_descriptionForEps0,	     u"εo, vacuum electric permittivity (exact value)", u""},
+ { DSC_descriptionForG,	         u"Newtonian constant of gravitation"			,   u""},	
+ { DSC_descriptionForGf,	     u"average g on Earth"							,   u""},		
+ { DSC_descriptionForH,	         u"Planck constant"								,   u""},	
+ { DSC_descriptionForHbar,	     u"reduced Planck constant (h/2π)"				,   u""},		
+ { DSC_descriptionForKb,	     u"Boltzmann constant"							,   u""},		
+ { DSC_descriptionForKc,	     u"= 1/4πεo Coulomb constant"					,   u""},	
+ { DSC_descriptionForLa,	     u"Avogadro constant (exact value)"				,   u""},	
+ { DSC_descriptionForMe,	     u"electron mass"								,   u""},	
+ { DSC_descriptionForMf,	     u"mass of the Earth"							,   u""},	
+ { DSC_descriptionForMp,	     u"proton mass"									,   u""},	
+ { DSC_descriptionForMs,	     u"mass of the Sun"								,   u""},	
+ { DSC_descriptionForMu0,	     u"4π*10ˉ⁷ vacuum magnetic permeability"		,   u""},	
+ { DSC_descriptionForQe,	     u"elementary charge"							,   u""},	
+ { DSC_descriptionForRfsc,	     u"reciprocal of the fine structure constant (approx 137)",
+		                         u""},  
+ { DSC_descriptionForRf,	     u"radius of the Earth"                         ,   u""},
+ { DSC_descriptionForRg,	     u"molar gas constant R"                        ,   u""},
+ { DSC_descriptionForRs,	     u"radius of the Sun"                           ,   u""},
+ { DSC_descriptionForSb,	     u"Stefan–Boltzmann constant"                   ,   u""},
+ { DSC_descriptionForU,	         u"atomic mass unit (=(mass of C12)/12)"        ,   u""}
 };
 
 static _ErrorTexts_private __errorTexts[] = {
@@ -345,6 +399,26 @@ wchar_t* LanguageTexts::GetTranslationFor(EngineErrorCodes id) const
             return __errorTexts[i].texts[nLang];
     }
     return L"";
+}
+
+char16_t* LanguageTexts::GetTranslationFor(BuiltinDescId id) const
+{
+    int nLang = (int)_lang;
+    if (nLang == 0)
+        nLang = 0;
+    else
+        --nLang;
+    if (!((int)id >= 0 && (int)id < sizeof(__descriptions) / sizeof(__descriptions[0])))
+        return u"";
+    if (__descriptions[(int)id].id == id)
+        return __descriptions[(int)id].texts[nLang];
+    // search for the id
+    for (size_t i = 0; i < sizeof(__descriptions) / sizeof(__descriptions[0]); i++)
+    {
+        if (__descriptions[i].id == id)
+            return __descriptions[i].texts[nLang];
+    }
+    return u"";
 }
 
 LanguageTexts::LanguageTexts()

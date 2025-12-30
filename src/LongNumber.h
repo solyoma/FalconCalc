@@ -305,7 +305,7 @@ namespace LongNumber {
 		// special values
 		static const RealNumber RN_0, RN_1, RN_2, RN_3, RN_4, RN_5, RN_6, RN_7, RN_8, RN_9, RN_10, 
 								RN_11, RN_12, RN_13, RN_14, RN_15, RN_16,
-								RN_30, RN_60, RN_90, RN_180, RN_270, RN_360	;
+								RN_30, RN_45, RN_60, RN_90, RN_180, RN_270, RN_360	;
 
 	public:
 		// static functions
@@ -634,8 +634,6 @@ namespace LongNumber {
 	{ 
 		RealNumber xi(x);
 		int sx = x.Sign(), sy = y.Sign();
-		if (x.Abs() < y.Abs())
-			return xi.SetSign(sx * sy);
 		return xi - (xi / y).Int() * y; 
 	}
 	RealNumber fact(const RealNumber n);
@@ -690,40 +688,49 @@ namespace LongNumber {
 		SmString::SmartString name;		// used from outside
 		SmString::SmartString unit;		// e.g. kg
 		SmString::SmartString desc;		// description
+		BuiltinDescId binDesc;			// description ID for builtins
 		RealNumber value;		// re-scaled value
 
 		Constant() {}
 		// built-in constants
-		explicit Constant(const wchar_t* cname, const RealNumber cvalue, const wchar_t* cunit, const wchar_t* cdesc, const RealNumber* pBaseValue) :
-			value(cvalue), _pBaseValue(pBaseValue), _builtin(true), _set(true)
+		explicit Constant(const wchar_t* cname, const RealNumber cvalue, const wchar_t* cunit, const BuiltinDescId binDesc, const RealNumber* pBaseValue) :
+			value(cvalue), _pBaseValue(pBaseValue), _builtin(true), _set(true), binDesc(binDesc)
 		{
 			name.FromWideString(cname);
 			unit.FromWideString(cunit);
-			desc.FromWideString(cdesc);
 		}
 #ifndef _MSC_VER_SA
 		// hasznalja
-		explicit Constant(const char16_t* cname, const RealNumber cvalue, const char16_t* cunit, const char16_t* cdesc, const RealNumber* pBaseValue) :
-			value(cvalue), _pBaseValue(pBaseValue), _builtin(true), _set(true)
+		explicit Constant(const char16_t* cname, const RealNumber cvalue, const char16_t* cunit, BuiltinDescId binDesc, const RealNumber* pBaseValue, const char16_t *cdesc= nullptr) :
+			value(cvalue), _pBaseValue(pBaseValue), _builtin(true), _set(true), binDesc(binDesc)
 		{
 			name = SmartString(cname);
 			unit = SmartString(cunit);
-			desc = SmartString(cdesc);
+			desc = cdesc;
 		}
 #endif
 
 		explicit Constant(const SmString::String name, const RealNumber value, const SmString::String unit, const SmString::String desc, const RealNumber* pBaseValue) :
-			name(name), value(value), unit(unit), desc(desc), _pBaseValue(pBaseValue), _builtin(true), _set(true) {}
+			name(name), value(value), unit(unit), binDesc(binDesc), _pBaseValue(pBaseValue), desc(desc), _builtin(true), _set(true) {}
+
+		explicit Constant(const SmString::String name, const RealNumber value, const SmString::String unit, const BuiltinDescId binDesc, const RealNumber* pBaseValue) :
+			name(name), value(value), unit(unit), binDesc(binDesc), _pBaseValue(pBaseValue), _builtin(true), _set(true) {}
 
 		// for user defined constants (variables) definition value will be the base value
-		explicit Constant(const wchar_t* cname, const RealNumber cvalue, const wchar_t* cunit, const wchar_t* cdesc) :
+		explicit Constant(const wchar_t* cname, const RealNumber cvalue, const wchar_t* cunit, const wchar_t *pdesc) :
 			value(cvalue), _set(true)
 		{
 			name.FromWideString(cname);
 			unit.FromWideString(cunit);
-			desc.FromWideString(cdesc);
+			desc.FromWideString(pdesc);
 			_pBaseValue = new RealNumber(value);
 		}
+
+		explicit Constant(const SmString::String name, const RealNumber value, const SmString::String unit, const SmString::String desc) :
+			name(name), value(value), unit(unit), desc(desc) {}
+		// for both
+		Constant(const Constant& co) : name(co.name), value(co.value), unit(co.unit), desc(co.desc), binDesc(co.binDesc), _pBaseValue(co._pBaseValue), 
+										_builtin(co._builtin), _set(co._set) {}
 
 		virtual ~Constant()
 		{
@@ -731,17 +738,13 @@ namespace LongNumber {
 				delete _pBaseValue;
 		}
 
-		explicit Constant(const SmString::String name, const RealNumber value, const SmString::String unit, const SmString::String desc) :
-			name(name), value(value), unit(unit), desc(desc) {}
-		// for both
-		Constant(const Constant& co) : name(co.name), value(co.value), unit(co.unit), desc(co.desc), _pBaseValue(co._pBaseValue), _builtin(co._builtin), _set(co._set) {}
-
 		Constant& operator=(const Constant& other) 
 		{ 
 			name = other.name; 
 			value = other.value; 
 			unit = other.unit; 
 			desc = other.desc; 
+			binDesc = other.binDesc; 
 			return *this; 
 		}
 		Constant& operator=(const SmString::SmartString sms) { name = sms; return *this; }
@@ -788,8 +791,8 @@ namespace LongNumber {
 		virtual ~ConstantsMap();
 
 		// user defined constants only
-		void Add(const wchar_t* cname, const RealNumber cvalue, const wchar_t* cunit, const wchar_t* cdesc);
-		void Add(const SmString::String cname, const RealNumber cvalue, const SmString::String cunit, const SmString::String cdesc);
+		void Add(const wchar_t* cname, const RealNumber cvalue, const wchar_t* cunit, const wchar_t *cdesc);
+		void Add(const SmString::String cname, const RealNumber cvalue, const SmString::String cunit, const String cdesc);
 		void Rescale(int newMaxLength);
 	private:
 		void _AddBuiltIn(Constant& c);	// set as builtin

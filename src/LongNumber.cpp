@@ -89,7 +89,7 @@ LENGTH_TYPE RealNumber::_maxLength = 60;		// maximum length of number string
 const RealNumber RealNumber::RN_0("0"), RealNumber::RN_1("1"), RealNumber::RN_2("2"), RealNumber::RN_3("3"), RealNumber::RN_4("4"), 
 				RealNumber::RN_5("5"), RealNumber::RN_6("6"), RealNumber::RN_7("7"), RealNumber::RN_8("8"), RealNumber::RN_9("9"), RealNumber::RN_10("10"),
 				RealNumber::RN_11("11"), RealNumber::RN_12("12"), RealNumber::RN_13("13"), RealNumber::RN_14("14"), RealNumber::RN_15("15"), RealNumber::RN_16("16"),
-				RealNumber::RN_30("30"), RealNumber::RN_60("60"), RealNumber::RN_90("90"), RealNumber::RN_180("180"), RealNumber::RN_270("270"), RealNumber::RN_360("360") ;
+				RealNumber::RN_30("30"), RealNumber::RN_45("45"), RealNumber::RN_60("60"), RealNumber::RN_90("90"), RealNumber::RN_180("180"), RealNumber::RN_270("270"), RealNumber::RN_360("360") ;
 
 // constants and Functions that can be used with REAL_NUMBERs
 static const RealNumber rnNull("0"),
@@ -102,24 +102,25 @@ static const RealNumber rnNull("0"),
 				  rnPi("3.141592653589793238462643383279502884197169399375105820974944592307816406286208998628034825342117067980"), // π
 				 rn2Pi("6.283185307179586476925286766559005768394338798750211641949889184615632812572417997256069650684234135960"),	// 2π
 				rnPiP2("1.570796326794896619231321691639751442098584699687552910487472296153908203143104499314017412671058533990"),	// π/2
+ 				rnPiP4("0.785398163397448309615660845819875721049292349843776455243736148076954101571552249657008706335529266995"), // π/4
 				  rnE ("2.718281828459045235360287471352662497757247093699959574966967627724076630353547594571382178525166427427"),	// e
 			   rnSqrt2("1.414213562373095048801688724209698078569671875376948073176679737990732478462107038850387534327641572735"),	// √2
-			  rnPSqrt2("0.707106781186547524400844362104849039284835937688474036588339868995366239231053519425193767163820786367"),	// 1/√2
 			   rnSqrt3("1.732050807568877293527446341505872366942805253810380628055806979451933016908800037081146186757248575675"),	// √3
-			 rnSqrt3P2("0.866025403784438646763723170752936183471402626905190314027903489725966508454400018540573093378624287837"),	// 1 / (3√π)
 				 rnLn2("0.693147180559945309417232121458176568075500134360255254120680009493393621969694715605863326996418687542"),	// ln(2)
 				rnLn10("2.302585092994045684017991454684364207601101488628772976033327900967572609677352480235997205089598298341"), // ln(10)
-				 pln10("0.434294481903251827651128918916605082294397005803666566114453783165864649208870774729224949338431748318"),	// 1/ln(10)
-				  pln2("1.442695040888963407359924681001892137426645954152985934135449406931109219181185079885526622893506344497"),	// 1/ln(2)
+			     rnLg2("0.301029995663981195213738894724493026768189881462108541310427461127108189274424509486927252118186172040"),	// lg(2)
+			     rnLgE("0.434294481903251827651128918916605082294397005803666566114453783165864649208870774729224949338431748318"), // lg(e) == 1/ln(10)
+				 &rnLge = rnLgE,																									// same name as rnLgE
+			   rnLog2E("1.442695040888963407359924681001892137426645954152985934135449406931109219181185079885526622893506344497"),	// 1/ln(2) == log2(e)
 
-				 rnRpi("0.318309886183790671537767526745028724068919291480912897495334688117793595268453070180227605532506171912"),	// 1/π
-				rnPiP4("0.785398163397448309615660845819875721049292349843776455243736148076954101571552249657008706335529266995"), // π/4
-				rnRPi2("0.636619772367581343075535053490057448137838582961825794990669376235587190536906140360455211065012343824"), // 2/π
-				rnSqpi("1.772453850905516027298167483341145182797549456122387128213807789852911284591032181374950656738544665415"),	// 1/√π
-			  rnLogB2E("0.301029995663981195213738894724493026768189881462108541310427461127108189274424509486927252118186172040"),	// log_2(e)
-			     rnLgE("0.434294481903251827651128918916605082294397005803666566114453783165864649208870774729224949338431748318"), // lg(e)
-				 rnLge = rnLgE,
-
+			  rnPSqrt2("0.707106781186547524400844362104849039284835937688474036588339868995366239231053519425193767163820786367"),	// 1/√2
+			 rnSqrt3P2("0.866025403784438646763723170752936183471402626905190314027903489725966508454400018540573093378624287837"),	// 1/(³√π)
+				 rnPPi("0.318309886183790671537767526745028724068919291480912897495334688117793595268453070180227605532506171912"),	// 1/π
+			  rnTwoPPi("0.636619772367581343075535053490057448137838582961825794990669376235587190536906140360455211065012343824"), // 2/π
+			 rnPSqrtPi("1.772453850905516027298167483341145182797549456122387128213807789852911284591032181374950656738544665415"),	// 1/√π
+			   &rnPln10 = rnLgE,																									// 1/ln(10) == lg(e)
+				&rnPln2 = rnLog2E,																									// 1/ln(2) == log2(e)
+																																	
 					rnNaN(NAN_STR), rnInf(INF_STR), rnTooLong(TOO_LONG_STR), 
 // physical constants		// they are not rescaled in RealNumber::SetMaxLength()
 			rn_au		("149597870700"),		// astronomival unit - definition (m)
@@ -152,53 +153,104 @@ RealNumber	zero  		(rnNull),
 			NaN 		(rnNaN),
 			Inf 		(rnInf),
 			tooLong		(rnTooLong);
-// constant names in this table must be in all lowercase and must be unique
+
+#ifdef QT_SA_PROJECT
+#else
+	#if 0	
+			descriptionForE		, /* u"Euler's number" */
+			descriptionForPi 	, /* u"π - half the circumference of a unit circle" */
+			descriptionForRpi	, /* u"1/π" */
+			descriptionForTwoPi	, /* u"2π" */
+			descriptionForPiP2 	, /* u"π/2" */
+			descriptionForPiP4	, /* u"π/4" */
+			descriptionForRpi2	, /* u"2/π" */
+			descriptionForSqpi	, /* u"√π" */
+			descriptionForSqrt2	, /* u"√2" */
+			descriptionForRsqrt2, /* u"1/√2" */
+			descriptionForSqrt3	, /* u"√3" */
+			descriptionForSqrt3P2,/* u"sqrt3P2" */
+			descriptionForLn10 	, /* u"natural logarithm of 10" */
+			descriptionForLn2	, /* u"natural logarithm of 2" */
+			descriptionForRln10	, /* u"1/ln(10)" */
+			descriptionForRln2	, /* u"1/ln(2)" */
+			descriptionForLog2e	, /* u"base 2 logarithm of e" */
+			descriptionForLg10e	, /* u"base 10 logarithm of e" */
+			descriptionForLge	, /* u"base 10 logarithm of e" */
+	// physics 					, 													 */
+			descriptionForFsc	, /* u"fine-structure constant (about 1/137)" */
+			descriptionForAu	, /* u"astronomical unit (exact value)" */
+			descriptionForC		, /* u"speed of light in vacuum (exact value)" */
+			descriptionForEps0	, /* u"εo, vacuum electric permittivity (exact value)" */
+			descriptionForG		, /* u"Newtonian constant of gravitation" */
+			descriptionForGf	, /* u"average g on Earth" */
+			descriptionForH		, /* u"Planck constant" */
+			descriptionForHbar	, /* u"reduced Planck constant (h/2π)" */
+			descriptionForKb	, /* u"Boltzmann constant" */
+			descriptionForKc	, /* u"= 1/4πεo Coulomb constant" */
+			descriptionForLa	, /* u"Avogadro constant (exact value)" */
+			descriptionForMe	, /* u"electron mass" */
+			descriptionForMf	, /* u"mass of the Earth" */
+			descriptionForMp	, /* u"proton mass" */
+			descriptionForMs	, /* u"mass of the Sun" */
+			descriptionForMu0	, /* u"4π*10ˉ⁷ vacuum magnetic permeability" */
+			descriptionForQe	, /* u"elementary charge" */
+			descriptionForRfsc	, /* u"reciprocal of the fine structure constant (approx 137)" */
+			descriptionForRf	, /* u"radius of the Earth" */
+			descriptionForRg	, /* u"molar gas constant R" */
+			descriptionForRs	, /* u"radius of the Sun" */
+			descriptionForSb	, /* u"Stefan–Boltzmann constant" */
+			descriptionForU		, /* u"atomic mass unit (=(mass of C12)/12)" */
+	#endif
+#endif
+
 Constant
+	// constant names in this table must be in all lowercase and must be unique
+	// math
 	//				 name     	value		 unit				  explanation
-				// math
-			e		{ u"e"		, rnE		, u"-"				, u"Euler's number"										,&rnE	 		},
-			pi 		{ u"pi"		, rnPi		, u"-"				, u"π - half the circumference of a unit circle"		,&rnPi	 		},
-			rpi		{ u"rpi"	, rnRpi		, u"-"				, u"1 / π, RealNumber::RN_1 / pi)"						,&rnRpi	 		},
-			twoPi 	{ u"twoPi"	, rn2Pi		, u"-"				, u"2π"													,&rn2Pi	 		},
-			piP2 	{ u"piP2"	, rnPiP2	, u"-"				, u"π/2"												,&rnPiP2		},
-			piP4	{ u"piP4"	, rnPiP4	, u"-"				, u"π / 4, half * piP2)"								,&rnPiP4		},
-			rpi2	{ u"rpi2"	, rnRPi2	, u"-"				, u"2 / π, RealNumber::RN_2 / pi)"						,&rnRPi2		},
-			sqpi	{ u"sqpi"	, rnSqpi	, u"-"				, u"√π, sqrt(pi))"										,&rnSqpi		},
-			sqrt2 	{ u"sqrt2"	, rnSqrt2	, u"-"				, u"√2"													,&rnSqrt2		},
-			rsqrt2 	{ u"rsqrt2"	, rnPSqrt2	, u"-"				, u"1/√2"												,&rnPSqrt2		},
-			sqrt3 	{ u"sqrt3"	, rnSqrt3	, u"-"				, u"√3"													,&rnSqrt3		},
-			sqrt3P2 { u"sqrt3P2", rnSqrt3P2 , u"-"				, u"√3/2"												,&rnSqrt3P2  	}, 
-			ln10 	{ u"ln10"	, rnLn10	, u"-"				, u"ln(10)"												,&rnLn10		},
-			ln2		{ u"ln2"	, rnLn2		, u"-"				, u"natural logarithm of 2, ln2)"						,&rnLn2			},
-			rln10  	{ u"rln10"	, pln10		, u"-"				, u"1/ln(10)"											,&pln10			},
-			rln2	{ u"rln2"	, pln2		, u"-"				, u"1/ln(2)"											,&pln2			},
-			log2e	{ u"log2e"	, rnLogB2E	, u"-"				, u"base 2 logarithm of e, log2(e))"					,&rnLogB2E		},
-			lg10e	{ u"log10e"	, rnLgE		, u"-"				, u"base 10 logarithm of e, log10(e))"					,&rnLgE			},
-			lge		{ u"lge"	, rnLge		, u"-"				, u"base 10 logarithm of e, log10(e))"					,&rnLge			},
+			e		{ u"e"		, rnE		, u"-"				,descriptionForE		,&rnE	 		},
+			pi 		{ u"pi"		, rnPi		, u"-"				,descriptionForPi 	 	,&rnPi	 		},
+			rpi		{ u"rpi"	, rnPPi		, u"-"				,descriptionForRpi	 	,&rnPPi	 		},
+			twoPi 	{ u"twoPi"	, rn2Pi		, u"-"				,descriptionForTwoPi	,&rn2Pi	 		},
+			piP2 	{ u"piP2"	, rnPiP2	, u"-"				,descriptionForPiP2 	,&rnPiP2		},
+			piP4	{ u"piP4"	, rnPiP4	, u"-"				,descriptionForPiP4	 	,&rnPiP4		},
+			rpi2	{ u"rpi2"	, rnTwoPPi	, u"-"				,descriptionForRpi2	 	,&rnTwoPPi		},
+			sqpi	{ u"sqpi"	, rnPSqrtPi	, u"-"				,descriptionForSqpi	 	,&rnPSqrtPi		},
+			sqrt2 	{ u"sqrt2"	, rnSqrt2	, u"-"				,descriptionForSqrt2	,&rnSqrt2		},
+			rsqrt2 	{ u"rsqrt2"	, rnPSqrt2	, u"-"				,descriptionForRsqrt2 	,&rnPSqrt2		},
+			sqrt3 	{ u"sqrt3"	, rnSqrt3	, u"-"				,descriptionForSqrt3	,&rnSqrt3		},
+			sqrt3P2 { u"sqrt3P2", rnSqrt3P2 , u"-"				,descriptionForSqrt3P2 	,&rnSqrt3P2  	}, 
+			ln10 	{ u"ln10"	, rnLn10	, u"-"				,descriptionForLn10 	,&rnLn10		},
+			ln2		{ u"ln2"	, rnLn2		, u"-"				,descriptionForLn2	 	,&rnLn2			},
+			rln10  	{ u"rln10"	, rnPln10	, u"-"				,descriptionForRln10	,&rnPln10		},
+			rln2	{ u"rln2"	, rnPln2	, u"-"				,descriptionForRln2	 	,&rnPln2		},
+			log2e	{ u"log2e"	, rnLog2E	, u"-"				,descriptionForLog2e	,&rnLog2E		},
+			lg10e	{ u"log10e"	, rnLgE		, u"-"				,descriptionForLg10e	,&rnLgE			},
+			lge		{ u"lge"	, rnLge		, u"-"				,descriptionForLge	 	,&rnLge			},
 	// physics 
-			fsc		{ u"fsc"	, rn_fsc	, u"[-]"			, u"fine - structure constant"							, nullptr		},
-			au		{ u"au"		, rn_au		, u"[m]"			, u"astronomical unit - exact value"					, nullptr		},
-			c		{ u"c"		, rn_c		, u"[m/s]"			, u"speed of light in vacuum - exact value"				, nullptr		},
-			eps0	{ u"eps0"	, rn_eps0	, u"[F/m=As/Vm]"	, u"vacuum electric permittivity - exact value"			, nullptr		},
-			G		{ u"g"		, rn_G		, u"[m²/kg²s²]"		, u"Newtonian constant of gravitation"					, nullptr		},
-			gf		{ u"gE"		, rn_gf		, u"[m/s²]"			, u"average g on Earth"									, nullptr		},
-			h		{ u"h"		, rn_h		, u"[Js]"			, u"Planck constant"									, nullptr		},
-			hbar	{ u"hbar"	, rn_hbar	, u"[Js]"			, u"reduced Planck constant (h/2π)"						, nullptr		},
-			kb		{ u"kb"		, rn_kb		, u"[J/K]"			, u"Boltzmann constant"									, nullptr		},
-			kc		{ u"kc"		, rn_kc		, u"[N m²/C²]"		, u"= 1/4πεo Coulomb constant"							, nullptr		},
-			la		{ u"la"		, rn_la		, u"[1/mol]"		, u"Avogadro constant - exact value"					, nullptr		},
-			me		{ u"em"		, rn_me		, u"[kg]"			, u"electron mass"										, nullptr		},
-			mf		{ u"me"		, rn_mf		, u"[kg]"			, u"mass of the Earth"									, nullptr		},
-			mp		{ u"mp"		, rn_mp		, u"[kg]"			, u"proton mass"										, nullptr		},
-			ms		{ u"ms"		, rn_ms		, u"[kg]"			, u"mass of the Sun"									, nullptr		},
-			mu0		{ u"mu"		, rn_mu0	, u"[N/A²=Vs/m²]"	, u"4π*10ˉ⁷ vacuum magnetic permeability"				, nullptr		},
-			qe		{ u"qe"		, rn_qe		, u"[C]"			, u"elementary charge"									, nullptr		},
-			rfsc	{ u"rafs"	, rn_pfsc	, u"[-]"			, u"reciprocal of the fine structure constant (approx 137)", nullptr	},
-			rf		{ u"re"		, rn_rf		, u"[m]"			, u"radius of the Earth"								, nullptr		},
-			rg		{ u"rg"		, rn_rg		, u"[J/mol K]"		, u"molar gas constant R"								, nullptr		},
-			rs		{ u"rs"		, rn_rs		, u"[m]"			, u"radius of the Sun"									, nullptr		},
-			sb		{ u"sb"		, rn_sb		, u"[W/m² K⁴]"		, u"Stefan–Boltzmann constant"							, nullptr		},
-			u		{ u"u"		, rn_u		, u"[kg]"			, u"atomic mass unit (m[C12]/12)"						, nullptr		};
+	//				 name     	value		 unit				  explanation
+			fsc		{ u"fsc"	, rn_fsc	, u"[-]"			,descriptionForFsc	 	, nullptr		},
+			au		{ u"au"		, rn_au		, u"[m]"			,descriptionForAu	 	, nullptr		},
+			c		{ u"c"		, rn_c		, u"[m/s]"			,descriptionForC	 	, nullptr		},
+			eps0	{ u"eps0"	, rn_eps0	, u"[F/m=As/Vm]"	,descriptionForEps0	 	, nullptr		},
+			G		{ u"g"		, rn_G		, u"[m²/kg²s²]"		,descriptionForG	 	, nullptr		},
+			gf		{ u"gE"		, rn_gf		, u"[m/s²]"			,descriptionForGf	 	, nullptr		},
+			h		{ u"h"		, rn_h		, u"[Js]"			,descriptionForH	 	, nullptr		},
+			hbar	{ u"hbar"	, rn_hbar	, u"[Js]"			,descriptionForHbar	 	, nullptr		},
+			kb		{ u"kb"		, rn_kb		, u"[J/K]"			,descriptionForKb	 	, nullptr		},
+			kc		{ u"kc"		, rn_kc		, u"[N m²/C²]"		,descriptionForKc	 	, nullptr		},
+			la		{ u"la"		, rn_la		, u"[1/mol]"		,descriptionForLa	 	, nullptr		},
+			me		{ u"em"		, rn_me		, u"[kg]"			,descriptionForMe	 	, nullptr		},
+			mf		{ u"me"		, rn_mf		, u"[kg]"			,descriptionForMf	 	, nullptr		},
+			mp		{ u"mp"		, rn_mp		, u"[kg]"			,descriptionForMp	 	, nullptr		},
+			ms		{ u"ms"		, rn_ms		, u"[kg]"			,descriptionForMs	 	, nullptr		},
+			mu0		{ u"mu"		, rn_mu0	, u"[N/A²=Vs/m²]"	,descriptionForMu0	 	, nullptr		},
+			qe		{ u"qe"		, rn_qe		, u"[C]"			,descriptionForQe	 	, nullptr		},
+			rfsc	{ u"rafs"	, rn_pfsc	, u"[-]"			,descriptionForRfsc	    , nullptr		},
+			rf		{ u"re"		, rn_rf		, u"[m]"			,descriptionForRf	 	, nullptr		},
+			rg		{ u"rg"		, rn_rg		, u"[J/mol K]"		,descriptionForRg	 	, nullptr		},
+			rs		{ u"rs"		, rn_rs		, u"[m]"			,descriptionForRs	 	, nullptr		},
+			sb		{ u"sb"		, rn_sb		, u"[W/m² K⁴]"		,descriptionForSb	 	, nullptr		},
+			u		{ u"u"		, rn_u		, u"[kg]"			,descriptionForU	 	, nullptr		};
 
 
 ConstantsMap constantsMap;
@@ -257,14 +309,14 @@ ConstantsMap::~ConstantsMap()	 // delete new values
 			delete it->second;			// it deletes the new variable inside it too
 }
 
-void ConstantsMap::Add(const wchar_t* cname, const RealNumber cvalue, const wchar_t* cunit, const wchar_t* cdesc)
+void ConstantsMap::Add(const wchar_t* cname, const RealNumber cvalue, const wchar_t* cunit, const wchar_t *cdesc)
 {
 	Constant* pc = new Constant(cname, cvalue, cunit, cdesc);
 	insert(end(), std::make_pair(pc->name, pc) ) ;
 }
-void ConstantsMap::Add(const String cname, const RealNumber cvalue, const String cunit, const String cdesc)
+void ConstantsMap::Add(const String cname, const RealNumber cvalue, const String cunit, const String desc)
 {
-	insert(end(), { cname, new Constant(cname, cvalue, cunit, cdesc, nullptr)});
+	insert(end(), { cname, new Constant(cname, cvalue, cunit, desc, nullptr)});
 }
 void ConstantsMap::_AddBuiltIn( Constant& c)	// existing builtin constant
 {
@@ -1814,7 +1866,11 @@ bool RealNumber::__HandleSpecialDivisions(RealNumber& dividend, const RealNumber
 
 RealNumber RealNumber::_Divide(const RealNumber& rnOther) const
 {
+	if (IsNull())
+		return *this;
+
 	RealNumber left(*this);	// adjust number to larger precision
+
 	left._sign *= rnOther._sign;
 	if (rnOther.IsPure10Power())
 	{
@@ -1833,6 +1889,8 @@ RealNumber RealNumber::_Divide(const RealNumber& rnOther) const
 
 RealNumber RealNumber::_Div(const RealNumber& divisor, RealNumber& remainder) const
 {
+	if (IsNull())
+		return *this;
 	RealNumber rem;
 	rem._SetNull();
 	// RealNumber d(this->Int()), dv(divisor.Int());	// result, divident, divisor
@@ -2634,12 +2692,16 @@ void RealNumber::_MultiplyTheStrings(RealNumber& left, RealNumber& right) const
  *------------------------------------------------------------*/
 void RealNumber::_DivideInternal(RealNumber& left, RealNumber& right, RealNumber* pRemainder) const
 {	
+	if(pRemainder)
+		pRemainder->_SetNull();
+
 	if (left.IsNaN() || right.IsNaN())
 		return left.SetNaN();
+	if (left.IsNull())
+		return;
 				   // simplest case for integer division and remainder
 	if (pRemainder)
 	{
-		pRemainder->_SetNull();
 		if (left == right)
 		{
 			left = RealNumber("1");
@@ -2810,16 +2872,17 @@ void RealNumber::_CorrectResult(RealNumber &left, String &result, int trailingch
 	LENGTH_TYPE maxLength = _maxLength + LengthOverFlow;
 	if (l > maxLength)
 		l = maxLength;
-	SmartString(result).erase(l, SmartString(result).npos);	// may erase all characters from string
+	SmartString res = result;
+	res.erase(l, SmartString(result).npos);	// may erase all characters from string
 
 	if (carry)
 	{
-		result = SmartString(result).insert(0,1,SCharT(carry + chZero.unicode())); // single digit
+		result = res.insert(0,1,SCharT(carry + chZero.unicode())); // single digit
 		++l;
 		if (l > maxLength)
 		{
 			l = maxLength;
-			SmartString(result).pop_back();
+			res.pop_back();
 		}
 		++left._exponent;	// 1 plus digits at front
 	}
@@ -2829,11 +2892,11 @@ void RealNumber::_CorrectResult(RealNumber &left, String &result, int trailingch
 
 	if (leadingZeros)
 	{
-		SmartString(result).erase(0, leadingZeros);
+		res.erase(0, leadingZeros);
 		left._exponent -= (int)leadingZeros;
 		l -= leadingZeros;
 	}
-	left._numberString = result;
+	left._numberString = res;
 	if (left.Precision() > maxLength)
 		left.RoundToDigits((int)maxLength);
 	left._leadingZeros = 0;
@@ -3043,12 +3106,12 @@ RealNumber log(RealNumber x, RealNumber &base)	// logarithm in base 'base'
 
 RealNumber log10(RealNumber num)					// or lg, base = 10
 {
-	return ln(num) * pln10;
+	return ln(num) * rnPln10;
 }
 
 RealNumber log2(RealNumber num)
 {
-	return ln(num) * pln2;
+	return ln(num) * rnPln2;
 }
 
 // trigonometric functions
@@ -3079,9 +3142,11 @@ static RealNumber _sin(RealNumber r)		// sine	(RAD)	0<= r <= 2*pi =>  0 <= _sin 
 	// 	r in [0,π/2] (set in sin())
 	// quadrant and sign is handled there
 #else
-	//	scale = 0 // to get integer part only
+	// this is used in original code of BC   during preconditioning 
+	 v = rnPiP4; 	// π/4
+	scale = 0 // to get integer part only
 	RealNumber remainder;
-	n = (r / rnPiP4 + RealNumber::RN_2).Div(RealNumber::RN_4, remainder);	// remainder just to ensure integer divison
+	n = (r / v + RealNumber::RN_2).Div(RealNumber::RN_4, remainder);	// remainder just to ensure integer divison
 								// n = [(4r/π+2)/4] = [(r+π/2)/π], e.g. when r = π/4 => [(1/4+1/2)]=0
 								// n >0 when r >= π/2
 	if(!n.IsNull())
@@ -3089,17 +3154,16 @@ static RealNumber _sin(RealNumber r)		// sine	(RAD)	0<= r <= 2*pi =>  0 <= _sin 
 	if (n.IsOdd())	//		if (n % 2) x = -x		  for angles in quarters 3 or 4
 		r.SetSign(-r.Sign());
 #endif
-	v = rnPiP4; 	// π/4
 			/* Do the loop. */
 	RealNumber 	epsilon(SmartString("1"), 1, -(z + 2));
 
 	RealNumber::SetMaxLength(z + 2);
 	v = ee = r;					  // v == sin(r) = r, e_{1} = r (actual power of r, n = 1) / i!
 	s = -r * r;					  // for integer powers of r get -r^2
-	i = RealNumber::RN_3;		  // i will be n!, first non linear term is x^3/3!
-	while(true)
+	i = RealNumber::RN_3;		  // i == n!, first non linear term is -r³/3!
+	while(true)		// => for(i=3; true; i +=2)
 	{
-		ee *= s / (i * (i - RealNumber::RN_1));	  // e_{n+1} = e_{n} * (-r^2) / ( (i *(i-1)) * (i-2)! ) 
+		ee *= s / (i * (i - RealNumber::RN_1));	  // e_{n+1} = e_{n} * (-r²) / ( (i *(i-1)) * (i-2)! ) 
 		if (ee.Abs() <= epsilon)// x^(2n+1)/(2n+1)! < accuracy
 		{
 			RealNumber::SetMaxLength(z);
@@ -3122,6 +3186,7 @@ RealNumber sin (RealNumber r, AngularUnit angu)		// sine
 	RealNumber epsilon = RealNumber("1e-40");
 	const RealNumber &rn30 = RealNumber::RN_30,
 					 &rn60 = RealNumber::RN_60,	
+					 &rn45 = RealNumber::RN_45,	
 					 &rn90 = RealNumber::RN_90,	
 					 &rn180 = RealNumber::RN_180,	
 					 &rn270 = RealNumber::RN_270,	
@@ -3131,9 +3196,6 @@ RealNumber sin (RealNumber r, AngularUnit angu)		// sine
 	{
 		case AngularUnit::auDeg:
 		{
-			RealNumber rn180 = RealNumber("180");
-			RealNumber rn90  = RealNumber("90");
-
 			r = fmod(r, rn360);			 // |r| is < 360
 			// sine: 		+  | +
 			//			 ------|------
@@ -3156,17 +3218,17 @@ RealNumber sin (RealNumber r, AngularUnit angu)		// sine
 			// now r is in 0<= r <= 90
 			if (r < epsilon)
 				return RealNumber::RN_0;
-			else if (r == RealNumber("30"))
+			else if (r == rn30)
 			{
 				r = half;
 				return r.SetSign(sign);
 			}
-			else if (r == RealNumber("45"))
+			else if (r == rn45)
 			{
 				r = rsqrt2.value;
 				return r.SetSign(sign);
 			}
-			else if (r == RealNumber("60"))
+			else if (r == rn60)
 			{
 				r = sqrt3P2.value;
 				return r.SetSign(sign);
@@ -3185,18 +3247,19 @@ RealNumber sin (RealNumber r, AngularUnit angu)		// sine
 		}
 		case AngularUnit::auRad:
 		{
-			RealNumber piP3 = rnPi / RealNumber(3), piP6 = rnPi / RealNumber(6);
-			r = fmod(r, rn2Pi);	// 0 <= r <= 2 π
+			RealNumber	piP3 = rnPi / RealNumber::RN_3, 
+						piP6 = rnPi / RealNumber::RN_6;
+			r = fmod(r, rn2Pi);	// move r into [0,2π)
 			if (r >= rnPi)
 			{
 				sign = -sign;
-				r -= rnPi;
+				r -= rnPi;		
 			}
-			//  0 <= r <= π
+			// here r ϵ [0,π) 
 			if (r > rnPiP2)					// sin(π/2+alpha)=cos(alpha)=sin(π/2-alpha), if alpha < π
-				r = rnPi - r;
+				r = rnPi - r;				// to [0, π/2)
 
-			if (r < epsilon)				// 0 <= r <= π/2
+			if (r < epsilon)
 				return RealNumber::RN_0;
 			else if ((r - piP6).Abs() < epsilon)		// 30
 			{
@@ -3245,6 +3308,19 @@ RealNumber cos(RealNumber r, AngularUnit angu)		// cosine
 	if (r.IsNaN())
 		return r;
 
+	switch (angu)
+	{
+		default:
+		case  AngularUnit::auDeg:			   // cos(x) = sin(x + 90°)	
+			return sin(r + RealNumber::RN_90);
+		case  AngularUnit::auRad:			   // cos(x) = sin(x + π/2)	
+			return sin(r + rnPiP2, AngularUnit::auRad);
+		case  AngularUnit::auTurn:	 		   // cos(x) = sin(x + 1/4)	
+			return sin(r + RealNumber(0.25), AngularUnit::auTurn);  
+		case  AngularUnit::auGrad:			   // cos(x) = sin(x + 100)	
+			return sin(r + RealNumber(100), AngularUnit::auGrad);   
+	}
+#if 0
 	RealNumber epsilon = RealNumber("1e-40");
 	const RealNumber &rn30 = RealNumber::RN_30,
 					 &rn60 = RealNumber::RN_60,	
@@ -3260,10 +3336,6 @@ RealNumber cos(RealNumber r, AngularUnit angu)		// cosine
 	{
 		case AngularUnit::auDeg:
 		{
-			RealNumber rn270 = RealNumber("270");
-			RealNumber rn180 = RealNumber("180");
-			RealNumber rn90 = RealNumber("90");
-
 			r = fmod(r, rn360);	 // |r| is < 360
 			// sine: 		+  | +	   	cos.:	-  | +
 			//			 ------|------		 ------|------
@@ -3279,16 +3351,18 @@ RealNumber cos(RealNumber r, AngularUnit angu)		// cosine
 
 		case AngularUnit::auRad:
 			r /= twoPi.value;
-			r = r.Frac();		// 0<= r <= 1 => number of "turns"
+			r = r.Frac();		// 0 <= r < 1 => number of "turns"
 			[[fallthrough]];	// From C++17
 		case AngularUnit::auTurn:			// full circle 1 turn
 			return cos(r * rn360);
 
-		case AngularUnit::auGrad:			// full circle 400 Grad
+		case AngularUnit::auGrad:			// full circle 400 grad
 			return cos(rn360 / RealNumber("400") * r);
 			break;
 	}
+
 	return RealNumber();
+#endif
 }
 
 RealNumber sec(RealNumber r, AngularUnit angu)		// secant = 1/cosine
