@@ -146,25 +146,7 @@ namespace FalconCalc
         Token(TokenType t, SmartString b, OP d):type(t), name(b), val(RealNumber::RN_0), data(d) {}
 		Token(const Token& tk) { *this = tk; }
 		Token &operator=(const Token& tk) { type = tk.type; val = tk.val; data = tk.data; name = tk.name; return *this; }
-		Token &operator=(const SmartString s) // use only for new operator NOT for variables or functions!
-		{
-			name = s;
-			OP op = MathOperator::Op(name);
-            if(op.oper == opOpenBrace || op.oper == opCloseBrace)
-            {
-              type = tknBrace; // special handling for braces
-			  data = op;
-            }
-			else if(op.oper != opINVALID)
-    		{
-			  type = tknOperator;		// known operator
-			  data = op;
-			}
-			else
-			  type = tknUnknown;		// any other character
-
-			return *this;
-		}
+        Token& operator=(const SmartString s); // use only for new operator NOT for variables or functions!
             // this is only used wen new value is stored in val as
             // name is not set
         Token(RealNumber v): type(tknNumber), val(v) {}
@@ -226,61 +208,14 @@ namespace FalconCalc
 
         void clear() { funct1 = nullptr;  funct2r = nullptr; funct2i = nullptr; funct2a = nullptr; }
 
-        SmartString Description() const
-        {
-			return lt.GetTranslationFor(binDesc);
-        }
-
-        RealNumber operator() (RealNumber r) 
-        { 
-            if (funct1) 
-                return funct1(r); 
-            return NaN; 
-        }
-        RealNumber operator() (RealNumber r1, RealNumber r2) 
-        { 
-            if (funct2r) 
-                return funct2r(r1,r2); 
-            return NaN; 
-        }
-        RealNumber operator() (RealNumber r, int i) 
-        { 
-            if (funct2i) 
-                return funct2i(i, r); 
-            return NaN; 
-        }
-        RealNumber operator() (RealNumber r, AngularUnit angu)
-        { 
-            if (funct2a) 
-                return funct2a(r,angu);
-            return NaN; 
-        }
-        ArgTyp SecondArgumentType() const 
-        {
-            if (funct1) return atyNone;
-            if (funct2r) return atyR;
-            if (funct2i) return atyI;
-            if (funct2a) return atyA;
-            return atyNone;
-        }
-        BuiltinFunc & operator=(const BuiltinFunc & ofunc)
-        {
-            name = ofunc.name;
-            binDesc = ofunc.binDesc;
-            funct1  = ofunc.funct1;
-            funct2r = ofunc.funct2r;
-            funct2i = ofunc.funct2i;
-            funct2a = ofunc.funct2a;
-            useAngleUnit = ofunc.useAngleUnit;
-            useAngleUnitAsResult = ofunc.useAngleUnitAsResult;
-            return *this;
-        }
-        int RequireddArgumentCount() const 
-        {
-            if (funct1) 
-                return 1;
-            return 2;   // funct2r, funct2i, funct2a
-        }
+        SmartString Description() const;
+        RealNumber operator() (RealNumber r);
+        RealNumber operator() (RealNumber r1, RealNumber r2);
+        RealNumber operator() (RealNumber r, int i);
+        RealNumber operator() (RealNumber r, AngularUnit angu);
+        ArgTyp SecondArgumentType() const;
+        BuiltinFunc& operator=(const BuiltinFunc& ofunc);
+        int RequireddArgumentCount() const;
     };
 
     /*=============================================================
@@ -308,55 +243,14 @@ namespace FalconCalc
 
         Variable(){}
         Variable(Constant &co) : Constant(co) {}
-        Variable(SmartString line) 
-        {
-            int pos = line.indexOf(SCharT('='));
-            if (pos < 0)
-                return;
-            name = line.left(pos++);         // to definition
-            pos = line.indexOf(schCommentDelimiter, pos);
-            if (pos < 0)    // only variable body
-                body = line.mid(pos);
-            else
-            {
-                pos = line.indexOf("["_ss, pos + 1);
-                if (pos >= 0)
-                {
-                    int pos1 = line.indexOf("]"_ss, pos + 1);
-                    if (pos1 > 0)    // else no unit
-                    {
-                        unit = line.mid(pos + 1, pos1 - pos);
-                        ++pos1;
-                    }
-                    else 
-                        pos1 = pos;
-                    desc = line.mid(pos1);
-                }
-            }
-        }
+        Variable(SmartString line);
         explicit Variable(const String name, const RealNumber value, const String unit, const String desc) : 
-            Constant(name, value, unit, DSC_NoDescription, nullptr, desc) , dirty(true) 
-        {}
+            Constant(name, value, unit, desc, nullptr) , dirty(true)  {}
         virtual ~Variable()
         {
         }
-        SmartString Serialize() const
-        {
-            SmartString s(name + ssEqString + body);
-            if (!desc.empty())
-                s += ssCommentDelimiterString + desc;
-            else if(!unit.empty())                 // but description is
-                s += ssCommentDelimiterString;
-            if(!unit.empty())
-                s += ssCommentDelimiterString + unit;
-
-            return s;
-        }
-        inline UTF8String  SerializeUtf8() const
-        {
-            return Serialize().toUtf8String();
-        }
-
+        SmartString Serialize() const;
+        inline UTF8String  SerializeUtf8() const;
     };
 
     /*=============================================================
@@ -530,40 +424,12 @@ namespace FalconCalc
 
         RowData() {}
         RowData(const RowData& o) { *this = o; }
-        RowData(SmartString name, SmartString body, SmartString descr, SmartString unit)
-        {
-            cols[0] = name;
-            cols[1] = body;
-            cols[2] = descr;
-            cols[3] = unit;
-        }
-        RowData(SmartString name, SmartString body, BuiltinDescId descId, SmartString unit)
-        {
-            cols[0] = name;
-            cols[1] = body;
-            cols[2] = lt.GetTranslationFor(descId);
-            cols[3] = unit;
-        }
+        RowData(SmartString name, SmartString body, SmartString descr, SmartString unit);
+        RowData(SmartString name, SmartString body, BuiltinDescId descId, SmartString unit);
         void clear() { cols[0] = cols[1] = cols[2] = cols[3] = ""; }
-        RowData& operator=(const RowData& o)
-        {
-            cols[0] = o.cols[0];
-            cols[1] = o.cols[1];
-            cols[2] = o.cols[2];
-            cols[3] = o.cols[3];
-            return *this;
-        }
-        bool operator!=(const RowData& rd)
-        {
-            for (int i = 0; i < 4; ++i)
-                if (cols[i] != rd.cols[i])
-                    return true;
-            return false;
-        }
-        bool operator==(const RowData& rd)
-        {
-            return !(*this != rd);
-        }
+        RowData& operator=(const RowData& o);
+        bool operator!=(const RowData& rd);
+        bool operator==(const RowData& rd);
         SmartString Serialize();
     };
 

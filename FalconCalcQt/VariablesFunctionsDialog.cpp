@@ -1,3 +1,4 @@
+﻿#include <QStack>
 #include <QStack>
 #include <QPair>
 
@@ -16,6 +17,85 @@ const QString qsEgString = "=";
 const QString qsCommentDelimiterString = ":";
 
 int VariablesFunctionsDialog::_colW[2][4] = { {80,100,60,300},{50,200,60,300} };
+
+/* ============================ global =================*/
+QString GetBuiltinTextForId(BuiltinDescId bdId)
+{
+	struct DescIdText
+	{
+		BuiltinDescId	id;
+		const QString	text;
+	};
+	static const QMap<BuiltinDescId, QString> descIdTextMap = {
+		{ DSC_NoDescription,			QObject::tr("No description available.") },
+		{ DSC_descriptionForE,			QObject::tr("Euler's number") },
+		{ DSC_descriptionForPi,			QObject::tr("π - half the circumference of a unit circle") },
+		{ DSC_descriptionForRpi,		QObject::tr("1 / π") },
+		{ DSC_descriptionForTwoPi,		QObject::tr("2π") },
+		{ DSC_descriptionForPiP2,		QObject::tr("π/2") },
+		{ DSC_descriptionForPiP4,		QObject::tr("π / 4") },
+		{ DSC_descriptionForRpi2,		QObject::tr("2 / π") },
+		{ DSC_descriptionForSqpi,		QObject::tr("√π") },
+		{ DSC_descriptionForSqrt2,		QObject::tr("√2") },
+		{ DSC_descriptionForRsqrt2,		QObject::tr("1/√2") },
+		{ DSC_descriptionForSqrt3,		QObject::tr("√3") },
+		{ DSC_descriptionForSqrt3P2,	QObject::tr("√3/2") },
+		{ DSC_descriptionForLn10,		QObject::tr("natural logarithm of 10") },
+		{ DSC_descriptionForLn2,		QObject::tr("natural logarithm of 2") },
+		{ DSC_descriptionForRln10,		QObject::tr("1/ln(10)") },
+		{ DSC_descriptionForRln2,		QObject::tr("1/ln(2)") },
+		{ DSC_descriptionForLog2e,		QObject::tr("base 2 logarithm of e") },
+		{ DSC_descriptionForLg10e,		QObject::tr("base 10 logarithm of e") },
+		{ DSC_descriptionForLge,		QObject::tr("base e logarithm of e") },
+		{ DSC_descriptionForFsc,		QObject::tr("fine-structure constant (about 1/137)") },
+		{ DSC_descriptionForAu,			QObject::tr("astronomical unit (exact value)") },
+		{ DSC_descriptionForC,			QObject::tr("speed of light in vacuum (exact value)") },
+		{ DSC_descriptionForEps0,		QObject::tr("ε₀ - vacuum permittivity") },
+		{ DSC_descriptionForG,			QObject::tr("Newtonian constant of gravitation") },
+		{ DSC_descriptionForGf,			QObject::tr("average g on Earth") },
+		{ DSC_descriptionForH,			QObject::tr("Planck constant") },
+		{ DSC_descriptionForHbar,		QObject::tr("reduced Planck constant (h/2π)") },
+		{ DSC_descriptionForKb,			QObject::tr("Boltzmann constant") },
+		{ DSC_descriptionForKc,			QObject::tr("= 1/4πε₀ Coulomb constant") },
+		{ DSC_descriptionForLa,			QObject::tr("Avogadro constant (exact value)") },
+		{ DSC_descriptionForMe,			QObject::tr("electron mass") },
+		{ DSC_descriptionForMf,			QObject::tr("mass of the Earth") },
+		{ DSC_descriptionForMp,			QObject::tr("proton mass") },
+		{ DSC_descriptionForMs,			QObject::tr("mass of the Sun") },
+		{ DSC_descriptionForMu0,		QObject::tr("4π·10⁻⁷ vacuum magnetic permeability") },
+		{ DSC_descriptionForQe,			QObject::tr("elementary charge") },
+		{ DSC_descriptionForRfsc,		QObject::tr("reciprocal of the fine structure constant (approx 137)") },
+		{ DSC_descriptionForRf,			QObject::tr("radius of the Earth") },
+		{ DSC_descriptionForRg,			QObject::tr("molar gas constant R") },
+		{ DSC_descriptionForRs,			QObject::tr("radius of the Sun") },
+		{ DSC_descriptionForSb,			QObject::tr("Stefan–Boltzmann constant") },
+		{ DSC_descriptionForU,			QObject::tr("atomic mass unit (=(mass of C12)/12)") },
+		{ DSC_FuncAbs,					QObject::tr("absolute value") },
+		{ DSC_FuncACos,					QObject::tr("arc cosine") },
+		{ DSC_FuncASin,					QObject::tr("arc sine") },
+		{ DSC_FuncATan,					QObject::tr("arc tangent") },
+		{ DSC_FuncCos,					QObject::tr("cosine") },
+		{ DSC_FuncExp,					QObject::tr("exponential function eˣ") },
+		{ DSC_FuncFact,					QObject::tr("factorial") },
+		{ DSC_FuncFrac,					QObject::tr("fractional part") },
+		{ DSC_FuncInt,					QObject::tr("integer part") },
+		{ DSC_FuncLn,					QObject::tr("natural logarithm (base e)") },
+		{ DSC_FuncLg,					QObject::tr("logarithm (base 10)") },
+		{ DSC_FuncPow,					QObject::tr("pow(x,y)=x^y") },
+		{ DSC_FuncRound,				QObject::tr("round y to x decimals") },
+		{ DSC_FuncRoot3,				QObject::tr("cubic root of x") },
+		{ DSC_FuncSign,					QObject::tr("sign of number") },
+		{ DSC_FuncSin,					QObject::tr("sine") },
+		{ DSC_FuncSqrt,					QObject::tr("square root") },
+		{ DSC_FuncTan,					QObject::tr("tangent") },
+		{ DSC_FuncTanH,					QObject::tr("hyperbolic tangent") },
+		{ DSC_FuncTrunc,				QObject::tr("truncate to integer") },
+		{ DSC_FuncXRY,					QObject::tr("x-th root of y") },
+	};
+	if (descIdTextMap.contains(bdId))
+		return descIdTextMap[bdId];
+	return QString();
+}
 
 /* ============================ VariablesFunctionsDialog =================*/
 
@@ -371,11 +451,11 @@ void VariablesFunctionsDialog::on_tblUserFuncs_cellDoubleClicked(int row, int co
 
 void VariablesFunctionsDialog::_TableDoubleClickedCommon(QTableWidget* ptw, int row, int col)
 {
-	   QString name = _GetItemText(ptw, row, 0);
-	   if ((ptw == ui.tblBuiltinFuncs) || (ptw == ui.tblUserFuncs))
-		   name = name.mid(0, name.indexOf('(')+1); // remove arguments)
+	QString name = _GetItemText(ptw, row, 0);
+	if ((ptw == ui.tblBuiltinFuncs) || (ptw == ui.tblUserFuncs))
+		name = name.mid(0, name.indexOf('(')+1); // remove arguments)
 
-	   emit SignalTableDoubleClicked(name);
+	emit SignalTableDoubleClicked(name);
 }
 
 void VariablesFunctionsDialog::on_tblBuiltinVars_cellDoubleClicked(int row, int col)
@@ -418,7 +498,7 @@ void VariablesFunctionsDialog::_FillBuiltinFuncTable()
 		ui.tblBuiltinFuncs->setItem(row, 1, ptw);
 		ptw = new ElidingTableWidgetItem("-");
 		ui.tblBuiltinFuncs->setItem(row, 2, ptw);
-		ptw = new ElidingTableWidgetItem(bif.desc.toQString());	
+		ptw = new ElidingTableWidgetItem(GetBuiltinTextForId(bif.binDesc));	
 		ui.tblBuiltinFuncs->setItem(row, 3, ptw);
 	}
 }
@@ -447,7 +527,7 @@ void VariablesFunctionsDialog::_FillUserFuncTable()
 	*_pUserFuncsInMap = *_pUserFuncsMap;
 }
 
-void VariablesFunctionsDialog::_FillFuncTables()   
+void VariablesFunctionsDialog::_FillFuncTables()
 {
 	_FillUserFuncTable();
 	_FillBuiltinFuncTable();
@@ -503,7 +583,7 @@ void VariablesFunctionsDialog::_FillVarTables()
 
 //void VariablesFunctionsDialog::_Serialize(VarFuncInfoQt* pvf)
 //{
-//	if (_busy || (!pvf && !_changed) )    // 'changed' must be modified in caller when necessary
+//	if (_busy || (!pvf && !_changed) ) // 'changed' must be modified in caller when necessary
 //		return;
 //	if (!pvf)
 //		pvf = &_vf;

@@ -528,13 +528,13 @@ void FalconCalcQt::on_btnDecimal_clicked()	   // decimal display chaged
 	int pos = text.indexOf(QChar(183));
 	if (pos > 0)							   // sci or eng with display mode "normal"
 	{
-		text.replace(pos, 8, "E"); // replace "·10<sup>" with E
+		text.replace(pos, 8, "E"); // replace "Â·10<sup>" with E
 		pos = text.indexOf('<', pos);
 		text.remove(pos, 6); // "</sup>"
 	}
 	else if ((pos = text.indexOf('x')) > 0)			// sci or eng with display mode Html
 	{
-		text.replace(pos, 14, "E"); // replace "·10<sup>" with E
+		text.replace(pos, 14, "E"); // replace "Â·10<sup>" with E
 		pos = text.indexOf('&', pos);
 		text.remove(pos, 12); // "</sup>"
 	}
@@ -1099,7 +1099,7 @@ bool FalconCalcQt::_LoadState()
 					val = std::abs(val + 1);
 				ui.spnDecDigits->setValue(val);
 				// 2: exponent display format
-				val = data[2].toInt();	// (0)E: 1E5, (1)HTML: 1<sp>12</sup>, (2)TeX: 1^{12}, (3)normal: 1²³
+				val = data[2].toInt();	// (0)E: 1E5, (1)HTML: 1<sp>12</sup>, (2)TeX: 1^{12}, (3)normal: 1Â²Â³
 				lengine->displayFormat.expFormat = static_cast<ExpFormat>(val);
 				if (lengine->displayFormat.expFormat == ExpFormat::rnsfE)
 					ui.rbNone->setChecked(true);

@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include <QtWidgets/QDialog>
 #include <QTableWidget>
 #include <QStyledItemDelegate>
@@ -19,6 +19,7 @@ namespace FalconCalc {
 	class LittleEngine;
 }
 
+QString GetBuiltinTextForId(BuiltinDescId bdId);
 
 /*=============================================================
  * TASK   :	crete an elided text only for display. 

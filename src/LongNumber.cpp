@@ -3,6 +3,8 @@
 #include <cstdint>
 #include<limits>
 
+#include "defines.h"
+
 #ifndef QTSA_PROJECT
 	#include "SmartString.h"
 #else
@@ -207,50 +209,50 @@ Constant
 	// constant names in this table must be in all lowercase and must be unique
 	// math
 	//				 name     	value		 unit				  explanation
-			e		{ u"e"		, rnE		, u"-"				,descriptionForE		,&rnE	 		},
-			pi 		{ u"pi"		, rnPi		, u"-"				,descriptionForPi 	 	,&rnPi	 		},
-			rpi		{ u"rpi"	, rnPPi		, u"-"				,descriptionForRpi	 	,&rnPPi	 		},
-			twoPi 	{ u"twoPi"	, rn2Pi		, u"-"				,descriptionForTwoPi	,&rn2Pi	 		},
-			piP2 	{ u"piP2"	, rnPiP2	, u"-"				,descriptionForPiP2 	,&rnPiP2		},
-			piP4	{ u"piP4"	, rnPiP4	, u"-"				,descriptionForPiP4	 	,&rnPiP4		},
-			rpi2	{ u"rpi2"	, rnTwoPPi	, u"-"				,descriptionForRpi2	 	,&rnTwoPPi		},
-			sqpi	{ u"sqpi"	, rnPSqrtPi	, u"-"				,descriptionForSqpi	 	,&rnPSqrtPi		},
-			sqrt2 	{ u"sqrt2"	, rnSqrt2	, u"-"				,descriptionForSqrt2	,&rnSqrt2		},
-			rsqrt2 	{ u"rsqrt2"	, rnPSqrt2	, u"-"				,descriptionForRsqrt2 	,&rnPSqrt2		},
-			sqrt3 	{ u"sqrt3"	, rnSqrt3	, u"-"				,descriptionForSqrt3	,&rnSqrt3		},
-			sqrt3P2 { u"sqrt3P2", rnSqrt3P2 , u"-"				,descriptionForSqrt3P2 	,&rnSqrt3P2  	}, 
-			ln10 	{ u"ln10"	, rnLn10	, u"-"				,descriptionForLn10 	,&rnLn10		},
-			ln2		{ u"ln2"	, rnLn2		, u"-"				,descriptionForLn2	 	,&rnLn2			},
-			rln10  	{ u"rln10"	, rnPln10	, u"-"				,descriptionForRln10	,&rnPln10		},
-			rln2	{ u"rln2"	, rnPln2	, u"-"				,descriptionForRln2	 	,&rnPln2		},
-			log2e	{ u"log2e"	, rnLog2E	, u"-"				,descriptionForLog2e	,&rnLog2E		},
-			lg10e	{ u"log10e"	, rnLgE		, u"-"				,descriptionForLg10e	,&rnLgE			},
-			lge		{ u"lge"	, rnLge		, u"-"				,descriptionForLge	 	,&rnLge			},
+			e		{ u"e"		, rnE		, u"-"				,DSC_descriptionForE		,&rnE	 		},
+			pi 		{ u"pi"		, rnPi		, u"-"				,DSC_descriptionForPi 	 	,&rnPi	 		},
+			rpi		{ u"rpi"	, rnPPi		, u"-"				,DSC_descriptionForRpi	 	,&rnPPi	 		},
+			twoPi 	{ u"twoPi"	, rn2Pi		, u"-"				,DSC_descriptionForTwoPi	,&rn2Pi	 		},
+			piP2 	{ u"piP2"	, rnPiP2	, u"-"				,DSC_descriptionForPiP2 	,&rnPiP2		},
+			piP4	{ u"piP4"	, rnPiP4	, u"-"				,DSC_descriptionForPiP4	 	,&rnPiP4		},
+			rpi2	{ u"rpi2"	, rnTwoPPi	, u"-"				,DSC_descriptionForRpi2	 	,&rnTwoPPi		},
+			sqpi	{ u"sqpi"	, rnPSqrtPi	, u"-"				,DSC_descriptionForSqpi	 	,&rnPSqrtPi		},
+			sqrt2 	{ u"sqrt2"	, rnSqrt2	, u"-"				,DSC_descriptionForSqrt2	,&rnSqrt2		},
+			rsqrt2 	{ u"rsqrt2"	, rnPSqrt2	, u"-"				,DSC_descriptionForRsqrt2 	,&rnPSqrt2		},
+			sqrt3 	{ u"sqrt3"	, rnSqrt3	, u"-"				,DSC_descriptionForSqrt3	,&rnSqrt3		},
+			sqrt3P2 { u"sqrt3P2", rnSqrt3P2 , u"-"				,DSC_descriptionForSqrt3P2 	,&rnSqrt3P2  	}, 
+			ln10 	{ u"ln10"	, rnLn10	, u"-"				,DSC_descriptionForLn10 	,&rnLn10		},
+			ln2		{ u"ln2"	, rnLn2		, u"-"				,DSC_descriptionForLn2	 	,&rnLn2			},
+			rln10  	{ u"rln10"	, rnPln10	, u"-"				,DSC_descriptionForRln10	,&rnPln10		},
+			rln2	{ u"rln2"	, rnPln2	, u"-"				,DSC_descriptionForRln2	 	,&rnPln2		},
+			log2e	{ u"log2e"	, rnLog2E	, u"-"				,DSC_descriptionForLog2e	,&rnLog2E		},
+			lg10e	{ u"log10e"	, rnLgE		, u"-"				,DSC_descriptionForLg10e	,&rnLgE			},
+			lge		{ u"lge"	, rnLge		, u"-"				,DSC_descriptionForLge	 	,&rnLge			},
 	// physics 
 	//				 name     	value		 unit				  explanation
-			fsc		{ u"fsc"	, rn_fsc	, u"[-]"			,descriptionForFsc	 	, nullptr		},
-			au		{ u"au"		, rn_au		, u"[m]"			,descriptionForAu	 	, nullptr		},
-			c		{ u"c"		, rn_c		, u"[m/s]"			,descriptionForC	 	, nullptr		},
-			eps0	{ u"eps0"	, rn_eps0	, u"[F/m=As/Vm]"	,descriptionForEps0	 	, nullptr		},
-			G		{ u"g"		, rn_G		, u"[m²/kg²s²]"		,descriptionForG	 	, nullptr		},
-			gf		{ u"gE"		, rn_gf		, u"[m/s²]"			,descriptionForGf	 	, nullptr		},
-			h		{ u"h"		, rn_h		, u"[Js]"			,descriptionForH	 	, nullptr		},
-			hbar	{ u"hbar"	, rn_hbar	, u"[Js]"			,descriptionForHbar	 	, nullptr		},
-			kb		{ u"kb"		, rn_kb		, u"[J/K]"			,descriptionForKb	 	, nullptr		},
-			kc		{ u"kc"		, rn_kc		, u"[N m²/C²]"		,descriptionForKc	 	, nullptr		},
-			la		{ u"la"		, rn_la		, u"[1/mol]"		,descriptionForLa	 	, nullptr		},
-			me		{ u"em"		, rn_me		, u"[kg]"			,descriptionForMe	 	, nullptr		},
-			mf		{ u"me"		, rn_mf		, u"[kg]"			,descriptionForMf	 	, nullptr		},
-			mp		{ u"mp"		, rn_mp		, u"[kg]"			,descriptionForMp	 	, nullptr		},
-			ms		{ u"ms"		, rn_ms		, u"[kg]"			,descriptionForMs	 	, nullptr		},
-			mu0		{ u"mu"		, rn_mu0	, u"[N/A²=Vs/m²]"	,descriptionForMu0	 	, nullptr		},
-			qe		{ u"qe"		, rn_qe		, u"[C]"			,descriptionForQe	 	, nullptr		},
-			rfsc	{ u"rafs"	, rn_pfsc	, u"[-]"			,descriptionForRfsc	    , nullptr		},
-			rf		{ u"re"		, rn_rf		, u"[m]"			,descriptionForRf	 	, nullptr		},
-			rg		{ u"rg"		, rn_rg		, u"[J/mol K]"		,descriptionForRg	 	, nullptr		},
-			rs		{ u"rs"		, rn_rs		, u"[m]"			,descriptionForRs	 	, nullptr		},
-			sb		{ u"sb"		, rn_sb		, u"[W/m² K⁴]"		,descriptionForSb	 	, nullptr		},
-			u		{ u"u"		, rn_u		, u"[kg]"			,descriptionForU	 	, nullptr		};
+			fsc		{ u"fsc"	, rn_fsc	, u"[-]"			,DSC_descriptionForFsc	 	, nullptr		},
+			au		{ u"au"		, rn_au		, u"[m]"			,DSC_descriptionForAu	 	, nullptr		},
+			c		{ u"c"		, rn_c		, u"[m/s]"			,DSC_descriptionForC	 	, nullptr		},
+			eps0	{ u"eps0"	, rn_eps0	, u"[F/m=As/Vm]"	,DSC_descriptionForEps0	 	, nullptr		},
+			G		{ u"g"		, rn_G		, u"[m²/kg²s²]"		,DSC_descriptionForG	 	, nullptr		},
+			gf		{ u"gE"		, rn_gf		, u"[m/s²]"			,DSC_descriptionForGf	 	, nullptr		},
+			h		{ u"h"		, rn_h		, u"[Js]"			,DSC_descriptionForH	 	, nullptr		},
+			hbar	{ u"hbar"	, rn_hbar	, u"[Js]"			,DSC_descriptionForHbar	 	, nullptr		},
+			kb		{ u"kb"		, rn_kb		, u"[J/K]"			,DSC_descriptionForKb	 	, nullptr		},
+			kc		{ u"kc"		, rn_kc		, u"[N m²/C²]"		,DSC_descriptionForKc	 	, nullptr		},
+			la		{ u"la"		, rn_la		, u"[1/mol]"		,DSC_descriptionForLa	 	, nullptr		},
+			me		{ u"em"		, rn_me		, u"[kg]"			,DSC_descriptionForMe	 	, nullptr		},
+			mf		{ u"me"		, rn_mf		, u"[kg]"			,DSC_descriptionForMf	 	, nullptr		},
+			mp		{ u"mp"		, rn_mp		, u"[kg]"			,DSC_descriptionForMp	 	, nullptr		},
+			ms		{ u"ms"		, rn_ms		, u"[kg]"			,DSC_descriptionForMs	 	, nullptr		},
+			mu0		{ u"mu"		, rn_mu0	, u"[N/A²=Vs/m²]"	,DSC_descriptionForMu0	 	, nullptr		},
+			qe		{ u"qe"		, rn_qe		, u"[C]"			,DSC_descriptionForQe	 	, nullptr		},
+			rfsc	{ u"rafs"	, rn_pfsc	, u"[-]"			,DSC_descriptionForRfsc	    , nullptr		},
+			rf		{ u"re"		, rn_rf		, u"[m]"			,DSC_descriptionForRf	 	, nullptr		},
+			rg		{ u"rg"		, rn_rg		, u"[J/mol K]"		,DSC_descriptionForRg	 	, nullptr		},
+			rs		{ u"rs"		, rn_rs		, u"[m]"			,DSC_descriptionForRs	 	, nullptr		},
+			sb		{ u"sb"		, rn_sb		, u"[W/m² K⁴]"		,DSC_descriptionForSb	 	, nullptr		},
+			u		{ u"u"		, rn_u		, u"[kg]"			,DSC_descriptionForU	 	, nullptr		};
 
 
 ConstantsMap constantsMap;

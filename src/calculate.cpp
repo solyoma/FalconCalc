@@ -1,4 +1,4 @@
-﻿#include "defines.h"    // for LENGTH_TYPE
+﻿#include "defines.h"    // for LENGTH_TYPE and text IDS
 
 #ifndef QTSA_PROJECT
     namespace nlib {}
@@ -16,6 +16,8 @@ using namespace LongNumber;
 
 #include "common.h"
 #include "calculate.h"
+
+//#include ""
 
 /*----------------- global engine ------------------*/
 FalconCalc::LittleEngine *lengine = nullptr;    // created in main
@@ -238,6 +240,25 @@ void MathOperator::Setup()
 /*==========================================
 Class Token
  *-----------------------------------------*/
+Token& Token::operator=(const SmartString s) // use only for new operator NOT for variables or functions!
+{
+    name = s;
+    OP op = MathOperator::Op(name);
+    if (op.oper == opOpenBrace || op.oper == opCloseBrace)
+    {
+        type = tknBrace; // special handling for braces
+        data = op;
+    }
+    else if (op.oper != opINVALID)
+    {
+        type = tknOperator;		// known operator
+        data = op;
+    }
+    else
+        type = tknUnknown;		// any other character
+
+    return *this;
+}
 
 /*==========================================
  * TASK: scans 'text' from pos for non alpha
@@ -603,6 +624,113 @@ static RealNumber Acos(RealNumber r) { return acos(r, lengine->AngleUnit()); }
 static RealNumber Atan(RealNumber r) { return atan(r, lengine->AngleUnit()); }
 static RealNumber Acot(RealNumber r) { return acot(r, lengine->AngleUnit()); }
 
+
+SmartString BuiltinFunc::Description() const
+{
+#ifdef QTSA_PROJECT
+	extern QString GetBuiltinTextForId(BuiltinDescId bdId);     // in  VariablesFunctionsQt.cpp
+    return GetBuiltinTextForId(binDesc);
+#else
+    return lt.GetTranslationFor(binDesc);
+#endif
+}
+
+RealNumber BuiltinFunc::operator() (RealNumber r)
+{
+    if (funct1)
+        return funct1(r);
+    return NaN;
+}
+RealNumber BuiltinFunc::operator() (RealNumber r1, RealNumber r2)
+{
+    if (funct2r)
+        return funct2r(r1, r2);
+    return NaN;
+}
+RealNumber BuiltinFunc::operator() (RealNumber r, int i)
+{
+    if (funct2i)
+        return funct2i(i, r);
+    return NaN;
+}
+RealNumber BuiltinFunc::operator() (RealNumber r, AngularUnit angu)
+{
+    if (funct2a)
+        return funct2a(r, angu);
+    return NaN;
+}
+BuiltinFunc::ArgTyp BuiltinFunc::SecondArgumentType() const
+{
+    if (funct1) return atyNone;
+    if (funct2r) return atyR;
+    if (funct2i) return atyI;
+    if (funct2a) return atyA;
+    return atyNone;
+}
+BuiltinFunc& BuiltinFunc::operator=(const BuiltinFunc& ofunc)
+{
+    name = ofunc.name;
+    binDesc = ofunc.binDesc;
+    funct1 = ofunc.funct1;
+    funct2r = ofunc.funct2r;
+    funct2i = ofunc.funct2i;
+    funct2a = ofunc.funct2a;
+    useAngleUnit = ofunc.useAngleUnit;
+    useAngleUnitAsResult = ofunc.useAngleUnitAsResult;
+    return *this;
+}
+int BuiltinFunc::RequireddArgumentCount() const
+{
+    if (funct1)
+        return 1;
+    return 2;   // funct2r, funct2i, funct2a
+}
+//========================================================
+
+Variable::Variable(SmartString line)
+{
+    int pos = line.indexOf(SCharT('='));
+    if (pos < 0)
+        return;
+    name = line.left(pos++);         // to definition
+    pos = line.indexOf(schCommentDelimiter, pos);
+    if (pos < 0)    // only variable body
+        body = line.mid(pos);
+    else
+    {
+        pos = line.indexOf("["_ss, pos + 1);
+        if (pos >= 0)
+        {
+            int pos1 = line.indexOf("]"_ss, pos + 1);
+            if (pos1 > 0)    // else no unit
+            {
+                unit = line.mid(pos + 1, pos1 - pos);
+                ++pos1;
+            }
+            else
+                pos1 = pos;
+            desc = line.mid(pos1);
+        }
+    }
+}
+SmartString Variable::Serialize() const
+{
+    SmartString s(name + ssEqString + body);
+    if (!desc.empty())
+        s += ssCommentDelimiterString + desc;
+    else if (!unit.empty())                 // but description is
+        s += ssCommentDelimiterString;
+    if (!unit.empty())
+        s += ssCommentDelimiterString + unit;
+
+    return s;
+}
+inline UTF8String Variable::SerializeUtf8() const
+{
+    return Serialize().toUtf8String();
+}
+
+
 /*========================================================
  * TASK: Creates a single instance of the calculator
  *       if the built-ins are not yet set up sets them up too
@@ -621,56 +749,56 @@ LittleEngine::LittleEngine() : clean(true)
             // they are not 'dirty' and they are 'isnumber's
        BuiltinFunc f;
 
-	   #define SET_BUILTIN_FUNC1(a,b,c)  f.name = #a; f.desc = #b; f.funct1  = c; f.funct2r=nullptr; f.funct2i=nullptr; builtinFunctions[SmartString(#a)] = f;
-	   #define SET_BUILTIN_FUNC2R(a,b,c) f.name = #a; f.desc = #b; f.funct2r = c; f.funct1=nullptr;  f.funct2i=nullptr; builtinFunctions[SmartString(#a)] = f;
-	   #define SET_BUILTIN_FUNC2I(a,b,c) f.name = #a; f.desc = #b; f.funct2i = c; f.funct1=nullptr;  f.funct2r=nullptr; builtinFunctions[SmartString(#a)] = f;
-       SET_BUILTIN_FUNC1(abs, absolute value, abs);
+	   #define SET_BUILTIN_FUNC1(a,b,c)  f.name = #a; f.binDesc = b; f.funct1  = c; f.funct2r=nullptr; f.funct2i=nullptr; builtinFunctions[SmartString(#a)] = f;
+	   #define SET_BUILTIN_FUNC2R(a,b,c) f.name = #a; f.binDesc = b; f.funct2r = c; f.funct1=nullptr;  f.funct2i=nullptr; builtinFunctions[SmartString(#a)] = f;
+	   #define SET_BUILTIN_FUNC2I(a,b,c) f.name = #a; f.binDesc = b; f.funct2i = c; f.funct1=nullptr;  f.funct2r=nullptr; builtinFunctions[SmartString(#a)] = f;
+       SET_BUILTIN_FUNC1(abs, DSC_FuncAbs, abs);
 
 	   f.useAngleUnitAsResult=true;
-       SET_BUILTIN_FUNC1(arcsin , inverse of sine   , Asin);
-       SET_BUILTIN_FUNC1(asin   , inverse of sine   , Asin);
-       SET_BUILTIN_FUNC1(arccos , inverse of cosine , Acos);
-       SET_BUILTIN_FUNC1(acos   , inverse of cosine , Acos);
-       SET_BUILTIN_FUNC1(arctan , inverse of tangent, Atan);
-       SET_BUILTIN_FUNC1(atan   , inverse of tangent, Atan);
+       SET_BUILTIN_FUNC1(arcsin , DSC_FuncASin, Asin);
+       SET_BUILTIN_FUNC1(asin   , DSC_FuncASin, Asin);
+       SET_BUILTIN_FUNC1(arccos , DSC_FuncACos , Acos);
+       SET_BUILTIN_FUNC1(acos   , DSC_FuncACos , Acos);
+       SET_BUILTIN_FUNC1(arctan , DSC_FuncATan, Atan);
+       SET_BUILTIN_FUNC1(atan   , DSC_FuncATan, Atan);
        f.useAngleUnitAsResult=false;
 
        f.useAngleUnit        =true;
-       SET_BUILTIN_FUNC1(sin    , sine      , Sin);
-       SET_BUILTIN_FUNC1(cos    , cosine    , Cos);
-       SET_BUILTIN_FUNC1(cot    , cotangent , Cot);
-       SET_BUILTIN_FUNC1(tan    , tangent   , Tan);
-       SET_BUILTIN_FUNC1(tg     , tangent   , Tan);
-       SET_BUILTIN_FUNC1(ctg    , cotangent , Cot);
+       SET_BUILTIN_FUNC1(sin    , DSC_FuncSin , Sin);
+       SET_BUILTIN_FUNC1(cos    , DSC_FuncCos , Cos);
+       SET_BUILTIN_FUNC1(cot    , DSC_FuncCot , Cot);
+       SET_BUILTIN_FUNC1(tan    , DSC_FuncTan , Tan);
+       SET_BUILTIN_FUNC1(tg     , DSC_FuncTan , Tan);
+       SET_BUILTIN_FUNC1(ctg    , DSC_FuncCot , Cot);
        f.useAngleUnit        =false;
 
-       SET_BUILTIN_FUNC1(asinh  , inverse of hyperbolic sine     , asinh);
-       SET_BUILTIN_FUNC1(acosh  , inverse of hyperbolic cosine   , acosh);
-       SET_BUILTIN_FUNC1(atanh  , inverse of hyperbolic tangent  , atanh);
-       SET_BUILTIN_FUNC1(acoth  , inverse of hyperbolic cotangent, acoth);
-	   SET_BUILTIN_FUNC1(sinh   , hyperbolic sine                , sinh);
+       SET_BUILTIN_FUNC1(asinh  , DSC_FuncASinH, asinh);
+       SET_BUILTIN_FUNC1(acosh  , DSC_FuncACosH, acosh);
+       SET_BUILTIN_FUNC1(atanh  , DSC_FuncATanH, atanh);
+       SET_BUILTIN_FUNC1(acoth  , DSC_FuncACotH, acoth);
+	   SET_BUILTIN_FUNC1(sinh   , DSC_FuncSinH, sinh);
 
-       SET_BUILTIN_FUNC1(cosh, hyperbolic cosine, cosh);
-       SET_BUILTIN_FUNC1(ch, hyperbolic cosine, cosh);
-       SET_BUILTIN_FUNC1(coth, hyperbolic cotangent, coth);
-       SET_BUILTIN_FUNC1(cth, hyperbolic cotangent, coth);
-       SET_BUILTIN_FUNC1(exp, power of e, exp);
-       SET_BUILTIN_FUNC1(fact, factorial, fact);
-       SET_BUILTIN_FUNC1(frac, fractional part, frac);
-       SET_BUILTIN_FUNC1(int, integer part, floor);
-       SET_BUILTIN_FUNC1(lg, base 10 logarithm, log10);
-       SET_BUILTIN_FUNC1(log, natural logarithm, ln);
-       SET_BUILTIN_FUNC1(log2, base 2 logarithm, log2);
-       SET_BUILTIN_FUNC1(log10, base 10 logarithm, log10);
-       SET_BUILTIN_FUNC1(ln, natural logarithm, ln);
-       SET_BUILTIN_FUNC2R(pow, pow(x,y)=x^y, pow);
-       SET_BUILTIN_FUNC2I(root, x-th root of y, root);
-       SET_BUILTIN_FUNC2I(round, round y to x decimals, round);
-       SET_BUILTIN_FUNC1(root3, cubic root of x, root3);
-       SET_BUILTIN_FUNC1(sign, sign of number, Sign);
-       SET_BUILTIN_FUNC1(sqrt, square root, sqrt);
-       SET_BUILTIN_FUNC1(tanh, hyperbolic tangent, tanh);
-       SET_BUILTIN_FUNC1(trunc, truncate to integer, floor);
+       SET_BUILTIN_FUNC1(cosh   , DSC_FuncCosH  , cosh);
+       SET_BUILTIN_FUNC1(ch     , DSC_FuncCosH  , cosh);
+       SET_BUILTIN_FUNC1(coth   , DSC_FuncCotH  , coth);
+       SET_BUILTIN_FUNC1(cth    , DSC_FuncCotH  , coth);
+       SET_BUILTIN_FUNC1(exp    , DSC_FuncExp   , exp);
+       SET_BUILTIN_FUNC1(fact   , DSC_FuncFact  , fact);
+       SET_BUILTIN_FUNC1(frac   , DSC_FuncFrac  , frac);
+       SET_BUILTIN_FUNC1(int    , DSC_FuncInt   , floor);
+       SET_BUILTIN_FUNC1(lg     , DSC_FuncLg    , log10);
+       SET_BUILTIN_FUNC1(log    , DSC_FuncLn    , ln);
+       SET_BUILTIN_FUNC1(log2   , DSC_FuncLog2  , log2);
+       SET_BUILTIN_FUNC1(log10  , DSC_FuncLg    , log10);
+       SET_BUILTIN_FUNC1(ln     , DSC_FuncLn    , ln);
+       SET_BUILTIN_FUNC2R(pow   , DSC_FuncPow   , pow);
+       SET_BUILTIN_FUNC2I(root  , DSC_FuncXRY   , root);
+       SET_BUILTIN_FUNC2I(round , DSC_FuncRound , round);
+       SET_BUILTIN_FUNC1(root3  , DSC_FuncRoot3 , root3);
+       SET_BUILTIN_FUNC1(sign   , DSC_FuncSign  , Sign);
+       SET_BUILTIN_FUNC1(sqrt   , DSC_FuncSqrt  , sqrt);
+       SET_BUILTIN_FUNC1(tanh   , DSC_FuncTanH  , tanh);
+       SET_BUILTIN_FUNC1(trunc  , DSC_FuncTrunc , floor);
     }
 }
 
@@ -1806,6 +1934,46 @@ void Trigger::Raise(EngineErrorCodes tids)
 // end of namespace FalconCalc
 }
 
+// ---------------RowData class implementation ----------------------
+
+RowData::RowData(SmartString name, SmartString body, SmartString descr, SmartString unit)
+{
+    cols[0] = name;
+    cols[1] = body;
+    cols[2] = descr;
+    cols[3] = unit;
+}
+RowData::RowData(SmartString name, SmartString body, BuiltinDescId descId, SmartString unit)
+{
+    cols[0] = name;
+    cols[1] = body;
+#ifdef QTSA_PROJECT
+    cols[2] = GetBuiltinTextForId(descId);
+#else
+    cols[2] = lt.GetTranslationFor(descId);
+#endif
+    cols[3] = unit;
+}
+
+RowData& RowData::operator=(const RowData& o)
+{
+    cols[0] = o.cols[0];
+    cols[1] = o.cols[1];
+    cols[2] = o.cols[2];
+    cols[3] = o.cols[3];
+    return *this;
+}
+bool RowData::operator!=(const RowData& rd)
+{
+    for (int i = 0; i < 4; ++i)
+        if (cols[i] != rd.cols[i])
+            return true;
+    return false;
+}
+bool RowData::operator==(const RowData& rd)
+{
+    return !(*this != rd);
+}
 SmartString RowData::Serialize()
 {	   //	name				  body/definition					description								unit
     return cols[0] + ssEqString + cols[1] + ssCommentDelimiterString + cols[3] + ssCommentDelimiterString + cols[2];

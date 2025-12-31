@@ -463,7 +463,7 @@ void TfrmVariables::tcVarsTabChange(void *sender, nlib::TabChangeParameters para
 			sgBuiltin->SetString(0, i,s.ToWideString());
 			sgBuiltin->SetString(1, i, L"-");
 			sgBuiltin->SetString(2, i, L"-");
-			sgBuiltin->SetString(3, i, bfunc[i].desc.ToWideString());
+			sgBuiltin->SetString(3, i, (wchar_t*)(lt.GetTranslationFor(bfunc[i].binDesc)));  // only in Windows!
 		}
 	}
 	else	//	VARIABLES:
@@ -478,7 +478,7 @@ void TfrmVariables::tcVarsTabChange(void *sender, nlib::TabChangeParameters para
 			sgBuiltin->SetString(0, i, it.second->name.ToWideString());
 			sgBuiltin->SetString(1, i, it.second->value.ToDecimalString(df).ToWideString());
 			sgBuiltin->SetString(2, i, it.second->unit.ToWideString());
-			sgBuiltin->SetString(3, i, it.second->desc.ToWideString());
+			sgBuiltin->SetString(3, i, (wchar_t*)lt.GetTranslationFor(it.second->binDesc)); // only in windows!
 			++i;
 		}
 	}
