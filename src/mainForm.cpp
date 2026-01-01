@@ -95,7 +95,7 @@ static int __ReadAndSplitLine(std::ifstream& fs, SmartStringVector& data)
 
 	SmartStringVector sdata;
 
-	int n = s.indexOf('=');
+	int n = s.indexOf(SCharT('='));
 	if (n < 0)
 		return -1;
 	SmartString name = s.left(++n);	// name + '='
@@ -1033,7 +1033,7 @@ bool TfrmMain::_LoadState(SmartString name)
 				else if (data[3][1] == SCharT('2'))
 					cbThousandSep->SetItemIndex(2);
 				if (chkThousandSep->Checked())
-					lengine->displayFormat.strThousandSeparator = SmartString(cbThousandSep->ItemIndex() > 0 ? cbThousandSep->Text()[0] : ' ');
+					lengine->displayFormat.strThousandSeparator = SmartString(SCharT(cbThousandSep->ItemIndex() > 0 ? cbThousandSep->Text()[0] : wchar_t(' ')) );
 			}
 					// 4: fraction separator
 			if (!data[4].empty() && data[4] == SmartString("1"))
@@ -1621,7 +1621,7 @@ void TfrmMain::chkSepClick(void *sender, nlib::EventParameters param)
     cbThousandSep->SetEnabled(b);
 	if (b && cbThousandSep->ItemIndex() >= 0)
 	{
-		lengine->displayFormat.strThousandSeparator = SmartString(cbThousandSep->ItemIndex() > 0 ? cbThousandSep->Text()[0] : ' ');
+		lengine->displayFormat.strThousandSeparator = SmartString(SCharT(cbThousandSep->ItemIndex() > 0 ? cbThousandSep->Text()[0] : wchar_t(' ')));
 	}
 	else
 		lengine->displayFormat.strThousandSeparator.clear();
@@ -1834,8 +1834,8 @@ void TfrmMain::miCopyBinClick(void *sender, nlib::EventParameters param)
 
 void TfrmMain::cbThousandSepChanged(void *sender, nlib::EventParameters param)
 {
-	lengine->displayFormat.strThousandSeparator =  SmartString(cbThousandSep->ItemIndex() > 0 ? cbThousandSep->Text()[0] : ' ');
-	if(lengine->displayFormat.strThousandSeparator == SmartString('s') )	// 'space'
+	lengine->displayFormat.strThousandSeparator =  SmartString(SCharT(cbThousandSep->ItemIndex() > 0 ? cbThousandSep->Text()[0] : wchar_t(' ')));
+	if(lengine->displayFormat.strThousandSeparator == SmartString(SCharT('s')) )	// 'space'
 		lengine->displayFormat.strThousandSeparator = " ";
 	_ShowResults();
 }

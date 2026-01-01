@@ -151,9 +151,10 @@ public:
 	bool SetLanguage(AppLanguage lang);		// true: must set menus and help text in the selected language
 											// false: already OK
 	wchar_t* GetHelpText() const;		// returns the help text in the current language
-	wchar_t* GetTranslationFor(TextIDs id) const; // returns the text in the current language
-	wchar_t* GetTranslationFor(EngineErrorCodes id) const; // returns the text in the current language
-	char16_t* GetTranslationFor(BuiltinDescId id) const; // returns the text in the current language
+	   // these return the text in the current language
+	wchar_t* GetTranslationFor(TextIDs id) const; 
+	wchar_t* GetTranslationFor(EngineErrorCodes id) const;
+	char16_t* GetTranslationFor(BuiltinDescId id) const;
 private:
 	AppLanguage _lang= AppLanguage::lanNotSet;
 };

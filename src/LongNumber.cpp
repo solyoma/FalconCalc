@@ -628,8 +628,8 @@ SmartString RealNumber::_IntegerPartToString(const SmartString& sNumber, int sig
 
 	switch (format.base)
 	{
-		case DisplayBase::rnbBin: sPrefix = SmartString(1, u'#'); break;
-		case DisplayBase::rnbOct: sPrefix = SmartString(1, u'0'); break;
+		case DisplayBase::rnbBin: sPrefix = SmartString(1, SCharT('#')); break;
+		case DisplayBase::rnbOct: sPrefix = SmartString(1, SCharT('0')); break;
 		case DisplayBase::rnbHex: sPrefix = SmartString("0x")   ; break;
 		default:sDelim = format.strThousandSeparator;  break;	// rnb10
 	}
@@ -642,7 +642,7 @@ SmartString RealNumber::_IntegerPartToString(const SmartString& sNumber, int sig
 	if ( (format.base == DisplayBase::rnbOct && nIntDigits) || (format.useNumberPrefix && !sPrefix.empty()) )
 		res += sPrefix;
 	if (!nIntDigits)
-		res += SmartString('0');
+		res += SCharT('0');
 	else if (!sepLen)		// no separators: just prepare whole integer part of number
 		res += sNumber.left(nIntDigits, chZero);
 	else		// separate 'chunkSize' digit groups by separator and optionally by sPrefix too
@@ -753,7 +753,7 @@ SmartString RealNumber::ToBinaryString(const DisplayFormat& format)
 	if (format.bSignedBinOrHex)
 		++len;
 
-	if ((format.displWidth > 0  && len > (LENGTH_TYPE)format.displWidth) || (bin == u"Inf" && !IsInf()) || (bin == u"NaN" && !IsNaN()))
+	if ((format.displWidth > 0  && len > (LENGTH_TYPE)format.displWidth) || (bin == SmartString("Inf") && !IsInf()) || (bin == SmartString("NaN") && !IsNaN()))
 		return TOO_LONG_STR;
 
 	LENGTH_TYPE lenb = bin.length();
@@ -1426,7 +1426,7 @@ SmartString RealNumber::_DisplData::FormatExponent()
 				expLen = s.length();
 				break;
 			case ExpFormat::rnsfSciTeX:
-				s = SmartString("\\cdot10^{") + s + SmartString('}');	// or "\\cdot10 ^ ("+s+")"
+				s = SmartString("\\cdot10^{") + s + SCharT('}');	// or "\\cdot10 ^ ("+s+")"
 				expLen = s.length() - 2;
 				expW = expLen;
 				break;
@@ -1434,7 +1434,7 @@ SmartString RealNumber::_DisplData::FormatExponent()
 			default:
 				expW = 2 + s.length() * 2 / 3;
 				//s = SmartString(1, SCharT(183)) + u"10^{" + s + u"}";
-				s = SmartString(1, SCharT(0xd7)) + SmartString("10^{") + s + SmartString('}');
+				s = SmartString(1, SCharT(0xd7)) + SmartString("10^{") + s + SCharT('}');
 				expLen = s.length() - 2;
 				break;
 		}
@@ -1448,16 +1448,16 @@ int RealNumber::_PosExpInNumberString(const DisplayFormat fmt, const SmartString
 	switch (fmt.expFormat)
 	{
 		case ExpFormat::rnsfSciHTML:
-			posE = s.indexOf(u'x', fromPos + 1);
+			posE = s.indexOf(SCharT('x'), fromPos + 1);
 			break;
 		case ExpFormat::rnsfSciTeX:
-			posE = s.indexOf(u'\\', fromPos + 1);
+			posE = s.indexOf(SCharT('\\'), fromPos + 1);
 			break;
 		case ExpFormat::rnsfGraph:
 			posE = s.indexOf(SCharT(183), fromPos + 1);
 			break;
 		default: // E
-			posE = s.indexOf(u'E', fromPos + 1);
+			posE = s.indexOf(SCharT('E'), fromPos + 1);
 			break;
 	}
 	return posE;
@@ -1502,7 +1502,7 @@ SmartString RealNumber::_AsSmartString() const
 		for(LENGTH_TYPE n = 0; n < size; ++n,++i)
 			c16 = (c16 << 4) + char16_t(MyCharTToByte(strh[i]));
 		if(c16 < u' ')
-			str.push_back(u'?');
+			str.push_back(SCharT('?'));
 		else
 			str.push_back(SCharT(c16));
 	}
@@ -1549,7 +1549,7 @@ int64_t RealNumber::ToInt64() const
 	if (r.Abs() >= lx)
 		throw("Number can't fit in a 64 bit integer");
 	if (r._exponent > (int)r._numberString.length())
-		r._numberString += SmartString(r._exponent - (int)r._numberString.length(), u'0');
+		r._numberString += SmartString(r._exponent - (int)r._numberString.length(), SCharT('0'));
 	return std::strtoll(r._numberString.toUtf8String().c_str(), nullptr, 10)*r._sign;
 }
 
@@ -2126,7 +2126,7 @@ void RealNumber::_FromNumberString()
 	int positionOfError=0;	// if there's an error in the number string
 
 	int posE = _numberString.indexOf(SCharT('E'));	// if a string has an exponent it must be decimal
-	if (_numberString.left(2) == u"0X")				// hexadecimal string may have an E inside
+	if (_numberString.left(2) == SmartString("0X"))	// hexadecimal string may have an E inside
 		posE = -1;
 
 	if (posE > 0)
@@ -2169,7 +2169,7 @@ void RealNumber::_FromNumberString()
 		}
 		else if (/*posE > 0 &&*/ (_numberString.indexOf(_decPoint) >= 0 || (_exponent && _exponent < (int)_numberString.length()) ))// explicit and implicit (e.g. 1E-3) decimal point
 		{																										 // decimal and not octal string
-			pattern = SmartString("[^0-9") + _decPoint.unicode() + SmartString("]");
+			pattern = SmartString("[^0-9") + _decPoint + SmartString("]");
 			
 			LENGTH_TYPE n = _numberString.find_last_of(_decPoint);
 						// remove leading zeros from integer part, trailing zeros are removed after exponent set
@@ -2194,7 +2194,7 @@ void RealNumber::_FromNumberString()
 	}
 	else		  // decimal string which did not start with a zero, but may end with zeros
 	{
-		pattern = SmartString("[^0-9") + _decPoint.unicode() + SmartString("]");
+		pattern = SmartString("[^0-9") + _decPoint + SmartString("]");
 		
 	}
 
@@ -2483,7 +2483,7 @@ void RealNumber::_AddStrings(RealNumber &left, RealNumber &right) const
 	int trailingchZeros = 0;
 	bool bTrailing = true;
 	int carry = 0;
-	for (LENGTH_TYPE i =  (int)l - 1; i >= 0; --i)
+	for (LENGTH_TYPE i =  (int)l - 1; GEQ0(i); --i)
 	{
 		result[i] = _AddDigits(left._CharAt(i), right._CharAt(i), carry);
 		if (bTrailing && SCharT(result[i]) == chZero)
@@ -2518,7 +2518,7 @@ void RealNumber::_SubtractStrings(RealNumber& minuend, RealNumber& subtrahend) c
 	int borrow = 0;
 	bool bTrailing = true;
 	//int l = _numberString.length();
-	for (LENGTH_TYPE i =  (int)l - 1; i >= 0; --i)
+	for (LENGTH_TYPE i =  (int)l - 1; GEQ0(i); --i)
 	{
 		if (SCharT(result[i] = _SubtractDigits(minuend._CharAt(i), subtrahend._CharAt(i), borrow)) == chZero && bTrailing)
 			++trailingchZeros;

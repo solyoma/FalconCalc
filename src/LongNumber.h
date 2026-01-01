@@ -707,7 +707,7 @@ namespace LongNumber {
 			name = SmartString(cname);
 			unit = SmartString(cunit);
 			if(cdesc)
-				desc = cdesc;
+				desc = SmartString(cdesc);
 		}
 #endif
 

@@ -43,13 +43,13 @@ static wchar_t* __helpTexts[2] = {
                     L"  pi/π, pi2 (=π/2), pi4 (=π/4), ppi (=1/π), tpi (=2/√π), sqpi (=√π), \n"
                     L"  sqrt2 (=√2), psqrt2 (=1/√2)), sqrt3 (=√3), sqrt3P2 (=√3/2)\n\n"
                     L"Built-in physical constants:\n"
-                    L"  au  - astronomical unit [m], c - speed of light in vacuum (definition - exact value) [m/s], \n"
+                    L"  au  - astronomical unit [m], c - speed of light in vacuum (definition - definition) [m/s], \n"
                     L"  h    - Planck constant  [Js], hbar - reduced Planck constant [Js], \n"
                     L"  qe  - elementary charge [As], me - electron mass [kg], mp - proton mass [kg], \n"
                     L"  k    - Boltzmann constant [J/K],G  - Newtonian constant of gravitation [m^3/kg/s^2],\n"
                     L"  gf  - mean value of the gravitational acceleration on Earth (9.81 m/s²)\n"
-                    L"  eps0- electric constant (vacuum permittivity) exact value [F /m]\n"
-                    L"  mu0 - magnetic constant (vacuum permeability) exact value [N/A^2] = 4π·10^(-7), \n"
+                    L"  eps0- electric constant (vacuum permittivity) definition [F /m]\n"
+                    L"  mu0 - magnetic constant (vacuum permeability) definition [N/A^2] = 4π·10^(-7), \n"
                     L"  kc  - Coulomb's constant 1/4π eps0 [N m^2/C^2], LA  - Avogadro's number [1/mol],\n"
                     L"  rf  - Earth's radius [m], rg  - molar gas constant (8.31 J/ mol K), rs - Sun's radius\n"
                     L"  u    - atomic mass unit [1]\n\n"
@@ -268,68 +268,68 @@ static _LanguageTexts_private __texts[] = {
 static _Descriptions_private __descriptions[] = {
     // descriptions of constants
     // mathematical constants
- { DSC_descriptionForE,	         u"Euler's number"								,   u""},
- { DSC_descriptionForPi,	     u"π - half the circumference of a unit circle" ,   u""},
- { DSC_descriptionForRpi,	     u"1/π"                                         ,   u""},
- { DSC_descriptionForTwoPi,	     u"2π"											,   u""},
- { DSC_descriptionForPiP2,	     u"π/2"											,   u""},
- { DSC_descriptionForPiP4,	     u"π/4"                                         ,   u""},
- { DSC_descriptionForRpi2,	     u"2/π"                                         ,   u""},
- { DSC_descriptionForSqpi,	     u"√π"                                          ,   u""},
- { DSC_descriptionForSqrt2,	     u"√2"											,   u""},
- { DSC_descriptionForRsqrt2,	 u"1/√2"									    ,   u""},
- { DSC_descriptionForSqrt3,	     u"√3"											,   u""},
- { DSC_descriptionForSqrt3P2,	 u"sqrt3P2"                                     ,   u""},
- { DSC_descriptionForLn10,	     u"natural logarithm of 10"                     ,   u""},
- { DSC_descriptionForLn2,	     u"natural logarithm of 2 "                     ,   u""},
- { DSC_descriptionForRln10,	     u"1/ln(10)"									,   u""},	
- { DSC_descriptionForRln2,	     u"1/ln(2)"										,   u""},	
- { DSC_descriptionForLog2e,	     u"base 2 logarithm of e"                       ,   u""},
- { DSC_descriptionForLg10e,	     u"base 10 logarithm of e"                      ,   u""},
- { DSC_descriptionForLge,	     u"base 10 logarithm of e"                      ,   u""},
+ { DSC_descriptionForE,	         u"Euler's number"								,   u"Euler szám"},
+ { DSC_descriptionForPi,	     u"π - half the circumference of a unit circle" ,   u"π - az egységkör kerületének fele"},
+ { DSC_descriptionForRpi,	     u"1/π"                                         ,   u"1/π"},
+ { DSC_descriptionForTwoPi,	     u"2π"											,   u"2π"},
+ { DSC_descriptionForPiP2,	     u"π/2"											,   u"π/2"},
+ { DSC_descriptionForPiP4,	     u"π/4"                                         ,   u"π/4"},
+ { DSC_descriptionForRpi2,	     u"2/π"                                         ,   u"2/π"},
+ { DSC_descriptionForSqpi,	     u"√π"                                          ,   u"√π"},
+ { DSC_descriptionForSqrt2,	     u"√2"											,   u"√2"},
+ { DSC_descriptionForRsqrt2,	 u"1/√2"									    ,   u"1/√2"},
+ { DSC_descriptionForSqrt3,	     u"√3"											,   u"√3"},
+ { DSC_descriptionForSqrt3P2,	 u"√3/2"                                        ,   u"√3/2"},
+ { DSC_descriptionForLn10,	     u"natural logarithm of 10"                     ,   u"ln(10)"},
+ { DSC_descriptionForLn2,	     u"natural logarithm of 2 "                     ,   u"ln(2)"},
+ { DSC_descriptionForRln10,	     u"1/ln(10)"									,   u"1/ln(10)"},	
+ { DSC_descriptionForRln2,	     u"1/ln(2)"										,   u"1/ln(2)"},	
+ { DSC_descriptionForLog2e,	     u"base 2 logarithm of e"                       ,   u"e 2-es alapú logaritmusa"},
+ { DSC_descriptionForLg10e,	     u"base 10 logarithm of e"                      ,   u"lg(e)"},
+ { DSC_descriptionForLge,	     u"base 10 logarithm of e"                      ,   u"lg(e)"},
  // physics 					
- { DSC_descriptionForFsc,	     u"fine-structure constant (about 1/137)"		,   u""},	
- { DSC_descriptionForAu,	     u"astronomical unit (exact value)"				,   u""},	
- { DSC_descriptionForC,	         u"speed of light in vacuum (exact value)"		,   u""},		
- { DSC_descriptionForEps0,	     u"εo, vacuum electric permittivity (exact value)", u""},
- { DSC_descriptionForG,	         u"Newtonian constant of gravitation"			,   u""},	
- { DSC_descriptionForGf,	     u"average g on Earth"							,   u""},		
- { DSC_descriptionForH,	         u"Planck constant"								,   u""},	
- { DSC_descriptionForHbar,	     u"reduced Planck constant (h/2π)"				,   u""},		
- { DSC_descriptionForKb,	     u"Boltzmann constant"							,   u""},		
- { DSC_descriptionForKc,	     u"= 1/4πεo Coulomb constant"					,   u""},	
- { DSC_descriptionForLa,	     u"Avogadro constant (exact value)"				,   u""},	
- { DSC_descriptionForMe,	     u"electron mass"								,   u""},	
- { DSC_descriptionForMf,	     u"mass of the Earth"							,   u""},	
- { DSC_descriptionForMp,	     u"proton mass"									,   u""},	
- { DSC_descriptionForMs,	     u"mass of the Sun"								,   u""},	
- { DSC_descriptionForMu0,	     u"4π*10ˉ⁷ vacuum magnetic permeability"		,   u""},	
- { DSC_descriptionForQe,	     u"elementary charge"							,   u""},	
+ { DSC_descriptionForFsc,	     u"fine-structure constant (about 1/137)"		,   u"finomszerkezeti állandó (kb 1/137)"},	
+ { DSC_descriptionForAu,	     u"astronomical unit (definition)"				,   u"csillagászati egység (definíció)"},	
+ { DSC_descriptionForC,	         u"speed of light in vacuum (definition)"		,   u"fénysebesség vákuumban (definíció)"},		
+ { DSC_descriptionForEps0,	     u"ε₀, vacuum electric permittivity (definition)",  u"ε₀ - vákuum permittivitás  (definíció)"},
+ { DSC_descriptionForG,	         u"Newtonian constant of gravitation"			,   u"Newton-féle gravitációs állandó"},	
+ { DSC_descriptionForGf,	     u"average g on Earth"							,   u"g átlagos értéke a Földön"},		
+ { DSC_descriptionForH,	         u"Planck constant"								,   u"Planck állandó"},	
+ { DSC_descriptionForHbar,	     u"reduced Planck constant (h/2π)"				,   u"redukált Plank állandó (h/2π)"},		
+ { DSC_descriptionForKb,	     u"Boltzmann constant"							,   u"Boltzmann állandó"},		
+ { DSC_descriptionForKc,	     u"= 1/4πεo Coulomb constant"					,   u"= 1/4πεo Coulomb konstans"},	
+ { DSC_descriptionForLa,	     u"Avogadro constant (definition)"				,   u"Avogadro-szám (definíció)"},	
+ { DSC_descriptionForMe,	     u"electron mass"								,   u"elektrontömeg"},	
+ { DSC_descriptionForMf,	     u"mass of the Earth"							,   u"a Föld tömege"},	
+ { DSC_descriptionForMp,	     u"proton mass"									,   u"protontömeg"},	
+ { DSC_descriptionForMs,	     u"mass of the Sun"								,   u"a Nap tömege"},	
+ { DSC_descriptionForMu0,	     u"4π*10ˉ⁷ vacuum magnetic permeability"		,   u"4π*10ˉ⁷ a \"vákuum permeabilitása\""},	
+ { DSC_descriptionForQe,	     u"elementary charge"							,   u"elemi töltés"},	
  { DSC_descriptionForRfsc,	     u"reciprocal of the fine structure constant (approx 137)",
-		                         u""},  
- { DSC_descriptionForRf,	     u"radius of the Earth"                         ,   u""},
- { DSC_descriptionForRg,	     u"molar gas constant R"                        ,   u""},
- { DSC_descriptionForRs,	     u"radius of the Sun"                           ,   u""},
- { DSC_descriptionForSb,	     u"Stefan–Boltzmann constant"                   ,   u""},
- { DSC_descriptionForU,	         u"atomic mass unit (=(mass of C12)/12)"        ,   u""}
+		                         u"a finomszerkezeti állandó reciproka (kb. 137)"},  
+ { DSC_descriptionForRf,	     u"radius of the Earth"                         ,   u"a Föld sugara"},
+ { DSC_descriptionForRg,	     u"molar gas constant R"                        ,   u"egyetemes gázállandó"},
+ { DSC_descriptionForRs,	     u"radius of the Sun"                           ,   u"a Nap sugara"},
+ { DSC_descriptionForSb,	     u"Stefan–Boltzmann constant"                   ,   u"Stefan-Boltzmann állandó"},
+ { DSC_descriptionForU,	         u"atomic mass unit (=(mass of C12)/12)"        ,   u"atomi tömegegység (a C12 tömegének 12-ed része)"}
 };
 
 static _ErrorTexts_private __errorTexts[] = {
  // error messages
- { EEC_NO_ERROR,                                L"Result:",             L"Eredmény:" },
- { EEC_VARIABLE_DEFINITION_MISSING,             L"Variable definition missing",L"A változó definíciója hiányzik" },
- { EEC_UNKNOWN_FUNCTION_IN_EXPRESSION,	        L"Unknown function in expression",				L"Ismeretlen függvény a képletben"},
- { EEC_SYNTAX_ERROR,					        L"Syntax error",			L"Hibás szintaxis"},
- { EEC_STACK_ERROR,					            L"Stack error",				L"Stack hiba"},
- { EEC_OVERFLOW_ERROR,					        L"Overflow error",				L"Túlcsordulási hiba"},
- { EEC_DOMAIN_ERROR,					        L"Domain error",				L"Ért. tartomány hiba"},
- { EEC_MISSING_BRACE,					        L"Missing closing '}'",				L"Záró '}' hiányzik"},
- { EEC_LARGE_FOR64,					            L"Number can't fit in a 64 bit integer",				L"A szám hosszabb, mint 64 bit"},
+ { EEC_NO_ERROR,                                L"Result:"                      , L"Eredmény:" },
+ { EEC_VARIABLE_DEFINITION_MISSING,             L"Variable definition missing"  , L"A változó definíciója hiányzik" },
+ { EEC_UNKNOWN_FUNCTION_IN_EXPRESSION,	        L"Unknown function in expression",L"Ismeretlen függvény a képletben"},
+ { EEC_SYNTAX_ERROR,					        L"Syntax error"                 , L"Hibás szintaxis"},
+ { EEC_STACK_ERROR,					            L"Stack error"                  , L"Stack hiba"},
+ { EEC_OVERFLOW_ERROR,					        L"Overflow error"               , L"Túlcsordulási hiba"},
+ { EEC_DOMAIN_ERROR,					        L"Domain error"                 , L"Ért. tartomány hiba"},
+ { EEC_MISSING_BRACE,					        L"Missing closing '}'"          , L"Záró '}' hiányzik"},
+ { EEC_LARGE_FOR64,					            L"Number can't fit in a 64 bit integer", L"A szám hosszabb, mint 64 bit"},
  { EEC_RECURSIVE_FUNCTIONS_ARE_NOT_ALLOWED,		L"Recursive functions are not allowed",	L"Rekurzív függvény. Nem megengedett."},
- { EEC_NO_FUNCTION_ARGUMENT,					L"No function argument",				L"Nincsenek függvényparaméterek"},
- { EEC_MISSING_BINARY_NUMBER,					L"Missing binary number",				L"Hiányzó bináris szám"},
- { EEC_MISMATCHED_PARENTHESIS,					L"Mismatched parenthesis",				L"Zárójelezési hiba"},
- { EEC_INVALID_FUNCTION_DEFINITION,				L"Invalid function definition",
+ { EEC_NO_FUNCTION_ARGUMENT,					L"No function argument"			, L"Nincsenek függvényparaméterek"},
+ { EEC_MISSING_BINARY_NUMBER,					L"Missing binary number"        , L"Hiányzó bináris szám"},
+ { EEC_MISMATCHED_PARENTHESIS,					L"Mismatched parenthesis"       , L"Zárójelezési hiba"},
+ { EEC_INVALID_FUNCTION_DEFINITION,				L"Invalid function definition"  ,
                                                 L"Hibás függvény definíció"},
  { EEC_INVALID_CHARACTER_IN_FUNCTION_DEFINITION,L"Invalid character in function definition",
                                                 L"Hibás karakter a függvény definícióban"},

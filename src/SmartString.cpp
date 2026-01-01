@@ -1,4 +1,4 @@
-#include <stdint.h>
+﻿#include <stdint.h>
 #include <regex>
 #include <cwchar>
 #include <iostream>
@@ -208,7 +208,7 @@ namespace SmString {
 	void SmartString::FromUtf8String(const UTF8String& us)
 	{
 		clear();
-		SCharT sch;
+		SCharT sch(0);
 		int l;
 		for (size_t i = 0; i < us.length(); ++i)
 		{
@@ -328,6 +328,14 @@ namespace SmString {
 	SmartString& SmartString::operator=(const wchar_t* pwcs)
 	{
 		std::wstring ws(pwcs);
+		FromWideString(ws);
+		return *this;
+	}
+	SmartString& SmartString::operator=(const char16_t* pwcs)
+	{
+		std::wstring ws;
+		while (*pwcs)
+			ws += wchar_t(*pwcs++);
 		FromWideString(ws);
 		return *this;
 	}
@@ -507,7 +515,7 @@ namespace SmString {
 	{
 		std::locale loc = std::cout.getloc();
 		for (auto& ch : *this)
-			ch = (char16_t)std::toupper((wchar_t)ch, loc);
+			ch = ch.ToUpper(loc);
 		return *this;
 	}
 	SmartString& SmartString::toLower()
@@ -515,7 +523,7 @@ namespace SmString {
 		std::locale loc = std::cout.getloc();
 		//std::locale loc("HU_hu");
 		for (auto& ch : *this)
-			ch = (char16_t)std::tolower((wchar_t)ch, loc);
+			ch = ch.ToLower(loc);
 		return *this;
 	}
 

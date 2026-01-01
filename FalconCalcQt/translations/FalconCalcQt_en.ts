@@ -63,12 +63,12 @@ Are you sure?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.cpp" line="1049"/>
+        <location filename="../FalconCalcQt.cpp" line="1050"/>
         <source>FalconCalcQt - Error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.cpp" line="1049"/>
+        <location filename="../FalconCalcQt.cpp" line="1050"/>
         <source>%1 is for a newer version of the program.
 There might be problems with it.</source>
         <translation type="unfinished"></translation>
@@ -798,6 +798,371 @@ There might be problems with it.</source>
     <message>
         <location filename="../main.cpp" line="77"/>
         <source>Cannot install language file %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../VariablesFunctionsDialog.cpp" line="30"/>
+        <source>No description available.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../VariablesFunctionsDialog.cpp" line="34"/>
+        <source>Euler&apos;s number</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../VariablesFunctionsDialog.cpp" line="35"/>
+        <source>base 10 logarithm of e</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../VariablesFunctionsDialog.cpp" line="36"/>
+        <source>base 10 logarithm of e</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../VariablesFunctionsDialog.cpp" line="37"/>
+        <source>natural logarithm of 10</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../VariablesFunctionsDialog.cpp" line="38"/>
+        <source>natural logarithm of 2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../VariablesFunctionsDialog.cpp" line="39"/>
+        <source>base 2 logarithm of e</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../VariablesFunctionsDialog.cpp" line="40"/>
+        <source>π - half the circumference of a unit circle</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../VariablesFunctionsDialog.cpp" line="41"/>
+        <source>π/2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../VariablesFunctionsDialog.cpp" line="42"/>
+        <source>π / 4</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../VariablesFunctionsDialog.cpp" line="43"/>
+        <source>1/ln(10)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../VariablesFunctionsDialog.cpp" line="44"/>
+        <source>1/ln(2)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../VariablesFunctionsDialog.cpp" line="45"/>
+        <source>1 / π</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../VariablesFunctionsDialog.cpp" line="46"/>
+        <source>2 / π</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../VariablesFunctionsDialog.cpp" line="47"/>
+        <source>1/√2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../VariablesFunctionsDialog.cpp" line="48"/>
+        <source>√π</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../VariablesFunctionsDialog.cpp" line="49"/>
+        <source>√2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../VariablesFunctionsDialog.cpp" line="50"/>
+        <source>√3</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../VariablesFunctionsDialog.cpp" line="51"/>
+        <source>√3/2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../VariablesFunctionsDialog.cpp" line="52"/>
+        <source>2π</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../VariablesFunctionsDialog.cpp" line="54"/>
+        <source>fine-structure constant (about 1/137)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../VariablesFunctionsDialog.cpp" line="55"/>
+        <source>astronomical unit (exact value)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../VariablesFunctionsDialog.cpp" line="56"/>
+        <source>speed of light in vacuum (exact value)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../VariablesFunctionsDialog.cpp" line="57"/>
+        <source>ε₀ - vacuum permittivity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../VariablesFunctionsDialog.cpp" line="58"/>
+        <source>Newtonian constant of gravitation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../VariablesFunctionsDialog.cpp" line="59"/>
+        <source>average g on Earth</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../VariablesFunctionsDialog.cpp" line="60"/>
+        <source>Planck constant</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../VariablesFunctionsDialog.cpp" line="61"/>
+        <source>reduced Planck constant (h/2π)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../VariablesFunctionsDialog.cpp" line="62"/>
+        <source>Boltzmann constant</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../VariablesFunctionsDialog.cpp" line="63"/>
+        <source>= 1/4πε₀ Coulomb constant</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../VariablesFunctionsDialog.cpp" line="64"/>
+        <source>Avogadro constant (exact value)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../VariablesFunctionsDialog.cpp" line="65"/>
+        <source>electron mass</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../VariablesFunctionsDialog.cpp" line="66"/>
+        <source>mass of the Earth</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../VariablesFunctionsDialog.cpp" line="67"/>
+        <source>proton mass</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../VariablesFunctionsDialog.cpp" line="68"/>
+        <source>mass of the Sun</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../VariablesFunctionsDialog.cpp" line="69"/>
+        <source>4π·10⁻⁷ vacuum magnetic permeability</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../VariablesFunctionsDialog.cpp" line="70"/>
+        <source>elementary charge</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../VariablesFunctionsDialog.cpp" line="71"/>
+        <source>reciprocal of the fine structure constant (approx 137)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../VariablesFunctionsDialog.cpp" line="72"/>
+        <source>radius of the Earth</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../VariablesFunctionsDialog.cpp" line="73"/>
+        <source>molar gas constant R</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../VariablesFunctionsDialog.cpp" line="74"/>
+        <source>radius of the Sun</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../VariablesFunctionsDialog.cpp" line="75"/>
+        <source>Stefan–Boltzmann constant</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../VariablesFunctionsDialog.cpp" line="76"/>
+        <source>atomic mass unit (=(mass of C12)/12)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../VariablesFunctionsDialog.cpp" line="78"/>
+        <source>arc cosine</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../VariablesFunctionsDialog.cpp" line="79"/>
+        <source>inverse of hyperbolic cosine</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../VariablesFunctionsDialog.cpp" line="80"/>
+        <source>inverse of hyperbolic cotangent</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../VariablesFunctionsDialog.cpp" line="81"/>
+        <source>arc sine</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../VariablesFunctionsDialog.cpp" line="82"/>
+        <source>inverse of hyperbolic sine</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../VariablesFunctionsDialog.cpp" line="83"/>
+        <source>arc tangent</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../VariablesFunctionsDialog.cpp" line="84"/>
+        <source>inverse of hyperbolic tangent</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../VariablesFunctionsDialog.cpp" line="85"/>
+        <source>absolute value</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../VariablesFunctionsDialog.cpp" line="86"/>
+        <source>cosine</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../VariablesFunctionsDialog.cpp" line="87"/>
+        <source>hyperbolic cosine</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../VariablesFunctionsDialog.cpp" line="88"/>
+        <source>cotangent</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../VariablesFunctionsDialog.cpp" line="89"/>
+        <source>hyperbolic cotangent</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../VariablesFunctionsDialog.cpp" line="90"/>
+        <source>exponential function eˣ</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../VariablesFunctionsDialog.cpp" line="91"/>
+        <source>factorial</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../VariablesFunctionsDialog.cpp" line="92"/>
+        <source>fractional part</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../VariablesFunctionsDialog.cpp" line="93"/>
+        <source>integer part</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../VariablesFunctionsDialog.cpp" line="94"/>
+        <source>base 10 logarithm)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../VariablesFunctionsDialog.cpp" line="95"/>
+        <source>natural logarithm (base e)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../VariablesFunctionsDialog.cpp" line="96"/>
+        <source>base 2 logarithm</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../VariablesFunctionsDialog.cpp" line="97"/>
+        <source>pow(x,y)=x^y</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../VariablesFunctionsDialog.cpp" line="98"/>
+        <source>cubic root of x</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../VariablesFunctionsDialog.cpp" line="99"/>
+        <source>round y to x decimals</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../VariablesFunctionsDialog.cpp" line="100"/>
+        <source>sign of number</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../VariablesFunctionsDialog.cpp" line="101"/>
+        <source>sine</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../VariablesFunctionsDialog.cpp" line="102"/>
+        <source>hyperbolic sine</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../VariablesFunctionsDialog.cpp" line="103"/>
+        <source>square root</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../VariablesFunctionsDialog.cpp" line="104"/>
+        <source>tangent</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../VariablesFunctionsDialog.cpp" line="105"/>
+        <source>hyperbolic tangent</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../VariablesFunctionsDialog.cpp" line="106"/>
+        <source>truncate to integer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../VariablesFunctionsDialog.cpp" line="107"/>
+        <source>x-th root of y</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

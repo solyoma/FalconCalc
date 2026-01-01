@@ -295,30 +295,30 @@ void Token::_GetOperator(const SmartString &text, LENGTH_TYPE &pos)
 					    trigger.Raise(EEC_ILLEGAL_OPERATOR_AT_LINE_END);
 				    switch(cn)
 				    {               
-					    case '>' : name = u">>"; break;
-                        case '=':  name = u">="; break;
-                        default:   name = u">";  break;
+					    case '>' : name = ">>"; break;
+                        case '=':  name = ">="; break;
+                        default:   name = ">";  break;
 				    };
 				    break;
 	    case '!':  if(!cn) // no more character in line
 					    trigger.Raise(EEC_ILLEGAL_OPERATOR_AT_LINE_END);
 				    switch(cn)
 				    {
-					    case '=' : name =u"!="; break;
-                        default  : name = u"!"; break;
+					    case '=' : name = "!="; break;
+                        default  : name = "!"; break;
 				    };
 				    break;
 	    case '=' :  if(!cn) // no more character in line
 					    trigger.Raise(EEC_ILLEGAL_OPERATOR_AT_LINE_END);
 				    switch(cn)
 				    {
-					    case '=' : name = u"=="; break;
-					    default  : name = u"=";  break;
+					    case '=' : name = "=="; break;
+					    default  : name = "=";  break;
 				    };
 				    break;
 	    case '~' :  if (!cn) // no more character in line
 					    trigger.Raise(EEC_ILLEGAL_OPERATOR_AT_LINE_END);
-                    name = u"~"; 
+                    name = "~"; 
                     break;
 	    default:  *this = s;
 			      return;
@@ -516,20 +516,20 @@ void Token::_GetVarOrFuncOrOperator(const SmartString &text, LENGTH_TYPE &pos)
 {
 	locale loc = cout.getloc();
 	int startpos = pos;
-	wchar_t c = text.at(pos).unicode();
-	while(pos < text.length() && (IsAlnum(c,loc) || c == '_'))
+	SCharT c = text.at(pos);
+	while(pos < text.length() && (IsAlnum(c,loc) || c == SCharT('_')) )
 		c = text.at(++pos).unicode();
 
 	SmartString s = text.mid(startpos, pos - startpos);
-    if (s.length() == 1 && s == u"π")
-        s = u"pi";
+    if (s.length() == 1 && s == SmartString("π") )
+        s = "pi";
 	name = s;  //  set name
-    while(pos < text.length() && isspace(c,loc))
+    while(pos < text.length() && isspace(c.unicode(), loc))
         ++pos; // skip whitespace because of function definitions
     data = MathOperator::Op(s );
 	if( data.oper != opINVALID )
 		type = tknOperator;
-	else if(pos < text.length() && c == '(') // function
+	else if(pos < text.length() && c == SCharT('(') ) // function
     {
 		type = tknFunction;
         ++pos;                 // skip '('
@@ -631,7 +631,7 @@ SmartString BuiltinFunc::Description() const
 	extern QString GetBuiltinTextForId(BuiltinDescId bdId);     // in  VariablesFunctionsQt.cpp
     return GetBuiltinTextForId(binDesc);
 #else
-    return lt.GetTranslationFor(binDesc);
+    return SmartString( lt.GetTranslationFor(binDesc) );
 #endif
 }
 
@@ -938,17 +938,17 @@ int LittleEngine::_InfixToPostFix(const SmartString expr)
     SmartString::const_iterator it;
     for(it = expr.begin(); it != expr.end() && SCharT(*it) != FalconCalc::schCommentDelimiter; ++it)
     {
-#ifdef QTSA_PROJECT
+//#ifdef QTSA_PROJECT               !!!!
+//        wchar_t c = (*it).unicode();
+//#else
         wchar_t c = (*it).unicode();
-#else
-        wchar_t c = *it;
-#endif
+//#endif
 
         if (!quoted)
         {
             if (isspace(c, loc))  // drop spaces inside
                 continue;
-            if (!IsAlnum(c, loc) && pattern.find_first_of(*it) == std::string::npos)
+            if (!IsAlnum(SCharT(c), loc) && pattern.find_first_of(*it) == std::string::npos)
                 trigger.Raise(EEC_ILLEGAL_CHARACTER_NUMBER);
             if (c == u'(')
                 ++bc;
@@ -1245,7 +1245,7 @@ bool LittleEngine::_VariableAssignment(const SmartString &expr, LENGTH_TYPE &pos
  bool LittleEngine::_FunctionAssignment(const SmartString& expr, LENGTH_TYPE& pos, Token* tok)
 {
    calcResult = RealNumber::RN_0;
-   LENGTH_TYPE poseq = expr.find_first_of(u'=', pos);
+   LENGTH_TYPE poseq = expr.find_first_of(SCharT('='), pos);
    if (poseq == SmartString::npos) // no equal sign, maybe a colon?
    {
        poseq = expr.find_first_of(schCommentDelimiter, pos);
@@ -1746,7 +1746,7 @@ bool LittleEngine::LoadUserData(SmartString name)
             while (std::getline(in, line))
             {
                 s = line;
-                if ((i = s.indexOf('#')) >= 0)
+                if ((i = s.indexOf(SCharT('#'))) >= 0)
                     s.erase(s.begin() + i, s.end());
                 s.Trim();
                 if (!s.empty())
@@ -1759,11 +1759,11 @@ bool LittleEngine::LoadUserData(SmartString name)
     if (!__GetLine().empty() && s == SmartString("[Locale]") )   // get locale name
     {
         if (!__GetLine().empty() )
-            if(s.indexOf(u'=') > 0 )   // loc=locale
+            if(s.indexOf(SCharT('=')) > 0 )   // loc=locale
             {
                 if (s != "loc=C"_ss)
                 {
-                    locale      loc(s.mid(s.indexOf(u'=') + 1).toUtf8String().c_str());
+                    locale      loc(s.mid(s.indexOf(SCharT('=')) + 1).toUtf8String().c_str());
                     in.imbue(loc);
                     cout.imbue(loc);
                 }
@@ -1936,21 +1936,21 @@ void Trigger::Raise(EngineErrorCodes tids)
 
 // ---------------RowData class implementation ----------------------
 
-RowData::RowData(SmartString name, SmartString body, SmartString descr, SmartString unit)
+RowData::RowData(SmartString name, SmartString body, SmartString descr, SmartString unit) // user
 {
     cols[0] = name;
     cols[1] = body;
     cols[2] = descr;
     cols[3] = unit;
 }
-RowData::RowData(SmartString name, SmartString body, BuiltinDescId descId, SmartString unit)
+RowData::RowData(SmartString name, SmartString body, BuiltinDescId descId, SmartString unit) // builtin
 {
     cols[0] = name;
     cols[1] = body;
 #ifdef QTSA_PROJECT
     cols[2] = GetBuiltinTextForId(descId);
 #else
-    cols[2] = lt.GetTranslationFor(descId);
+    cols[2] = SmartString(lt.GetTranslationFor(descId));
 #endif
     cols[3] = unit;
 }

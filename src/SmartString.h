@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #ifndef _SMARTSTRING_H
 	#define _SMARTSTRING_H
@@ -19,12 +19,12 @@
 namespace SmString {
 
 	typedef std::string UTF8String;
-	typedef std::u16string String;
+	// typedef std::u16string String;
 
 class SCharT
 {
 	//#pragma message("*** SmartString.h included")
-	char16_t _unicode = 0;
+	char16_t _unicode;
 
 	int _Utf8CodeLengthFrom(const UTF8String& u8str, size_t pos);  // -1: error
 	int _FromString(const UTF8String& u8str, size_t pos);
@@ -32,23 +32,15 @@ class SCharT
 	friend class SmartString;	//unicode string of SChars
 public:
 	SCharT() = default;
-#ifdef QTSA_PROJECT
-	explicit constexpr SCharT(QChar ch)	: _unicode(ch.unicode())	{}
-#endif
-	explicit constexpr SCharT(char ch)	: _unicode((unsigned char) ch)	{}
-	explicit constexpr SCharT(int ch)	: _unicode((unsigned) ch)		{}
-	explicit constexpr SCharT(long ch)	: _unicode((char16_t) ch)		{}
-	SCharT(char16_t sch): _unicode(sch)				{}
-	explicit constexpr SCharT(wchar_t wch) : _unicode((char16_t)wch)		{}
+	explicit constexpr SCharT(char ch)		: _unicode((unsigned char) ch)	{}
+	explicit constexpr SCharT(int ch)		: _unicode((unsigned) ch)		{}
+	explicit constexpr SCharT(long ch)		: _unicode((char16_t) ch)		{}
+	explicit constexpr SCharT(char16_t sch)	: _unicode(sch)					{}
+	explicit constexpr SCharT(wchar_t wch)	: _unicode((char16_t)wch)		{}
 	explicit SCharT(UTF8String& s, int pos = 0)	 // unicode character from utf8 encoded std::string
 	{
 		_FromString(s, pos);
 	}
-
-	//explicit operator String() const
-	//{
-	//	return String(1, _unicode);
-	//}
 
 	operator char16_t() const
 	{
@@ -58,13 +50,6 @@ public:
 	{
 		return (char)(_unicode & 0xFF);
 	}
-
-#ifdef QTSA_PROJECT
-	operator QChar()
-	{
-		return QChar(_unicode);
-	}
-#endif
 
 	SCharT& operator=(size_t n) { _unicode=(char16_t)n; return *this; }
 	SCharT& operator=(int n) { _unicode=(char16_t)n; return *this; }
@@ -101,6 +86,8 @@ public:
 	SCharT ToLower(std::locale loc) { _unicode = std::tolower(_unicode, loc); return *this;}
 };
 
+typedef std::basic_string<SCharT> String;
+
 using UTF8Pos = size_t;			// when used for unicode position (no unicode character in string: same as position)
 // Portable UTF-8 <-> wide helpers (works C++14/17/20+, no Qt, no platform APIs)
 std::wstring utf8_to_wstring(const UTF8String& s);
@@ -131,12 +118,18 @@ public:
 	explicit SmartString(const UTF8String &s);
 	explicit SmartString(const char* pcstr);
 	explicit SmartString(const std::wstring ws);
-	explicit SmartString(const wchar_t* pws) :SmartString(std::wstring(pws)) {}
+	explicit SmartString(const wchar_t* pws)  : SmartString(std::wstring(pws)) {}
+	explicit SmartString(const char16_t* pws) 
+	{ 
+		while(*pws++) 
+			*this += SCharT(*pws);
+		*this += SCharT(0);
+	}
 	SmartString(const SmartString& o) :String(o) {}
 	SmartString(const SmartString& o, size_t pos, size_t len) { *this = o.mid(pos, len); }
 	SmartString(const String &s) : String(s){}
 	SmartString(SCharT ch) : SmartString(1, ch){}
-	SmartString(const SCharT* ps) : String((char16_t*)ps) {}
+	//SmartString(const SCharT* ps) : SmartString(ps) {}
 	SmartString(const SCharT* ps, size_t len) :SmartString(ps) {}
 	SmartString(size_t len, SCharT ch) : String(len, ch)  { }
 	SmartString(String::iterator from, String::iterator to) : String(from, to) { }
@@ -148,6 +141,7 @@ public:
 	SmartString& operator=(const std::wstring ws);
 	SmartString& operator=(const char *pcs);
 	SmartString& operator=(const wchar_t *pwcs);
+	SmartString& operator=(const char16_t *pc16s);
 #ifdef QTSA_PROJECT
 	SmartString& operator=(const QString qs);
 #endif
@@ -163,11 +157,13 @@ public:
 	int CompareWith(const SmartString ss, CaseSens caseSensitivity) const;
 
 	SCharT at(size_t pos, SCharT defch = SCharT(0) ) const;
-	SCharT operator[](size_t pos) const
+	SCharT &operator[](size_t pos) const
 	{ 
+		static SCharT def;
+		def = SCharT(0);
 		if (pos < 0 || pos >= size()) 
-			return SCharT(0);
-		return  SCharT(String::operator[](pos));
+			return def;
+		return  const_cast<SCharT&>(String::operator[](pos) );
 	}
 
 	SmartString left( UTF8Pos n, SCharT fillChar = SCharT(-1)) const; // may extend the string to the right

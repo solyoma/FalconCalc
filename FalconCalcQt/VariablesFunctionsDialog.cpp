@@ -27,26 +27,30 @@ QString GetBuiltinTextForId(BuiltinDescId bdId)
 		const QString	text;
 	};
 	static const QMap<BuiltinDescId, QString> descIdTextMap = {
-		{ DSC_NoDescription,			QObject::tr("No description available.") },
+		{ DSC_NoDescription,			QObject::tr("No description available.") },  // for user defined variables and functions
+	// all others are for built-in constants descriptions
+	
+	// mathematical constants
 		{ DSC_descriptionForE,			QObject::tr("Euler's number") },
-		{ DSC_descriptionForPi,			QObject::tr("π - half the circumference of a unit circle") },
-		{ DSC_descriptionForRpi,		QObject::tr("1 / π") },
-		{ DSC_descriptionForTwoPi,		QObject::tr("2π") },
-		{ DSC_descriptionForPiP2,		QObject::tr("π/2") },
-		{ DSC_descriptionForPiP4,		QObject::tr("π / 4") },
-		{ DSC_descriptionForRpi2,		QObject::tr("2 / π") },
-		{ DSC_descriptionForSqpi,		QObject::tr("√π") },
-		{ DSC_descriptionForSqrt2,		QObject::tr("√2") },
-		{ DSC_descriptionForRsqrt2,		QObject::tr("1/√2") },
-		{ DSC_descriptionForSqrt3,		QObject::tr("√3") },
-		{ DSC_descriptionForSqrt3P2,	QObject::tr("√3/2") },
+		{ DSC_descriptionForLg10e,		QObject::tr("base 10 logarithm of e") },
+		{ DSC_descriptionForLge,		QObject::tr("base 10 logarithm of e") },
 		{ DSC_descriptionForLn10,		QObject::tr("natural logarithm of 10") },
 		{ DSC_descriptionForLn2,		QObject::tr("natural logarithm of 2") },
+		{ DSC_descriptionForLog2e,		QObject::tr("base 2 logarithm of e") },
+		{ DSC_descriptionForPi,			QObject::tr("π - half the circumference of a unit circle") },
+		{ DSC_descriptionForPiP2,		QObject::tr("π/2") },
+		{ DSC_descriptionForPiP4,		QObject::tr("π / 4") },
 		{ DSC_descriptionForRln10,		QObject::tr("1/ln(10)") },
 		{ DSC_descriptionForRln2,		QObject::tr("1/ln(2)") },
-		{ DSC_descriptionForLog2e,		QObject::tr("base 2 logarithm of e") },
-		{ DSC_descriptionForLg10e,		QObject::tr("base 10 logarithm of e") },
-		{ DSC_descriptionForLge,		QObject::tr("base e logarithm of e") },
+		{ DSC_descriptionForRpi,		QObject::tr("1 / π") },
+		{ DSC_descriptionForRpi2,		QObject::tr("2 / π") },
+		{ DSC_descriptionForRsqrt2,		QObject::tr("1/√2") },
+		{ DSC_descriptionForSqpi,		QObject::tr("√π") },
+		{ DSC_descriptionForSqrt2,		QObject::tr("√2") },
+		{ DSC_descriptionForSqrt3,		QObject::tr("√3") },
+		{ DSC_descriptionForSqrt3P2,	QObject::tr("√3/2") },
+		{ DSC_descriptionForTwoPi,		QObject::tr("2π") },
+	// physics,	
 		{ DSC_descriptionForFsc,		QObject::tr("fine-structure constant (about 1/137)") },
 		{ DSC_descriptionForAu,			QObject::tr("astronomical unit (exact value)") },
 		{ DSC_descriptionForC,			QObject::tr("speed of light in vacuum (exact value)") },
@@ -70,22 +74,32 @@ QString GetBuiltinTextForId(BuiltinDescId bdId)
 		{ DSC_descriptionForRs,			QObject::tr("radius of the Sun") },
 		{ DSC_descriptionForSb,			QObject::tr("Stefan–Boltzmann constant") },
 		{ DSC_descriptionForU,			QObject::tr("atomic mass unit (=(mass of C12)/12)") },
-		{ DSC_FuncAbs,					QObject::tr("absolute value") },
+	  // functions
 		{ DSC_FuncACos,					QObject::tr("arc cosine") },
+		{ DSC_FuncACosH,				QObject::tr("inverse of hyperbolic cosine") },
+		{ DSC_FuncACotH,				QObject::tr("inverse of hyperbolic cotangent") },
 		{ DSC_FuncASin,					QObject::tr("arc sine") },
+		{ DSC_FuncASinH,				QObject::tr("inverse of hyperbolic sine") },
 		{ DSC_FuncATan,					QObject::tr("arc tangent") },
+		{ DSC_FuncATanH,				QObject::tr("inverse of hyperbolic tangent") },
+		{ DSC_FuncAbs,					QObject::tr("absolute value") },
 		{ DSC_FuncCos,					QObject::tr("cosine") },
+		{ DSC_FuncCosH,					QObject::tr("hyperbolic cosine") },
+		{ DSC_FuncCot,					QObject::tr("cotangent") },
+		{ DSC_FuncCotH,					QObject::tr("hyperbolic cotangent") },
 		{ DSC_FuncExp,					QObject::tr("exponential function eˣ") },
 		{ DSC_FuncFact,					QObject::tr("factorial") },
 		{ DSC_FuncFrac,					QObject::tr("fractional part") },
 		{ DSC_FuncInt,					QObject::tr("integer part") },
+		{ DSC_FuncLg,					QObject::tr("base 10 logarithm)") },
 		{ DSC_FuncLn,					QObject::tr("natural logarithm (base e)") },
-		{ DSC_FuncLg,					QObject::tr("logarithm (base 10)") },
+		{ DSC_FuncLog2,					QObject::tr("base 2 logarithm") },
 		{ DSC_FuncPow,					QObject::tr("pow(x,y)=x^y") },
-		{ DSC_FuncRound,				QObject::tr("round y to x decimals") },
 		{ DSC_FuncRoot3,				QObject::tr("cubic root of x") },
+		{ DSC_FuncRound,				QObject::tr("round y to x decimals") },
 		{ DSC_FuncSign,					QObject::tr("sign of number") },
 		{ DSC_FuncSin,					QObject::tr("sine") },
+		{ DSC_FuncSinH,					QObject::tr("hyperbolic sine") },
 		{ DSC_FuncSqrt,					QObject::tr("square root") },
 		{ DSC_FuncTan,					QObject::tr("tangent") },
 		{ DSC_FuncTanH,					QObject::tr("hyperbolic tangent") },
@@ -539,6 +553,7 @@ void VariablesFunctionsDialog::_FillBuiltinVarTable()
 	LongNumber::ConstantsMap builtIns;
 	ui.tblBuiltinVars->setRowCount(builtIns.size());
 	DisplayFormat df;
+	df.expFormat = ExpFormat::rnsfGraph;
 	df.nFormatSwitchFracLength = 3;
 	df.nFormatSwitchIntLength = 15;
 	df.strThousandSeparator = " ";
@@ -548,7 +563,7 @@ void VariablesFunctionsDialog::_FillBuiltinVarTable()
 		_AddCellText(ui.tblBuiltinVars, row, 0, bi.second->name.toQString());
 		_AddCellText(ui.tblBuiltinVars, row, 1, bi.second->value.ToDecimalString(df).toQString());
 		_AddCellText(ui.tblBuiltinVars, row, 2, bi.second->unit.toQString());
-		_AddCellText(ui.tblBuiltinVars, row, 3, bi.second->desc.toQString());
+		_AddCellText(ui.tblBuiltinVars, row, 3, GetBuiltinTextForId(bi.second->binDesc));
 		++row;
 	}
 }
