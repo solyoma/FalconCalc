@@ -1,4 +1,4 @@
-
+﻿
 #include <QDir>
 #include <QFile>
 #include <QTextStream>
@@ -893,6 +893,9 @@ void FalconCalcQt::on_chkLittleEndian_toggled(bool b)
 
 void FalconCalcQt::_AngUnitCommon(int au)
 {
+	if (_busy)
+		return;
+
 	lengine->displayFormat.angUnit = (LongNumber::AngularUnit)au;
 	lengine->Calculate();
 	_ShowResults();
@@ -1101,6 +1104,8 @@ bool FalconCalcQt::_LoadState()
 				// 2: exponent display format
 				val = data[2].toInt();	// (0)E: 1E5, (1)HTML: 1<sp>12</sup>, (2)TeX: 1^{12}, (3)normal: 1²³
 				lengine->displayFormat.expFormat = static_cast<ExpFormat>(val);
+
+				// ExpFormat::rnsfUTF8 is only used for the variables table
 				if (lengine->displayFormat.expFormat == ExpFormat::rnsfE)
 					ui.rbNone->setChecked(true);
 				else if (lengine->displayFormat.expFormat == ExpFormat::rnsfSciHTML)
@@ -1130,8 +1135,17 @@ bool FalconCalcQt::_LoadState()
 					ui.chkDecDelim->setChecked(true);
 				// 5: angular unit 0:
 				if (!data[5].isEmpty())
+				{
 					lengine->displayFormat.angUnit = static_cast<AngularUnit>(data[5].toInt());
-
+					switch (lengine->displayFormat.angUnit)
+					{
+						default:
+						case AngularUnit::auDeg:  ui.rbDeg->setChecked(true); break;
+						case AngularUnit::auRad:  ui.rbRad->setChecked(true); break;
+						case AngularUnit::auTurn: ui.rbTurns->setChecked(true); break;
+						case AngularUnit::auGrad: ui.rbGrad->setChecked(true); break;
+					}
+				}
 				--_busy;
 
 				return true;

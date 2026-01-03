@@ -3144,7 +3144,7 @@ static RealNumber _sin(RealNumber r)		// sine	(RAD)	0<= r <= 2*pi =>  0 <= _sin 
 	//sin(x) = x - x^3/3! + x^5/5! - x^7/7! ...
 	int z = (int)RealNumber::MaxLength();// , m = 0;
 
-	RealNumber::SetMaxLength( (int)(1.1 * z) + 2);
+//	RealNumber::SetMaxLength( (int)(1.1 * z) + 2);
 
 	RealNumber b, ee, i, n, s, v;
 
@@ -3166,7 +3166,7 @@ static RealNumber _sin(RealNumber r)		// sine	(RAD)	0<= r <= 2*pi =>  0 <= _sin 
 		r.SetSign(-r.Sign());
 #endif
 			/* Do the loop. */
-	RealNumber 	epsilon(SmartString("1"), 1, -(z + 2));		// hides global epsilon
+//	RealNumber 	epsilon(SmartString("1"), 1, -(z + 2));		// hides global epsilon
 
 	// RealNumber::SetMaxLength(z + 2);
 	//
@@ -3176,16 +3176,16 @@ static RealNumber _sin(RealNumber r)		// sine	(RAD)	0<= r <= 2*pi =>  0 <= _sin 
 	//	 v_{1} = r,  v_{n+1} = v_{n} + ee_{n}, ee_{0} = r,  
 	//						ee_{1} = ee_{0}*(-r^2)/(i_{0}*(i_{0}-1)) = -r^3/3!
 	//							i_{n} = 2*(n+1)+1
-	//						ee_{n+1} = ee_{n}*(-r^2)/(i_{n}*(i_{n}-1) = r*(-r^2)^n/(2*(n+1))!
-	v = ee = r;					  // v == sin(r) = r, e_{1} = r (actual power of r, n = 1) / i!
-	i = RealNumber::RN_3;		  // i == n!, first non linear term is -r³/3!
+	//						ee_{n+1} = ee_{n}*(-r^2)/(i_{n}*(i_{n}-1) = r*(-r^2)^n/(2n+1)! = (-1)^n*r^(2n+1)/(2n+1)!
+	v = ee = r;					  // v == sin(r) = r, e_{n} = (-1)^n*r^(2n+1)/(2n+1)!
+	i = RealNumber::RN_3;		  // i == (2n+1)!, first non linear term (n=0) is -r³/3!
 	while(true)		// => for(i=3; true; i +=2)
 	{
 		ee *= s / (i * (i - RealNumber::RN_1));	  // e_{n+1} = e_{n} * (-r²) / ( (i *(i-1)) * (i-2)! ) 
-		if (ee.Abs() <= epsilon)// x^(2n+1)/(2n+1)! < accuracy
+		if (ee.Abs() <= RealNumber::trigEpsilon)// x^(2n+1)/(2n+1)! < accuracy
 		{
-			RealNumber::SetMaxLength(z);
-			if (v.Abs() < RealNumber("1e-40"))		// max accuracy for sine
+//			RealNumber::SetMaxLength(z);
+			if (v.Abs() < RealNumber::epsilon)		// max accuracy for sine epsilon >= trigEpsilon
 				v = rnNull;
 			return v;
 		}
@@ -3195,6 +3195,7 @@ static RealNumber _sin(RealNumber r)		// sine	(RAD)	0<= r <= 2*pi =>  0 <= _sin 
 			   // never comes here
 	return RealNumber();
 }
+
 RealNumber sin (RealNumber r, AngularUnit angu)		// sine
 {
 
@@ -3213,26 +3214,30 @@ RealNumber sin (RealNumber r, AngularUnit angu)		// sine
 	{
 		case AngularUnit::auDeg:
 		{
-			r = fmod(r, rn360);			 // |r| is < 360
+			r = fmod(r, rn360);			 // |r| is < 360⁰
+									 // border cases
+			if(r >= rn180 && r < rn180 + RealNumber::trigEpsilon)
+				  r = rn180;
+			if (r >= rn270 && r < rn270 + RealNumber::trigEpsilon)
+				r = rn270;
+			if (r >= rn360 - RealNumber::trigEpsilon)
+				r = RealNumber::RN_0;
 			// sine: 		+  | +
 			//			 ------|------
 			//				-  | -
-			if (r > rn90)
+			if (r >= RealNumber::RN_180)
+				sign = -sign;
+
+			if (r >= rn90 && r <= rn180)
+				r = rn180 - r;
+			else if(r > rn180)
 			{
-				if (r < rn180- RealNumber::trigEpsilon)
+				r -= rn180;
+				if (r > rn90)
 					r = rn180 - r;
-				else if (r < rn270 - RealNumber::trigEpsilon)
-				{
-					sign = -sign;
-					r = rn270 - r;
-				}
-				else
-				{
-					r = rn360 - r;
-					sign = -sign;
-				}
 			}
-			// now r is in 0<= r <= 90
+
+			// now r is in 0<= r < 90
 			if (r < RealNumber::trigEpsilon)
 				return RealNumber::RN_0;
 			else if (r == rn30)
@@ -3264,6 +3269,9 @@ RealNumber sin (RealNumber r, AngularUnit angu)		// sine
 		}
 		case AngularUnit::auRad:
 		{
+			r = r / rn2Pi * rn360;
+			return sin(r);
+
 			RealNumber	piP3 = rnPi / RealNumber::RN_3, 
 						piP6 = rnPi / RealNumber::RN_6;
 			r = fmod(r, rn2Pi);	// move r into [0,2π)
