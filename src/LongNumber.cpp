@@ -14,6 +14,10 @@ using namespace SmString;
 
 #include "LongNumber.h"
 
+// const SmString::UTF8String  EpsilonString     = std::string("10^") + std::to_string(-LongNumber::MaxAllowedDigits + 2);		// minimum value used in calculations
+// const SmString::UTF8String  TrigEpsilonString = std::string("10^") + std::to_string(-LongNumber::TrigAccuracy + 2);	// minimum value used in calculations
+
+
 #ifdef _DEBUG		// DEBUG
 
 #include <cstdarg>
@@ -42,14 +46,11 @@ namespace LongNumber {
 
 
 	const SCharT chSpace = SCharT(' ');
-	static RealNumber epsilon(SmartString("1"), 1, -(int)RealNumber::MaxLength());
+						   //		digits	   sign		   exponent
+	RealNumber RealNumber::epsilon(SmartString("1"), 1, -(int)RealNumber::MaxLength());
+	RealNumber RealNumber::trigEpsilon(SmartString("1"), 1, -(int)TrigAccuracy);
 	// atan(0.2)  used in invert trigonometric function calculations
 	const RealNumber atanOfDot2 = RealNumber(".197395559849880758370049765194790293447585103787852101517688940241033969978243785732697828037288044112");
-
-	static void RedefineEpsilon()
-	{
-		epsilon = RealNumber(SmartString("1"), 1, -(int)RealNumber::MaxLength());
-	}
 
 SCharT ByteToMyCharT(uint16_t digit)	// 0 <= digit <= 32
 {
@@ -85,13 +86,18 @@ SmartString ToHexByte(uint16_t byte)
 };
 //--------------------------------------
 SCharT RealNumber::_decPoint;
-LENGTH_TYPE RealNumber::_maxExponent = 1024;	// absolute value of largest possible exponent of 10 in number
-LENGTH_TYPE RealNumber::_maxLength = 60;		// maximum length of number string
+LENGTH_TYPE RealNumber::_maxExponent = MaxAbsExponent;	// absolute value of largest possible exponent of 10 in number
+LENGTH_TYPE RealNumber::_maxLength = MaxAllowedDigits;		// maximum length of number string
+LENGTH_TYPE RealNumber::_maxTrigLength = TrigAccuracy;		// maximum length of number string
 
-const RealNumber RealNumber::RN_0("0"), RealNumber::RN_1("1"), RealNumber::RN_2("2"), RealNumber::RN_3("3"), RealNumber::RN_4("4"), 
-				RealNumber::RN_5("5"), RealNumber::RN_6("6"), RealNumber::RN_7("7"), RealNumber::RN_8("8"), RealNumber::RN_9("9"), RealNumber::RN_10("10"),
-				RealNumber::RN_11("11"), RealNumber::RN_12("12"), RealNumber::RN_13("13"), RealNumber::RN_14("14"), RealNumber::RN_15("15"), RealNumber::RN_16("16"),
-				RealNumber::RN_30("30"), RealNumber::RN_45("45"), RealNumber::RN_60("60"), RealNumber::RN_90("90"), RealNumber::RN_180("180"), RealNumber::RN_270("270"), RealNumber::RN_360("360") ;
+const RealNumber RealNumber::RN_0("0"), RealNumber::RN_1("1"), RealNumber::RN_2("2"), 
+				RealNumber::RN_3("3"), RealNumber::RN_4("4"), RealNumber::RN_5("5"), 
+				RealNumber::RN_6("6"), RealNumber::RN_7("7"), RealNumber::RN_8("8"), 
+				RealNumber::RN_9("9"), RealNumber::RN_10("10"),	RealNumber::RN_11("11"), 
+				RealNumber::RN_12("12"), RealNumber::RN_13("13"), RealNumber::RN_14("14"), 
+				RealNumber::RN_15("15"), RealNumber::RN_16("16"), RealNumber::RN_30("30"), 
+				RealNumber::RN_45("45"), RealNumber::RN_60("60"), RealNumber::RN_90("90"), 
+				RealNumber::RN_180("180"), RealNumber::RN_270("270"), RealNumber::RN_360("360");
 
 // constants and Functions that can be used with REAL_NUMBERs
 static const RealNumber rnNull("0"),
@@ -101,25 +107,25 @@ static const RealNumber rnNull("0"),
 			// as many digits as set, in RealNumber::SetMaxLength(new_length) 
 			//					   1		 2 		   3		 4		   5		 6		   7		 8		   9		10
 			//			0 123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012				  
-				  rnPi("3.141592653589793238462643383279502884197169399375105820974944592307816406286208998628034825342117067980"), // π
-				 rn2Pi("6.283185307179586476925286766559005768394338798750211641949889184615632812572417997256069650684234135960"),	// 2π
-				rnPiP2("1.570796326794896619231321691639751442098584699687552910487472296153908203143104499314017412671058533990"),	// π/2
- 				rnPiP4("0.785398163397448309615660845819875721049292349843776455243736148076954101571552249657008706335529266995"), // π/4
+				  rnPi("3.141592653589793238462643383279502884197169399375105820974944592307816406286208998628034825342117067982"), // π
+				 rn2Pi("6.283185307179586476925286766559005768394338798750211641949889184615632812572417997256069650684234135964"),	// 2π
+				rnPiP2("1.570796326794896619231321691639751442098584699687552910487472296153908203143104499314017412671058533991"),	// π/2
+ 				rnPiP4("0.7853981633974483096156608458198757210492923498437764552437361480769541015715522496570087063355292669955"),// π/4
 				  rnE ("2.718281828459045235360287471352662497757247093699959574966967627724076630353547594571382178525166427427"),	// e
 			   rnSqrt2("1.414213562373095048801688724209698078569671875376948073176679737990732478462107038850387534327641572735"),	// √2
 			   rnSqrt3("1.732050807568877293527446341505872366942805253810380628055806979451933016908800037081146186757248575675"),	// √3
+			  rnSqrtPi("1.772453850905516027298167483341145182797549456122387128213807789852911284591032181374950656738544665415"),	// √π
 				 rnLn2("0.693147180559945309417232121458176568075500134360255254120680009493393621969694715605863326996418687542"),	// ln(2)
-				rnLn10("2.302585092994045684017991454684364207601101488628772976033327900967572609677352480235997205089598298341"), // ln(10)
-			     rnLg2("0.301029995663981195213738894724493026768189881462108541310427461127108189274424509486927252118186172040"),	// lg(2)
-			     rnLgE("0.434294481903251827651128918916605082294397005803666566114453783165864649208870774729224949338431748318"), // lg(e) == 1/ln(10)
+				rnLn10("2.3025850929940456840179914546843642076011014886287729760333279009675726096773524802359972050895982983419"),// ln(10)
+			     rnLg2("0.3010299956639811952137388947244930267681898814621085413104274611271081892744245094869272521181861720406"),// lg(2)
+			     rnLgE("0.4342944819032518276511289189166050822943970058036665661144537831658646492088707747292249493384317483187"),// lg(e) == 1/ln(10)
 				 &rnLge = rnLgE,																									// same name as rnLgE
 			   rnLog2E("1.442695040888963407359924681001892137426645954152985934135449406931109219181185079885526622893506344497"),	// 1/ln(2) == log2(e)
 
-			  rnPSqrt2("0.707106781186547524400844362104849039284835937688474036588339868995366239231053519425193767163820786367"),	// 1/√2
-			 rnSqrt3P2("0.866025403784438646763723170752936183471402626905190314027903489725966508454400018540573093378624287837"),	// 1/(³√π)
-				 rnPPi("0.318309886183790671537767526745028724068919291480912897495334688117793595268453070180227605532506171912"),	// 1/π
-			  rnTwoPPi("0.636619772367581343075535053490057448137838582961825794990669376235587190536906140360455211065012343824"), // 2/π
-			 rnPSqrtPi("1.772453850905516027298167483341145182797549456122387128213807789852911284591032181374950656738544665415"),	// 1/√π
+			  rnPSqrt2("0.7071067811865475244008443621048490392848359376884740365883398689953662392310535194251937671638207863675"),// 1/√2
+			 rnSqrt3P2("0.8660254037844386467637231707529361834714026269051903140279034897259665084544000185405730933786242878378"),// √3 / 2)
+				 rnPPi("0.3183098861837906715377675267450287240689192914809128974953346881177935952684530701802276055325061719121"),// 1/π
+			  rnTwoPPi("0.6366197723675813430755350534900574481378385829618257949906693762355871905369061403604552110650123438243"), // 2/π
 			   &rnPln10 = rnLgE,																									// 1/ln(10) == lg(e)
 				&rnPln2 = rnLog2E,																									// 1/ln(2) == log2(e)
 																																	
@@ -216,7 +222,7 @@ Constant
 			piP2 	{ u"piP2"	, rnPiP2	, u"-"				,DSC_descriptionForPiP2 	,&rnPiP2		},
 			piP4	{ u"piP4"	, rnPiP4	, u"-"				,DSC_descriptionForPiP4	 	,&rnPiP4		},
 			rpi2	{ u"rpi2"	, rnTwoPPi	, u"-"				,DSC_descriptionForRpi2	 	,&rnTwoPPi		},
-			sqpi	{ u"sqpi"	, rnPSqrtPi	, u"-"				,DSC_descriptionForSqpi	 	,&rnPSqrtPi		},
+			sqpi	{ u"sqpi"	, rnSqrtPi	, u"-"				,DSC_descriptionForSqpi	 	,&rnSqrtPi		},
 			sqrt2 	{ u"sqrt2"	, rnSqrt2	, u"-"				,DSC_descriptionForSqrt2	,&rnSqrt2		},
 			rsqrt2 	{ u"rsqrt2"	, rnPSqrt2	, u"-"				,DSC_descriptionForRsqrt2 	,&rnPSqrt2		},
 			sqrt3 	{ u"sqrt3"	, rnSqrt3	, u"-"				,DSC_descriptionForSqrt3	,&rnSqrt3		},
@@ -342,7 +348,19 @@ LENGTH_TYPE RealNumber::SetMaxLength(LENGTH_TYPE mxl)	// returns original
 	LENGTH_TYPE res = _maxLength;
 	_maxLength = mxl;
 	_RescaleConstants((int)mxl);
-	RedefineEpsilon();
+	_RedefineEpsilon();
+	return res;
+}
+
+LENGTH_TYPE RealNumber::SetMaxTrigLength(LENGTH_TYPE mxl)	// returns original
+{
+	if (mxl > TrigAccuracy)
+		mxl = TrigAccuracy;
+
+	LENGTH_TYPE res = _maxLength;
+	_maxLength = mxl;
+	_RescaleConstants((int)mxl);
+	_RedefineEpsilon();
 	return res;
 }
 
@@ -353,7 +371,17 @@ void RealNumber::_RescaleConstants(int maxLength)
 	constantsMap.Rescale(maxLength);
 }
 
-RealNumber RealNumber::operator=(const RealNumber& rn) 
+void RealNumber::_RedefineEpsilon()
+{
+	epsilon = RealNumber(SmartString("1"), 1, -(int)RealNumber::MaxLength());
+}
+
+void RealNumber::_RedefineTrigEpsilon()
+{
+	epsilon = RealNumber(SmartString("1"), 1, -(int)RealNumber::MaxLength());
+}
+
+RealNumber RealNumber::operator=(const RealNumber& rn)
 { 
 	if (&rn != this)	// else same variables: nothing to do
 	{
@@ -1430,6 +1458,25 @@ SmartString RealNumber::_DisplData::FormatExponent()
 				expLen = s.length() - 2;
 				expW = expLen;
 				break;
+			case ExpFormat::rnsfUTF8:
+			{
+				static SmartString ssSuperScripts("⁰¹²³⁴⁵⁶⁷⁸⁹");
+				SmartString sres = SmartString("·10");
+				for (int i = 0; i < s.length(); ++i)
+				{
+					switch (s.at(i).unicode())
+					{
+						case '+': sres += SCharT(u'⁺'); break;
+						case '-': sres += SCharT(u'⁻'); break;
+						default:
+							sres += ssSuperScripts[s.at(i).unicode() - 48];	 // 32= '0'
+					}
+				}
+				s = sres;
+			}
+				expLen = s.length();
+				expW = expLen;
+				break;
 			case ExpFormat::rnsfGraph:
 			default:
 				expW = 2 + s.length() * 2 / 3;
@@ -1547,7 +1594,7 @@ int64_t RealNumber::ToInt64() const
 	RealNumber r = Int();
 	static RealNumber lx((int64_t)LLONG_MAX) ;
 	if (r.Abs() >= lx)
-		throw("Number can't fit in a 64 bit integer");
+		throw(TR("Number can't fit in a 64 bit integer"));
 	if (r._exponent > (int)r._numberString.length())
 		r._numberString += SmartString(r._exponent - (int)r._numberString.length(), SCharT('0'));
 	return std::strtoll(r._numberString.toUtf8String().c_str(), nullptr, 10)*r._sign;
@@ -2062,6 +2109,7 @@ long RealNumber::_AddExponents(long oneExp, long otherExp, EFlagSet& efs) const
 }
 void RealNumber::_AddExponents(int otherExp)
 {
+	_eFlags = EFlagSet();
 	long ex = _AddExponents(_exponent, otherExp, _eFlags);
 	if (_eFlags.count(EFlag::rnfOverflow) || _eFlags.count(EFlag::rnfUnderflow))
 		_SetTooLong();
@@ -2957,7 +3005,7 @@ RealNumber sqrtA(RealNumber r, int accuracy)
 	//Newton's method
 	RealNumber	rootn("1"), // was r),	// n-th iteration step
 				rootnp1,			// n plus 1th step
-				epsilon(SmartString("1"), 1, -accuracy);
+				epsilon(SmartString("1"), 1, -accuracy);	// hides global epsilon
 	
 	// start with half the integer digits
 //	rootn /= RealNumber("1");
@@ -3035,7 +3083,7 @@ RealNumber exp(RealNumber power)						// e^x = e^(int(x)) x e^(frac(x))
 		RealNumber x(rnFracPart), resp(zero), xn, factp(RealNumber::RN_1);
 		// tailor series for fractional part: e^x = 1 + sum_1^inf(x^n/n!)
 		int n = 1;			// fract^n is calculated by fract^n = fract * fract^(n-1)
-		while ((res - resp).Abs() > epsilon || n < (int)RealNumber::MaxLength())
+		while ((res - resp).Abs() > RealNumber::epsilon || n < (int)RealNumber::MaxLength())
 		{
 			resp = res;
 			res += x * factp;
@@ -3047,34 +3095,38 @@ RealNumber exp(RealNumber power)						// e^x = e^(int(x)) x e^(frac(x))
 	return power.Sign() < 0 ? RealNumber::RN_1 / res : res;
 }
 
-RealNumber ln(RealNumber num)
+RealNumber ln(RealNumber x)
 {
-	if (!num.IsValid() || num.Sign() < 0)	// invalid test for both NaN and Inf
+	if (!x.IsValid() || x.Sign() < 0)	// invalid test for both NaN and Inf
 	{
-		num.SetNaN();
-		num.SetEFlag(EFlag::rnfInvalid);
-		return num;
+		x.SetNaN();
+		x.SetEFlag(EFlag::rnfInvalid);
+		return x;
 	}
-	if (num.Sign() < 0 || !num.IsValid() || num.IsNull())
+	if (x.Sign() < 0 || !x.IsValid() || x.IsNull())
 		return NaN;
-	if (num == RealNumber::RN_1)
+	if (x == RealNumber::RN_1)
 		return RealNumber::RN_0;
-	if (num == e)
+	if (x == RealNumber::RN_2)
+		return rnLn2;
+	if (x == RealNumber::RN_10)
+		return rnLn10;
+	if (x == e)
 		return RealNumber::RN_1;
-	// if x = a * 10^y =>  ln(x) = y*ln10 + ln(a)  , where  0 < a < 1
-	RealNumber x(num);
-	int expnt = x.Exponent()+1;
-	RealNumber	rnIntPart = RealNumber(expnt) * rnLn10; // can be +/-
-	x /= RealNumber::TenToThePowerOf(expnt);	// now x is between 0 and 1
+	// if x = a * 10^y =>  ln(x) = y*ln(10) + ln(a)  , where  0 < a < 1
+	int expnt = x.Exponent();
+	RealNumber	rnYxln10 = RealNumber(expnt) * rnLn10; // can be +/-
+	x /= RealNumber::TenToThePowerOf(expnt);	// now x is between 0 and 1 
 	// use Newtons' method (https://en.wikipedia.org/wiki/Natural_logarithm#High_precision)
 	// Solve exp(y/2)-exp(-y/2) = 0, where y = ln x
-	// 								  x - exp(y_n)
-	//	y := lnx y_(n+1) = y_n + 2 * -------------
-	//								  x	+ exp(y_n)
+	// 								   x - exp(y_n)
+	//	y := lnx, y_(n+1) = y_n + 2 * --------------
+	//								   x + exp(y_n)
 	int iter = 0;
-	RealNumber yn(RealNumber::RN_1), ynp1(RealNumber::RN_0), expy,
-				epsilon("1"_ss, 1, -(int)RealNumber::MaxLength() + 2 );
-	while ((yn - ynp1).Abs() > epsilon && iter++ < 1000)
+				// y_n					 y_(n+1)
+	RealNumber yn(RealNumber::RN_1), ynp1(RealNumber::RN_0), expy;
+	constexpr const int LOOPLIMIT = 500;
+	while ((yn - ynp1).Abs() > RealNumber::epsilon && iter++ < LOOPLIMIT)
 	{
 		yn = ynp1;
 		expy = exp(yn);
@@ -3082,7 +3134,9 @@ RealNumber ln(RealNumber num)
 		if (ynp1.IsNaN())
 			break;
 	}
-	yn = yn + rnIntPart;
+	if (iter == LOOPLIMIT)
+		throw(TR("Too many iterations"));
+	yn = yn + rnYxln10;
 	return yn;
 }								// log_base(x)
 RealNumber log(RealNumber x, RealNumber &base)	// logarithm in base 'base'
@@ -3157,11 +3211,18 @@ static RealNumber _sin(RealNumber r)		// sine	(RAD)	0<= r <= 2*pi =>  0 <= _sin 
 		r.SetSign(-r.Sign());
 #endif
 			/* Do the loop. */
-	RealNumber 	epsilon(SmartString("1"), 1, -(z + 2));
+	RealNumber 	epsilon(SmartString("1"), 1, -(z + 2));		// hides global epsilon
 
-	RealNumber::SetMaxLength(z + 2);
+	// RealNumber::SetMaxLength(z + 2);
+	//
+	// sin(r) = r -r^3/3!+r^5/5!-...
+
+	s = -r * r;					  // negative constant, used to get r*(-r^2)^n = (-1)^n*r^(2n+1)
+	//	 v_{1} = r,  v_{n+1} = v_{n} + ee_{n}, ee_{0} = r,  
+	//						ee_{1} = ee_{0}*(-r^2)/(i_{0}*(i_{0}-1)) = -r^3/3!
+	//							i_{n} = 2*(n+1)+1
+	//						ee_{n+1} = ee_{n}*(-r^2)/(i_{n}*(i_{n}-1) = r*(-r^2)^n/(2*(n+1))!
 	v = ee = r;					  // v == sin(r) = r, e_{1} = r (actual power of r, n = 1) / i!
-	s = -r * r;					  // for integer powers of r get -r^2
 	i = RealNumber::RN_3;		  // i == n!, first non linear term is -r³/3!
 	while(true)		// => for(i=3; true; i +=2)
 	{
@@ -3185,7 +3246,6 @@ RealNumber sin (RealNumber r, AngularUnit angu)		// sine
 	int sign = r.Sign();	
 	r.ToAbs();				// calculate sign of |r|
 
-	RealNumber epsilon = RealNumber("1e-40");
 	const RealNumber &rn30 = RealNumber::RN_30,
 					 &rn60 = RealNumber::RN_60,	
 					 &rn45 = RealNumber::RN_45,	
@@ -3204,9 +3264,9 @@ RealNumber sin (RealNumber r, AngularUnit angu)		// sine
 			//				-  | -
 			if (r > rn90)
 			{
-				if (r < rn180-epsilon)
+				if (r < rn180- RealNumber::trigEpsilon)
 					r = rn180 - r;
-				else if (r < rn270 - epsilon)
+				else if (r < rn270 - RealNumber::trigEpsilon)
 				{
 					sign = -sign;
 					r = rn270 - r;
@@ -3218,7 +3278,7 @@ RealNumber sin (RealNumber r, AngularUnit angu)		// sine
 				}
 			}
 			// now r is in 0<= r <= 90
-			if (r < epsilon)
+			if (r < RealNumber::trigEpsilon)
 				return RealNumber::RN_0;
 			else if (r == rn30)
 			{
@@ -3261,24 +3321,24 @@ RealNumber sin (RealNumber r, AngularUnit angu)		// sine
 			if (r > rnPiP2)					// sin(π/2+alpha)=cos(alpha)=sin(π/2-alpha), if alpha < π
 				r = rnPi - r;				// to [0, π/2)
 
-			if (r < epsilon)
+			if (r < RealNumber::trigEpsilon)
 				return RealNumber::RN_0;
-			else if ((r - piP6).Abs() < epsilon)		// 30
+			else if ((r - piP6).Abs() < RealNumber::trigEpsilon)		// 30
 			{
 				r = RealNumber::RN_0;
 				return r.SetSign(sign);
 			}
-			else if ((r - rnPiP4).Abs() < epsilon)		// 45
+			else if ((r - rnPiP4).Abs() < RealNumber::trigEpsilon)		// 45
 			{
 				r = rsqrt2.value;
 				return r.SetSign(sign);
 			}
-			else if ((r - piP3).Abs() < epsilon)		// 60
+			else if ((r - piP3).Abs() < RealNumber::trigEpsilon)		// 60
 			{
 				r = sqrt3P2.value;
 				return r.SetSign(sign);
 			}
-			else if ((r - rnPiP2).Abs() < epsilon)		// 90
+			else if ((r - rnPiP2).Abs() < RealNumber::trigEpsilon)		// 90
 			{
 				r = RealNumber::RN_1;
 				return r.SetSign(sign);
@@ -3513,7 +3573,7 @@ RealNumber atan(RealNumber r, AngularUnit angu)		// arcus tangent
 		e = (n *= s) / i;
 		int esign = e.Sign();
 		e.SetSign(1);		// faster then Abs and no space requirement
-		if (e <= epsilon) 
+		if (e <= RealNumber::trigEpsilon)
 		{
 			RealNumber::SetMaxLength(z);
 			r = (f * a + v);

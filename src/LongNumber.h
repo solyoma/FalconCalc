@@ -13,14 +13,16 @@
 
 namespace LongNumber {
 	//using namespace SmString;				// SmString::SmartString.h
-	extern const SmString::SCharT chZero;				// = (SmString::SCharT)'0';
-	extern const SmString::SCharT chOne;				// = (SmString::SCharT)'1';
-	constexpr const LENGTH_TYPE MaxAllowedDigits = 60;	// !!! Modify this  - no number string can have more digits than this + LengthOverflow
+	constexpr const LENGTH_TYPE MaxAllowedDigits = 120;	// !!! Modify these  - no number string can have more digits than this + LengthOverflow
 	constexpr const LENGTH_TYPE LengthOverFlow = 2;		// add this to the _maxLength of a RealNumber to get the real maximum string length
-	constexpr const LENGTH_TYPE TrigAccuracy = 58;		// max this many digits used for trigonometric functions
+	constexpr const LENGTH_TYPE MaxAbsExponent = 1024;	// absolute value of maximum exponent
+	constexpr const LENGTH_TYPE TrigAccuracy = 120;		// max this many digits used for trigonometric functions. must be <= MaxAllowedDigits
 
 	extern const SmString::SmartString NAN_STR;
 	extern const SmString::SmartString INF_STR;
+
+	extern const SmString::SCharT chZero;				// = (SmString::SCharT)'0';
+	extern const SmString::SCharT chOne;				// = (SmString::SCharT)'1';
 
 #ifdef max
 	#undef max
@@ -55,7 +57,8 @@ namespace LongNumber {
 		rnsfGraph,			// exponent after ^, like -1.234^{567}
 		rnsfSciHTML,		// format for html : -1.234x10<sup>-567</sup>
 		rnsfSciTeX,			// format for TeX: -1.234\cdot10^{-567}
-		rnsfE				// exponent string is 'E'+ [+|-] + exp digits
+		rnsfE,				// exponent string is 'E'+ [+|-] + exp digits
+		rnsfUTF8			// uses UTF-8 superscripts ⁰¹²³⁴⁵⁶⁷⁸⁹ with superscript - sign
 	};
 	enum class HexFormat {
 		rnHexNormal, 		// -1234567890ABCDEF OR EDCBA09876543210	
@@ -264,6 +267,7 @@ namespace LongNumber {
 
 		static LENGTH_TYPE _maxExponent; // absolute value of largest possible exponent of 10 in number
 		static LENGTH_TYPE _maxLength;	//	# of bytes this number may occupy, now === # of digits+LengthOverFlow
+		static LENGTH_TYPE _maxTrigLength;	//	# of bytes trigonometry calculations can use
 		// other private members like _leadingZeros, etc are below the 'public:' parts
 	public:
 		using EFlagSet = std::set<EFlag>;
@@ -305,7 +309,9 @@ namespace LongNumber {
 		// special values
 		static const RealNumber RN_0, RN_1, RN_2, RN_3, RN_4, RN_5, RN_6, RN_7, RN_8, RN_9, RN_10, 
 								RN_11, RN_12, RN_13, RN_14, RN_15, RN_16,
-								RN_30, RN_45, RN_60, RN_90, RN_180, RN_270, RN_360	;
+								RN_30, RN_45, RN_60, RN_90, RN_180, RN_270, RN_360;
+		static RealNumber epsilon;
+		static RealNumber trigEpsilon;
 
 	public:
 		// static functions
@@ -316,6 +322,7 @@ namespace LongNumber {
 			_maxExponent = maxExp;
 		}
 		static LENGTH_TYPE SetMaxLength(LENGTH_TYPE mxl);	// returns original
+		static LENGTH_TYPE SetMaxTrigLength(LENGTH_TYPE mxtrl);	// returns original
 		static RealNumber NumberLimit(bool smallest = false) { RealNumber r; r._exponent = (int)r._maxExponent * (smallest ? 1 : -1); r._numberString = "1"; return r; }
 		static RealNumber TenToThePowerOf(int exp) /* exp is normal 10's exponent*/ 
 		{ 
@@ -323,6 +330,7 @@ namespace LongNumber {
 			x._exponent = exp + 1; 
 			return x; 
 		}
+
 	public:	// operators
 		RealNumber operator=(const RealNumber& rn);
 		RealNumber operator=(RealNumber&& rn) noexcept;
@@ -565,6 +573,8 @@ namespace LongNumber {
 			_FromNumberString();
 		}
 	private:
+		static void _RedefineEpsilon();
+		static void _RedefineTrigEpsilon();
 		RealNumber _Add(const RealNumber& ra, bool negateRa = false) const;
 		RealNumber _Subtract(const RealNumber& ra) const;
 		RealNumber _Multiply(const RealNumber& ra) const;

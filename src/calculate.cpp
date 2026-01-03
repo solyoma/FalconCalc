@@ -48,29 +48,6 @@ using namespace std;
 #define DOMAIN EDOM
 #endif
 
-#if 0
-int __CRTDECL  _matherr (_Inout_ struct _exception *a)
-{
-    if (a->type == OVERFLOW)
-    {
-        {
-#ifdef _MSC_VER
-#else
-            throw EEC_OVERFLOW;
-#endif
-        }
-    }
-    else if(a->type == DOMAIN)
-    {
-#ifdef _MSC_VER
-#else
-        throw EEC_DOMAIN_ERROR;
-#endif
-    }
-    return 1;
-}
-#endif
-
 static bool IsAlpha(SCharT ch, std::locale loc)
 {
     static  const wchar_t* notCtrl = L"!+-*/_.,^%@#()=<>|\\:'\"~&";

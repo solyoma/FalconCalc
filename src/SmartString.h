@@ -19,7 +19,6 @@
 namespace SmString {
 
 	typedef std::string UTF8String;
-	// typedef std::u16string String;
 
 class SCharT
 {

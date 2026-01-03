@@ -297,7 +297,7 @@ static _Descriptions_private __descriptions[] = {
  { DSC_descriptionForH,	         u"Planck constant"								,   u"Planck állandó"},	
  { DSC_descriptionForHbar,	     u"reduced Planck constant (h/2π)"				,   u"redukált Plank állandó (h/2π)"},		
  { DSC_descriptionForKb,	     u"Boltzmann constant"							,   u"Boltzmann állandó"},		
- { DSC_descriptionForKc,	     u"= 1/4πεo Coulomb constant"					,   u"= 1/4πεo Coulomb konstans"},	
+ { DSC_descriptionForKc,	     u"= 1/4πε₀ Coulomb constant"					,   u"= 1/4πε₀ Coulomb konstans"},	
  { DSC_descriptionForLa,	     u"Avogadro constant (definition)"				,   u"Avogadro-szám (definíció)"},	
  { DSC_descriptionForMe,	     u"electron mass"								,   u"elektrontömeg"},	
  { DSC_descriptionForMf,	     u"mass of the Earth"							,   u"a Föld tömege"},	

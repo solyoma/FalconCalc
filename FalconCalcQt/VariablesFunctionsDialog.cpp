@@ -553,7 +553,7 @@ void VariablesFunctionsDialog::_FillBuiltinVarTable()
 	LongNumber::ConstantsMap builtIns;
 	ui.tblBuiltinVars->setRowCount(builtIns.size());
 	DisplayFormat df;
-	df.expFormat = ExpFormat::rnsfGraph;
+	df.expFormat = ExpFormat::rnsfUTF8;
 	df.nFormatSwitchFracLength = 3;
 	df.nFormatSwitchIntLength = 15;
 	df.strThousandSeparator = " ";

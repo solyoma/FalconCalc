@@ -6,10 +6,12 @@
 #ifndef QTSA_PROJECT
 typedef size_t LENGTH_TYPE;
 #define GEQ0(i) (i < 0x80000000)
+#define TR(a)	a
 #else
 #include <QString>
 typedef int LENGTH_TYPE;
 #define GEQ0(i) (i >= 0)
+#define TR(a)	QObject::tr(a)
 #endif
 
 enum BuiltinDescId {
