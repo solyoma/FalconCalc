@@ -514,7 +514,7 @@ There might be problems with it.</source>
     </message>
     <message>
         <location filename="../HelpDialog.ui" line="76"/>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Every Windows has a desktop calculator with many features but FalconCalc offers many unique features not found in them:&lt;/p&gt;&lt;p&gt;FalconCalc continuously evaluates expressions as they are entered. Those may contain built-in and user defined constants&lt;br/&gt;and functions of any number of arguments with many significant digits (currently 65, but can be any number).&lt;/p&gt;&lt;p&gt;Results are displayed simultaneously as decimal, hexadecimal, octal and binary numbers and as a string of characters.&lt;/p&gt;&lt;p&gt;By pressing the corresponding button the result can be copied to the clipboard in any of these formats.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Arithmetic operators&lt;/span&gt;:&lt;br/&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;+&lt;/span&gt;, &lt;span style=&quot; font-weight:600;&quot;&gt;-&lt;/span&gt;, &lt;span style=&quot; font-weight:600;&quot;&gt;*&lt;/span&gt;, &lt;span style=&quot; font-weight:600;&quot;&gt;/&lt;/span&gt;, &lt;span style=&quot; font-weight:600;&quot;&gt;^&lt;/span&gt;(power), &lt;span style=&quot; font-weight:600;&quot;&gt;|&lt;/span&gt; (or &apos;or&apos;), &lt;span style=&quot; font-weight:600;&quot;&gt;&amp;amp;&lt;/span&gt; (or &lt;span style=&quot; font-weight:600;&quot;&gt;and&lt;/span&gt;), &lt;span style=&quot; font-weight:600;&quot;&gt;xor&lt;/span&gt;, &lt;span style=&quot; font-weight:600;&quot;&gt;&amp;lt;&amp;lt;&lt;/span&gt; (or &apos;&lt;span style=&quot; font-weight:600;&quot;&gt;shl&lt;/span&gt;&apos;=shift left), &lt;span style=&quot; font-weight:600;&quot;&gt;&amp;lt;&amp;lt;&lt;/span&gt; (or &apos;&lt;span style=&quot; font-weight:600;&quot;&gt;sh&lt;/span&gt;r&apos;=shift right),&lt;span style=&quot; font-weight:600;&quot;&gt;&lt;br/&gt;%&lt;/span&gt; (or &lt;span style=&quot; font-weight:600;&quot;&gt;mod&lt;/span&gt; - remainder), &lt;span style=&quot; font-weight:600;&quot;&gt;~&lt;/span&gt; (bit negation)&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Logical operators&lt;/span&gt;:&lt;br/&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;== &lt;/span&gt;(equal), &lt;span style=&quot; font-weight:600;&quot;&gt;!=&lt;/span&gt; (not equal), &lt;span style=&quot; font-weight:600;&quot;&gt;&amp;lt;&lt;/span&gt;, &lt;span style=&quot; font-weight:600;&quot;&gt;&amp;gt;&lt;/span&gt;, &lt;span style=&quot; font-weight:600;&quot;&gt;&amp;lt;=&lt;/span&gt;, &lt;span style=&quot; font-weight:600;&quot;&gt;&amp;gt;=&lt;/span&gt; (these results in 1 or 0&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Built-in functions&lt;/span&gt; (alternative names separated by a slash[&apos;/&apos;]):&lt;br/&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;abs(x)&lt;/span&gt;, &lt;span style=&quot; font-weight:600;&quot;&gt;arcsin&lt;/span&gt;/&lt;span style=&quot; font-weight:600;&quot;&gt;asin(x)&lt;/span&gt;, &lt;span style=&quot; font-weight:600;&quot;&gt;arccos&lt;/span&gt;/&lt;span style=&quot; font-weight:600;&quot;&gt;acos(x)&lt;/span&gt;,&lt;span style=&quot; font-weight:600;&quot;&gt; arctan&lt;/span&gt;/&lt;span style=&quot; font-weight:600;&quot;&gt;atan(x)&lt;/span&gt;,&lt;span style=&quot; font-weight:600;&quot;&gt; cos(x)&lt;/span&gt;,&lt;span style=&quot; font-weight:600;&quot;&gt; cosh&lt;/span&gt;/&lt;span style=&quot; font-weight:600;&quot;&gt;ch(x)&lt;/span&gt;, &lt;span style=&quot; font-weight:600;&quot;&gt;coth&lt;/span&gt;/&lt;span style=&quot; font-weight:600;&quot;&gt;cth(x)&lt;/span&gt;, &lt;span style=&quot; font-weight:600;&quot;&gt;exp(x)&lt;/span&gt;, &lt;span style=&quot; font-weight:600;&quot;&gt;fact(n)&lt;/span&gt;, &lt;span style=&quot; font-weight:600;&quot;&gt;frac(x)&lt;/span&gt;,&lt;br/&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;int(x)&lt;/span&gt;, &lt;span style=&quot; font-weight:600;&quot;&gt;log&lt;/span&gt;/&lt;span style=&quot; font-weight:600;&quot;&gt;ln(x&lt;/span&gt;), &lt;span style=&quot; font-weight:600;&quot;&gt;log2(x)&lt;/span&gt;, &lt;span style=&quot; font-weight:600;&quot;&gt;log10&lt;/span&gt;/&lt;span style=&quot; font-weight:600;&quot;&gt;lg(x)&lt;/span&gt;, &lt;span style=&quot; font-weight:600;&quot;&gt;pow(base,power)&lt;/span&gt;, &lt;span style=&quot; font-weight:600;&quot;&gt;root(n,x)&lt;/span&gt;, &lt;span style=&quot; font-weight:600;&quot;&gt;root3(x)&lt;/span&gt;, &lt;span style=&quot; font-weight:600;&quot;&gt;round(n,x)&lt;/span&gt;, &lt;span style=&quot; font-weight:600;&quot;&gt;sign(x)&lt;/span&gt;, &lt;span style=&quot; font-weight:600;&quot;&gt;sin(x)&lt;/span&gt;, &lt;span style=&quot; font-weight:600;&quot;&gt;sinh&lt;/span&gt;/&lt;span style=&quot; font-weight:600;&quot;&gt;sh(x)&lt;/span&gt;,&lt;br/&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;sqrt(x)&lt;/span&gt;, &lt;span style=&quot; font-weight:600;&quot;&gt;tan&lt;/span&gt;/&lt;span style=&quot; font-weight:600;&quot;&gt;tg(x)&lt;/span&gt;, &lt;span style=&quot; font-weight:600;&quot;&gt;trunc(x)&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Built in mathematical constants:&lt;br/&gt;&lt;/span&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;e&lt;/span&gt; (base of the natural logarithm),&lt;span style=&quot; font-weight:600;&quot;&gt; log2e&lt;/span&gt; (base 2 logarithm of e), &lt;span style=&quot; font-weight:600;&quot;&gt;log10e&lt;/span&gt; (or&lt;span style=&quot; font-weight:600;&quot;&gt; lge&lt;/span&gt; - base 10 logarithm of e),&lt;br/&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;ln2&lt;/span&gt; (natural logarithm of 2)\n &lt;span style=&quot; font-weight:600;&quot;&gt;pi/&lt;br/&gt;pi2&lt;/span&gt; (=π/2), &lt;span style=&quot; font-weight:600;&quot;&gt;pi4&lt;/span&gt; (=π/4), &lt;span style=&quot; font-weight:600;&quot;&gt;ppi&lt;/span&gt; (=1/π), &lt;span style=&quot; font-weight:600;&quot;&gt;tpi&lt;/span&gt; (=2/√π), &lt;span style=&quot; font-weight:600;&quot;&gt;sqpi&lt;/span&gt; (=√π), &lt;br/&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;sqrt2&lt;/span&gt; (=√2), &lt;span style=&quot; font-weight:600;&quot;&gt;psqrt2&lt;/span&gt; (=1/√2)), &lt;span style=&quot; font-weight:600;&quot;&gt;sqrt3&lt;/span&gt; (=√3), &lt;span style=&quot; font-weight:600;&quot;&gt;sqrt3P2&lt;/span&gt; (=√3/2)&lt;br/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Built-in physical constants&lt;/span&gt;:&lt;br/&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;au&lt;/span&gt; - astronomical unit [m], &lt;span style=&quot; font-weight:600;&quot;&gt;c&lt;/span&gt; - speed of light in vacuum (definition - exact value) [m/s], &lt;br/&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;h&lt;/span&gt; - Planck constant [Js], &lt;span style=&quot; font-weight:600;&quot;&gt;hba&lt;/span&gt;r - reduced Planck constant [Js],&lt;br/&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;qe&lt;/span&gt; - elementary charge [As], &lt;span style=&quot; font-weight:600;&quot;&gt;me&lt;/span&gt; - electron mass [kg], &lt;span style=&quot; font-weight:600;&quot;&gt;mp&lt;/span&gt; - proton mass [kg],&lt;br/&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;k&lt;/span&gt; - Boltzmann constant [J/K], &lt;span style=&quot; font-weight:600;&quot;&gt;G&lt;/span&gt; - Newtonian constant of gravitation [m^3/kg/s^2],&lt;br/&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;gf&lt;/span&gt; - mean value of the gravitational acceleration on Earth (9.81 m/s²)&lt;br/&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;eps0&lt;/span&gt;- electric constant (vacuum permittivity) exact value [F /m] &lt;span style=&quot; font-weight:600;&quot;&gt;mu0&lt;/span&gt; - magnetic constant (vacuum permeability) exact value [N/A^2] = 4π·10^(-7), &lt;br/&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;kc&lt;/span&gt; - Coulomb&apos;s constant 1/4π eps0 [N m^2/C^2], &lt;span style=&quot; font-weight:600;&quot;&gt;LA&lt;/span&gt; - Avogadro&apos;s number [1/mol],&lt;br/&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;rf&lt;/span&gt; - Earth&apos;s radius [m], &lt;span style=&quot; font-weight:600;&quot;&gt;Rg&lt;/span&gt; - molar gas constant (8.31 J/ mol K), &lt;span style=&quot; font-weight:600;&quot;&gt;rs&lt;/span&gt; - Sun&apos;s radius&lt;br/&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;u&lt;/span&gt; - atomic mass unit [1]&lt;/p&gt;&lt;p&gt;Any number of user constants and functions may be defined with any valid arithmetic formula including other constants and variables. When a variable is modified the value of all dependent variables and functions are automatically changed.&lt;br/&gt;&lt;br/&gt;Functions may have any number of arguments with any names that is different from the name of any built-in function or constant.&lt;/p&gt;&lt;p&gt;Line format: &lt;br/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;name = expression:comment:unit&lt;/span&gt;, where name may be a variable name or a function name like &apos;a(x,y)&lt;/p&gt;&lt;p&gt;Examples:&lt;br/&gt;constR=8.31446261815324:Universal gas constant:J/K/mol&lt;br/&gt;solvequad(a, b, c, s) = (-b + s * sqrt(b ^ 2 - 4 * a * c)) / 2 / a:solves the quadratic equation ax² + bx + c = 0&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Every Windows has a desktop calculator with many features but FalconCalc offers many unique features not found in them:&lt;/p&gt;&lt;p&gt;FalconCalc continuously evaluates expressions as they are entered. Those may contain built-in and user defined constants&lt;br/&gt;and functions of any number of arguments with many significant digits (currently 65, but can be any number).&lt;/p&gt;&lt;p&gt;Results are displayed simultaneously as decimal, hexadecimal, octal and binary numbers and as a string of characters.&lt;/p&gt;&lt;p&gt;By pressing the corresponding button the result can be copied to the clipboard in any of these formats.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Arithmetic operators&lt;/span&gt;:&lt;br/&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;+&lt;/span&gt;, &lt;span style=&quot; font-weight:600;&quot;&gt;-&lt;/span&gt;, &lt;span style=&quot; font-weight:600;&quot;&gt;*&lt;/span&gt;, &lt;span style=&quot; font-weight:600;&quot;&gt;/&lt;/span&gt;, &lt;span style=&quot; font-weight:600;&quot;&gt;^&lt;/span&gt;(power), &lt;span style=&quot; font-weight:600;&quot;&gt;|&lt;/span&gt; (or &apos;or&apos;), &lt;span style=&quot; font-weight:600;&quot;&gt;&amp;amp;&lt;/span&gt; (or &lt;span style=&quot; font-weight:600;&quot;&gt;and&lt;/span&gt;), &lt;span style=&quot; font-weight:600;&quot;&gt;xor&lt;/span&gt;, &lt;span style=&quot; font-weight:600;&quot;&gt;&amp;lt;&amp;lt;&lt;/span&gt; (or &apos;&lt;span style=&quot; font-weight:600;&quot;&gt;shl&lt;/span&gt;&apos;=shift left), &lt;span style=&quot; font-weight:600;&quot;&gt;&amp;lt;&amp;lt;&lt;/span&gt; (or &apos;&lt;span style=&quot; font-weight:600;&quot;&gt;sh&lt;/span&gt;r&apos;=shift right),&lt;span style=&quot; font-weight:600;&quot;&gt;&lt;br/&gt;%&lt;/span&gt; (or &lt;span style=&quot; font-weight:600;&quot;&gt;mod&lt;/span&gt; - remainder), &lt;span style=&quot; font-weight:600;&quot;&gt;~&lt;/span&gt; (bit negation)&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Logical operators&lt;/span&gt;:&lt;br/&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;== &lt;/span&gt;(equal), &lt;span style=&quot; font-weight:600;&quot;&gt;!=&lt;/span&gt; (not equal), &lt;span style=&quot; font-weight:600;&quot;&gt;&amp;lt;&lt;/span&gt;, &lt;span style=&quot; font-weight:600;&quot;&gt;&amp;gt;&lt;/span&gt;, &lt;span style=&quot; font-weight:600;&quot;&gt;&amp;lt;=&lt;/span&gt;, &lt;span style=&quot; font-weight:600;&quot;&gt;&amp;gt;=&lt;/span&gt; (these results in 1 or 0&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Built-in functions&lt;/span&gt; (alternative names separated by a slash[&apos;/&apos;]):&lt;br/&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;abs(x)&lt;/span&gt;, &lt;span style=&quot; font-weight:600;&quot;&gt;arcsin&lt;/span&gt;/&lt;span style=&quot; font-weight:600;&quot;&gt;asin(x)&lt;/span&gt;, &lt;span style=&quot; font-weight:600;&quot;&gt;arccos&lt;/span&gt;/&lt;span style=&quot; font-weight:600;&quot;&gt;acos(x)&lt;/span&gt;,&lt;span style=&quot; font-weight:600;&quot;&gt; arctan&lt;/span&gt;/&lt;span style=&quot; font-weight:600;&quot;&gt;atan(x)&lt;/span&gt;,&lt;span style=&quot; font-weight:600;&quot;&gt; cos(x)&lt;/span&gt;,&lt;span style=&quot; font-weight:600;&quot;&gt; cosh&lt;/span&gt;/&lt;span style=&quot; font-weight:600;&quot;&gt;ch(x)&lt;/span&gt;, &lt;span style=&quot; font-weight:600;&quot;&gt;coth&lt;/span&gt;/&lt;span style=&quot; font-weight:600;&quot;&gt;cth(x)&lt;/span&gt;, &lt;span style=&quot; font-weight:600;&quot;&gt;exp(x)&lt;/span&gt;, &lt;span style=&quot; font-weight:600;&quot;&gt;fact(n)&lt;/span&gt;, &lt;span style=&quot; font-weight:600;&quot;&gt;frac(x)&lt;/span&gt;,&lt;br/&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;int(x)&lt;/span&gt;, &lt;span style=&quot; font-weight:600;&quot;&gt;log&lt;/span&gt;/&lt;span style=&quot; font-weight:600;&quot;&gt;ln(x&lt;/span&gt;), &lt;span style=&quot; font-weight:600;&quot;&gt;log2(x)&lt;/span&gt;, &lt;span style=&quot; font-weight:600;&quot;&gt;log10&lt;/span&gt;/&lt;span style=&quot; font-weight:600;&quot;&gt;lg(x)&lt;/span&gt;, &lt;span style=&quot; font-weight:600;&quot;&gt;pow(base,power)&lt;/span&gt;, &lt;span style=&quot; font-weight:600;&quot;&gt;root(n,x)&lt;/span&gt;, &lt;span style=&quot; font-weight:600;&quot;&gt;root3(x)&lt;/span&gt;, &lt;span style=&quot; font-weight:600;&quot;&gt;round(n,x)&lt;/span&gt;, &lt;span style=&quot; font-weight:600;&quot;&gt;sign(x)&lt;/span&gt;, &lt;span style=&quot; font-weight:600;&quot;&gt;sin(x)&lt;/span&gt;, &lt;span style=&quot; font-weight:600;&quot;&gt;sinh&lt;/span&gt;/&lt;span style=&quot; font-weight:600;&quot;&gt;sh(x)&lt;/span&gt;,&lt;br/&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;sqrt(x)&lt;/span&gt;, &lt;span style=&quot; font-weight:600;&quot;&gt;tan&lt;/span&gt;/&lt;span style=&quot; font-weight:600;&quot;&gt;tg(x)&lt;/span&gt;, &lt;span style=&quot; font-weight:600;&quot;&gt;trunc(x)&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Built in mathematical constants:&lt;br/&gt;&lt;/span&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;e&lt;/span&gt; (base of the natural logarithm),&lt;span style=&quot; font-weight:600;&quot;&gt; log2e&lt;/span&gt; (base 2 logarithm of e), &lt;span style=&quot; font-weight:600;&quot;&gt;log10e&lt;/span&gt; (or&lt;span style=&quot; font-weight:600;&quot;&gt; lge&lt;/span&gt; - base 10 logarithm of e),&lt;br/&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;ln2&lt;/span&gt; (natural logarithm of 2)\n &lt;span style=&quot; font-weight:600;&quot;&gt;pi/&lt;br/&gt;pi2&lt;/span&gt; (=π/2), &lt;span style=&quot; font-weight:600;&quot;&gt;pi4&lt;/span&gt; (=π/4), &lt;span style=&quot; font-weight:600;&quot;&gt;ppi&lt;/span&gt; (=1/π), &lt;span style=&quot; font-weight:600;&quot;&gt;tpi&lt;/span&gt; (=2/√π), &lt;span style=&quot; font-weight:600;&quot;&gt;sqpi&lt;/span&gt; (=√π),&lt;br/&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;sqrt2&lt;/span&gt; (=√2), &lt;span style=&quot; font-weight:600;&quot;&gt;psqrt2&lt;/span&gt; (=1/√2)), &lt;span style=&quot; font-weight:600;&quot;&gt;sqrt3&lt;/span&gt; (=√3), &lt;span style=&quot; font-weight:600;&quot;&gt;sqrt3P2&lt;/span&gt; (=√3/2)&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Built-in physical constants&lt;/span&gt;:&lt;br/&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;a0&lt;/span&gt; - Bohr radius, &lt;span style=&quot; font-weight:600;&quot;&gt;au&lt;/span&gt; - astronomical unit [m], &lt;br/&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;c&lt;/span&gt; - speed of light in vacuum (definition - exact value) [m/s], &lt;span style=&quot; font-weight:600;&quot;&gt;h&lt;/span&gt; - Planck constant [Js], &lt;br/&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;hba&lt;/span&gt;r - reduced Planck constant [Js], &lt;span style=&quot; font-weight:600;&quot;&gt;qe&lt;/span&gt; - elementary charge [As], &lt;span style=&quot; font-weight:600;&quot;&gt;me&lt;/span&gt; - electron mass [kg], &lt;span style=&quot; font-weight:600;&quot;&gt;mp&lt;/span&gt; - proton mass [kg],&lt;br/&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;k&lt;/span&gt; - Boltzmann constant [J/K], &lt;span style=&quot; font-weight:600;&quot;&gt;g&lt;/span&gt; - Newtonian constant of gravitation [m^3/kg/s^2],&lt;br/&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;gf&lt;/span&gt; - mean value of the gravitational acceleration on Earth (9.81 m/s²)&lt;br/&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;eps0&lt;/span&gt;- electric constant (vacuum permittivity) exact value [F /m] &lt;span style=&quot; font-weight:600;&quot;&gt;mu0&lt;/span&gt; - magnetic constant (vacuum permeability) exact value [N/A^2] = 4π·10^(-7), &lt;br/&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;kc&lt;/span&gt; - Coulomb&apos;s constant 1/4π eps0 [N m^2/C^2], &lt;span style=&quot; font-weight:600;&quot;&gt;LA&lt;/span&gt; - Avogadro&apos;s number [1/mol],&lt;br/&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;rf&lt;/span&gt; - Earth&apos;s radius [m], &lt;span style=&quot; font-weight:600;&quot;&gt;Rg&lt;/span&gt; - molar gas constant (8.31 J/ mol K), &lt;span style=&quot; font-weight:600;&quot;&gt;rs&lt;/span&gt; - Sun&apos;s radius&lt;br/&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;u&lt;/span&gt; - atomic mass unit [1]&lt;/p&gt;&lt;p&gt;Any number of user constants and functions may be defined with any valid arithmetic formula including other constants and variables. When a variable is modified the value of all dependent variables and functions are automatically changed.&lt;br/&gt;&lt;br/&gt;Functions may have any number of arguments with any names that is different from the name of any built-in function or constant.&lt;/p&gt;&lt;p&gt;Line format: &lt;br/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;name = expression:comment:unit&lt;/span&gt;, where name may be a variable name or a function name like &apos;a(x,y)&lt;/p&gt;&lt;p&gt;Examples:&lt;br/&gt;constR=8.31446261815324:Universal gas constant:J/K/mol&lt;br/&gt;solvequad(a, b, c, s) = (-b + s * sqrt(b ^ 2 - 4 * a * c)) / 2 / a:solves the quadratic equation ax² + bx + c = 0&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -812,10 +812,6 @@ There might be problems with it.</source>
     </message>
     <message>
         <location filename="../VariablesFunctionsDialog.cpp" line="35"/>
-        <source>base 10 logarithm of e</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../VariablesFunctionsDialog.cpp" line="36"/>
         <source>base 10 logarithm of e</source>
         <translation type="unfinished"></translation>
@@ -901,7 +897,7 @@ There might be problems with it.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../VariablesFunctionsDialog.cpp" line="54"/>
+        <location filename="../VariablesFunctionsDialog.cpp" line="58"/>
         <source>fine-structure constant (about 1/137)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -921,72 +917,72 @@ There might be problems with it.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../VariablesFunctionsDialog.cpp" line="58"/>
+        <location filename="../VariablesFunctionsDialog.cpp" line="59"/>
         <source>Newtonian constant of gravitation</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../VariablesFunctionsDialog.cpp" line="59"/>
+        <location filename="../VariablesFunctionsDialog.cpp" line="60"/>
         <source>average g on Earth</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../VariablesFunctionsDialog.cpp" line="60"/>
+        <location filename="../VariablesFunctionsDialog.cpp" line="61"/>
         <source>Planck constant</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../VariablesFunctionsDialog.cpp" line="61"/>
+        <location filename="../VariablesFunctionsDialog.cpp" line="62"/>
         <source>reduced Planck constant (h/2π)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../VariablesFunctionsDialog.cpp" line="62"/>
+        <location filename="../VariablesFunctionsDialog.cpp" line="63"/>
         <source>Boltzmann constant</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../VariablesFunctionsDialog.cpp" line="63"/>
+        <location filename="../VariablesFunctionsDialog.cpp" line="64"/>
         <source>= 1/4πε₀ Coulomb constant</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../VariablesFunctionsDialog.cpp" line="64"/>
+        <location filename="../VariablesFunctionsDialog.cpp" line="65"/>
         <source>Avogadro constant (exact value)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../VariablesFunctionsDialog.cpp" line="65"/>
+        <location filename="../VariablesFunctionsDialog.cpp" line="66"/>
         <source>electron mass</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../VariablesFunctionsDialog.cpp" line="66"/>
+        <location filename="../VariablesFunctionsDialog.cpp" line="67"/>
         <source>mass of the Earth</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../VariablesFunctionsDialog.cpp" line="67"/>
+        <location filename="../VariablesFunctionsDialog.cpp" line="68"/>
         <source>proton mass</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../VariablesFunctionsDialog.cpp" line="68"/>
+        <location filename="../VariablesFunctionsDialog.cpp" line="69"/>
         <source>mass of the Sun</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../VariablesFunctionsDialog.cpp" line="69"/>
+        <location filename="../VariablesFunctionsDialog.cpp" line="70"/>
         <source>4π·10⁻⁷ vacuum magnetic permeability</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../VariablesFunctionsDialog.cpp" line="70"/>
+        <location filename="../VariablesFunctionsDialog.cpp" line="71"/>
         <source>elementary charge</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../VariablesFunctionsDialog.cpp" line="71"/>
+        <location filename="../VariablesFunctionsDialog.cpp" line="73"/>
         <source>reciprocal of the fine structure constant (approx 137)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -996,172 +992,177 @@ There might be problems with it.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../VariablesFunctionsDialog.cpp" line="73"/>
-        <source>molar gas constant R</source>
+        <location filename="../VariablesFunctionsDialog.cpp" line="54"/>
+        <source>Bohr radius</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../VariablesFunctionsDialog.cpp" line="74"/>
-        <source>radius of the Sun</source>
+        <source>molar gas constant R</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../VariablesFunctionsDialog.cpp" line="75"/>
-        <source>Stefan–Boltzmann constant</source>
+        <source>radius of the Sun</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../VariablesFunctionsDialog.cpp" line="76"/>
+        <source>Stefan–Boltzmann constant</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../VariablesFunctionsDialog.cpp" line="77"/>
         <source>atomic mass unit (=(mass of C12)/12)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../VariablesFunctionsDialog.cpp" line="78"/>
+        <location filename="../VariablesFunctionsDialog.cpp" line="79"/>
         <source>arc cosine</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../VariablesFunctionsDialog.cpp" line="79"/>
+        <location filename="../VariablesFunctionsDialog.cpp" line="80"/>
         <source>inverse of hyperbolic cosine</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../VariablesFunctionsDialog.cpp" line="80"/>
+        <location filename="../VariablesFunctionsDialog.cpp" line="81"/>
         <source>inverse of hyperbolic cotangent</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../VariablesFunctionsDialog.cpp" line="81"/>
+        <location filename="../VariablesFunctionsDialog.cpp" line="82"/>
         <source>arc sine</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../VariablesFunctionsDialog.cpp" line="82"/>
+        <location filename="../VariablesFunctionsDialog.cpp" line="83"/>
         <source>inverse of hyperbolic sine</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../VariablesFunctionsDialog.cpp" line="83"/>
+        <location filename="../VariablesFunctionsDialog.cpp" line="84"/>
         <source>arc tangent</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../VariablesFunctionsDialog.cpp" line="84"/>
+        <location filename="../VariablesFunctionsDialog.cpp" line="85"/>
         <source>inverse of hyperbolic tangent</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../VariablesFunctionsDialog.cpp" line="85"/>
+        <location filename="../VariablesFunctionsDialog.cpp" line="86"/>
         <source>absolute value</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../VariablesFunctionsDialog.cpp" line="86"/>
+        <location filename="../VariablesFunctionsDialog.cpp" line="87"/>
         <source>cosine</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../VariablesFunctionsDialog.cpp" line="87"/>
+        <location filename="../VariablesFunctionsDialog.cpp" line="88"/>
         <source>hyperbolic cosine</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../VariablesFunctionsDialog.cpp" line="88"/>
+        <location filename="../VariablesFunctionsDialog.cpp" line="89"/>
         <source>cotangent</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../VariablesFunctionsDialog.cpp" line="89"/>
+        <location filename="../VariablesFunctionsDialog.cpp" line="90"/>
         <source>hyperbolic cotangent</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../VariablesFunctionsDialog.cpp" line="90"/>
+        <location filename="../VariablesFunctionsDialog.cpp" line="91"/>
         <source>exponential function eˣ</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../VariablesFunctionsDialog.cpp" line="91"/>
+        <location filename="../VariablesFunctionsDialog.cpp" line="92"/>
         <source>factorial</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../VariablesFunctionsDialog.cpp" line="92"/>
+        <location filename="../VariablesFunctionsDialog.cpp" line="93"/>
         <source>fractional part</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../VariablesFunctionsDialog.cpp" line="93"/>
+        <location filename="../VariablesFunctionsDialog.cpp" line="94"/>
         <source>integer part</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../VariablesFunctionsDialog.cpp" line="94"/>
+        <location filename="../VariablesFunctionsDialog.cpp" line="95"/>
         <source>base 10 logarithm)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../VariablesFunctionsDialog.cpp" line="95"/>
+        <location filename="../VariablesFunctionsDialog.cpp" line="96"/>
         <source>natural logarithm (base e)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../VariablesFunctionsDialog.cpp" line="96"/>
+        <location filename="../VariablesFunctionsDialog.cpp" line="97"/>
         <source>base 2 logarithm</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../VariablesFunctionsDialog.cpp" line="97"/>
+        <location filename="../VariablesFunctionsDialog.cpp" line="98"/>
         <source>pow(x,y)=x^y</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../VariablesFunctionsDialog.cpp" line="98"/>
+        <location filename="../VariablesFunctionsDialog.cpp" line="99"/>
         <source>cubic root of x</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../VariablesFunctionsDialog.cpp" line="99"/>
+        <location filename="../VariablesFunctionsDialog.cpp" line="100"/>
         <source>round y to x decimals</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../VariablesFunctionsDialog.cpp" line="100"/>
+        <location filename="../VariablesFunctionsDialog.cpp" line="101"/>
         <source>sign of number</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../VariablesFunctionsDialog.cpp" line="101"/>
+        <location filename="../VariablesFunctionsDialog.cpp" line="102"/>
         <source>sine</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../VariablesFunctionsDialog.cpp" line="102"/>
+        <location filename="../VariablesFunctionsDialog.cpp" line="103"/>
         <source>hyperbolic sine</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../VariablesFunctionsDialog.cpp" line="103"/>
+        <location filename="../VariablesFunctionsDialog.cpp" line="104"/>
         <source>square root</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../VariablesFunctionsDialog.cpp" line="104"/>
+        <location filename="../VariablesFunctionsDialog.cpp" line="105"/>
         <source>tangent</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../VariablesFunctionsDialog.cpp" line="105"/>
+        <location filename="../VariablesFunctionsDialog.cpp" line="106"/>
         <source>hyperbolic tangent</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../VariablesFunctionsDialog.cpp" line="106"/>
+        <location filename="../VariablesFunctionsDialog.cpp" line="107"/>
         <source>truncate to integer</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../VariablesFunctionsDialog.cpp" line="107"/>
+        <location filename="../VariablesFunctionsDialog.cpp" line="108"/>
         <source>x-th root of y</source>
         <translation type="unfinished"></translation>
     </message>

@@ -38,6 +38,7 @@ enum BuiltinDescId {
 	DSC_descriptionForSqrt3P2,	// u"sqrt3P2"
 	DSC_descriptionForTwoPi,	// u"2π"											
 	// physics,	
+	DSC_descriptionForA0,		// u"Bohr sugar"					
 	DSC_descriptionForAu,		// u"astronomical unit (exact value)"					
 	DSC_descriptionForC,		// u"speed of light in vacuum (exact value)"				
 	DSC_descriptionForEps0,		// u"εo

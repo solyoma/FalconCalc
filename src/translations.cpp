@@ -288,6 +288,7 @@ static _Descriptions_private __descriptions[] = {
  { DSC_descriptionForLg10e,	     u"base 10 logarithm of e"                      ,   u"lg(e)"},
  { DSC_descriptionForLge,	     u"base 10 logarithm of e"                      ,   u"lg(e)"},
  // physics 					
+ { DSC_descriptionForA0,	     u"Bohr radius"									,   u"Bohr sugár"},	
  { DSC_descriptionForFsc,	     u"fine-structure constant (about 1/137)"		,   u"finomszerkezeti állandó (kb 1/137)"},	
  { DSC_descriptionForAu,	     u"astronomical unit (definition)"				,   u"csillagászati egység (definíció)"},	
  { DSC_descriptionForC,	         u"speed of light in vacuum (definition)"		,   u"fénysebesség vákuumban (definíció)"},		

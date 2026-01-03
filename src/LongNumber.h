@@ -186,7 +186,7 @@ namespace LongNumber {
 		sqrt2,
 		rsqrt2,
 
-
+		a0,			// Bohr radius
 		au,			// astronomical unit
 		c,			// speed of light in vacuum
 		eps0,		// vacuum electric permittivity

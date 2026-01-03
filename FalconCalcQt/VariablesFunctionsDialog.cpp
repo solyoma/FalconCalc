@@ -51,10 +51,11 @@ QString GetBuiltinTextForId(BuiltinDescId bdId)
 		{ DSC_descriptionForSqrt3P2,	QObject::tr("√3/2") },
 		{ DSC_descriptionForTwoPi,		QObject::tr("2π") },
 	// physics,	
-		{ DSC_descriptionForFsc,		QObject::tr("fine-structure constant (about 1/137)") },
+		{ DSC_descriptionForA0,			QObject::tr("Bohr radius") },
 		{ DSC_descriptionForAu,			QObject::tr("astronomical unit (exact value)") },
 		{ DSC_descriptionForC,			QObject::tr("speed of light in vacuum (exact value)") },
 		{ DSC_descriptionForEps0,		QObject::tr("ε₀ - vacuum permittivity") },
+		{ DSC_descriptionForFsc,		QObject::tr("fine-structure constant (about 1/137)") },
 		{ DSC_descriptionForG,			QObject::tr("Newtonian constant of gravitation") },
 		{ DSC_descriptionForGf,			QObject::tr("average g on Earth") },
 		{ DSC_descriptionForH,			QObject::tr("Planck constant") },
@@ -68,8 +69,8 @@ QString GetBuiltinTextForId(BuiltinDescId bdId)
 		{ DSC_descriptionForMs,			QObject::tr("mass of the Sun") },
 		{ DSC_descriptionForMu0,		QObject::tr("4π·10⁻⁷ vacuum magnetic permeability") },
 		{ DSC_descriptionForQe,			QObject::tr("elementary charge") },
-		{ DSC_descriptionForRfsc,		QObject::tr("reciprocal of the fine structure constant (approx 137)") },
 		{ DSC_descriptionForRf,			QObject::tr("radius of the Earth") },
+		{ DSC_descriptionForRfsc,		QObject::tr("reciprocal of the fine structure constant (approx 137)") },
 		{ DSC_descriptionForRg,			QObject::tr("molar gas constant R") },
 		{ DSC_descriptionForRs,			QObject::tr("radius of the Sun") },
 		{ DSC_descriptionForSb,			QObject::tr("Stefan–Boltzmann constant") },
@@ -574,13 +575,36 @@ void VariablesFunctionsDialog::_FillUserVarTable()
 		ui.tblUserVars->setRowCount(LittleEngine::variables.size());
 
 	RowData rd;
+	auto toUnicodeSuperscriptFormat = [](SmartString s)
+		{
+			static SmartString ssSuperScripts("⁰¹²³⁴⁵⁶⁷⁸⁹");
+			int n = s.indexOf('E');
+			if (n < 0)
+				n = s.indexOf('e');
+			if(n< 0)
+				return s;
+
+			SmartString sres = s.left(n) + SmartString("·10");
+
+			for (int i = n+1; i < s.length(); ++i)
+			{
+				switch (s.at(i).unicode())
+				{
+					case '+': sres += SCharT(u'⁺'); break;
+					case '-': sres += SCharT(u'⁻'); break;
+					default:
+						sres += ssSuperScripts[s.at(i).unicode() - 48 - (n+1)];	 // 32= '0'
+				}
+			}
+			return sres;
+		};
 	for (int row = 0; row < LittleEngine::variables.size(); ++row)
 	{
 		Variable& v = LittleEngine::variables[row];
 		rd = { v.name, v.body, v.unit, v.desc };
 		(*_pUserVarsMap)[v.name] = rd;
 		_AddCellText(ui.tblUserVars, row, 0, v.name.toQString());
-		_AddCellText(ui.tblUserVars, row, 1, v.body.toQString());
+		_AddCellText(ui.tblUserVars, row, 1, toUnicodeSuperscriptFormat(v.body.toQString()));
 		_AddCellText(ui.tblUserVars, row, 2, v.unit.toQString());
 		_AddCellText(ui.tblUserVars, row, 3, v.desc.toQString());
 	}

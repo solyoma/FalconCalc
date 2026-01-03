@@ -131,6 +131,7 @@ static const RealNumber rnNull("0"),
 																																	
 					rnNaN(NAN_STR), rnInf(INF_STR), rnTooLong(TOO_LONG_STR), 
 // physical constants		// they are not rescaled in RealNumber::SetMaxLength()
+			rn_a0		("5.29177210903E-11"),	// Bohr radius (m)
 			rn_au		("149597870700"),		// astronomival unit - definition (m)
 			rn_c		("299792458"),			// speed of light in vacuum	 m⋅s-1
 			rn_eps0		("8.8541878128E-12"),	// vacuum electric permittivity	(F/m)
@@ -162,86 +163,38 @@ RealNumber	zero  		(rnNull),
 			Inf 		(rnInf),
 			tooLong		(rnTooLong);
 
-#ifdef QT_SA_PROJECT
-#else
-	#if 0	
-			descriptionForE		, /* u"Euler's number" */
-			descriptionForPi 	, /* u"π - half the circumference of a unit circle" */
-			descriptionForRpi	, /* u"1/π" */
-			descriptionForTwoPi	, /* u"2π" */
-			descriptionForPiP2 	, /* u"π/2" */
-			descriptionForPiP4	, /* u"π/4" */
-			descriptionForRpi2	, /* u"2/π" */
-			descriptionForSqpi	, /* u"√π" */
-			descriptionForSqrt2	, /* u"√2" */
-			descriptionForRsqrt2, /* u"1/√2" */
-			descriptionForSqrt3	, /* u"√3" */
-			descriptionForSqrt3P2,/* u"sqrt3P2" */
-			descriptionForLn10 	, /* u"natural logarithm of 10" */
-			descriptionForLn2	, /* u"natural logarithm of 2" */
-			descriptionForRln10	, /* u"1/ln(10)" */
-			descriptionForRln2	, /* u"1/ln(2)" */
-			descriptionForLog2e	, /* u"base 2 logarithm of e" */
-			descriptionForLg10e	, /* u"base 10 logarithm of e" */
-			descriptionForLge	, /* u"base 10 logarithm of e" */
-	// physics 					, 													 */
-			descriptionForFsc	, /* u"fine-structure constant (about 1/137)" */
-			descriptionForAu	, /* u"astronomical unit (exact value)" */
-			descriptionForC		, /* u"speed of light in vacuum (exact value)" */
-			descriptionForEps0	, /* u"εo, vacuum electric permittivity (exact value)" */
-			descriptionForG		, /* u"Newtonian constant of gravitation" */
-			descriptionForGf	, /* u"average g on Earth" */
-			descriptionForH		, /* u"Planck constant" */
-			descriptionForHbar	, /* u"reduced Planck constant (h/2π)" */
-			descriptionForKb	, /* u"Boltzmann constant" */
-			descriptionForKc	, /* u"= 1/4πεo Coulomb constant" */
-			descriptionForLa	, /* u"Avogadro constant (exact value)" */
-			descriptionForMe	, /* u"electron mass" */
-			descriptionForMf	, /* u"mass of the Earth" */
-			descriptionForMp	, /* u"proton mass" */
-			descriptionForMs	, /* u"mass of the Sun" */
-			descriptionForMu0	, /* u"4π*10ˉ⁷ vacuum magnetic permeability" */
-			descriptionForQe	, /* u"elementary charge" */
-			descriptionForRfsc	, /* u"reciprocal of the fine structure constant (approx 137)" */
-			descriptionForRf	, /* u"radius of the Earth" */
-			descriptionForRg	, /* u"molar gas constant R" */
-			descriptionForRs	, /* u"radius of the Sun" */
-			descriptionForSb	, /* u"Stefan–Boltzmann constant" */
-			descriptionForU		, /* u"atomic mass unit (=(mass of C12)/12)" */
-	#endif
-#endif
-
 Constant
 	// constant names in this table must be in all lowercase and must be unique
 	// math
 	//				 name     	value		 unit				  explanation
 			e		{ u"e"		, rnE		, u"-"				,DSC_descriptionForE		,&rnE	 		},
-			pi 		{ u"pi"		, rnPi		, u"-"				,DSC_descriptionForPi 	 	,&rnPi	 		},
-			rpi		{ u"rpi"	, rnPPi		, u"-"				,DSC_descriptionForRpi	 	,&rnPPi	 		},
-			twoPi 	{ u"twoPi"	, rn2Pi		, u"-"				,DSC_descriptionForTwoPi	,&rn2Pi	 		},
-			piP2 	{ u"piP2"	, rnPiP2	, u"-"				,DSC_descriptionForPiP2 	,&rnPiP2		},
-			piP4	{ u"piP4"	, rnPiP4	, u"-"				,DSC_descriptionForPiP4	 	,&rnPiP4		},
-			rpi2	{ u"rpi2"	, rnTwoPPi	, u"-"				,DSC_descriptionForRpi2	 	,&rnTwoPPi		},
-			sqpi	{ u"sqpi"	, rnSqrtPi	, u"-"				,DSC_descriptionForSqpi	 	,&rnSqrtPi		},
-			sqrt2 	{ u"sqrt2"	, rnSqrt2	, u"-"				,DSC_descriptionForSqrt2	,&rnSqrt2		},
-			rsqrt2 	{ u"rsqrt2"	, rnPSqrt2	, u"-"				,DSC_descriptionForRsqrt2 	,&rnPSqrt2		},
-			sqrt3 	{ u"sqrt3"	, rnSqrt3	, u"-"				,DSC_descriptionForSqrt3	,&rnSqrt3		},
-			sqrt3P2 { u"sqrt3P2", rnSqrt3P2 , u"-"				,DSC_descriptionForSqrt3P2 	,&rnSqrt3P2  	}, 
-			ln10 	{ u"ln10"	, rnLn10	, u"-"				,DSC_descriptionForLn10 	,&rnLn10		},
-			ln2		{ u"ln2"	, rnLn2		, u"-"				,DSC_descriptionForLn2	 	,&rnLn2			},
-			rln10  	{ u"rln10"	, rnPln10	, u"-"				,DSC_descriptionForRln10	,&rnPln10		},
-			rln2	{ u"rln2"	, rnPln2	, u"-"				,DSC_descriptionForRln2	 	,&rnPln2		},
-			log2e	{ u"log2e"	, rnLog2E	, u"-"				,DSC_descriptionForLog2e	,&rnLog2E		},
 			lg10e	{ u"log10e"	, rnLgE		, u"-"				,DSC_descriptionForLg10e	,&rnLgE			},
 			lge		{ u"lge"	, rnLge		, u"-"				,DSC_descriptionForLge	 	,&rnLge			},
+			ln10 	{ u"ln10"	, rnLn10	, u"-"				,DSC_descriptionForLn10 	,&rnLn10		},
+			ln2		{ u"ln2"	, rnLn2		, u"-"				,DSC_descriptionForLn2	 	,&rnLn2			},
+			log2e	{ u"log2e"	, rnLog2E	, u"-"				,DSC_descriptionForLog2e	,&rnLog2E		},
+			pi 		{ u"pi"		, rnPi		, u"-"				,DSC_descriptionForPi 	 	,&rnPi	 		},
+			piP2 	{ u"piP2"	, rnPiP2	, u"-"				,DSC_descriptionForPiP2 	,&rnPiP2		},
+			piP4	{ u"piP4"	, rnPiP4	, u"-"				,DSC_descriptionForPiP4	 	,&rnPiP4		},
+			rln10  	{ u"rln10"	, rnPln10	, u"-"				,DSC_descriptionForRln10	,&rnPln10		},
+			rln2	{ u"rln2"	, rnPln2	, u"-"				,DSC_descriptionForRln2	 	,&rnPln2		},
+			rpi		{ u"rpi"	, rnPPi		, u"-"				,DSC_descriptionForRpi	 	,&rnPPi	 		},
+			rpi2	{ u"rpi2"	, rnTwoPPi	, u"-"				,DSC_descriptionForRpi2	 	,&rnTwoPPi		},
+			rsqrt2 	{ u"rsqrt2"	, rnPSqrt2	, u"-"				,DSC_descriptionForRsqrt2 	,&rnPSqrt2		},
+			sqpi	{ u"sqpi"	, rnSqrtPi	, u"-"				,DSC_descriptionForSqpi	 	,&rnSqrtPi		},
+			sqrt2 	{ u"sqrt2"	, rnSqrt2	, u"-"				,DSC_descriptionForSqrt2	,&rnSqrt2		},
+			sqrt3 	{ u"sqrt3"	, rnSqrt3	, u"-"				,DSC_descriptionForSqrt3	,&rnSqrt3		},
+			sqrt3P2 { u"sqrt3P2", rnSqrt3P2 , u"-"				,DSC_descriptionForSqrt3P2 	,&rnSqrt3P2  	}, 
+			twoPi 	{ u"twoPi"	, rn2Pi		, u"-"				,DSC_descriptionForTwoPi	,&rn2Pi	 		},
 	// physics 
 	//				 name     	value		 unit				  explanation
-			fsc		{ u"fsc"	, rn_fsc	, u"[-]"			,DSC_descriptionForFsc	 	, nullptr		},
+			a0		{ u"a0"		, rn_a0		, u"[m]"			,DSC_descriptionForA0	 	, nullptr		},
 			au		{ u"au"		, rn_au		, u"[m]"			,DSC_descriptionForAu	 	, nullptr		},
 			c		{ u"c"		, rn_c		, u"[m/s]"			,DSC_descriptionForC	 	, nullptr		},
 			eps0	{ u"eps0"	, rn_eps0	, u"[F/m=As/Vm]"	,DSC_descriptionForEps0	 	, nullptr		},
-			G		{ u"g"		, rn_G		, u"[m²/kg²s²]"		,DSC_descriptionForG	 	, nullptr		},
-			gf		{ u"gE"		, rn_gf		, u"[m/s²]"			,DSC_descriptionForGf	 	, nullptr		},
+			fsc		{ u"fsc"	, rn_fsc	, u"[-]"			,DSC_descriptionForFsc	 	, nullptr		},
+			g		{ u"g"		, rn_G		, u"[m²/kg²s²]"		,DSC_descriptionForG	 	, nullptr		},
+			gf		{ u"ge"		, rn_gf		, u"[m/s²]"			,DSC_descriptionForGf	 	, nullptr		},
 			h		{ u"h"		, rn_h		, u"[Js]"			,DSC_descriptionForH	 	, nullptr		},
 			hbar	{ u"hbar"	, rn_hbar	, u"[Js]"			,DSC_descriptionForHbar	 	, nullptr		},
 			kb		{ u"kb"		, rn_kb		, u"[J/K]"			,DSC_descriptionForKb	 	, nullptr		},
@@ -253,8 +206,8 @@ Constant
 			ms		{ u"ms"		, rn_ms		, u"[kg]"			,DSC_descriptionForMs	 	, nullptr		},
 			mu0		{ u"mu"		, rn_mu0	, u"[N/A²=Vs/m²]"	,DSC_descriptionForMu0	 	, nullptr		},
 			qe		{ u"qe"		, rn_qe		, u"[C]"			,DSC_descriptionForQe	 	, nullptr		},
-			rfsc	{ u"rafs"	, rn_pfsc	, u"[-]"			,DSC_descriptionForRfsc	    , nullptr		},
 			rf		{ u"re"		, rn_rf		, u"[m]"			,DSC_descriptionForRf	 	, nullptr		},
+			rfsc	{ u"rafs"	, rn_pfsc	, u"[-]"			,DSC_descriptionForRfsc	    , nullptr		},
 			rg		{ u"rg"		, rn_rg		, u"[J/mol K]"		,DSC_descriptionForRg	 	, nullptr		},
 			rs		{ u"rs"		, rn_rs		, u"[m]"			,DSC_descriptionForRs	 	, nullptr		},
 			sb		{ u"sb"		, rn_sb		, u"[W/m² K⁴]"		,DSC_descriptionForSb	 	, nullptr		},
@@ -267,29 +220,31 @@ ConstantsMap constantsMap;
 ConstantsMap::ConstantsMap()
 {
 	_AddBuiltIn(e);
-	_AddBuiltIn(pi);
-	_AddBuiltIn(rpi);
-	_AddBuiltIn(twoPi);
-	_AddBuiltIn(piP2);
-	_AddBuiltIn(piP4);
-	_AddBuiltIn(rpi2);
-	_AddBuiltIn(sqpi);
-	_AddBuiltIn(sqrt2);
-	_AddBuiltIn(rsqrt2);
-	_AddBuiltIn(sqrt3);
-	_AddBuiltIn(sqrt3P2);
-	_AddBuiltIn(ln10);
-	_AddBuiltIn(ln2);
-	_AddBuiltIn(rln10);
-	_AddBuiltIn(rln2);
-	_AddBuiltIn(log2e);
 	_AddBuiltIn(lg10e);
 	_AddBuiltIn(lge);
-	_AddBuiltIn(fsc);
+	_AddBuiltIn(ln10);
+	_AddBuiltIn(ln2);
+	_AddBuiltIn(log2e);
+	_AddBuiltIn(pi);
+	_AddBuiltIn(piP2);
+	_AddBuiltIn(piP4);
+	_AddBuiltIn(rln10);
+	_AddBuiltIn(rln2);
+	_AddBuiltIn(rpi);
+	_AddBuiltIn(rpi2);
+	_AddBuiltIn(rsqrt2);
+	_AddBuiltIn(sqpi);
+	_AddBuiltIn(sqrt2);
+	_AddBuiltIn(sqrt3);
+	_AddBuiltIn(sqrt3P2);
+	_AddBuiltIn(twoPi);
+	
+	_AddBuiltIn(a0);
 	_AddBuiltIn(au);
 	_AddBuiltIn(c);
 	_AddBuiltIn(eps0);
-	_AddBuiltIn(G);
+	_AddBuiltIn(fsc);
+	_AddBuiltIn(g);
 	_AddBuiltIn(gf);
 	_AddBuiltIn(h);
 	_AddBuiltIn(hbar);
@@ -302,8 +257,8 @@ ConstantsMap::ConstantsMap()
 	_AddBuiltIn(ms);
 	_AddBuiltIn(mu0);
 	_AddBuiltIn(qe);
-	_AddBuiltIn(rfsc);
 	_AddBuiltIn(rf);
+	_AddBuiltIn(rfsc);
 	_AddBuiltIn(rg);
 	_AddBuiltIn(rs);
 	_AddBuiltIn(sb);
@@ -1462,7 +1417,7 @@ SmartString RealNumber::_DisplData::FormatExponent()
 			{
 				static SmartString ssSuperScripts("⁰¹²³⁴⁵⁶⁷⁸⁹");
 				SmartString sres = SmartString("·10");
-				for (int i = 0; i < s.length(); ++i)
+				for (LENGTH_TYPE i = 0; i < s.length(); ++i)
 				{
 					switch (s.at(i).unicode())
 					{
