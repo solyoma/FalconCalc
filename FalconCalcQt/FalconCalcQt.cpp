@@ -9,6 +9,7 @@
 #include <QtGui>
 #include <QMessageBox>
 #include <QFontDialog>
+#include <QTextDocument>
 
 #include <vector>
 
@@ -94,7 +95,7 @@ FalconCalcQt::FalconCalcQt(QWidget *parent)  : QMainWindow(parent)
 	lengine = new LittleEngine;
 	lengine->displayFormat.useNumberPrefix = ui.chkHexPrefix->isChecked();
 	lengine->displayFormat.strThousandSeparator = " "_ss;
-	lengine->displayFormat.displWidth = 55;
+	lengine->displayFormat.displWidth = LongNumber::MaxAllowedDigits - 3;
 
 	_schemeVector = new FSchemeVector();	// with color schemes light, dark, black and blue
 	_LoadState();
@@ -525,7 +526,7 @@ void FalconCalcQt::on_btnBinary_clicked()
 void FalconCalcQt::on_btnDecimal_clicked()	   // decimal display chaged
 {
 	QString text = ui.lblDec->text();
-	int pos = text.indexOf(QChar(183));
+	int pos = text.indexOf(QChar(183));		   // '·'
 	if (pos > 0)							   // sci or eng with display mode "normal"
 	{
 		text.replace(pos, 8, "E"); // replace "·10<sup>" with E
@@ -1424,6 +1425,31 @@ void FalconCalcQt::_AddToHistory(QString infix)
 	}
 }
 
+/*=============================================================
+ * TASK   : get pixel width of a HTML formatted (Rich text) string
+ *			that will be shown on a label
+ * PARAMS : font - it should be drawn with this font
+ *			qs   - string to display
+ * EXPECTS:
+ * GLOBALS:
+ * RETURNS:
+ * REMARKS:
+ *------------------------------------------------------------*/
+static int __GetPixelWidthOfRichTextString(QFont& font, const QString& qs)
+{
+	QTextDocument doc;
+	doc.setHtml(qs);
+	doc.setDefaultFont(font);
+	doc.setDocumentMargin(0);   // QLabel has no margins
+	doc.setTextWidth(-1);
+
+	// DEBUG
+	QFontMetrics fmf(font);
+	qDebug("%d - %f", fmf.horizontalAdvance(qs), doc.idealWidth());
+	// /DEBUG
+	return (int)doc.idealWidth();
+}
+
 void FalconCalcQt::_ShowResults()
 {
 	if (ui.cbInfix->currentText().isEmpty() || lengine->resultType == LittleEngine::ResultType::rtInvalid)
@@ -1432,19 +1458,50 @@ void FalconCalcQt::_ShowResults()
 		_ShowMessageOnAllPanels("Definition");
 	else
 	{
-		ExpFormat ef = lengine->displayFormat.expFormat;
-		if (ef == ExpFormat::rnsfGraph) // in QT the @normal mode = HTML mode for non QT version
-			lengine->displayFormat.expFormat = ExpFormat::rnsfSciHTML;
 		QString qs = lengine->ResultAsDecString().toQString();	
-		if (ef == ExpFormat::rnsfGraph) // in QT the @normal mode = HTML mode for non QT version
-			qs.replace('x',183 );
+		// special handling for the decimal text string because it may contain rich text (superscripts)
+		ExpFormat ef = lengine->displayFormat.expFormat;	// save format
 
-		if (ef == ExpFormat::rnsfSciHTML)
+		int posx = qs.indexOf(u'×');
+		if (posx < 0)
+			posx = qs.indexOf(u'·');
+		
+		// get pixel width of strings of base string and "exponent" (e.g. x10^{123456)) and 1.2)
+		QFont qf = ui.lblDec->font();
+
+		if (ef == ExpFormat::rnsfSciHTML)		   // want a literal string there
 		{
 			qs.replace("<", "&lt;");
 			qs.replace(">", "&gt;");
 		}
-		lengine->displayFormat.expFormat = ef;
+		else if (ef == ExpFormat::rnsfGraph)	   // make it HTML
+		{
+			qs.replace("^{", "<sup>");
+			qs.replace("}", "</sup>");
+		}
+		int pxwNum=0, pxwExp=0, pxwLbl = ui.lblDec->width()-4;
+
+		QString qsExp;
+		if ( (pxwNum = __GetPixelWidthOfRichTextString(qf, qs)) > pxwLbl)	// too long string: cut digits from base, until it fits
+		{
+			if (posx > 0)				// multiplication sign 'x'  or '.'
+			{
+				qsExp = qs.mid(posx);	// separate exponent part from string
+				qs = qs.left(posx);
+			}
+			if (!qsExp.isEmpty())
+				pxwExp = __GetPixelWidthOfRichTextString(qf, qsExp);
+			int l = qs.length();
+			// discard characters from end of string until it fits into the width of the label
+			// this does not round the number, so 0.9999..99 does remain 0.999...9 when the last digit is cut
+			while (l-- && pxwNum + pxwExp > pxwLbl)
+				pxwNum = __GetPixelWidthOfRichTextString(qf, qs.mid(0,l));	// width of remaining string
+
+			qs.remove(l, qs.length()+1);
+		}
+		qs += qsExp;
+		
+		//lengine->displayFormat.expFormat = ef;			   // restore format
 
 		ui.lblDec->setText(qs);
 		ui.lblHex->setText(lengine->ResultAsHexString().toQString());

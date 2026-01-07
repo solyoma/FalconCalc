@@ -524,6 +524,100 @@ RealNumber RealNumber::Rounded(int countOfDecimalPlaces, int cntInteDigits) cons
 	return r.Round(countOfDecimalPlaces, cntInteDigits);
 }
 
+/*=============================================================
+ * TASK   :in place rounding of a fix point decimal number string 
+ *			to have max 'maxLength' length string 
+ *			This may lead to the truncating the string
+ * PARAMS :	strNumber - string to be rounded
+ *			maxLength - maximum length of rounded string
+ *				including the decimal point if any
+ * EXPECTS: string contains only digits and possibly a single
+ *			decimal character.
+ * GLOBALS:	_decPoint
+ * RETURNS:	modified string in place and increment in the 10's exponent.
+ * 
+ * REMARKS: - static function
+ *			- 
+ *			- if maxLength is grater than the length of the string
+ *				nothing happens and 0 is returned
+ *			
+ *			- examples: 
+ *	Number      maxLength	decpoint	round Pos	rounded		returned	exponent
+ *	 129		  >=3         -1		 -1			 129			129			0
+ *	 129			2		  -1		  2			 130			 13			1
+ *	 12.91		    3		   2		  3			 13.			 13			0
+ *	 12.91		    4		   2		  4			 12.9			 12.9		0
+ *    9.995			2		   2		  2			 10				 10			1
+ *    9.995			3		   2		  4			 10.			 10			1
+ *    9.995			4		   2		  5			 10.0			 10.0		1
+ *    9.995		  >=5		   2		 -1			  9.995			  9.995		0
+ *	 99987.65		2		   5		  2			 10(9987.65)	 10		    4 (3 + 1)
+ *	 99987.65		3		   5		  3			100(987.65)		100			3 (2 + 1)							  0
+ *	 99987.65		4		   5		  4		   1000(87.65)	   1000			2 (1 + 1)
+ *	 99987.65		5		   5		  6        9999(7.65)	  10000			1 (1 + 0)						  0
+ *	 99987.65		6		   5		  6       99987(.65)	 100000			0 (0 + 0)						  0
+ *------------------------------------------------------------*/
+int RealNumber::RoundNumberString(SmartString& strNumber, int maxLength)
+{
+	if ((strNumber.isEmpty() || strNumber.at(0).IsAlpha()) && strNumber.length() <= maxLength)
+		return 0;
+	if(maxLength <= 0)
+	{
+		strNumber.clear();
+		return 0;
+	}
+
+	int posdot = strNumber.find_first_of(_decPoint.unicode());
+	int res=0;
+	int roundPos = maxLength + (posdot > 0 && posdot <= maxLength ? 1 : 0);
+
+	SCharT
+		one = SCharT('1'),
+		zero = SCharT('0'),
+		five = SCharT('5'),
+		nine = SCharT('9');
+
+	int carry = strNumber.at(roundPos, zero) >= five ? 1 : 0;
+	for(int i = roundPos - 1; i >= 0 && carry; --i)
+	{
+		SCharT ch = strNumber.at(i);
+		if (ch == _decPoint)
+			continue;
+		if (ch == nine)
+		{
+			strNumber[i] = zero;
+			carry = 1;
+		}
+		else
+		{
+			strNumber[i] = ch + one;
+			carry = 0;
+		}
+	}
+	if(carry)
+	{
+		strNumber = SmartString(1, one) + strNumber;
+		++res;
+	}
+	if (strNumber.length() > (LENGTH_TYPE)maxLength)
+		strNumber.erase(maxLength);
+	if(strNumber.at(maxLength-1) == _decPoint)
+		strNumber.erase(maxLength - 1);
+	if(posdot >= 0 && posdot < strNumber.length())
+	{
+		// remove trailing zeros after decimal point
+		int i = strNumber.length() - 1;
+		while(i > posdot && strNumber.at(i) == zero)
+			--i;
+		if(i == posdot)
+			--i;	// remove decimal point too
+		strNumber.erase(i + 1);
+	}
+	if(posdot > strNumber.length())
+		res += posdot - strNumber.length();
+	return res;
+}
+
 RealNumber RealNumber::RoundToDigits(int countOfSignificantDigits, int cntIntDigits)
 {
 	int intLenIn = cntIntDigits < 0 ? (_exponent > 0 ? _exponent : 0) : cntIntDigits, // in _numberString
@@ -542,7 +636,7 @@ RealNumber RealNumber::RoundedToDigits(int countOfSignificantDigits, int cntInte
 	return r.RoundToDigits(countOfSignificantDigits, cntInteDigits);
 }
 
-SmartString RealNumber::_ToBase(int base, LENGTH_TYPE maxNumDigits) const	// base must be >1 && <= 16
+SmartString RealNumber::_ToBase(int base, LENGTH_TYPE maxmaxLength) const	// base must be >1 && <= 16
 {	
 	if (IsNaN())
 		return NAN_STR;
@@ -562,7 +656,7 @@ SmartString RealNumber::_ToBase(int base, LENGTH_TYPE maxNumDigits) const	// bas
 		int n = (int)remainder.ToInt64();
 		convertedValue = String(1,ByteToMyCharT(n)) + convertedValue;
 	}
-	if (convertedValue.length() > maxNumDigits)
+	if (convertedValue.length() > maxmaxLength)
 		convertedValue = SmartString((_sign < 0 ? "-": "")) + SmartString(INF_STR);
 
 	return convertedValue;
@@ -1405,7 +1499,7 @@ SmartString RealNumber::_DisplData::FormatExponent()
 				expW = expLen;
 				break;
 			case ExpFormat::rnsfSciHTML:
-				s = SmartString("x10<sup>") + s + SmartString("</sup>");
+				s = SmartString("×10<sup>") + s + SmartString("</sup>");
 				expLen = s.length();
 				break;
 			case ExpFormat::rnsfSciTeX:
@@ -1432,11 +1526,10 @@ SmartString RealNumber::_DisplData::FormatExponent()
 				expLen = s.length();
 				expW = expLen;
 				break;
-			case ExpFormat::rnsfGraph:
+			case ExpFormat::rnsfGraph:		 // will display as "×10⁻¹²³⁴
 			default:
-				expW = 2 + s.length() * 2 / 3;
-				//s = SmartString(1, SCharT(183)) + u"10^{" + s + u"}";
-				s = SmartString(1, SCharT(0xd7)) + SmartString("10^{") + s + SCharT('}');
+				expW = 3 + (s.length()+1) / 2;
+				s = SmartString(u"×10^{") + s + SCharT('}'); // was '·'. now '×'
 				expLen = s.length() - 2;
 				break;
 		}
@@ -1603,6 +1696,22 @@ RealNumber RealNumber::Frac()	const
 	{
 		r._numberString.erase(0, r._exponent);
 		r._exponent = 0;
+		// but this number may start with '0' characters, so erase them too
+		// which will modify the exponent
+		int n = r._numberString.length();
+		int i = 0;
+		for( ; i < n; ++i)
+		{
+			if (r._numberString.at(i) != chZero)
+				break;
+		}
+		if (i == n)
+			r._SetNull();
+		else if (i > 0)
+		{
+			r._numberString.erase(0, i);
+			r._exponent -= i;
+		}
 	}
 	return r;
 }
@@ -3268,47 +3377,7 @@ RealNumber sin (RealNumber r, AngularUnit angu)		// sine
 			break;
 		}
 		case AngularUnit::auRad:
-		{
-			r = r / rn2Pi * rn360;
-			return sin(r);
-
-			RealNumber	piP3 = rnPi / RealNumber::RN_3, 
-						piP6 = rnPi / RealNumber::RN_6;
-			r = fmod(r, rn2Pi);	// move r into [0,2π)
-			if (r >= rnPi)
-			{
-				sign = -sign;
-				r -= rnPi;		
-			}
-			// here r ϵ [0,π) 
-			if (r > rnPiP2)					// sin(π/2+alpha)=cos(alpha)=sin(π/2-alpha), if alpha < π
-				r = rnPi - r;				// to [0, π/2)
-
-			if (r < RealNumber::trigEpsilon)
-				return RealNumber::RN_0;
-			else if ((r - piP6).Abs() < RealNumber::trigEpsilon)		// 30
-			{
-				r = RealNumber::RN_0;
-				return r.SetSign(sign);
-			}
-			else if ((r - rnPiP4).Abs() < RealNumber::trigEpsilon)		// 45
-			{
-				r = rsqrt2.value;
-				return r.SetSign(sign);
-			}
-			else if ((r - piP3).Abs() < RealNumber::trigEpsilon)		// 60
-			{
-				r = sqrt3P2.value;
-				return r.SetSign(sign);
-			}
-			else if ((r - rnPiP2).Abs() < RealNumber::trigEpsilon)		// 90
-			{
-				r = RealNumber::RN_1;
-				return r.SetSign(sign);
-			}
-			else									  // 0 <= r <= π/2
-				return _sin(r).Round(TrigAccuracy).SetSign(sign);
-		}
+			return sin(r / rn2Pi * rn360);			 // converted to degrees
 			
 		case AngularUnit::auTurn:		// full circle 1 turn
 			return _sin(r.Frac()*rn2Pi).Round(TrigAccuracy).SetSign(sign);

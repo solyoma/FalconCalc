@@ -1,18 +1,28 @@
 ﻿# FalconCalc
-Multi language Windows scientist's and programmer's calculator featuring arbitrary precision decimal arithmetic, built in mathematical and physics constants, claculation history user definable constants and functions and more.
+Multi language Windows scientist's and programmer's calculator featuring arbitrary precision decimal arithmetic, built in mathematical and physics constants, calculation history, user definable constants and functions and more.
 # FalconCalcQt
-Qt based version of the calculator for multi platform (Windows, Linux, OsX) usage, with more options than the only windows version (e.g. light, dark, black, blue styles)
+Qt based version of the calculator for multi platform (Windows, Linux, OsX) usage, with more options than the windows-only version (e.g. light, dark, black, blue styles)
 # Screenshots
 
 ![falconcalc1](https://github.com/user-attachments/assets/24b50146-f20c-4fcf-b2ea-e351b4cf5240)
 ![falconcalc2](https://github.com/user-attachments/assets/d280df82-9c94-45a7-84d0-f9dd8633fbf2)
 
 # Description
-  Every Windows version has a desktop calculator with many features but FalconCalc offers many 
-  unique features not found in them:
+  Every OS has a desktop calculator. These usually works like the physical calculators did, with buttons, separate normal and scientific modes. 
 
-    - FalconCalc continuously evaluates expressions, that may contain built-in and 
-      *user defined* constants and functions of any number of arguments, as they are entered.
+  The open source FalconCalc offers many unique features not found in those:
+
+    - has no numeric and function buttons, you just enter an expression.
+
+    - expressions may contain built-in and *user defined* constants and functions of any number of arguments
+
+    - it continuously evaluates expressions as they are entered.
+
+    - numerical precision: 60 significant digits, max displayable 55 digits
+
+    - multilingual: presently two in-built languages: English and Hungarian
+
+    In the input:
 
     - *Numbers* may be entered in decimal, hexadecimal, octal or binary notation or as character strings.
              Examples       number string        what it is          decimal value
@@ -24,11 +34,13 @@ Qt based version of the calculator for multi platform (Windows, Linux, OsX) usag
                            'FalconCalc'       - character string     1.5610851718... x 10^45
 
     - Results are displayed simultaneously as decimal, hexadecimal, octal and binary numbers and as a 
-      string of characters
+      string of characters. Either of these can be copied tothe clipboard.
 
     - Decimal formats: general, scientific and engeneering
 
-    - Decimal display formats:  normal, html, TEX and 'E' (1.2·10³, 1.2x10<sup>3</sup>, 1.2\cdot10^{8},1.2E3)
+    - Decimal display formats:  normal (1.2·10³), html (1.2x10<sup>3</sup>), TEX (1.2\cdot10^{8}) and 'E' (1.2E3)
+      with 
+      (Inputs always use the 'E' format)
 
     - Hexadecimal formats: normal or grouped as bytes, words or dwords each with or without the 0x prefix. 
       Also as Big- or little endian, unsigned or signed numbers.
@@ -36,7 +48,7 @@ Qt based version of the calculator for multi platform (Windows, Linux, OsX) usag
 	  that format can also be selected. (For large numbers the display will be incorrect!)
 
     - Angles for triginometric functions can be entered as degrees, radians, gradians or turns.
-	  (The full circle is 360°, 2π, 400 grad, 1turn)
+	  (The full circle is 360°, 2π, 400 grad, 1 turn)
 
     - Formulas may contain the following operators (+ and - may be unary):
           arithmetics: +, -, *, /, ^(power), | (or 'or'), & (or 'and'), xor, << (or 'shl' - shift left), 
@@ -55,7 +67,7 @@ Qt based version of the calculator for multi platform (Windows, Linux, OsX) usag
            sqrt2 (√2), psqrt2 (1/√2)), sqrt3 (√3), sqrt3P2 (√3/2)
 
     - Built-in physical constants (units in []):
-           au - astronomical unit [m], c - speed of light in vacuum (definition - exact value) [m/s], 
+           a0 - Bohr radius, au - astronomical unit [m], c - speed of light in vacuum (definition - exact value) [m/s], 
            h  - Planck constant  [Js], hbar - reduced Planck constant [Js], 
            qe - elementary charge [As], me - electron mass [kg], mp - proton mass [kg], 
            u - atomic mass unit [1], k - Boltzmann constant [J/K],G  - Newtonian constant of gravitation [m^3/kg/s^2], 
@@ -66,8 +78,10 @@ Qt based version of the calculator for multi platform (Windows, Linux, OsX) usag
            rf - Earth's radius [m], rg  - molar gas constant (8.31 J/ mol K), rs - Sun's radius
            u - atomic mass unit
 
-    - Any number of user constants and functions may be defined with any valid arithmetic formula 
+    - Any number of user variables/constants and functions may be defined with any valid arithmetic formula 
       including other constants and variables.
-    - When a variable is modified the value of all dependent variables and functions are automatically changed
-    - Functions may have any number of arguments with any names that is different from the name of any 
+
+    - When a user variable is modified the value of all dependent user variables and functions are automatically changed
+
+    - User defined functions may have any number of arguments with any names that is different from the name of any 
       built-in function or constant.

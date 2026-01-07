@@ -13,10 +13,10 @@
 
 namespace LongNumber {
 	//using namespace SmString;				// SmString::SmartString.h
-	constexpr const LENGTH_TYPE MaxAllowedDigits = 120;	// !!! Modify these  - no number string can have more digits than this + LengthOverflow
+	constexpr const LENGTH_TYPE MaxAllowedDigits = 75;	// !!! Modify these  - no number string can have more digits than this + LengthOverflow
 	constexpr const LENGTH_TYPE LengthOverFlow = 2;		// add this to the _maxLength of a RealNumber to get the real maximum string length
 	constexpr const LENGTH_TYPE MaxAbsExponent = 1024;	// absolute value of maximum exponent
-	constexpr const LENGTH_TYPE TrigAccuracy = 120;		// max this many digits used for trigonometric functions. must be <= MaxAllowedDigits
+	constexpr const LENGTH_TYPE TrigAccuracy = 70;		// max this many digits used for trigonometric functions. must be <= MaxAllowedDigits
 
 	extern const SmString::SmartString NAN_STR;
 	extern const SmString::SmartString INF_STR;
@@ -425,10 +425,14 @@ namespace LongNumber {
 		LENGTH_TYPE Precision() const { return _numberString.length(); }
 		LENGTH_TYPE LargestExponent() const { return _maxExponent; }
 
-		RealNumber Rounded(int toThisManyDecimalPlaces				,int cntIntDigits=-1) const; // returns a rounded copy
-		RealNumber Round(  int toThisManyDecimalPlaces				,int cntIntDigits=-1);		   // rounds the number
-		RealNumber RoundedToDigits(int toThisManySignificantDigits	,int cntIntDigits=-1) const;  // rounds _numberString in copy
-		RealNumber RoundToDigits(int toThisManySignificantDigits	,int cntIntDigits=-1);		    // rounds _numberString in the number itself
+		RealNumber Round(  int toThisManyDecimalPlaces				,int cntIntDigits=-1);		 // returns the rounded number rounded to the given decimal places
+		RealNumber RoundToDigits(int toThisManySignificantDigits	,int cntIntDigits=-1);		 // returns the number rounded to the given significant digits which includes the integer part as well
+		RealNumber RoundedToDigits(int toThisManySignificantDigits	,int cntIntDigits=-1) const; // similar to 'Round()' but a copy is rounded, not the original number
+		RealNumber Rounded(int toThisManyDecimalPlaces				,int cntIntDigits=-1) const; // similar to 'RoundToDigits()' but for a copy
+		// in place rounding of a string of numbers (and possibly a single decimal point) to max 'maxLength' digits. Returns increment in the exponent.
+		// examples: strNumber = "129",   for maxLength >= 3 - nothing happens, returns 0, for 'maxLength=2' rounds to "13" and returns 1
+		//			 strNumber = "9.995", for maxLength >= 4 - nothing happens, returns 0, for 'maxLength=2' rounds to "10" (== 10.000) and returns 1
+		static int RoundNumberString(SmString::SmartString& strNumber, int maxLength); 
 
 		SmString::SmartString ToBinaryString(const DisplayFormat& format);
 		SmString::SmartString ToOctalString(const DisplayFormat& format);
@@ -627,7 +631,7 @@ namespace LongNumber {
 		int _PosExpInNumberString(const DisplayFormat fmt, const SmString::SmartString& s, int fromPos) const;
 
 		// conversion
-		SmString::SmartString _ToBase(int base, LENGTH_TYPE maxNumDigits = 32) const;	// number must be smallar than the allowed digits and base must be >1 && <= 16
+		SmString::SmartString _ToBase(int base, LENGTH_TYPE maxmaxLength = 32) const;	// number must be smallar than the allowed digits and base must be >1 && <= 16
 		// exponentiation
 		RealNumber _PowInt(const RealNumber& AnInteger) const;
 	};
