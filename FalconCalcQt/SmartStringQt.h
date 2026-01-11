@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #ifndef _SMARTSTRING_QT_H
 	#define _SMARTSTRING_QT_H
@@ -143,8 +143,8 @@ namespace SmString {
 		}
 		SmartString &insert( int pos, int count, const QChar qch)
 		{
-			SmartString res = SmartString(count, qch); // *this = "ab",  pos = 1, count=3, qch='x' => "axxxb"
-			return *this = left(pos) + res + mid(pos+1);
+			QString::insert(pos, &qch, 1);
+			return *this;
 		}
 
 		inline void pop_back() { return chop(1); }

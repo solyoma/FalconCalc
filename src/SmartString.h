@@ -165,6 +165,7 @@ public:
 		return  const_cast<SCharT&>(String::operator[](pos) );
 	}
 
+	bool isEmpty() { return String::empty(); }
 	SmartString left( UTF8Pos n, SCharT fillChar = SCharT(-1)) const; // may extend the string to the right
 	SmartString right(UTF8Pos n, SCharT fillChar = SCharT(-1)) const;	// may extend the string to the left
 	// similar to substr but may extend the string with a given character too

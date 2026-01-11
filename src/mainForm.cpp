@@ -1229,7 +1229,7 @@ TfrmMain::TfrmMain()
 	// /for fun
 	_bAutoSave = false;
 
-	RealNumber::SetMaxLength(65);	// but only display 59
+	RealNumber::SetMaxLength(MaxAllowedDigits);	// but only display fewer
 
 	lengine = new FalconCalc::LittleEngine;			// this remain valid when the program is running
 	lengine->displayFormat.useNumberPrefix = true;

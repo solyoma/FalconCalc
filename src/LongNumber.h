@@ -283,6 +283,9 @@ namespace LongNumber {
 			_sign(rn._sign), _numberString(rn._numberString), _exponent(rn._exponent),_eFlags(rn._eFlags)
 		{
 			_GetDecPoint();
+			if (_numberString.length() > MaxAllowedDigits)
+				RoundNumberString(_numberString, MaxAllowedDigits);
+
 			_isNormalized = true;
 		}
 		explicit RealNumber(const char* s) : RealNumber(SmString::SmartString(s)) {}
@@ -298,6 +301,8 @@ namespace LongNumber {
 			_sign(sign), _numberString(digits), _exponent(exponent)
 		{
 			_GetDecPoint();
+			if (_numberString.length() > MaxAllowedDigits)
+				RoundNumberString(_numberString, MaxAllowedDigits);
 		}
 		explicit RealNumber(int lval) :_exponent(0) { _FromLongLong(lval); }
 		explicit RealNumber(unsigned lval) :_exponent(0) { _FromLongLong(lval); }
@@ -442,6 +447,16 @@ namespace LongNumber {
 		SmString::SmartString ToSmartString() const;
 		SmString::UTF8String  toUtf8String() const;	   // because Qt uses this type of function names
 		std::wstring ToWideString() const;
+//#if defined _DEBUG	|| defined DEBUG
+//		std::wstring numstringtowstr()
+//		{
+//			std::wstring ws;
+//			for (auto& a : _numberString)
+//				ws += wchar_t(a.unicode());
+//			return ws;
+//		}
+//#endif
+
 
 		SmString::SmartString ToString(const DisplayFormat& format);
 		SmString::SmartString ToString()					// format as decimal string with default settings
@@ -646,6 +661,8 @@ namespace LongNumber {
 	inline RealNumber round(int decDigits, const RealNumber r) { return r.Rounded(decDigits); }
 	inline RealNumber fmod(const RealNumber x, const RealNumber& y) 
 	{ 
+		if (x < y)
+			return x;
 		RealNumber xi(x);
 		int sx = x.Sign(), sy = y.Sign();
 		return xi - (xi / y).Int() * y; 
@@ -702,7 +719,7 @@ namespace LongNumber {
 		SmString::SmartString name;		// used from outside
 		SmString::SmartString unit;		// e.g. kg
 		SmString::SmartString desc;		// description
-		BuiltinDescId binDesc;			// description ID for builtins
+		BuiltinDescId binDesc = DSC_NoDescription;	// description ID for builtins
 		RealNumber value;		// re-scaled value
 
 		Constant() {}
@@ -712,6 +729,7 @@ namespace LongNumber {
 		{
 			name.FromWideString(cname);
 			unit.FromWideString(cunit);
+			value.RoundToDigits(LongNumber::RealNumber::MaxLength());
 		}
 #ifndef _MSC_VER_SA
 		// hasznalja
@@ -722,14 +740,21 @@ namespace LongNumber {
 			unit = SmartString(cunit);
 			if(cdesc)
 				desc = SmartString(cdesc);
+			value.RoundToDigits(MaxAllowedDigits);
 		}
 #endif
 
-		explicit Constant(const SmString::String name, const RealNumber value, const SmString::String unit, const SmString::String desc, const RealNumber* pBaseValue) :
-			name(name), value(value), unit(unit), binDesc(binDesc), _pBaseValue(pBaseValue), desc(desc), _builtin(true), _set(true) {}
+		explicit Constant(const SmString::String name, const RealNumber cvalue, const SmString::String unit, const SmString::String desc, const RealNumber* pBaseValue) :
+			name(name), value(cvalue), unit(unit), binDesc(binDesc), _pBaseValue(pBaseValue), desc(desc), _builtin(true), _set(true) 
+		{
+			value.RoundToDigits(MaxAllowedDigits);
+		}
 
-		explicit Constant(const SmString::String name, const RealNumber value, const SmString::String unit, const BuiltinDescId binDesc, const RealNumber* pBaseValue) :
-			name(name), value(value), unit(unit), binDesc(binDesc), _pBaseValue(pBaseValue), _builtin(true), _set(true) {}
+		explicit Constant(const SmString::String name, const RealNumber cvalue, const SmString::String unit, const BuiltinDescId binDesc, const RealNumber* pBaseValue) :
+			name(name), value(cvalue), unit(unit), binDesc(binDesc), _pBaseValue(pBaseValue), _builtin(true), _set(true) 
+		{
+			value.RoundToDigits(MaxAllowedDigits);
+		}
 
 		// for user defined constants (variables) definition value will be the base value
 		explicit Constant(const wchar_t* cname, const RealNumber cvalue, const wchar_t* cunit, const wchar_t *pdesc) :
@@ -738,14 +763,21 @@ namespace LongNumber {
 			name.FromWideString(cname);
 			unit.FromWideString(cunit);
 			desc.FromWideString(pdesc);
-			_pBaseValue = new RealNumber(value);
+			_pBaseValue = new RealNumber(value);		 // before possible rounding
+			value.RoundToDigits(MaxAllowedDigits);
 		}
 
-		explicit Constant(const SmString::String name, const RealNumber value, const SmString::String unit, const SmString::String desc) :
-			name(name), value(value), unit(unit), desc(desc) {}
+		explicit Constant(const SmString::String name, const RealNumber cvalue, const SmString::String unit, const SmString::String desc) :
+			name(name), value(cvalue), unit(unit), desc(desc) 
+		{
+			value.RoundToDigits(MaxAllowedDigits);
+		}
 		// for both
 		Constant(const Constant& co) : name(co.name), value(co.value), unit(co.unit), desc(co.desc), binDesc(co.binDesc), _pBaseValue(co._pBaseValue), 
-										_builtin(co._builtin), _set(co._set) {}
+										_builtin(co._builtin), _set(co._set) 
+		{
+			value.RoundToDigits(MaxAllowedDigits);
+		}
 
 		virtual ~Constant()
 		{

@@ -1444,8 +1444,8 @@ static int __GetPixelWidthOfRichTextString(QFont& font, const QString& qs)
 	doc.setTextWidth(-1);
 
 	// DEBUG
-	QFontMetrics fmf(font);
-	qDebug("%d - %f", fmf.horizontalAdvance(qs), doc.idealWidth());
+	//QFontMetrics fmf(font);
+	//qDebug("%d - %f", fmf.horizontalAdvance(qs), doc.idealWidth());
 	// /DEBUG
 	return (int)doc.idealWidth();
 }

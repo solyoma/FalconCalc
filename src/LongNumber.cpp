@@ -102,8 +102,8 @@ const RealNumber RealNumber::RN_0("0"), RealNumber::RN_1("1"), RealNumber::RN_2(
 // constants and Functions that can be used with REAL_NUMBERs
 static const RealNumber rnNull("0"),
 						rnHalf("0.5"),
-			// the following definitions define the main math cconstants' base value with 102 decimal places
-			// The the constants used in calculations is given by the same name, just without the 'rn' or 'rn_' prefix and have
+			// the following definitions define the main math constants' base value with 102 decimal places
+			// The constants used in calculations is given by the same name, just without the 'rn' or 'rn_' prefix and have
 			// as many digits as set, in RealNumber::SetMaxLength(new_length) 
 			//					   1		 2 		   3		 4		   5		 6		   7		 8		   9		10
 			//			0 123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012				  
@@ -166,7 +166,7 @@ RealNumber	zero  		(rnNull),
 Constant
 	// constant names in this table must be in all lowercase and must be unique
 	// math
-	//				 name     	value		 unit				  explanation
+	//				 name     	value		 unit				  explanation				 base value pointer
 			e		{ u"e"		, rnE		, u"-"				,DSC_descriptionForE		,&rnE	 		},
 			lg10e	{ u"log10e"	, rnLgE		, u"-"				,DSC_descriptionForLg10e	,&rnLgE			},
 			lge		{ u"lge"	, rnLge		, u"-"				,DSC_descriptionForLge	 	,&rnLge			},
@@ -559,7 +559,7 @@ RealNumber RealNumber::Rounded(int countOfDecimalPlaces, int cntInteDigits) cons
  *------------------------------------------------------------*/
 int RealNumber::RoundNumberString(SmartString& strNumber, int maxLength)
 {
-	if ((strNumber.isEmpty() || strNumber.at(0).IsAlpha()) && strNumber.length() <= maxLength)
+	if ((strNumber.isEmpty() || strNumber.at(0).IsAlpha()) && (int)strNumber.length() <= maxLength)
 		return 0;
 	if(maxLength <= 0)
 	{
@@ -567,7 +567,7 @@ int RealNumber::RoundNumberString(SmartString& strNumber, int maxLength)
 		return 0;
 	}
 
-	int posdot = strNumber.find_first_of(_decPoint.unicode());
+	int posdot = strNumber.find_first_of(_decPoint);
 	int res=0;
 	int roundPos = maxLength + (posdot > 0 && posdot <= maxLength ? 1 : 0);
 
@@ -590,8 +590,13 @@ int RealNumber::RoundNumberString(SmartString& strNumber, int maxLength)
 		}
 		else
 		{
-			strNumber[i] = ch + one;
-			carry = 0;
+			SCharT sum = ++ch;
+			if (sum > SCharT(u'9'))
+				sum = chZero;
+			else
+				carry = 0;
+
+			strNumber[i] = sum;
 		}
 	}
 	if(carry)
@@ -603,7 +608,7 @@ int RealNumber::RoundNumberString(SmartString& strNumber, int maxLength)
 		strNumber.erase(maxLength);
 	if(strNumber.at(maxLength-1) == _decPoint)
 		strNumber.erase(maxLength - 1);
-	if(posdot >= 0 && posdot < strNumber.length())
+	if(posdot >= 0 && posdot < (int)strNumber.length())
 	{
 		// remove trailing zeros after decimal point
 		int i = strNumber.length() - 1;
@@ -613,7 +618,7 @@ int RealNumber::RoundNumberString(SmartString& strNumber, int maxLength)
 			--i;	// remove decimal point too
 		strNumber.erase(i + 1);
 	}
-	if(posdot > strNumber.length())
+	if(posdot > (int)strNumber.length())
 		res += posdot - strNumber.length();
 	return res;
 }
@@ -3242,7 +3247,7 @@ static inline RealNumber deg2rad(RealNumber deg)
 // ------------- flag to disallow recursive call with units in radian
 static bool _sinCalcOn = false;
 
-static RealNumber _sin(RealNumber r)		// sine	(RAD)	0<= r <= 2*pi =>  0 <= _sin <= 1
+static RealNumber _sin(RealNumber r, int sign)		// sine	(RAD)	0<= r <= 2*pi =>  0 <= _sin <= 1
 { 	
 	if (r.IsInf())
 		r = NaN;
@@ -3293,10 +3298,9 @@ static RealNumber _sin(RealNumber r)		// sine	(RAD)	0<= r <= 2*pi =>  0 <= _sin 
 		ee *= s / (i * (i - RealNumber::RN_1));	  // e_{n+1} = e_{n} * (-r²) / ( (i *(i-1)) * (i-2)! ) 
 		if (ee.Abs() <= RealNumber::trigEpsilon)// x^(2n+1)/(2n+1)! < accuracy
 		{
-//			RealNumber::SetMaxLength(z);
 			if (v.Abs() < RealNumber::epsilon)		// max accuracy for sine epsilon >= trigEpsilon
 				v = rnNull;
-			return v;
+			return v.SetSign(sign);
 		}
 		v += ee;				  // sum
 		i += RealNumber::RN_2;	  // for (i+2)!
@@ -3323,7 +3327,8 @@ RealNumber sin (RealNumber r, AngularUnit angu)		// sine
 	{
 		case AngularUnit::auDeg:
 		{
-			r = fmod(r, rn360);			 // |r| is < 360⁰
+			if (r > rn360)
+				r = fmod(r, rn360);			 // |r| is < 360⁰
 									 // border cases
 			if(r >= rn180 && r < rn180 + RealNumber::trigEpsilon)
 				  r = rn180;
@@ -3372,19 +3377,19 @@ RealNumber sin (RealNumber r, AngularUnit angu)		// sine
 			else									  // 0 <= r <= 90
 			{
 				r = deg2rad(r);
-				return _sin(r).SetSign(sign);		   
+				return _sin(r, sign);		   
 			}
 			break;
 		}
 		case AngularUnit::auRad:
-			return sin(r / rn2Pi * rn360);			 // converted to degrees
+			return sin(r / twoPi * rn360).Round(TrigAccuracy);			 // converted to degrees
 			
 		case AngularUnit::auTurn:		// full circle 1 turn
-			return _sin(r.Frac()*rn2Pi).Round(TrigAccuracy).SetSign(sign);
+			return _sin(r.Frac()*twoPi,sign).Round(TrigAccuracy);
 			break;
 
 		case AngularUnit::auGrad:			// full circle 400 Grad
-			return _sin(r / RealNumber("400").SetSign(sign) * rn2Pi).Round(TrigAccuracy);	// display width is 59
+			return _sin(r / RealNumber("400") * twoPi,sign).Round(TrigAccuracy);	// display width is 59
 			break;
 	}
 	return RealNumber();
@@ -3414,49 +3419,6 @@ RealNumber cos(RealNumber r, AngularUnit angu)		// cosine
 		case  AngularUnit::auGrad:			   // cos(x) = sin(x + 100)	
 			return sin(r + RealNumber(100), AngularUnit::auGrad);   
 	}
-#if 0
-	RealNumber epsilon = RealNumber("1e-40");
-	const RealNumber &rn30 = RealNumber::RN_30,
-					 &rn60 = RealNumber::RN_60,	
-					 &rn90 = RealNumber::RN_90,	
-					 &rn180 = RealNumber::RN_180,	
-					 &rn270 = RealNumber::RN_270,	
-					 &rn360 = RealNumber::RN_360;
-
-	// cos (- alpha) = cos(alpha) : argument always positive
-	r.ToAbs();				
-
-	switch (angu)
-	{
-		case AngularUnit::auDeg:
-		{
-			r = fmod(r, rn360);	 // |r| is < 360
-			// sine: 		+  | +	   	cos.:	-  | +
-			//			 ------|------		 ------|------
-			//				-  | -	  			-  | +
-			if (r <= rn90+epsilon)
-				return sin(rn90 - r);
-			if (r <= rn180+epsilon)
-				return sin(r - rn90).SetSign(-1);
-			if (r <= rn270+epsilon)
-				return sin(r - rn180).SetSign(-1);
-			return sin(r - rn270).SetSign(1);		//  270 <= x < 360
-		}
-
-		case AngularUnit::auRad:
-			r /= twoPi.value;
-			r = r.Frac();		// 0 <= r < 1 => number of "turns"
-			[[fallthrough]];	// From C++17
-		case AngularUnit::auTurn:			// full circle 1 turn
-			return cos(r * rn360);
-
-		case AngularUnit::auGrad:			// full circle 400 grad
-			return cos(rn360 / RealNumber("400") * r);
-			break;
-	}
-
-	return RealNumber();
-#endif
 }
 
 RealNumber sec(RealNumber r, AngularUnit angu)		// secant = 1/cosine
