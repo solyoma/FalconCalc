@@ -17,7 +17,9 @@ using namespace LongNumber;
 #include "common.h"
 #include "calculate.h"
 
-//#include ""
+#ifdef QTSA_PROJECT
+    extern QString GetBuiltinTextForId(BuiltinDescId bdId);     // in  VariablesFunctionsQt.cpp
+#endif
 
 /*----------------- global engine ------------------*/
 FalconCalc::LittleEngine *lengine = nullptr;    // created in main
@@ -605,7 +607,6 @@ static RealNumber Acot(RealNumber r) { return acot(r, lengine->AngleUnit()); }
 SmartString BuiltinFunc::Description() const
 {
 #ifdef QTSA_PROJECT
-	extern QString GetBuiltinTextForId(BuiltinDescId bdId);     // in  VariablesFunctionsQt.cpp
     return GetBuiltinTextForId(binDesc);
 #else
     return SmartString( lt.GetTranslationFor(binDesc) );
