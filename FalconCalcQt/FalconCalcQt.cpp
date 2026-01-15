@@ -555,7 +555,6 @@ void FalconCalcQt::on_btnOctal_clicked()
 void FalconCalcQt::on_btnOpenCloseDecOptions_clicked()
 {
     QRect r = geometry();
-    int h = height();
     QString text = ui.btnOpenCloseDecOptions->text();
 
     if (ui.frmDecimal->isVisible())	  // then hide it
@@ -1045,7 +1044,7 @@ bool FalconCalcQt::_LoadState()
     QString s;
     s = ifcfg.readLine();
     if (! s.startsWith(STATE_VER_STRING) )
-        return false;
+		return false;
 	int l = s.length(), j = STATE_VER_STRING.length();
 	if (l == 0 || j < l)
 	{

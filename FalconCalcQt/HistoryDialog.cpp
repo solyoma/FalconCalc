@@ -30,9 +30,11 @@ void HistoryDialog::closeEvent(QCloseEvent* e)
 
 void HistoryDialog::moveEvent(QMoveEvent* e)
 {
-	int x0 = e->oldPos().x(), y0 = e->oldPos().y(),
-		x = e->pos().x(), y = e->pos().y(),
-		xh0 = geometry().left(), yh0 = geometry().top();
+	// DEBUG
+	//int x0 = e->oldPos().x(), y0 = e->oldPos().y(),
+	//	x = e->pos().x(), y = e->pos().y(),
+	//	xh0 = geometry().left(), yh0 = geometry().top();
+	// /DEBUG
 
 	// qDebug(" - hist dialog moved: (%d, %d)->(%d, %d), delta (%d,%d), ", xh0, yh0, xh0 + x - x0, yh0 + y - y0, x - x0, y - y0);
 

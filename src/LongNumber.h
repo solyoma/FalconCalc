@@ -664,8 +664,8 @@ namespace LongNumber {
 		if (x < y)
 			return x;
 		RealNumber xi(x);
-		int sx = x.Sign(), sy = y.Sign();
-		return xi - (xi / y).Int() * y; 
+		//int sx = x.Sign(), sy = y.Sign();
+		return xi - (xi / y).Int() * y; // has the same sign as x, when y =0 then the division returns the error
 	}
 	RealNumber fact(const RealNumber n);
 	RealNumber RadToAu(RealNumber r, AngularUnit au);
@@ -745,7 +745,7 @@ namespace LongNumber {
 #endif
 
 		explicit Constant(const SmString::String name, const RealNumber cvalue, const SmString::String unit, const SmString::String desc, const RealNumber* pBaseValue) :
-			name(name), value(cvalue), unit(unit), binDesc(binDesc), _pBaseValue(pBaseValue), desc(desc), _builtin(true), _set(true) 
+			name(name), value(cvalue), unit(unit), desc(desc), _pBaseValue(pBaseValue), _builtin(true), _set(true) 
 		{
 			value.RoundToDigits(MaxAllowedDigits);
 		}

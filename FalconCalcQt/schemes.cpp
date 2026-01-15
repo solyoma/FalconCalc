@@ -535,7 +535,7 @@ void FSchemeVector::push_back(const FalconCalcScheme& scheme)
 void FSchemeVector::ReadAndSetupSchemes()
 {
 	const QString schemeFile = FCSettings::homePath + "FalconCalc.fsty";
-	bool li = false, da = false, bk = false, bl = false;	// light, dark, black, blue set
+	// bool li = false, da = false, bk = false, bl = false;	// light, dark, black, blue set
 	if (QFile::exists(schemeFile ))
 	{
 		QSettings s(schemeFile, QSettings::IniFormat);	// in program directory;
