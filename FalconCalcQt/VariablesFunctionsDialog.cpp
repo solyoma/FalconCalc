@@ -384,12 +384,13 @@ void VariablesFunctionsDialog::on_btnAddRow_clicked()
 void VariablesFunctionsDialog::on_tblUserVars_currentItemChanged(QTableWidgetItem* current, QTableWidgetItem* previous)
 {
 	// DEBUG
-	int rowp = previous ? previous->row() : -1,
-		colp = previous ? previous->column() : -1,
-		rowc = current ? current->row() : -1,
-		colc = current ? current->column() : -1;
+	//int rowp = previous ? previous->row() : -1,
+	//	colp = previous ? previous->column() : -1,
 	//qDebug("on_tblUserVars_currentItemChanged from (%d,%d) to (%d,%d)", rowp, colp, rowc, colc);
 	// /DEBUG
+
+	int	rowc = current ? current->row() : -1,
+		colc = current ? current->column() : -1;
 	_GetItemText(ui.tblUserVars,rowc, colc);
 }
 
@@ -493,7 +494,6 @@ QString VariablesFunctionsDialog::_GetItemText(QTableWidget *table, int row, int
 void VariablesFunctionsDialog::_FillBuiltinFuncTable()
 {
 	ElidingTableWidgetItem* ptw;
-	int pos = 0, pos1 = 0;
 	QString qs;
 	int cntFunctions = LittleEngine::builtinFunctions.size();
 	ui.tblBuiltinFuncs->setRowCount(cntFunctions);

@@ -195,7 +195,7 @@ namespace FalconCalc
         enum ArgTyp {atyNone, atyR, atyI, atyA}; // RealNumber, integer or AngularUnit
 
         SmartString name;               // w.o. parathesis and arguments
-        BuiltinDescId binDesc;
+        BuiltinDescId binDesc = DSC_NoDescription;
 
                 // only one of the 'func...' pointers isn't nullptr
         FUNCT1 funct1 = nullptr;        // argument: RealNumber

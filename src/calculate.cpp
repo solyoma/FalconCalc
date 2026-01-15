@@ -925,7 +925,7 @@ int LittleEngine::_InfixToPostFix(const SmartString expr)
         {
             if (isspace(c, loc))  // drop spaces inside
                 continue;
-            if (!IsAlnum(SCharT(c), loc) && pattern.find_first_of(*it) == std::string::npos)
+            if (!IsAlnum(SCharT(c), loc) && pattern.find_first_of(*it) == (LENGTH_TYPE)std::string::npos)
                 trigger.Raise(EEC_ILLEGAL_CHARACTER_NUMBER);
             if (c == u'(')
                 ++bc;
@@ -943,7 +943,7 @@ int LittleEngine::_InfixToPostFix(const SmartString expr)
         trigger.Raise(EEC_MISMATCHED_PARENTHESIS);
     infix += expr.mid(it - expr.begin());   // add comment and unit
 
-    bool inq = false;       // inside quote
+    // bool inq = false;       // inside quote
     
 
     int result = 1;     // not an assignment
@@ -1230,7 +1230,7 @@ bool LittleEngine::_VariableAssignment(const SmartString &expr, LENGTH_TYPE &pos
            return false;
    }
    SmartString lcName = tok->Text().asLowerCase();
-   int existing = 0;        // 1: in builtinfunc table, 2: in function table
+   //int existing = 0;        // 1: in builtinfunc table, 2: in function table
    if(builtinFunctions.count(lcName) )
             trigger.Raise(EEC_BUILTIN_FUNCTIONS_CANNOT_BE_REDEFINED);
     // it may have been already defined user function, but we will overwrite it with the new
@@ -1250,13 +1250,12 @@ bool LittleEngine::_VariableAssignment(const SmartString &expr, LENGTH_TYPE &pos
    {
         case 3:
             f.unit = svFields[2];
-            // [[fallthrough]]
+            [[fallthrough]];
         case 2:
             f.desc = svFields[1];
-            // [[fallthrough]]
+            [[fallthrough]];
         case 1:
             f.body = svFields[0];
-            // [[fallthrough]]
             break;
         default:
             trigger.Raise(EEC_INVALID_FUNCTION_DEFINITION);
@@ -1636,18 +1635,18 @@ bool LittleEngine::SaveUserData(bool force)
     if (clean)
         return true;
 
-	static bool backedUp = false;
+	// static bool backedUp = false;
 
     SmString::UTF8String u8Name = ssNameOfDatFile.toUtf8String();
 	std::remove((u8Name + ".bak").c_str()); // remove old backup
-	std::rename(u8Name.c_str(), (u8Name + ".bak").c_str());
+	(void)std::rename(u8Name.c_str(), (u8Name + ".bak").c_str());
 
     std::ofstream ofs;
 	ofs.open(u8Name.c_str(), ios_base::out);
     if (ofs.fail())
     {
 		// name back to original
-	    std::rename((u8Name + ".bak").c_str(), u8Name.c_str());
+	    (void)std::rename((u8Name + ".bak").c_str(), u8Name.c_str());
         return false;
     }
     //std::locale locutf8(std::locale(), new std::codecvt_utf8<char16_t>);
@@ -1672,7 +1671,7 @@ bool LittleEngine::SaveUserData(bool force)
     //    ofs << vf.Serialize(1);
 
     ofs.close();
-    backedUp = true;
+    // backedUp = true;
     clean = true;
     return true;
 }

@@ -688,9 +688,8 @@ SmartString RealNumber::_IntegerPartToString(const SmartString& sNumber, int sig
 {
 	int len = sNumber.length(); 
 
-	int sepLen = (int)format.strThousandSeparator.length(),
-		nTrailingZeros = (int)nIntDigits > len ? nIntDigits - len : 0,
-		cntDelimiters = nIntDigits <= 3 ? 0 : ((nIntDigits - 1) / chunkSize);
+	int sepLen = (int)format.strThousandSeparator.length();
+		// int cntDelimiters = nIntDigits <= 3 ? 0 : ((nIntDigits - 1) / chunkSize);
 	bool useSign = false;
 
 	// len  		0 1 2 3 4 5 6 7 8 9
@@ -918,7 +917,7 @@ SmartString RealNumber::ToOctalString(const DisplayFormat& format)
 	if (oct == NAN_STR)
 		return oct;
 
-	LENGTH_TYPE n = leno;	// we need 'n' places in displayable result
+	//LENGTH_TYPE n = leno;	// we need 'n' places in displayable result
 						// including a single space for "thousand separator"
 
 	oct = _IntegerPartToString(oct, _sign, format,leno,3,false);
@@ -1390,7 +1389,7 @@ SmartString RealNumber::ToDecimalString(const DisplayFormat &format)
 		_dsplD.FormatExponent();		//      cntDecDigitsToDisplay	   - this many digits will be displayed	after the integer digits and nLeadingZeros
 
 	// now create the number string
-	LENGTH_TYPE nResultLength = _dsplD.nWSign + _dsplD.nWIntegerPart + _dsplD.nLeadingDecimalZeros + _dsplD.nWFractionalPart + _dsplD.expLen; // DEBUG line
+	// LENGTH_TYPE nResultLength = _dsplD.nWSign + _dsplD.nWIntegerPart + _dsplD.nLeadingDecimalZeros + _dsplD.nWFractionalPart + _dsplD.expLen; // DEBUG line
 	SmartString result;
 	int sign = _dsplD.nWFractionalPart == 0 && _dsplD.strRounded.empty() ? 1 : _sign;
 	result += _IntegerPartToString(_dsplD.strRounded, sign, _dsplD.fmt, _dsplD.nIntegerDigits, 3, false);
@@ -2249,7 +2248,7 @@ void RealNumber::_FromNumberString()
 	if (posE > 0)
 	{
 			SmartString sExp = _numberString.mid((LENGTH_TYPE)posE + 1);	// separate exponent and number
-			_numberString.erase(posE, std::string::npos);
+			_numberString.erase(posE, (int)std::string::npos);
 			// only sign and decimal places are allowed in exponent
 			positionOfError = sExp.indexOfRegex(SmartString("[^-+0-9]"));
 			if (positionOfError >= 0)
@@ -2288,7 +2287,7 @@ void RealNumber::_FromNumberString()
 		{																										 // decimal and not octal string
 			pattern = SmartString("[^0-9") + _decPoint + SmartString("]");
 			
-			LENGTH_TYPE n = _numberString.find_last_of(_decPoint);
+			// LENGTH_TYPE n = _numberString.find_last_of(_decPoint);
 						// remove leading zeros from integer part, trailing zeros are removed after exponent set
 			_numberString.erase(_numberString.begin(), std::find_if(_numberString.begin(), _numberString.end(), [](SCharT ch) {return ch != chZero; }));
 		}
@@ -3245,7 +3244,7 @@ static inline RealNumber deg2rad(RealNumber deg)
 	return deg / RealNumber("180") * pi;
 }
 // ------------- flag to disallow recursive call with units in radian
-static bool _sinCalcOn = false;
+//static bool _sinCalcOn = false;
 
 static RealNumber _sin(RealNumber r, int sign)		// sine	(RAD)	0<= r <= 2*pi =>  0 <= _sin <= 1
 { 	
