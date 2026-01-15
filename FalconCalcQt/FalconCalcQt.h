@@ -13,7 +13,7 @@
 #include "EngineErrors.h"
 
 #include "HelpDialog.h"
-// don't forget to include "#include "SmartString.h" and "LongNumber.h" before including this file!
+// don't forget to include "#include "SmartStringQt.h" and "LongNumber.h" before including this file!
 
 struct SEMAPHORE {
     int b = 0;

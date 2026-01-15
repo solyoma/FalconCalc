@@ -3,7 +3,11 @@
 #include "wcommon.h"
 using namespace nlib;
 #include "mainForm.h"
-#include "SmartString.h"
+#ifndef QTSA_PROJECT
+	#include "SmartString.h"
+#else
+	#include "SmartStringQt.h"
+#endif
 #include "history.h"
 #include "clipboard.h"
 
