@@ -6,6 +6,6 @@ constexpr const char* FalconCalc_Hist_File = "FalconCalc.hist";
 constexpr const char* FalconCalc_Dat_File = "FalconCalc.dat";
 constexpr const char* FalconCalc_State_File = "FalconCalc.cfg";
 
-constexpr const int   VERSION_INT = 0x010100;
-constexpr const char* VERSION_STRING = "1.1.0";
+constexpr const int   VERSION_INT = 0x010101;
+constexpr const char* VERSION_STRING = "1.1.1";
 
