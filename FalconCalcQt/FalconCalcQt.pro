@@ -14,40 +14,46 @@ RCC_DIR += ./Debug/rcc
 win32:RC_FILE = FalconCalcQt.rc
 HEADERS += \
 	../src/calculate.h	\
+	../src/defines.h	\
+	../src/common.h		\
 	../src/EngineErrors.h	\
 	../src/LongNumber.h	\
 	../src/SmartString.h	\
-	AboutDialog.h	\
-	FalconCalcQt.h	\
-	FCSettings.h	\
-	HelpDialog.h	\
-	HistoryDialog.h	\
-	HistoryOptions.h\
+	AboutDialog.h		\
+	FalconCalcQt.h		\
+	FCSettings.h		\
+	HelpDialog.h		\
+	HistoryDialog.h		\
+	HistoryOptions.h	\
 	LocaleDlg.h		\
+	resource.h		\
 	schemes.h		\
+	SmartStringQt.h		\
+	VarFuncDefDialog.h	\
 	VariablesFunctionsDialog.h
 SOURCES += \
 	../src/calculate.cpp	\
 	../src/EngineErrors.cpp	\
 	../src/LongNumber.cpp	\
 	../src/SmartString.cpp	\
-	FalconCalcQt.cpp         \
-	FCSettings.cpp           \
-	HelpDialog.cpp           \
-	HistoryDialog.cpp        \
-	HistoryOptions.cpp       \
-	LocaleDlg.cpp            \
-	main.cpp                 \
-	schemes.cpp              \
+	FalconCalcQt.cpp        \
+	FCSettings.cpp          \
+	HelpDialog.cpp          \
+	HistoryDialog.cpp       \
+	HistoryOptions.cpp      \
+	LocaleDlg.cpp           \
+	main.cpp                \
+	schemes.cpp             \
 	VariablesFunctionsDialog.cpp
 
 FORMS += \
-	AboutDialog.ui	\
-	FalconCalcQt.ui	\
-	HelpDialog.ui	\
+	AboutDialog.ui		\
+	FalconCalcQt.ui		\
+	HelpDialog.ui		\
 	HistoryDialog.ui	\
 	HistoryOptions.ui	\
-	LocaleDlg.ui	\
+	LocaleDlg.ui		\
+	VarFuncDefDialog.ui	\
 	VariablesFunctionsDialog.ui
 	
 RESOURCES += FalconCalcQt.qrc

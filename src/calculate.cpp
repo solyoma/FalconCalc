@@ -55,7 +55,7 @@ static bool IsAlpha(SCharT ch, std::locale loc)
     static  const wchar_t* notCtrl = L"!+-*/_.,^%@#()=<>|\\:'\"~&";
     if (isalpha((wchar_t)ch.unicode(), loc))
         return true;
-    if (std::iscntrl((wchar_t)ch.unicode(), loc) || wcschr(notCtrl, (wchar_t)ch.unicode()))
+    if (std::isdigit((wchar_t)ch.unicode()) || std::iscntrl((wchar_t)ch.unicode(), loc) || wcschr(notCtrl, (wchar_t)ch.unicode()))
         return false;
     return true;
 }
@@ -265,8 +265,8 @@ void Token::_GetOperator(const SmartString &text, LENGTH_TYPE &pos)
 					    trigger.Raise(EEC_ILLEGAL_AT_LINE_END);
 				    switch(cn)
 				    {
-					    case '<' : name = SmartString("<<"); break;
-					    case '=' : name = SmartString("<="); break;
+                        case '<': name = SmartString("<<"); ++pos; break;
+                        case '=': name = SmartString("<="); ++pos; break;
 					    default  : name = SmartString("<" ); break;
 				    };
 				    break;
@@ -274,8 +274,8 @@ void Token::_GetOperator(const SmartString &text, LENGTH_TYPE &pos)
 					    trigger.Raise(EEC_ILLEGAL_OPERATOR_AT_LINE_END);
 				    switch(cn)
 				    {               
-					    case '>' : name = ">>"; break;
-                        case '=':  name = ">="; break;
+                        case '>': name = ">>"; ++pos;  break;
+                        case '=':  name = ">="; ++pos; break;
                         default:   name = ">";  break;
 				    };
 				    break;
@@ -283,7 +283,7 @@ void Token::_GetOperator(const SmartString &text, LENGTH_TYPE &pos)
 					    trigger.Raise(EEC_ILLEGAL_OPERATOR_AT_LINE_END);
 				    switch(cn)
 				    {
-					    case '=' : name = "!="; break;
+                        case '=': name = "!="; ++pos; break;
                         default  : name = "!"; break;
 				    };
 				    break;
@@ -291,7 +291,7 @@ void Token::_GetOperator(const SmartString &text, LENGTH_TYPE &pos)
 					    trigger.Raise(EEC_ILLEGAL_OPERATOR_AT_LINE_END);
 				    switch(cn)
 				    {
-					    case '=' : name = "=="; break;
+                        case '=': name = "=="; ++pos;  break;
 					    default  : name = "=";  break;
 				    };
 				    break;
@@ -496,12 +496,25 @@ void Token::_GetVarOrFuncOrOperator(const SmartString &text, LENGTH_TYPE &pos)
 	locale loc = cout.getloc();
 	int startpos = pos;
 	SCharT c = text.at(pos);
-	while(pos < text.length() && (IsAlnum(c,loc) || c == SCharT('_')) )
+    // first find part that is just an alpha character to get shl, shr, or, and, xor, 
+    // operator names may not contain numbers, or underscores
+    // and if they are non alpha then they are handled in '_GetOperator()'
+	while(pos < text.length() && IsAlpha(c,loc) )
 		c = text.at(++pos).unicode();
-
 	SmartString s = text.mid(startpos, pos - startpos);
     if (s.length() == 1 && s == SmartString("π") )
         s = "pi";
+    // see if there's an operator with this name
+    data = MathOperator::Op(s);
+    if (data.oper != opINVALID)    // there is such an operator (
+    {
+        type = tknOperator;
+        return;
+    }
+    // now see the following characters
+	while(pos < text.length() && (IsAlnum(c,loc) || c == SCharT('_')) )
+		c = text.at(++pos).unicode();
+	s = text.mid(startpos, pos - startpos);
 	name = s;  //  set name
     while(pos < text.length() && isspace(c.unicode(), loc))
         ++pos; // skip whitespace because of function definitions

@@ -76,7 +76,6 @@ SOURCES       = ../src/calculate.cpp \
 OBJECTS       = Debug/calculate.o \
 		Debug/EngineErrors.o \
 		Debug/LongNumber.o \
-		Debug/SmartString.o \
 		Debug/FalconCalcQt.o \
 		Debug/FCSettings.o \
 		Debug/HelpDialog.o \
@@ -206,6 +205,7 @@ DIST          = /usr/lib64/qt5/mkspecs/features/spec_pre.prf \
 		/usr/lib64/qt5/mkspecs/features/lex.prf \
 		FalconCalcQt.pro ../src/calculate.h \
 		../src/defines.h \
+		../src/common.h \
 		../src/EngineErrors.h \
 		../src/LongNumber.h \
 		../src/SmartString.h \
@@ -216,7 +216,9 @@ DIST          = /usr/lib64/qt5/mkspecs/features/spec_pre.prf \
 		HistoryDialog.h \
 		HistoryOptions.h \
 		LocaleDlg.h \
+		resource.h \
 		schemes.h \
+		SmartStringQt.h \
 		VarFuncDefDialog.h \
 		VariablesFunctionsDialog.h ../src/calculate.cpp \
 		../src/EngineErrors.cpp \
@@ -482,8 +484,8 @@ distdir: FORCE
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
 	$(COPY_FILE) --parents FalconCalcQt.qrc $(DISTDIR)/
 	$(COPY_FILE) --parents /usr/lib64/qt5/mkspecs/features/data/dummy.cpp $(DISTDIR)/
-	$(COPY_FILE) --parents ../src/calculate.h ../src/defines.h ../src/EngineErrors.h ../src/LongNumber.h ../src/SmartString.h AboutDialog.h FalconCalcQt.h FCSettings.h HelpDialog.h HistoryDialog.h HistoryOptions.h LocaleDlg.h schemes.h VarFuncDefDialog.h VariablesFunctionsDialog.h $(DISTDIR)/
-	$(COPY_FILE) --parents ../src/calculate.cpp ../src/EngineErrors.cpp ../src/LongNumber.cpp ../src/SmartString.cpp FalconCalcQt.cpp FCSettings.cpp HelpDialog.cpp HistoryDialog.cpp HistoryOptions.cpp LocaleDlg.cpp main.cpp schemes.cpp VariablesFunctionsDialog.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents ../src/calculate.h ../src/defines.h ../src/common.h ../src/EngineErrors.h ../src/LongNumber.h ../src/SmartString.h AboutDialog.h FalconCalcQt.h FCSettings.h HelpDialog.h HistoryDialog.h HistoryOptions.h LocaleDlg.h resource.h schemes.h SmartStringQt.h VarFuncDefDialog.h VariablesFunctionsDialog.h $(DISTDIR)/
+	$(COPY_FILE) --parents ../src/calculate.cpp ../src/EngineErrors.cpp ../src/LongNumber.cpp FalconCalcQt.cpp FCSettings.cpp HelpDialog.cpp HistoryDialog.cpp HistoryOptions.cpp LocaleDlg.cpp main.cpp schemes.cpp VariablesFunctionsDialog.cpp $(DISTDIR)/
 	$(COPY_FILE) --parents AboutDialog.ui FalconCalcQt.ui HelpDialog.ui HistoryDialog.ui HistoryOptions.ui LocaleDlg.ui VarFuncDefDialog.ui VariablesFunctionsDialog.ui $(DISTDIR)/
 	$(COPY_FILE) --parents translations/FalconCalcQt_en.ts translations/FalconCalcQt_hu.ts $(DISTDIR)/
 
@@ -540,12 +542,14 @@ compiler_moc_header_clean:
 	-$(DEL_FILE) Debug/moc/moc_AboutDialog.cpp Debug/moc/moc_FalconCalcQt.cpp Debug/moc/moc_HelpDialog.cpp Debug/moc/moc_HistoryDialog.cpp Debug/moc/moc_HistoryOptions.cpp Debug/moc/moc_LocaleDlg.cpp Debug/moc/moc_VarFuncDefDialog.cpp Debug/moc/moc_VariablesFunctionsDialog.cpp
 Debug/moc/moc_AboutDialog.cpp: AboutDialog.h \
 		Debug/Ui/ui_AboutDialog.h \
+		../src/version.h \
 		Debug/moc/moc_predefs.h \
 		/usr/lib64/qt5/bin/moc
 	/usr/lib64/qt5/bin/moc $(DEFINES) --include /home/solyom/FalconCalc/FalconCalcQt/Debug/moc/moc_predefs.h -I/usr/lib64/qt5/mkspecs/linux-g++ -I/home/solyom/FalconCalc/FalconCalcQt -I/home/solyom/FalconCalc/src -I/usr/include/qt5 -I/usr/include/qt5/QtWidgets -I/usr/include/qt5/QtGui -I/usr/include/qt5/QtNetwork -I/usr/include/qt5/QtCore -I/usr/include/c++/12 -I/usr/include/x86_64-linux-gnu/c++/12 -I/usr/include/c++/12/backward -I/usr/lib/gcc/x86_64-linux-gnu/12/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include AboutDialog.h -o Debug/moc/moc_AboutDialog.cpp
 
 Debug/moc/moc_FalconCalcQt.cpp: FalconCalcQt.h \
 		Debug/Ui/ui_FalconCalcQt.h \
+		../src/version.h \
 		../src/common.h \
 		schemes.h \
 		../src/EngineErrors.h \
@@ -664,14 +668,11 @@ Debug/calculate.o: ../src/calculate.cpp ../src/defines.h \
 Debug/EngineErrors.o: ../src/EngineErrors.cpp ../src/EngineErrors.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o Debug/EngineErrors.o ../src/EngineErrors.cpp
 
-Debug/LongNumber.o: ../src/LongNumber.cpp ../src/SmartString.h \
+Debug/LongNumber.o: ../src/LongNumber.cpp ../src/defines.h \
+		../src/SmartString.h \
 		SmartStringQt.h \
-		../src/defines.h \
 		../src/LongNumber.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o Debug/LongNumber.o ../src/LongNumber.cpp
-
-Debug/SmartString.o: ../src/SmartString.cpp ../src/SmartString.h
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o Debug/SmartString.o ../src/SmartString.cpp
 
 Debug/FalconCalcQt.o: FalconCalcQt.cpp SmartStringQt.h \
 		../src/defines.h \
@@ -684,6 +685,7 @@ Debug/FalconCalcQt.o: FalconCalcQt.cpp SmartStringQt.h \
 		../src/translations.h \
 		FalconCalcQt.h \
 		Debug/Ui/ui_FalconCalcQt.h \
+		../src/version.h \
 		../src/common.h \
 		schemes.h \
 		HelpDialog.h \
@@ -732,6 +734,7 @@ Debug/main.o: main.cpp ../src/defines.h \
 		../src/translations.h \
 		FalconCalcQt.h \
 		Debug/Ui/ui_FalconCalcQt.h \
+		../src/version.h \
 		schemes.h \
 		HelpDialog.h \
 		Debug/Ui/ui_HelpDialog.h
