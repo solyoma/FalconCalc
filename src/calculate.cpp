@@ -188,13 +188,16 @@ void MathOperator::Setup()
 	ops["mod"_ss].oper        = opMOD;
 	ops["mod"_ss].precedence         = 7;
 
+	ops["!"_ss].oper        = opFACT;
+	ops["!"_ss].precedence           = 9;
+
 	ops["_"_ss].oper        = opUMIN;				// unary '-' on stack
 	ops["_"_ss].precedence           = 8;
 	ops["_"_ss].right_associative    = true;
 
-	ops["!"_ss].oper        = opNOT;
-	ops["!"_ss].precedence           = 8;
-	ops["!"_ss].right_associative    = true;
+	ops["¬"_ss].oper        = opNOT;
+	ops["¬"_ss].precedence           = 8;
+	ops["¬"_ss].right_associative    = true;
 
 	ops["not"_ss].oper      = opNOT;
 	ops["not"_ss].precedence         = 8;
@@ -279,8 +282,8 @@ void Token::_GetOperator(const SmartString &text, LENGTH_TYPE &pos)
                         default:   name = ">";  break;
 				    };
 				    break;
-	    case '!':  if(!cn) // no more character in line
-					    trigger.Raise(EEC_ILLEGAL_OPERATOR_AT_LINE_END);
+	    case '!':  //if(!cn) // no more character in line
+					//    trigger.Raise(EEC_ILLEGAL_OPERATOR_AT_LINE_END);
 				    switch(cn)
 				    {
                         case '=': name = "!="; ++pos; break;
@@ -295,6 +298,10 @@ void Token::_GetOperator(const SmartString &text, LENGTH_TYPE &pos)
 					    default  : name = "=";  break;
 				    };
 				    break;
+	    case '¬' :  if (!cn) // NOT operator
+					    trigger.Raise(EEC_ILLEGAL_OPERATOR_AT_LINE_END);
+                    name = "¬"; 
+                    break;
 	    case '~' :  if (!cn) // no more character in line
 					    trigger.Raise(EEC_ILLEGAL_OPERATOR_AT_LINE_END);
                     name = "~"; 
@@ -836,14 +843,14 @@ void LittleEngine::_HandleOperator(Token* tok)
     while(!stack.empty())  // while there is an operator token, 'op2', at the top of the stack, and
     {
         const Token &op2 = stack.peek();
-                            // either 'tok' is left-associative and its precedence is less than or equal to that of 'op2'
-                            // or 'tok' has precedence less than that of o2
+                            // if either the precedence of 'tok' is less than that of op2 or 
+                            // when it is left-associative is equal to that then
         if(tok->Precedence() < op2.Precedence() || (op2.Precedence() == tok->Precedence() && !tok->RightAssoc()))
             stack.popto(tvPostfix);			// pop 'op2' off the stack, onto the output queue;
         else
             break;			// precedence of operator 'tok' is larger than that of 'op2' or equal but 'tok' is right assoc.
     }
-    stack.push(*tok);					// push o1 onto the stack
+    stack.push(*tok);		// push op1 onto the stack
 }
 
 /*==================================================
@@ -1064,12 +1071,11 @@ int LittleEngine::_InfixToPostFix(const SmartString expr)
 					    }
 					    else if (tok->Oper() == opPLUS)   // unary +
 						    break;  // skip it
-					    else if (tok->Oper() == opNOT || tok->Oper() == opCompl)
-					    {
-						    _HandleOperator(tok);
-						    break;
-					    }
-					    else
+                        else if (!stack.empty() && stack.peek(1).Oper() == opFACT)
+                        {
+                            stack.popto(tvPostfix);
+                        }
+					    else if (tok->Oper() != opNOT && tok->Oper() != opCompl)
 					    {
 						    delete tok;
 						    trigger.Raise(EEC_SYNTAX_ERROR);
@@ -1536,6 +1542,10 @@ void LittleEngine::_DoOperator(const Token &tok)
                         break;
             case opNOT:
                         res = stack.peek(1).Value().IsNull() ? RealNumber::RN_1 : RealNumber::RN_0; // was Value() != RealNumber::RN_0 ? RealNumber::RN_0 : RealNumber::RN_1;
+                        stack.pop(1);
+                        break;
+            case opFACT:
+                        res = fact(stack.peek(1).Value());
                         stack.pop(1);
                         break;
 			case opCompl:

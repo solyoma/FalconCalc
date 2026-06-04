@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #ifndef calculateH
  #define calculateH
 
@@ -78,6 +78,7 @@ namespace FalconCalc
 		opMOD,  // l % r (fmod)
 		opUMIN, // unary minus on stack ('@')
 		opNOT,  // 0 or 1
+        opFACT, // l! (factorial)
 		opPOW,  // exponent ('l on the power of r')
         opOpenBrace,  // '('
         opCloseBrace, // ')'

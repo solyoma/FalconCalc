@@ -3024,6 +3024,8 @@ RealNumber fact(const RealNumber n)
 {
 	if (n.IsNegative() || n.IsInt() == false)
 		return NaN;
+	if (n.IsNull())
+		return RealNumber::RN_1;
 
 	if (n > RealNumber(1000))	// at 1000 the error is 3.46925154994 E-6 %
 	{
