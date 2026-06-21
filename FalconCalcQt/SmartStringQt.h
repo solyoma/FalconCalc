@@ -10,7 +10,7 @@
 #include <QChar>
 #include <QString>
 #include <QStringList>
-#include <QRegExp>
+#include <QRegularExpression>
 #include <QLocale>
 #include <QFile>
 #include <QTextStream>
@@ -218,8 +218,9 @@ namespace SmString {
 
 		int indexOfRegex(const SmartString regexpString, int pos = 0) const		// only first occurance
 		{
-			QRegExp rx(regexpString);
-			return rx.indexIn(*this, (int)pos);
+			QRegularExpression rx(regexpString);
+			QRegularExpressionMatch match = rx.match(*this, pos);
+			return match.capturedStart();
 		}
 		SmartString asUpperCase() const { QLocale loc; return loc.toUpper(QString(*this)); }
 		SmartString asLowerCase() const { QLocale loc; return loc.toLower(QString(*this));}
