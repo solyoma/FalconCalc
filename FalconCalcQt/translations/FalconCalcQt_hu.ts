@@ -184,7 +184,7 @@ There might be problems with it.</source>
     <message>
         <location filename="../FalconCalcQt.ui" line="536"/>
         <source>Space</source>
-        <translation>Betúköz</translation>
+        <translation>Betűköz</translation>
     </message>
     <message>
         <location filename="../FalconCalcQt.ui" line="541"/>
@@ -239,7 +239,7 @@ There might be problems with it.</source>
     <message>
         <location filename="../FalconCalcQt.ui" line="784"/>
         <source>Norm&amp;al</source>
-        <translation>Normá&amp;lis</translation>
+        <translation>&amp;Alap</translation>
     </message>
     <message>
         <location filename="../FalconCalcQt.ui" line="794"/>

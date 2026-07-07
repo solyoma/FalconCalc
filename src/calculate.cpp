@@ -298,7 +298,7 @@ void Token::_GetOperator(const SmartString &text, LENGTH_TYPE &pos)
 					    default  : name = "=";  break;
 				    };
 				    break;
-	    case '¬' :  if (!cn) // NOT operator
+	    case L'¬' :  if (!cn) // NOT operator
 					    trigger.Raise(EEC_ILLEGAL_OPERATOR_AT_LINE_END);
                     name = "¬"; 
                     break;
@@ -315,13 +315,13 @@ void Token::_GetOperator(const SmartString &text, LENGTH_TYPE &pos)
 
 static bool __IsXDigit(SCharT ch)
 {
-    locale loc = cout.getloc();
+    locale loc = wcout.getloc();
 
     return isxdigit(ch.unicode(), loc) != 0;
 }
 static bool __IsDigit(SCharT ch)
 {
-    locale loc = cout.getloc();
+    locale loc = wcout.getloc();
     return isdigit(ch.unicode(),loc) != 0;
 }
 
@@ -333,7 +333,6 @@ static bool __IsDigit(SCharT ch)
   *----------------------------------------*/
 void Token::_GetDecDigits(const SmartString &text, LENGTH_TYPE &pos)
 {
-	locale loc = cout.getloc();
 	while(pos < text.length() && __IsDigit(text.at(pos)) )
 		++pos;
 }
@@ -466,7 +465,7 @@ void Token::_GetBinaryNumber(const SmartString &text, LENGTH_TYPE &pos)
  *-----------------------------------------------------------*/
 void Token::_GetNumberFromQuotedString(const SmartString &text, LENGTH_TYPE &pos)
 {
-	locale loc = cout.getloc();
+	locale loc = wcout.getloc();
 	LENGTH_TYPE startpos = pos;
     RealNumber lval = RealNumber::RN_0, r10k = RealNumber(0x10000);
 	while(pos < text.length() && (text[pos] != SCharT('\'') || (pos > 0 && text[pos-1] == SCharT('\\'))) )
@@ -500,7 +499,7 @@ void Token::_GetNumberFromQuotedString(const SmartString &text, LENGTH_TYPE &pos
  *-----------------------------------------------------------*/
 void Token::_GetVarOrFuncOrOperator(const SmartString &text, LENGTH_TYPE &pos)
 {
-	locale loc = cout.getloc();
+	locale loc = wcout.getloc();
 	int startpos = pos;
 	SCharT c = text.at(pos);
     // first find part that is just an alpha character to get shl, shr, or, and, xor, 
@@ -541,7 +540,7 @@ void Token::FromText(const SmartString &text, LENGTH_TYPE &pos)
 {
     val = 0;
     // already set before called   type = tknUnknown;
-	locale loc = cout.getloc();
+	locale loc = wcout.getloc();
 
 	// skip whitespace
 	LENGTH_TYPE len = text.length();
@@ -555,7 +554,7 @@ void Token::FromText(const SmartString &text, LENGTH_TYPE &pos)
 	SmartString sErr = "Illegal operator"_ss;
 
     SCharT  c = text[pos];
-	while(pos < len && isspace(c.unicode(), loc))
+	while(pos < len && isspace((wchar_t)c.unicode(), loc))
 		c = text[++pos];
 
 	SCharT cn = (++pos >= len ? SCharT(0) : SCharT(text[pos])); // look ahead
@@ -920,7 +919,7 @@ int LittleEngine::_InfixToPostFix(const SmartString expr)
 {
 
     //check for invalid characters up to the comment field
-	locale loc = cout.getloc();
+	locale loc = wcout.getloc();
     infix.clear();
     //if( infix[  infix.length() -1] == '\n')
     //    infix = infix.mid(0, infix.length()-1);
@@ -1163,7 +1162,7 @@ void LittleEngine::_MarkDependentVariablesDirty(const SmartString name)
  *---------------------------------------------------------*/
 bool LittleEngine::_VariableAssignment(const SmartString &expr, LENGTH_TYPE &pos, Token *tok)
 {
-	locale loc = cout.getloc();
+	locale loc = wcout.getloc();
 
     auto exch = [&]()-> wchar_t
         {
@@ -1676,7 +1675,7 @@ bool LittleEngine::SaveUserData(bool force)
     //std::locale locutf8(std::locale(), new std::codecvt_utf8<char16_t>);
     //ofs.imbue(locutf8);
 
-    locale loc = cout.getloc();
+    locale loc = wcout.getloc();
     SmartString sLocale(loc.name());
 
 	ofs << CALC_ID_LINE << CALC_VERSION_STRING << "\n[Locale]\nloc=" <<  sLocale.toUtf8String()

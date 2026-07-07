@@ -1,4 +1,4 @@
-#include <QtWidgets/QApplication>
+﻿#include <QtWidgets/QApplication>
 #include <QFile>
 #include <QDir>
 #include <QMessageBox>
@@ -6,7 +6,6 @@
 #include <QStyleFactory>
 
 #include "defines.h"
-#include "common.h"
 #include "SmartStringQt.h"
 using namespace SmString;
 #include "LongNumber.h"

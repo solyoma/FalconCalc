@@ -25,7 +25,6 @@ using namespace FalconCalc;
 
 #include "FalconCalcQt.h"
 
-#include "common.h"
 #include "AboutDialog.h"
 #include "VariablesFunctionsDialog.h"
 #include "HistoryDialog.h"
