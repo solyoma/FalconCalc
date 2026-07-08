@@ -36,16 +36,13 @@
     <ClCompile Include="variables.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="calculate.cpp">
+    <ClCompile Include="..\common\calculate.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="graphictext.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="stdafx_lc.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="LongNumber.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SmartString.cpp">
@@ -60,10 +57,13 @@
     <ClCompile Include="translations.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="EngineErrors.cpp">
+    <ClCompile Include="..\common\EngineErrors.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="VFDefDialog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\LongNumber.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -89,7 +89,7 @@
     <ClInclude Include="variables.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="calculate.h">
+    <ClInclude Include="..\common\calculate.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="clipboard.h">
@@ -101,7 +101,7 @@
     <ClInclude Include="stdafx_lc.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="LongNumber.h">
+    <ClInclude Include="..\common\LongNumber.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SmartString.h">
@@ -116,19 +116,19 @@
     <ClInclude Include="translations.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="EngineErrors.h">
+    <ClInclude Include="..\common\EngineErrors.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="common.h">
+    <ClInclude Include="..\common\common.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="VFDefDialog.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="defines.h">
+    <ClInclude Include="..\common\defines.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="version.h">
+    <ClInclude Include="..\common\version.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -40,10 +40,10 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\calculate.cpp">
+    <ClCompile Include="..\common\calculate.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\LongNumber.cpp">
+    <ClCompile Include="..\common\LongNumber.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="HistoryDialog.cpp">
@@ -67,15 +67,15 @@
     <ClCompile Include="LocaleDlg.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\EngineErrors.cpp">
+    <ClCompile Include="..\common\EngineErrors.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\src\calculate.h">
+    <ClInclude Include="..\common\calculate.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\LongNumber.h">
+    <ClInclude Include="..\common\LongNumber.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="FCSettings.h">
@@ -84,10 +84,10 @@
     <ClInclude Include="schemes.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\EngineErrors.h">
+    <ClInclude Include="..\common\EngineErrors.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\common.h">
+    <ClInclude Include="..\common\common.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="resource.h">
@@ -96,10 +96,10 @@
     <ClInclude Include="SmartStringQt.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\defines.h">
+    <ClInclude Include="..\common\defines.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\version.h">
+    <ClInclude Include="..\common\version.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
