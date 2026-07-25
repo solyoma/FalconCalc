@@ -148,7 +148,7 @@ namespace FalconCalc
 		Token(const Token& tk) { *this = tk; }
 		Token &operator=(const Token& tk) { type = tk.type; val = tk.val; data = tk.data; name = tk.name; return *this; }
         Token& operator=(const SmartString s); // use only for new operator NOT for variables or functions!
-            // this is only used wen new value is stored in val as
+            // this is only used when new value is stored in val as
             // name is not set
         Token(RealNumber v): type(tknNumber), val(v) {}
 
@@ -279,7 +279,7 @@ namespace FalconCalc
         Func() {};
         Func(const Func& var) { *this = var;}
         // This constructor is used for builtins only. They never get dirty
-        Func(const SCharT *desc, const RealNumber val) :desc(desc), value(val) {}
+        Func(const SCharT *pdesc, const RealNumber val) :desc(pdesc), value(val) {}
 
         Func &operator=(const Func& other)
         {
@@ -304,7 +304,7 @@ namespace FalconCalc
             if (args.size())
                 s += args[0];
             for (size_t j = 1; j < (size_t)args.size(); ++j)  //(size_t) needed for Qt compatibility
-                s += SmartString(argSeparator) + args[j];
+                s += SmartString(1, argSeparator) + args[j];
 			s += ")"_ss;
             return s;
         }
@@ -338,11 +338,8 @@ namespace FalconCalc
         std::vector<T> _vec;
     public:
         DataMap() {}
-        DataMap(const DataMap& o)
-        {
-            _index = o._index;
-            _vec = o._vec;
-        }
+        DataMap(const DataMap& o): _index(o._index),_vec(o._vec) { }
+        DataMap& operator=(const DataMap& o) { _index = o._index; _vec = o._vec; return *this; }
         virtual ~DataMap() {};
 
         bool changed = false;
@@ -513,6 +510,12 @@ namespace FalconCalc
 	public:
 
         LittleEngine();
+        LittleEngine(const LittleEngine& src):  infix(src.infix),
+                                                tvPostfix(src.tvPostfix),
+                                                calcResult(src.calcResult),
+                                                displayFormat(src.displayFormat),
+                                                ssNameOfDatFile(src.ssNameOfDatFile),
+                                                clean(src.clean)        { }
         LittleEngine &operator=(const LittleEngine &src);
         RealNumber Calculate();                                 // using infix and angleUnit
 		SmartString Postfix() const;                            // get converted data as SmartString

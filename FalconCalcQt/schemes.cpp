@@ -1,6 +1,15 @@
-#include <QSettings>
+﻿#include <utility>
+#include <vector>
 #include <QFile>
+#if QT_VERSION >= QT_VERSION_CHECK(6,0,0)
+	#include <QGlobal>
+#endif
+#include <QSettings>
+#include <QString>
+#include <QStringlist>
+#include <QVector>
 #include <QApplication>
+#include <QMainwindow>
 
 #include "FCSettings.h"
 #include "schemes.h"
@@ -45,16 +54,16 @@ static void __SaveStyle(QString styleName, FalconCalcScheme &sch)
 #endif
 
 static QString fcStyles = {
-R"END(/* Qt Trick: This MUST be part of the string 'fcStyles' !!!!!!!!!!!!!!!!
-	Because if the range of %n has gaps, then the arg() can skip numbers:
-   e.g. using 'QString("%1 - %3").arg(1).arg(2).arg(3)' will result in the string "1 - 2" and not "1 - 3"
-	therefore to keep the order all arguments (colors) are enumerated here to be replaced by
-	the corresponding arguments and stripped of comments after it
+R"END(/* Beware that %n in a QString doesn't neccessarily mean the n-th argument!
+   E.g. "%1%3%29" with no other %n in the string would use the first 3
+   parameters, even when we have all 29.
+   Trick: put all %n in a comment in the string as I do it here:
    %1 %2 %3 %4 %5 %6 %7 %8 %9 %10
    %11 %12 %13 %14 %15 %16 %17 %18 %19 %20
    %21 %22 %23 %24 %25 %26 %27 %28 %29
-	ALL comments will be stripped from the style string before used (See lambda 'eraseComments'
-	around lines 671
+   to ensure all arguments are enumerated correctly by Qt.
+   To offset this aLL comments will be stripped from the style string 
+   before used (See lambda 'eraseComments' around lines 671!)
 */
 * {
 	background-color:%1;			/* (1) background */
@@ -539,7 +548,9 @@ void FSchemeVector::ReadAndSetupSchemes()
 	if (QFile::exists(schemeFile ))
 	{
 		QSettings s(schemeFile, QSettings::IniFormat);	// in program directory;
+#if QT_VERSION < QT_VERSION_CHECK(6,0,0)
 		s.setIniCodec("UTF-8");
+#endif
 		QStringList keys = s.childGroups();	// get all top level keys with subkeys
 		FalconCalcScheme fgst;
 		for (auto &k : keys)
@@ -602,11 +613,6 @@ int FSchemeVector::IndexOf(const QString& title) // title: maybe full name inclu
 	return -1;
 }
 
-// DEBUG
-#include <QFile>
-#include <QTextStream>
-// /DEBUG
-
 Scheme FSchemeVector::PrepStyle(Scheme m)
 {
 	// to minimize the # of copies required we start from the last comment
@@ -634,7 +640,7 @@ Scheme FSchemeVector::PrepStyle(Scheme m)
 		//	"QGroupBox#gbHexOptions::title {\n"
 		//	"  height: 0px;\n"
 		//	"}\n";
-		((QApplication*)(QApplication::instance()))->setStyleSheet(ss);
+//		((QApplication*)(QApplication::instance()))->setStyleSheet(ss);
 	}
 	else
 	{
@@ -671,9 +677,11 @@ Scheme FSchemeVector::PrepStyle(Scheme m)
 			.arg(sch._values[26].second)	// %27	ListAlternateColor
 			.arg(sch._values[27].second)	// %28	ListSelectionBackground
 			.arg(sch._values[28].second);	// %29	ListSelectionColor
+
 		eraseComments(ss);
-		((QApplication*)(QApplication::instance()))->setStyleSheet(ss);
 	}
+	((QApplication*)(QApplication::instance()))->setStyleSheet(ss);
+
 #ifdef NothingImportant
 		QString s;
 		switch (m)

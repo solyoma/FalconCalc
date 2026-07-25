@@ -4,7 +4,7 @@
 	#define _SMARTSTRING_QT_H
 
 #include <algorithm>
-#include <vector>
+//#include <vector>
 #include <locale>
 
 #include <QChar>
@@ -15,7 +15,7 @@
 #include <QFile>
 #include <QTextStream>
 
-#include "defines.h"
+//#include "defines.h"
 
 using CaseSens = Qt::CaseSensitivity;
 
@@ -35,20 +35,20 @@ namespace SmString {
 		SCharT() {}
 		template<typename T> SCharT(T t) : QChar(t) {}
 
-		operator QChar() { return *this; }
+        // >>> ??? >>> operator QChar() { return *this; }
 		operator char16_t() const { return unicode(); }
 		operator wchar_t() const { return (wchar_t)unicode(); }
 		operator int() const { return (int)unicode(); }
 
 		SCharT& operator+=(const SCharT n) { *this = *this + n; return *this; }
 		SCharT& operator-=(const SCharT n) { *this = *this - n; return *this; }
-		SCharT  operator+ (const SCharT n) const { QChar sch; sch = (unicode() + n.unicode()); return sch; }
-		SCharT  operator- (const SCharT n) const { QChar sch; sch = (unicode() - n.unicode()); return sch; }
+        SCharT  operator+ (const SCharT n) const { return QChar(unicode() + n.unicode()); }
+        SCharT  operator- (const SCharT n) const { return QChar(unicode() - n.unicode()); }
 
 		SCharT operator++() { *this = unicode() + 1; return *this; }
-		SCharT operator++(int) { SCharT p(*this); (*this)++; return p; }
+        SCharT operator++(int) { SCharT p(*this); *this = unicode() + 1; return p; }
 		SCharT operator--() { *this = unicode() - 1; return *this; }
-		SCharT operator--(int) { SCharT p(*this); (*this)--; return p; }
+        SCharT operator--(int) { SCharT p(*this); *this = unicode() - 1; return p; }
 
 		bool operator<(const SCharT& sch)  const { return QChar(*this) < QChar(sch); }
 		bool operator>(const SCharT& sch)  const { return QChar(*this) > QChar(sch); }
@@ -60,12 +60,12 @@ namespace SmString {
 		bool IsDigit() const { return (QChar*)(this)->isDigit(); }
 		bool IsAlnum() const { return (QChar*)(this)->isLetterOrNumber(); }
 		bool IsAlpha() const { return (QChar*)(this)->isLetter(); }
+		bool IsXDigit() const { int ch = this->unicode();  return (0 <= ch && ch <= 9) || (ch >= 'A' && ch <= 'F') || (ch >= 'a' && ch <= 'f'); }
 
 		SCharT ToUpper() { return this->toUpper(); }
 		SCharT ToLower() { return this->toLower(); }
 		SCharT ToUpper(std::locale loc) { *this = std::toupper((wchar_t)unicode(), loc); return *this; }
 		SCharT ToLower(std::locale loc) { *this = std::tolower((wchar_t)unicode(), loc); return *this; }
-
 	};
 
 	//-------------- class SmartString - wrapper for QString with some additional functionality ---
@@ -78,7 +78,14 @@ namespace SmString {
 		static int npos; // defined in main.cpp (no SmartStringQt.cpp - yet)
 	public:
 		SmartString() : QString() {}
-		template<typename T> SmartString(T t) : QString(t) {}
+//		template<typename T, typename = std::enable_if_t<!std::is_integral_v<T>>> SmartString(T t) : QString(t) {}
+//        SmartString (int i) : QString(QChar(i)) {}
+		SmartString(const SmartString &ssh) :QString(ssh) {}
+		SmartString(const SCharT *ssh) :QString(ssh) {}
+		explicit SmartString(const char *pch) :QString(pch) {}
+		SmartString(const QString s) :QString(s) {}
+		SmartString(char ch) : QString(ch) {}
+		SmartString(int i) :QString(QChar(i)) {}
 		SmartString(const UTF8String& utf8s) : QString( QString::fromUtf8(utf8s.c_str())) {}
 		SmartString(const std::wstring& ws) : QString(QString::fromStdWString(ws)) {}
 		SmartString(const std::u16string& ws) : QString(QString::fromStdU16String(ws)) {}
@@ -90,6 +97,20 @@ namespace SmString {
 			SmartString s = mid(from - begin(), to - from);
 		}
 		~SmartString() {}
+
+        SmartString&operator=(const SmartString&so)
+        {
+            *(QString*)this = (QString)so;
+            return *this;
+        }
+
+		bool CharAtPositionIsEqualTo(int pos, SCharT ch) 
+		{ 
+			if (pos < 0 || pos >= length())
+				return false;
+			return (at(pos) == ch);
+		}
+
 
 		// **** replacements for std::string functions 
 		void erase(int pos, int len=-1)
@@ -183,29 +204,29 @@ namespace SmString {
 		int CompareWith(const SmartString ss, CaseSens caseSensitivity) const {
 			return QString::compare(QString(*this), QString(ss), caseSensitivity);
 		}
-		SmartString left(int n, QChar fillChar = QChar(-1)) const // may extend the string to the right
+		SmartString left(int n, QChar fillChar = QChar()) const // may extend the string to the right
 		{
 			if (n == npos || n == length())	// full string or outside of string
 				return *this;
 
-			if (n < length() || fillChar == QChar(-1))
+			if (n < length() || fillChar == QChar())
 				return QString::left(n);
 			return *this + SmartString(n - length(), fillChar);
 		}
-		SmartString right(int n, QChar fillChar = QChar(-1)) const	// may extend the string to the left
+		SmartString right(int n, QChar fillChar = QChar()) const	// may extend the string to the left
 		{
 			if (n == npos || n == length())	// full string or outside of string
 				return *this;
-			if (n < length() || fillChar == QChar(-1))
+			if (n < length() || fillChar == QChar())
 				return QString::right(n);
 			return SmartString(n - length(), fillChar) + *this;
 		}
 		// similar to QString::mid() but may extend the string with a given character too
-		SmartString mid(int pos, int n = -1, SCharT fillChar = SCharT(-1)) const
+		SmartString mid(int pos, int n = -1, SCharT fillChar = SCharT()) const
 		{
 			if (pos < 0 && n == -1) return *this; // full string
 			if (n == -1) n = length() - pos;
-			if (pos + n <= length() || fillChar == SCharT(-1))
+			if (pos + n <= length() || fillChar == SCharT())
 				return QString::mid(pos, n);
 			SmartString res = QString::mid(pos, n);
 			return res + SmartString(pos + n - length(), fillChar);
@@ -351,7 +372,7 @@ namespace SmString {
 	}
 	inline SmartStringVector SmartString::SplitRegex(const SmartString regex, bool keepEmpty) const
 	{
-		return QString::split(QRegExp(QString(regex)), keepEmpty ? Qt::KeepEmptyParts : Qt::SkipEmptyParts);
+        return QString::split(QRegularExpression(QString(regex)), keepEmpty ? Qt::KeepEmptyParts : Qt::SkipEmptyParts);
 	}
 }    // namespace SmString
 #endif

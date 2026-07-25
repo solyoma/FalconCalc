@@ -3,6 +3,9 @@
 #include <QFile>
 #include <QTextStream>
 #include <QString>
+#if QT_VERSION < QT_VERSION_CHECK(6,0,0)
+    #include <QStringRef>
+#endif
 #include <QSettings>
 #include <QTimer>
 #include <QClipboard>
@@ -57,7 +60,7 @@ static void __SaveStyle(QString styleName)
 #endif
 //#endif
 
-// in calulat.h/cpp : FalconCalc::LittleEngine* lengine = nullptr;
+// in calulate.h/cpp : FalconCalc::LittleEngine* lengine = nullptr;
 
 const QString STATE_VER_STRING = QString(STATE_ID_STRING);
 const QString DAT_VER_STRING = QString(DAT_ID_STRING);
@@ -138,6 +141,13 @@ void FalconCalcQt::showEvent(QShowEvent * event)
 {
     if (!_bAlreadyShown)
     {
+#ifndef _MSVC_VER
+		if (_actScheme == Scheme::schSystem)
+		{
+			_actScheme = Scheme::schLight;
+			_actScheme = Scheme::schSystem;
+		}
+#endif
         hDecOptionsHeight = ui.frmDecimal->height();
         hHexOptionsHeight = ui.gbHexOptions->height();
 		if (!_decOpen)
@@ -699,8 +709,10 @@ void FalconCalcQt::_LoadHistory()
 	QFile f(FCSettings::homePath + FalconCalcQt_HIST_FILE);
 	if (f.open(QIODevice::ReadOnly))
 	{
-		QTextStream ifs(&f);
+        QTextStream ifs(&f);
+#if QT_VERSION < QT_VERSION_CHECK(6,0,0)
 		ifs.setCodec("UTF-8");
+#endif
 		QString s;
 		while (!ifs.atEnd())
 		{
@@ -724,7 +736,9 @@ void FalconCalcQt::_SaveHistory()
 	if (f.open(QIODevice::WriteOnly))
 	{
 		QTextStream ofs(&f);
+#if QT_VERSION < QT_VERSION_CHECK(6,0,0)
 		ofs.setCodec("UTF-8");
+#endif
 		for (auto& s : _slHistory)
 			ofs << s << "\n";
 	}
@@ -1038,8 +1052,9 @@ bool FalconCalcQt::_LoadState()
 		return false;
 	
     QTextStream ifcfg(&fcfg);
+#if QT_VERSION < QT_VERSION_CHECK(6,0,0)
     ifcfg.setCodec("UTF-8");
-
+#endif
     QString s;
     s = ifcfg.readLine();
     if (! s.startsWith(STATE_VER_STRING) )
@@ -1047,7 +1062,11 @@ bool FalconCalcQt::_LoadState()
 	int l = s.length(), j = STATE_VER_STRING.length();
 	if (l == 0 || j < l)
 	{
+#if QT_VERSION >= QT_VERSION_CHECK(6,0,0)
+        _version = _GetVersion(s.mid(j-1,l-j));
+#else
 		_version = _GetVersion(QStringRef(&s, j - 1, l - j));
+#endif
 		if (_version > VERSION_INT)
 			QMessageBox::warning(this, tr("FalconCalcQt - Error"), tr("%1 is for a newer version of the program.\nThere might be problems with it.").arg(FalconCalcQt_DAT_FILE));
 	}
@@ -1315,6 +1334,9 @@ bool FalconCalcQt::_LoadState()
 	switch (_actScheme)
 	{
 		case Scheme::schSystem:
+//#ifndef _MSC_VER
+			_actScheme = Scheme::schBlack;		 // to signal to make size changes under linux
+//#endif
 			on_actionSystemMode_triggered();
 			break;
 		case Scheme::schLight:
@@ -1344,8 +1366,9 @@ bool FalconCalcQt::_SaveState()
 		return false;
 
 	QTextStream ofs(&f);
-	ofs.setCodec("UTF-8");
-
+#if QT_VERSION < QT_VERSION_CHECK(6,0,0)
+    ofs.setCodec("UTF-8");
+#endif
 	ofs << STATE_VER_STRING << VERSION_STRING << "\n";
 	if(_appLanguage != AppLanguage::lanNotSet)
 		ofs << LANGUAGE << "=" << (_appLanguage == AppLanguage::lanHun ? "hu":"en") << "\n";
@@ -1395,27 +1418,26 @@ void FalconCalcQt::_AddToHistory(QString infix)
 		_added = true;	// so won't try it to add again
 		return;
 	}
-	// no it's an expression, may be a definition, we don't care
-	int n;
+	// no it's an expression, maybe a definition, we don't care
+	int n,m;
 	if((n = ui.cbInfix->findText(infix)) < 0)	// not already in combobox?
 		ui.cbInfix->insertItem(0, infix);		// add it at the top
-	while (_maxHistDepth && (int)_maxHistDepth < ui.cbInfix->count())		 // 0: unlimited
-		ui.cbInfix->removeItem(ui.cbInfix->count() - 1);
+	if ((m = _slHistory.indexOf(infix)) < 0)	// not already in history?
+		_slHistory.push_front(infix);			// new line to the top
 
-	if ((n = _slHistory.indexOf(infix)) >= 0)	// found in history?
+	if (_maxHistDepth)		 // 0: unlimited
 	{
-		if (n == 0)							// already at top
-			return;							// nothing to do
-		_slHistory.removeAt(n);				// not at top delete expression from inside
+		if(n < 0) while ((int)_maxHistDepth < ui.cbInfix->count())		   // if added
+					ui.cbInfix->removeItem(ui.cbInfix->count() - 1);
+		if(m < 0) while ((int)_maxHistDepth < _slHistory.size())		   // if added
+					_slHistory.pop_back();
 	}
-	_slHistory.push_front(infix);			 // new line to the top
-	while (_maxHistDepth && (int)_maxHistDepth < _slHistory.size())		 // 0: unlimited
-		_slHistory.pop_back();
-		
+	// history may be sorted, but the combobox is always in order of last used, so we don't sort it
 	if (_historySorted)
 		_slHistory.sort();
+	if (n < 0 || m < 0)	// if added to either list
+		_added = true;
 
-	_added = true;
 	if (_pHist)
 	{
 		_pHist->Clear();
@@ -1482,7 +1504,7 @@ void FalconCalcQt::_ShowResults()
 		QString qsExp;
 		if ( (pxwNum = __GetPixelWidthOfRichTextString(qf, qs)) > pxwLbl)	// too long string: cut digits from base, until it fits
 		{
-			if (posx > 0)				// multiplication sign 'x'  or '.'
+			if (posx > 0)				// multiplication sign 'x'  or '·'
 			{
 				qsExp = qs.mid(posx);	// separate exponent part from string
 				qs = qs.left(posx);

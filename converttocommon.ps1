@@ -15,7 +15,7 @@ $names = @(
   "version.h"
 )
 
-# Replace patterns: ../src/ or ..\src\  -> ../common/ or ..\common\
+# Replace patterns: ../FalconCalcWin/ or ..\FalconCalcWin\  -> ../common/ or ..\common\
 Get-ChildItem -Path . -Recurse -Include *.vcxproj,*.vcxproj.filters |
 ForEach-Object {
     $file = $_.FullName
@@ -23,12 +23,12 @@ ForEach-Object {
 
     foreach($name in $names) {
         # replace backslash style
-        $text = $text -replace ("(\.\.\\src\\)" + [regex]::Escape($name)), ("..\\common\\" + $name)
+        $text = $text -replace ("(\.\.\\FalconCalcWin\\)" + [regex]::Escape($name)), ("..\\common\\" + $name)
         # replace forward slash style
-        $text = $text -replace ("(\.\.\/src\/)" + [regex]::Escape($name)), ("../common/" + $name)
-        # also handle cases with different relative prefixes (e.g. ../src/ or src/ )
-        $text = $text -replace ("(src\/)" + [regex]::Escape($name)), ("common/" + $name)
-        $text = $text -replace ("(src\\)" + [regex]::Escape($name)), ("common\\" + $name)
+        $text = $text -replace ("(\.\.\/FalconCalcWin\/)" + [regex]::Escape($name)), ("../common/" + $name)
+        # also handle cases with different relative prefixes (e.g. ../FalconCalcWin/ or FalconCalcWin/ )
+        $text = $text -replace ("(FalconCalcWin\/)" + [regex]::Escape($name)), ("common/" + $name)
+        $text = $text -replace ("(FalconCalcWin\\)" + [regex]::Escape($name)), ("common\\" + $name)
     }
 
     # write back only if changed

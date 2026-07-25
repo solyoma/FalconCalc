@@ -259,8 +259,7 @@ void Token::_GetOperator(const SmartString &text, LENGTH_TYPE &pos)
 //		  cn = SCharT(pos >= text.length() ? 0 : text[pos] );
 //#endif
 
-	SmartString s;
-	s = SCharT(c);
+	SmartString s = SmartString(1, SCharT(c) );
 
 	switch(c)
 	{
@@ -313,18 +312,6 @@ void Token::_GetOperator(const SmartString &text, LENGTH_TYPE &pos)
     type = tknOperator;
 }
 
-static bool __IsXDigit(SCharT ch)
-{
-    locale loc = wcout.getloc();
-
-    return isxdigit(ch.unicode(), loc) != 0;
-}
-static bool __IsDigit(SCharT ch)
-{
-    locale loc = wcout.getloc();
-    return isdigit(ch.unicode(),loc) != 0;
-}
-
 /*==========================================
  * TASK: scans 'text' from pos for decimal digits
  *       using current locale
@@ -333,7 +320,7 @@ static bool __IsDigit(SCharT ch)
   *----------------------------------------*/
 void Token::_GetDecDigits(const SmartString &text, LENGTH_TYPE &pos)
 {
-	while(pos < text.length() && __IsDigit(text.at(pos)) )
+	while(pos < text.length() && text.at(pos).IsDigit() )
 		++pos;
 }
 
@@ -397,7 +384,7 @@ void Token::_GetHexNumber(const SmartString &text, LENGTH_TYPE &pos)
 {
     LENGTH_TYPE startpos = pos;
     pos += 2;
-	while(pos < text.length() && __IsXDigit(text[pos]) )
+	while(pos < text.length() && SCharT(text[pos]).IsXDigit() )
 		++pos;
 	if(pos == startpos+2)
 		trigger.Raise(EEC_ILLEGAL_HEXADECIMAL_NUMBER);
@@ -415,9 +402,9 @@ void Token::_GetHexNumber(const SmartString &text, LENGTH_TYPE &pos)
 void Token::_GetOctNumber(const SmartString &text, LENGTH_TYPE &pos)
 {
 	LENGTH_TYPE startpos = pos++;
-	while(pos < text.length() && __IsDigit(text[pos]))
+	while(pos < text.length() && SCharT(text[pos]).IsDigit())
 	{
-		if(text[pos] > SCharT('7'))
+		if(SCharT(text[pos]) > SCharT('7'))
 				trigger.Raise(EEC_ILLEGAL_OCTAL_NUMBER);
 		++pos;
 	}
@@ -440,7 +427,7 @@ void Token::_GetBinaryNumber(const SmartString &text, LENGTH_TYPE &pos)
             trigger.Raise(EEC_ILLEGAL_BINARY_NUMBER);
         };
     LENGTH_TYPE startpos = pos++;    // skip '#'
-    while (pos < text.length() && __IsDigit(text[pos]))
+    while (pos < text.length() && SCharT(text[pos]).IsDigit())
     {
         if (text[pos] > SCharT('1'))
             triggerError();
@@ -522,7 +509,7 @@ void Token::_GetVarOrFuncOrOperator(const SmartString &text, LENGTH_TYPE &pos)
 		c = text.at(++pos).unicode();
 	s = text.mid(startpos, pos - startpos);
 	name = s;  //  set name
-    while(pos < text.length() && isspace(c.unicode(), loc))
+    while(pos < text.length() && c.isSpace())
         ++pos; // skip whitespace because of function definitions
     data = MathOperator::Op(s );
 	if( data.oper != opINVALID )
@@ -554,7 +541,7 @@ void Token::FromText(const SmartString &text, LENGTH_TYPE &pos)
 	SmartString sErr = "Illegal operator"_ss;
 
     SCharT  c = text[pos];
-	while(pos < len && isspace((wchar_t)c.unicode(), loc))
+	while(pos < len && c.isSpace() )
 		c = text[++pos];
 
 	SCharT cn = (++pos >= len ? SCharT(0) : SCharT(text[pos])); // look ahead
@@ -562,11 +549,11 @@ void Token::FromText(const SmartString &text, LENGTH_TYPE &pos)
 
     if(c == SCharT('\'') )   // character SmartString
         _GetNumberFromQuotedString(text, ++pos);
-	else if(__IsDigit(c) || c == decpoint || c == SCharT('#'))		// token is a decimal, hexadecimal, octal or binary number
+    else if(c.IsDigit() || c == decpoint || c == SCharT('#'))		// token is a decimal, hexadecimal, octal or binary number
 	{
         bool bDecpF = (c == decpoint),							        // decimal point found ?
             bHexF = (c == SCharT('0') && (cn == SCharT('x'))),		// hex number?
-            bOctF = (c == SCharT('0') && cn != SCharT(0) && __IsDigit(cn)),
+            bOctF = (c == SCharT('0') && cn != SCharT(0) && cn.IsDigit()),
 				bBinF = (c == SCharT('#'));
 
 		if(bHexF)                       // starts with 0x and ends when any non hex. digit character found
@@ -581,7 +568,7 @@ void Token::FromText(const SmartString &text, LENGTH_TYPE &pos)
 		}
 		else // decimal number
 		{
-			if((cn == SCharT(0) && bDecpF) || (bDecpF && !__IsDigit(cn)))	// then EOL and number is a single decimal point
+			if((cn == SCharT(0) && bDecpF) || (bDecpF && !cn.IsDigit()))	// then EOL and number is a single decimal point
 				trigger.Raise(EEC_ILLEGAL_NUMBER_No2);
 			_GetDecimalNumber(text, pos); // start at the first number/decimal point
 		}
@@ -943,7 +930,7 @@ int LittleEngine::_InfixToPostFix(const SmartString expr)
 
         if (!quoted)
         {
-            if (isspace(c, loc))  // drop spaces inside
+            if (SCharT(c).isSpace())  // drop spaces inside
                 continue;
             if (!IsAlnum(SCharT(c), loc) && pattern.find_first_of(*it) == (LENGTH_TYPE)std::string::npos)
                 trigger.Raise(EEC_ILLEGAL_CHARACTER_NUMBER);
@@ -1164,12 +1151,7 @@ bool LittleEngine::_VariableAssignment(const SmartString &expr, LENGTH_TYPE &pos
 {
 	locale loc = wcout.getloc();
 
-    auto exch = [&]()-> wchar_t
-        {
-            return expr.at(pos).unicode();
-        };
-
-    while(pos < expr.length() && isspace(exch(), loc))
+    while(pos < expr.length() && expr[pos].isSpace())
       ++pos;
     if( pos == expr.length()  || (expr[pos] != SCharT('=') && expr[pos] != schCommentDelimiter) )
         return false;       // not an assignment

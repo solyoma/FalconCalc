@@ -19,6 +19,7 @@ struct FCSettings
 private:
     static QSettings* _ps;
     static QString _name;
+    static bool _initted;
 };
 
 #endif // _FCSETTINGS_H

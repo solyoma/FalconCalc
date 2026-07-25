@@ -1,7 +1,8 @@
 ﻿#include "HelpDialog.h"
 #include <QScreen>
-#include <QDesktopWidget>
-
+#if QT_VERSION < QT_VERSION_CHECK(6,0,0)
+    #include <QDesktopWidget>
+#endif
 int HelpDialog::helpVisible = false;
 
 HelpDialog::HelpDialog(QWidget* parent) :QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint)

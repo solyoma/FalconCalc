@@ -377,7 +377,7 @@ RealNumber RealNumber::operator=(double value) // usually will loose accuracy as
 	{
 		_exponent = 0;
 		_sign = 1;
-		_numberString = chZero;
+		_numberString = SmartString(1, chZero);
 		return *this;
 	}
 
@@ -705,7 +705,7 @@ SmartString RealNumber::_IntegerPartToString(const SmartString& sNumber, int sig
 	{
 		useSign = true;
 	}
-	SmartString sPrefix, sDelim = chSpace;
+	SmartString sPrefix, sDelim = SmartString(1, chSpace);
 
 	switch (format.base)
 	{
@@ -823,6 +823,9 @@ SmartString RealNumber::ToBinaryString(const DisplayFormat& format)
 		return _numberString;
 
 	SmartString bin = _ToBase(2, _maxLength+LengthOverFlow);
+	if(bin.isEmpty())
+		return SmartString(format.useNumberPrefix ? "#0" : "0");
+
 	if ((bin == "Inf"_ss && !IsInf()) || (bin == "NaN"_ss && !IsNaN()) || (bin[0] == SCharT('T')))
 		return TOO_LONG_STR;
 
@@ -897,6 +900,8 @@ SmartString RealNumber::ToOctalString(const DisplayFormat& format)
 		return _numberString;
 
 	SmartString oct = _ToBase(8, _maxLength+LengthOverFlow);	// w.o. leading '0'
+	if(oct.isEmpty())
+		return SmartString("0");	
 
 	if ( (oct == "Inf"_ss && !IsInf()) || (oct == "NaN"_ss && !IsNaN()) || (oct[0] == SCharT('T')))
 		return TOO_LONG_STR;
@@ -978,6 +983,9 @@ SmartString RealNumber::ToHexString(const DisplayFormat &format)
 	}
 	else
 		hex = _ToBase(16, _maxLength+LengthOverFlow);
+
+	if(hex.isEmpty())
+		return SmartString(format.useNumberPrefix ? "0x0" :"0");
 
 	if ( (hex == "Inf"_ss && !IsInf()) || (hex == "NaN"_ss && !IsNaN()) || (hex[0]==SCharT('T')))
 		return TOO_LONG_STR;
@@ -1323,7 +1331,7 @@ bool RealNumber::_DisplData::Round()
 	bool bExpChanged = false;
 	if (carry) // then we have an overflow of '1'
 	{		   // example: 0.999991 rounded to 3 decimal places: 1.000
-		strRounded = SmartString(chOne) + strRounded;
+		strRounded = SmartString(1, chOne) + strRounded;
 		++exp;
 		--nLeadingDecimalZeros;
 		if (exp >= 0)	// the number was > 0.9
@@ -2506,7 +2514,7 @@ SmartString RealNumber::_RoundNumberString(SmartString &numString, int &exponent
 
 	if (carry) // then 'res' is empty, and we have an overflow of '1'
 	{
-		res = SmartString(one);
+		res = SmartString(1, one);
 		++exponent;
 	}
 	return numString = res;
@@ -2945,7 +2953,7 @@ void RealNumber::_DivideInternal(RealNumber& left, RealNumber& right, RealNumber
 		for (int i =  (int)len - 1, j = (int)rp -1; j >= 0; --i, --j)
 			dividend[i] = _SubtractDigits(dividend.at(i,chZero), divisor.at(j,chZero), borrow);
 		if (extension)									  // 666|6 - 700*1 => 596|6 - 700*2 => ... 106|6 - 700 => 036|6 
-			dividend[0] = SCharT(dividend[0]).unicode() - borrow;
+            dividend[0] = SCharT(dividend[0].unicode() - borrow);
 	};
 	//*************** Main division loop							
 	ResultT res;

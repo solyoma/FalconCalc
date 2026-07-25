@@ -5,6 +5,7 @@
 #include <QTranslator>
 #include <QStyleFactory>
 
+
 #include "defines.h"
 #include "SmartStringQt.h"
 using namespace SmString;
@@ -83,7 +84,7 @@ static QString TranslateApp(QApplication &app, QTranslator &translator)
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-	a.setStyle("fusion");
+	a.setStyle("Fusion");
 
 	QTranslator translator;
 	TranslateApp(a, translator);

@@ -143,6 +143,9 @@
        <string/>
       </property>
       <layout class="QFormLayout" name="formLayout">
+       <property name="fieldGrowthPolicy">
+        <enum>QFormLayout::ExpandingFieldsGrow</enum>
+       </property>
        <property name="verticalSpacing">
         <number>2</number>
        </property>
@@ -194,6 +197,12 @@
        </item>
        <item row="0" column="1">
         <widget class="QLabel" name="lblDec">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
          <property name="font">
           <font>
            <family>Tahoma</family>
@@ -253,6 +262,12 @@
        </item>
        <item row="1" column="1">
         <widget class="QLabel" name="lblHex">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
          <property name="font">
           <font>
            <family>Tahoma</family>
@@ -312,6 +327,12 @@
        </item>
        <item row="2" column="1">
         <widget class="QLabel" name="lblOct">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
          <property name="font">
           <font>
            <family>Tahoma</family>
@@ -371,6 +392,12 @@
        </item>
        <item row="3" column="1">
         <widget class="QLabel" name="lblBin">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
          <property name="font">
           <font>
            <family>Tahoma</family>
@@ -757,7 +784,7 @@
              <set>Qt::AlignHCenter|Qt::AlignTop</set>
             </property>
             <property name="flat">
-             <bool>true</bool>
+             <bool>false</bool>
             </property>
             <layout class="QHBoxLayout" name="horizontalLayout_2">
              <property name="leftMargin">

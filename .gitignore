@@ -413,3 +413,4 @@ src/tmp/*
 src/saved/*
 _releases
 egyetem
+/common/LongNumber-.cpp

@@ -6,6 +6,12 @@
 #include <QSettings>
 #include <QTimer>
 
+#if QT_VERSION < QT_VERSION_CHECK(6,0,0)
+    #include <QStringRef>
+#else
+    #define QStringRef QString
+#endif
+
 #include "version.h"
 #include "common.h"
 #include "schemes.h"
@@ -108,6 +114,8 @@ private slots:
 private:
     Ui::FalconCalcQtClass ui;
 
+    bool _bAlreadyShown = false;
+
     int _version = VERSION_INT;
 	AppLanguage _appLanguage = AppLanguage::lanNotSet;
 
@@ -119,7 +127,6 @@ private:
 
     int hHexOptionsHeight = 78, // before display these cannot be determined
         hDecOptionsHeight = 124;
-    bool _bAlreadyShown = false;
     QColor _lblTextColor;
         // history
     bool _added=false;		    // already added to history by timer, reset by keypress

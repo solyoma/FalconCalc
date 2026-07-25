@@ -72,6 +72,8 @@ public:
 	bool IsDigit() const { return std::isdigit(_unicode, std::cout.getloc()); }
 	bool IsAlnum() const { return std::isalnum(_unicode, std::cout.getloc()); }
 	bool IsAlpha() const { return std::isalpha(_unicode, std::cout.getloc()); }
+	bool isSpace() const { return std::isspace(_unicode, std::cout.getloc()); }
+	bool IsXDigit() const { return std::isxdigit(_unicode, std::cout.getloc()); }
 
 
 	constexpr char16_t unicode() const { return _unicode; }
@@ -164,6 +166,7 @@ public:
 			return def;
 		return  const_cast<SCharT&>(String::operator[](pos) );
 	}
+	bool CharAtPositionIsEqualTo(size_t pos, SCharT ch) const { if (pos >= length()) return false; return (at(pos) == ch); }
 
 	bool isEmpty() { return String::empty(); }
 	SmartString left( UTF8Pos n, SCharT fillChar = SCharT(-1)) const; // may extend the string to the right

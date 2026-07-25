@@ -496,7 +496,7 @@ namespace LongNumber {
 		inline bool IsNaN()  const noexcept { return _numberString.at(0) == SmString::SCharT('N'); };
 		inline int  IsInf()  const noexcept { return _numberString.at(0) == SmString::SCharT('I'); };	// +Inf or -Inf
 		inline int  IsTooLong()  const noexcept { return _numberString.at(0) == SmString::SCharT('T'); };	// +Inf or -Inf
-		inline bool IsPure10Power() const noexcept { return _numberString == SmString::SmartString(chOne); }
+		inline bool IsPure10Power() const noexcept { return _numberString == SmString::SmartString(1, chOne); }
 
 		inline bool IsNull() const
 		{
