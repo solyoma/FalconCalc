@@ -5,6 +5,7 @@
 
 #include <QSettings>
 #include <QTimer>
+#include <QEvent>
 
 #if QT_VERSION < QT_VERSION_CHECK(6,0,0)
     #include <QStringRef>
@@ -51,6 +52,11 @@ public:
 protected:
     void moveEvent(QMoveEvent* event);
     void showEvent(QShowEvent* event);
+    QPoint dragPos;
+
+    void mousePressEvent(QMouseEvent* event);
+
+    void mouseMoveEvent(QMouseEvent* event);
 
 private slots:
     void on_actionAbout_triggered();
@@ -114,6 +120,9 @@ private slots:
 private:
     Ui::FalconCalcQtClass ui;
 
+	QToolButton* _pBtnMin = nullptr, * _pBtnClose = nullptr;    // minimize/maximize buttons on the title bar
+	QPoint _dragPos;
+
     bool _bAlreadyShown = false;
 
     int _version = VERSION_INT;
@@ -154,6 +163,7 @@ private:
         _varfuncDialogSnapped=true;
 
 private: // functions
+    void _SetupFramelessWindow();
     QString _SetColoredLabelText(QString text) const
     { 
         return QString("<font color='%1'>%2</font>").arg(_lblTextColor.name()).arg(text); 

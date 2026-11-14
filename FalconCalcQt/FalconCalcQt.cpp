@@ -1,5 +1,4 @@
-﻿
-#include <QDir>
+﻿#include <QDir>
 #include <QFile>
 #include <QTextStream>
 #include <QString>
@@ -79,6 +78,8 @@ FalconCalcQt::FalconCalcQt(QWidget *parent)  : QMainWindow(parent)
 #ifdef _DEBUG
 	setWindowTitle(windowTitle() + " - Debug");
 #endif
+
+	_SetupFramelessWindow();
 	FCSettings::Init();
 
 // make mode selection actions exclusive
@@ -228,6 +229,18 @@ void FalconCalcQt::moveEvent(QMoveEvent* e)
 		_pVF->move(xh0 + dx, yh0 + dy);
 		--_busy;
 	}
+}
+
+void FalconCalcQt::mousePressEvent(QMouseEvent* event)
+{
+	if (event->button() == Qt::LeftButton)
+		dragPos = event->globalPos() - frameGeometry().topLeft();
+}
+
+void FalconCalcQt::mouseMoveEvent(QMouseEvent* event)
+{
+	if (event->buttons() & Qt::LeftButton)
+		move(event->globalPos() - dragPos);
 }
 
 void FalconCalcQt::on_actionPasteAfter_triggered()
@@ -1023,6 +1036,38 @@ static int __ReadAndSplitLine(QTextStream& ifs, QStringList& data)
 	data.push_back(qs.left(n));
 	data += qs.mid(n+1).split('|');
 	return data.size();
+}
+
+void FalconCalcQt::_SetupFramelessWindow()
+{
+	setWindowFlags(Qt::FramelessWindowHint | Qt::Window);
+	_pBtnMin = new QToolButton(this);
+	_pBtnMin->setText("_");
+
+	_pBtnClose = new QToolButton(this);
+	_pBtnClose->setText("X");
+
+	connect(_pBtnMin, &QToolButton::clicked,
+		this, &QWidget::showMinimized);
+
+	connect(_pBtnClose, &QToolButton::clicked,
+		this, &QWidget::close);
+
+	QWidget* controls = new QWidget;
+	QHBoxLayout* layout = new QHBoxLayout(controls);
+	layout->setContentsMargins(0, 0, 0, 0);
+	layout->addWidget(_pBtnMin);
+	layout->addWidget(_pBtnClose);
+	int w = layout->sizeHint().width()+10,
+		w0= menuBar()->width()-200;
+
+	QWidget* pMover = new QWidget(this);
+	//pMover->setStyleSheet("background-color:red");
+	pMover->setFixedHeight(menuBar()->height());
+	pMover->setFixedWidth(w0-w);
+	pMover->move(200, 0);// w0 - w, 0);
+
+	menuBar()->setCornerWidget(controls, Qt::TopRightCorner);
 }
 
 void FalconCalcQt::_EnableMyTimer(bool enable)

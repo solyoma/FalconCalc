@@ -294,6 +294,13 @@ namespace SmString {
 	}
 #endif
 
+	SmartString::SmartString(const String::base& s)
+	{
+		resize(s.length());
+		for (size_t i = 0; i < length(); ++i)
+			(*this)[i] = s[i];
+	}
+
 	SmartString::SmartString(const UTF8String& s)
 	{
 		SCharT sch;
@@ -360,6 +367,11 @@ namespace SmString {
 	{
 		String::operator+=(String(1, ch));
 		return *this;
+	}
+
+	SmartString& SmartString::operator +=(const base& s)
+	{
+		return operator+=(SmartString(s));
 	}
 
 	SmartString& SmartString::operator+=(const SmartString s)
@@ -530,6 +542,15 @@ namespace SmString {
 	void SmartString::Reverse() // order of characters
 	{								// but characters in chunks are kept in the original order
 		std::reverse(begin(), end()); // in algorithm
+	}
+
+	int SmartString::WidthInPixels(const String& string)
+	{
+#ifdef _WIN32
+		HDC gdc = GetDC(nullptr);
+		if(GetTextExtentExPoint(hdc, )
+#endif
+		return 0;
 	}
 	// end of namespace SmString
 

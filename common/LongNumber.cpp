@@ -1210,7 +1210,7 @@ int RealNumber::_DisplData::RequiredSpaceforIntegerDigits()
 	 *------------------------------------------------------------*/
 bool RealNumber::_DisplData::PrepareRoundedString()
 {
-	LENGTH_TYPE nsLen		= pRn->_numberString.length(), 
+	LENGTH_TYPE nsLen	= pRn->_numberString.length(), 
 		   nTotLen		= nLeadingDecimalZeros + nsLen,
 		   nDecLen		= nTotLen - nIntegerDigits,
 		   cntDecSep	= 0;		// count of decimal separators, only used when needed
@@ -1404,7 +1404,12 @@ SmartString RealNumber::ToDecimalString(const DisplayFormat &format)
 	result += _DecimalPartToString(_dsplD.strRounded, _dsplD, _dsplD.nIntegerDigits);
 	if (_dsplD.expLen)
 		result += _dsplD.strExponent;
-
+#ifdef QTSA_PROJECT
+// DEBUG
+	qDebug("result string:%s", result.toUtf8String().c_str());
+	qDebug("expLen:%d, decDigits:%d, nRoundPos: %d, result length:%d", _dsplD.expLen, _dsplD.fmt.decDigits, _dsplD.nRoundPos, result.length());
+// /DEBUG
+#endif
 	return result;
 }
 
@@ -1489,7 +1494,7 @@ void RealNumber::_DisplData::Setup(const DisplayFormat& format, RealNumber& rN)
  *			'expLen'
  * REMARKS:
  *------------------------------------------------------------*/
-SmartString RealNumber::_DisplData::FormatExponent()
+SmartString RealNumber::_DisplData::FormatExponent(MyFontMetrics* metrics)
 {
 	if (numberIsZero)
 	{
@@ -1546,6 +1551,13 @@ SmartString RealNumber::_DisplData::FormatExponent()
 				break;
 		}
 	}
+
+	expWPix = -1;
+
+	int aw = SmartString::WidthInPixels(String("12345678890 .")) / 12; // average character width
+	expWPix = SmartString::WidthInPixels(s);			// real width of the exponent string in pixels
+	expW = (expWPix + aw)/aw;							// and in characters
+
 	return strExponent = s;
 }
 

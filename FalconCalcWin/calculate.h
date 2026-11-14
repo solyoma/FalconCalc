@@ -279,7 +279,7 @@ namespace FalconCalc
         Func() {};
         Func(const Func& var) { *this = var;}
         // This constructor is used for builtins only. They never get dirty
-        Func(const SCharT *desc, const RealNumber val) :desc(desc), value(val) {}
+        Func(const SCharT *desc, const RealNumber val) :desc(*desc), value(val) {}
 
         Func &operator=(const Func& other)
         {

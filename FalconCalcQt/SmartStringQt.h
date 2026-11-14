@@ -14,6 +14,7 @@
 #include <QLocale>
 #include <QFile>
 #include <QTextStream>
+#include <QFontMetrics>
 
 //#include "defines.h"
 
@@ -282,6 +283,13 @@ namespace SmString {
 		void Reverse() // order of characters
 		{
 			std::reverse(begin(), end());
+		}
+
+		static int WidthInPixels(const String& string)
+		{
+			QFont f;
+			QFontMetrics fm(f);
+			return fm.horizontalAdvance(QString(string));
 		}
 	};
 

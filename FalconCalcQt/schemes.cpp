@@ -6,10 +6,10 @@
 #endif
 #include <QSettings>
 #include <QString>
-#include <QStringlist>
+#include <QStringList>
 #include <QVector>
 #include <QApplication>
-#include <QMainwindow>
+#include <QMainWindow>
 
 #include "FCSettings.h"
 #include "schemes.h"

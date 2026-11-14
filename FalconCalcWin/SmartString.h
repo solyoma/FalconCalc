@@ -2,6 +2,9 @@
 
 #ifndef _SMARTSTRING_H
 	#define _SMARTSTRING_H
+// Only used in non-QT projects to emulate some of the properties of QString. 
+// It is a UTF-16 string class with some convenience functions not present in the STL
+// Qt programs use SmartStringQt.h
 
 #include <iostream>
 #include <limits>
@@ -87,7 +90,37 @@ public:
 	SCharT ToLower(std::locale loc) { _unicode = std::tolower(_unicode, loc); return *this;}
 };
 
-typedef std::basic_string<SCharT> String;
+class SmartString;	// forward declaration
+
+class String : public std::basic_string<SCharT>
+{
+	public:
+		using base = std::basic_string<SCharT>;
+		String() : base() {}
+		String(const String& ssh) : base(ssh){}
+		String(const SCharT* ssh) : base(ssh) {}
+		String(const base& ssh) : base(ssh) {}
+		explicit String(const char* pch) 
+		{
+			while(*pch) 
+				push_back(SCharT(*pch++));
+		}
+		String(String::iterator from, String::iterator to) : base(from, to) { }
+
+		String(int len, SCharT ch) : base(len, ch) {}
+		~String() {}
+
+		String& operator=(const String& so)
+		{
+			*(String*)this = (String)so;
+			return *this;
+		}
+		String & operator=(const base& so)
+		{
+			*(String*)this = (String)so;
+			return *this;
+		}
+};
 
 using UTF8Pos = size_t;			// when used for unicode position (no unicode character in string: same as position)
 // Portable UTF-8 <-> wide helpers (works C++14/17/20+, no Qt, no platform APIs)
@@ -104,7 +137,7 @@ UTF8String wchar_to_utf8(wchar_t wc);
 // The length() function returns the length in code points, the size() function returns
 // the number of bytes that makes up the string
 class SmartStringVector;	// forward declaration
-
+ // - - - - - - - - - - - - - - -
 class SmartString : public String
 {
 public:
@@ -116,6 +149,7 @@ public:
 #ifdef QTSA_PROJECT
 	explicit SmartString(const QString &qs);
 #endif
+	explicit SmartString(const String::base &s);
 	explicit SmartString(const UTF8String &s);
 	explicit SmartString(const char* pcstr);
 	explicit SmartString(const std::wstring ws);
@@ -131,7 +165,7 @@ public:
 	SmartString(const String &s) : String(s){}
 	SmartString(SCharT ch) : SmartString(1, ch){}
 	//SmartString(const SCharT* ps) : SmartString(ps) {}
-	SmartString(const SCharT* ps, size_t len) :SmartString(ps) {}
+	//SmartString(const SCharT* ps, size_t len) : SmartString(ps) {}
 	SmartString(size_t len, SCharT ch) : String(len, ch)  { }
 	SmartString(String::iterator from, String::iterator to) : String(from, to) { }
 	~SmartString() {}
@@ -147,6 +181,7 @@ public:
 	SmartString& operator=(const QString qs);
 #endif
 
+	SmartString& operator +=(const base &s);
 	SmartString& operator +=(const SmartString s);
 	SmartString& operator +=(const UTF8String s);
 	SmartString& operator +=(SCharT ch);
@@ -204,6 +239,8 @@ public:
 	SmartStringVector SplitRegex(const SmartString regex, bool keepEmpty) const;	// TODO
 				
 	void Reverse(); // order of characters
+
+	static int WidthInPixels(const String& string);	
 };
 // literal operator for string constants like "1234"_ss
 

@@ -61,6 +61,5 @@ DEFINES += QTSA_PROJECT
 RC_FILE += FalconCalcQt.rc
 QMAKE_CXXFLAGS += -std=c++17 -Wno-unused-parameter -Wno-reorder
 QT += gui widgets network
-requires(qtConfig(filedialog))
 TRANSLATIONS += ./translations/FalconCalcQt_en.ts \
-			    ./translations/FalconCalcQt_hu.ts
+		./translations/FalconCalcQt_hu.ts

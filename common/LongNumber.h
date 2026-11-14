@@ -9,11 +9,17 @@
 #include <set>
 #include <map>
 
+#ifdef _WIN32
+	#include <windows.h>
+	#include <wingdi.h>
+#endif
+
 #include "defines.h"
+#include "FontMetrics.h"
 
 namespace LongNumber {
 	//using namespace SmString;				// SmString::SmartString.h
-	constexpr const LENGTH_TYPE MaxAllowedDigits = 75;	// !!! Modify these  - no number string can have more digits than this + LengthOverflow
+	constexpr const LENGTH_TYPE MaxAllowedDigits = 70;	// !!! Modify these  - no number string can have more digits than this + LengthOverflow
 	constexpr const LENGTH_TYPE LengthOverFlow = 2;		// add this to the _maxLength of a RealNumber to get the real maximum string length
 	constexpr const LENGTH_TYPE MaxAbsExponent = 1024;	// absolute value of maximum exponent
 	constexpr const LENGTH_TYPE TrigAccuracy = 70;		// max this many digits used for trigonometric functions. must be <= MaxAllowedDigits
@@ -457,7 +463,6 @@ namespace LongNumber {
 //		}
 //#endif
 
-
 		SmString::SmartString ToString(const DisplayFormat& format);
 		SmString::SmartString ToString()					// format as decimal string with default settings
 		{
@@ -550,7 +555,8 @@ namespace LongNumber {
 			LENGTH_TYPE	cntDecDigitsToDisplay = 0;	// rounding position in pRn->_numberString
 			LENGTH_TYPE	cntDecDigitsInNumberString = 0;	// total number for decimal part in pRn->_numberString
 			LENGTH_TYPE	expLen = 0;					// length of exponent string
-			LENGTH_TYPE	expW = 0;					// display length of same (TODO: using pixel units)
+			LENGTH_TYPE expWPix = 0;				// width of exponent string in pixels
+			LENGTH_TYPE	expW = 0;					// display length of same
 
 			int nRoundPos = -1;					// relative to pRn->_numberString, including integer part! -1: no rounding 
 
@@ -564,7 +570,9 @@ namespace LongNumber {
 			SmString::SmartString strRounded;				// rounded string of digits from pRn->_numberString may be empty
 
 			void Setup(const DisplayFormat& format, RealNumber& rN);
-			SmString::SmartString FormatExponent();		// normal: smaller numbers at upper index position, TEX: with ^, HTML with <sup>...</sup>, else Exxx
+					// format exponent : *normal*: smaller numbers at upper index position : x10^{-12} 
+					// *TEX*: with ^, HTML with <sup>...</sup>, else Exxx
+			SmString::SmartString FormatExponent(MyFontMetrics *metrics = nullptr);
 
 			void FixNumberFormatAndSetExponent(); // for general format or too large/small numbers
 			int RequiredSpaceforIntegerDigits();  // calc. nWIntegerPart

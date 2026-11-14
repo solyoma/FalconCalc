@@ -138,6 +138,7 @@
     <ClInclude Include="..\common\common.h" />
     <ClInclude Include="..\common\defines.h" />
     <ClInclude Include="..\common\EngineErrors.h" />
+    <ClInclude Include="..\common\FontMetrics.h" />
     <ClInclude Include="frmLocale.h" />
     <ClInclude Include="..\common\LongNumber.h" />
     <ClInclude Include="about.h" />

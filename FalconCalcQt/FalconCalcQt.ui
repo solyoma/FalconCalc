@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>522</width>
-    <height>463</height>
+    <height>480</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -25,7 +25,7 @@
   <property name="maximumSize">
    <size>
     <width>522</width>
-    <height>463</height>
+    <height>496</height>
    </size>
   </property>
   <property name="font">
@@ -183,7 +183,7 @@
          </property>
          <property name="font">
           <font>
-           <family>Tahoma</family>
+           <family>Sans Serif</family>
            <pointsize>10</pointsize>
           </font>
          </property>
@@ -205,7 +205,7 @@
          </property>
          <property name="font">
           <font>
-           <family>Tahoma</family>
+           <family>Sans Serif</family>
            <pointsize>10</pointsize>
           </font>
          </property>
@@ -248,7 +248,7 @@
          </property>
          <property name="font">
           <font>
-           <family>Tahoma</family>
+           <family>Sans Serif</family>
            <pointsize>10</pointsize>
           </font>
          </property>
@@ -270,7 +270,7 @@
          </property>
          <property name="font">
           <font>
-           <family>Tahoma</family>
+           <family>Sans Serif</family>
            <pointsize>10</pointsize>
           </font>
          </property>
@@ -313,7 +313,7 @@
          </property>
          <property name="font">
           <font>
-           <family>Tahoma</family>
+           <family>Sans Serif</family>
            <pointsize>10</pointsize>
           </font>
          </property>
@@ -335,7 +335,7 @@
          </property>
          <property name="font">
           <font>
-           <family>Tahoma</family>
+           <family>Sans Serif</family>
            <pointsize>10</pointsize>
           </font>
          </property>
@@ -378,7 +378,7 @@
          </property>
          <property name="font">
           <font>
-           <family>Tahoma</family>
+           <family>Sans Serif</family>
            <pointsize>10</pointsize>
           </font>
          </property>
@@ -400,7 +400,7 @@
          </property>
          <property name="font">
           <font>
-           <family>Tahoma</family>
+           <family>Sans Serif</family>
            <pointsize>10</pointsize>
           </font>
          </property>
@@ -437,6 +437,12 @@
         <width>16777215</width>
         <height>24</height>
        </size>
+      </property>
+      <property name="font">
+       <font>
+        <family>Sans Serif</family>
+        <pointsize>10</pointsize>
+       </font>
       </property>
       <property name="text">
        <string>▼--------------Decimal options-------------</string>
@@ -514,6 +520,12 @@
           </property>
           <item row="4" column="0">
            <widget class="QCheckBox" name="chkSci">
+            <property name="font">
+             <font>
+              <family>Sans Serif</family>
+              <pointsize>10</pointsize>
+             </font>
+            </property>
             <property name="text">
              <string>&amp;Scientific format</string>
             </property>
@@ -521,6 +533,12 @@
           </item>
           <item row="1" column="0" rowspan="3">
            <widget class="QCheckBox" name="chkDecDelim">
+            <property name="font">
+             <font>
+              <family>Sans Serif</family>
+              <pointsize>10</pointsize>
+             </font>
+            </property>
             <property name="text">
              <string>Use D&amp;ecimal separator</string>
             </property>
@@ -538,6 +556,12 @@
           </item>
           <item row="5" column="0" rowspan="3">
            <widget class="QCheckBox" name="chkEng">
+            <property name="font">
+             <font>
+              <family>Sans Serif</family>
+              <pointsize>10</pointsize>
+             </font>
+            </property>
             <property name="text">
              <string>&amp;Engineering format</string>
             </property>
@@ -545,6 +569,12 @@
           </item>
           <item row="0" column="0">
            <widget class="QCheckBox" name="chkThousandSep">
+            <property name="font">
+             <font>
+              <family>Sans Serif</family>
+              <pointsize>10</pointsize>
+             </font>
+            </property>
             <property name="text">
              <string>Use &amp;Thousand separator:</string>
             </property>
@@ -590,6 +620,12 @@
           </item>
           <item row="8" column="0">
            <widget class="QCheckBox" name="chkDecDigits">
+            <property name="font">
+             <font>
+              <family>Sans Serif</family>
+              <pointsize>10</pointsize>
+             </font>
+            </property>
             <property name="text">
              <string>Decimal d&amp;igits:</string>
             </property>
@@ -697,6 +733,11 @@
                  <height>20</height>
                 </size>
                </property>
+               <property name="font">
+                <font>
+                 <family>Sans Serif</family>
+                </font>
+               </property>
                <property name="text">
                 <string>&amp;Font...</string>
                </property>
@@ -737,6 +778,12 @@
              </property>
              <item>
               <widget class="QRadioButton" name="rbDeg">
+               <property name="font">
+                <font>
+                 <family>Sans Serif</family>
+                 <pointsize>10</pointsize>
+                </font>
+               </property>
                <property name="text">
                 <string>De&amp;g</string>
                </property>
@@ -747,6 +794,12 @@
              </item>
              <item>
               <widget class="QRadioButton" name="rbRad">
+               <property name="font">
+                <font>
+                 <family>Sans Serif</family>
+                 <pointsize>10</pointsize>
+                </font>
+               </property>
                <property name="text">
                 <string>&amp;Rad</string>
                </property>
@@ -754,6 +807,12 @@
              </item>
              <item>
               <widget class="QRadioButton" name="rbGrad">
+               <property name="font">
+                <font>
+                 <family>Sans Serif</family>
+                 <pointsize>10</pointsize>
+                </font>
+               </property>
                <property name="text">
                 <string>&amp;Grad</string>
                </property>
@@ -761,6 +820,12 @@
              </item>
              <item>
               <widget class="QRadioButton" name="rbTurns">
+               <property name="font">
+                <font>
+                 <family>Sans Serif</family>
+                 <pointsize>10</pointsize>
+                </font>
+               </property>
                <property name="text">
                 <string>&amp;Turns</string>
                </property>
@@ -803,7 +868,7 @@
               <widget class="QRadioButton" name="rbNormal">
                <property name="font">
                 <font>
-                 <family>Tahoma</family>
+                 <family>Sans Serif</family>
                  <pointsize>10</pointsize>
                 </font>
                </property>
@@ -817,6 +882,12 @@
              </item>
              <item>
               <widget class="QRadioButton" name="rbHtml">
+               <property name="font">
+                <font>
+                 <family>Sans Serif</family>
+                 <pointsize>10</pointsize>
+                </font>
+               </property>
                <property name="text">
                 <string>HT&amp;ML</string>
                </property>
@@ -824,6 +895,12 @@
              </item>
              <item>
               <widget class="QRadioButton" name="rbTex">
+               <property name="font">
+                <font>
+                 <family>Sans Serif</family>
+                 <pointsize>10</pointsize>
+                </font>
+               </property>
                <property name="text">
                 <string>&amp;TeX</string>
                </property>
@@ -831,6 +908,12 @@
              </item>
              <item>
               <widget class="QRadioButton" name="rbNone">
+               <property name="font">
+                <font>
+                 <family>Sans Serif</family>
+                 <pointsize>10</pointsize>
+                </font>
+               </property>
                <property name="text">
                 <string>&amp;E</string>
                </property>
@@ -858,6 +941,12 @@
         <width>16777215</width>
         <height>24</height>
        </size>
+      </property>
+      <property name="font">
+       <font>
+        <family>Sans Serif</family>
+        <pointsize>10</pointsize>
+       </font>
       </property>
       <property name="text">
        <string>▼----------Hexadecimal Options-----------</string>
@@ -926,6 +1015,12 @@
           </property>
           <item>
            <widget class="QCheckBox" name="chkBytes">
+            <property name="font">
+             <font>
+              <family>Sans Serif</family>
+              <pointsize>10</pointsize>
+             </font>
+            </property>
             <property name="text">
              <string>As B&amp;ytes</string>
             </property>
@@ -936,6 +1031,12 @@
           </item>
           <item>
            <widget class="QCheckBox" name="chkWords">
+            <property name="font">
+             <font>
+              <family>Sans Serif</family>
+              <pointsize>10</pointsize>
+             </font>
+            </property>
             <property name="text">
              <string>As &amp;Words</string>
             </property>
@@ -946,6 +1047,12 @@
           </item>
           <item>
            <widget class="QCheckBox" name="chkDWords">
+            <property name="font">
+             <font>
+              <family>Sans Serif</family>
+              <pointsize>10</pointsize>
+             </font>
+            </property>
             <property name="text">
              <string>As &amp;Dwords</string>
             </property>
@@ -959,6 +1066,12 @@
        </item>
        <item row="1" column="0">
         <widget class="QCheckBox" name="chkHexPrefix">
+         <property name="font">
+          <font>
+           <family>Sans Serif</family>
+           <pointsize>10</pointsize>
+          </font>
+         </property>
          <property name="text">
           <string>0&amp;x prefix</string>
          </property>
@@ -969,6 +1082,12 @@
        </item>
        <item row="0" column="0">
         <widget class="QCheckBox" name="chkMinus">
+         <property name="font">
+          <font>
+           <family>Sans Serif</family>
+           <pointsize>10</pointsize>
+          </font>
+         </property>
          <property name="text">
           <string>M&amp;inus sign</string>
          </property>
@@ -976,6 +1095,12 @@
        </item>
        <item row="0" column="3">
         <widget class="QCheckBox" name="chkLittleEndian">
+         <property name="font">
+          <font>
+           <family>Sans Serif</family>
+           <pointsize>10</pointsize>
+          </font>
+         </property>
          <property name="text">
           <string>&amp;Little endian</string>
          </property>
@@ -995,6 +1120,12 @@
             <height>19</height>
            </rect>
           </property>
+          <property name="font">
+           <font>
+            <family>Sans Serif</family>
+            <pointsize>10</pointsize>
+           </font>
+          </property>
           <property name="text">
            <string>As IEEE 7&amp;54 double</string>
           </property>
@@ -1010,6 +1141,12 @@
             <width>143</width>
             <height>19</height>
            </rect>
+          </property>
+          <property name="font">
+           <font>
+            <family>Sans Serif</family>
+            <pointsize>10</pointsize>
+           </font>
           </property>
           <property name="text">
            <string>As IEEE &amp;754 single</string>
@@ -1031,7 +1168,7 @@
      <x>0</x>
      <y>0</y>
      <width>522</width>
-     <height>21</height>
+     <height>23</height>
     </rect>
    </property>
    <widget class="QMenu" name="mnuFile">
