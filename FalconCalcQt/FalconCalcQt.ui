@@ -44,25 +44,41 @@
   <property name="styleSheet">
    <string notr="true"/>
   </property>
-  <widget class="QWidget" name="centralWidget">
-   <layout class="QVBoxLayout" name="verticalLayout_3" stretch="0,0,0,0,0,0,0">
+  <widget class="QFrame" name="centralWidget">
+    <layout class="QVBoxLayout" name="verticalLayout_3" stretch="0,0,0,0,0,0,0,0">
     <property name="spacing">
      <number>2</number>
     </property>
     <property name="leftMargin">
-     <number>2</number>
+     <number>6</number>
     </property>
     <property name="topMargin">
-     <number>2</number>
+     <number>6</number>
     </property>
     <property name="rightMargin">
-     <number>2</number>
+     <number>6</number>
     </property>
     <property name="bottomMargin">
-     <number>2</number>
+     <number>6</number>
     </property>
     <item>
-     <widget class="QWidget" name="widget_4" native="true">
+     <widget class="QWidget" name="menuWidget" native="true">
+      <property name="minimumSize">
+       <size>
+        <width>0</width>
+        <height>0</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>16777215</width>
+        <height>20</height>
+       </size>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QWidget" name="infixWidget" native="true">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
         <horstretch>0</horstretch>
@@ -996,7 +1012,7 @@
         <number>2</number>
        </property>
        <item row="0" column="1" rowspan="2">
-        <widget class="QWidget" name="widget_2" native="true">
+        <widget class="QWidget" name="hexWidget" native="true">
          <property name="styleSheet">
           <string notr="true"/>
          </property>
@@ -1107,7 +1123,7 @@
         </widget>
        </item>
        <item row="0" column="2" rowspan="2">
-        <widget class="QWidget" name="widget_3" native="true">
+        <widget class="QWidget" name="iEEEWidget" native="true">
          <property name="styleSheet">
           <string notr="true"/>
          </property>
@@ -1192,9 +1208,9 @@
     <addaction name="actionPaste"/>
     <addaction name="actionPasteAfter"/>
     <addaction name="separator"/>
-    <addaction name="actionEditHist"/>
-    <addaction name="separator"/>
     <addaction name="mnuData"/>
+    <addaction name="separator"/>
+    <addaction name="actionEditHist"/>
     <addaction name="separator"/>
     <addaction name="actionClearHistory"/>
     <addaction name="separator"/>

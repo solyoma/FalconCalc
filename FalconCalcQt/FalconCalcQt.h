@@ -50,6 +50,8 @@ public:
     QStringList pslHistory;
 
 protected:
+	//void paintEvent(QPaintEvent* event) override;
+
     void moveEvent(QMoveEvent* event);
     void showEvent(QShowEvent* event);
     QPoint dragPos;

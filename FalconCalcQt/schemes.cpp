@@ -56,11 +56,11 @@ static void __SaveStyle(QString styleName, FalconCalcScheme &sch)
 static QString fcStyles = {
 R"END(/* Beware that %n in a QString doesn't neccessarily mean the n-th argument!
    E.g. "%1%3%29" with no other %n in the string would use the first 3
-   parameters, even when we have all 29.
+   parameters, even when we have all 30.
    Trick: put all %n in a comment in the string as I do it here:
    %1 %2 %3 %4 %5 %6 %7 %8 %9 %10
    %11 %12 %13 %14 %15 %16 %17 %18 %19 %20
-   %21 %22 %23 %24 %25 %26 %27 %28 %29
+   %21 %22 %23 %24 %25 %26 %27 %28 %29 %30
    to ensure all arguments are enumerated correctly by Qt.
    To offset this aLL comments will be stripped from the style string 
    before used (See lambda 'eraseComments' around lines 671!)
@@ -136,7 +136,10 @@ QTreeView {
 }
 
 /* ------------------ borders ----------------------*/
-
+QFrame#centralWidget {
+	border: 4px solid %30;			/* (30) Dialog border */
+	border-radius: 10px;
+}
 QGroupBox,
 QPushButton,
 QSpinBox,

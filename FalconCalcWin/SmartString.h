@@ -105,6 +105,7 @@ class String : public std::basic_string<SCharT>
 			while(*pch) 
 				push_back(SCharT(*pch++));
 		}
+		String(const std::string& s) : String(s.c_str()) {}
 		String(String::iterator from, String::iterator to) : base(from, to) { }
 
 		String(int len, SCharT ch) : base(len, ch) {}
@@ -146,10 +147,7 @@ public:
 	enum CaseSens { csCaseInsensitive, csCaseSensitive};
 public:
 	SmartString() : String() {}
-#ifdef QTSA_PROJECT
-	explicit SmartString(const QString &qs);
-#endif
-	explicit SmartString(const String::base &s);
+	SmartString(const String::base &s);
 	explicit SmartString(const UTF8String &s);
 	explicit SmartString(const char* pcstr);
 	explicit SmartString(const std::wstring ws);
@@ -162,7 +160,7 @@ public:
 	}
 	SmartString(const SmartString& o) :String(o) {}
 	SmartString(const SmartString& o, size_t pos, size_t len) { *this = o.mid(pos, len); }
-	SmartString(const String &s) : String(s){}
+	//explicit SmartString(const std::string& s) : String(s) {}
 	SmartString(SCharT ch) : SmartString(1, ch){}
 	//SmartString(const SCharT* ps) : SmartString(ps) {}
 	//SmartString(const SCharT* ps, size_t len) : SmartString(ps) {}

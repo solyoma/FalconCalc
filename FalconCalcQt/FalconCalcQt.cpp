@@ -184,6 +184,33 @@ void FalconCalcQt::showEvent(QShowEvent * event)
 }
 
 /*=============================================================
+ * TASK   :	override paint event to have thick border around the main window
+ * PARAMS :
+ * EXPECTS: setAttribute(Qt::WA_TranslucentBackground); was called in constructor
+ *          setWindowFlags(Qt::FramelessWindowHint); was called in constructor
+ *			border width = 4px
+ *			corner radius = 10px
+ * GLOBALS:
+ * RETURNS:
+ * REMARKS:
+ *------------------------------------------------------------*/
+//void FalconCalcQt::paintEvent(QPaintEvent* event)
+//{
+//	return;
+//	QPainter p(this);
+//	p.setRenderHint(QPainter::Antialiasing);
+//
+//
+//	QColor bckColor = _schemeVector->SchemeFor(_actScheme)[0],
+//		   penColor = _schemeVector->SchemeFor(_actScheme)[29];
+//	p.setPen(QPen(penColor, 4));
+//	p.setBrush(bckColor);
+//
+//	QRect r = rect(), r1 = r.adjusted(-2,-2,2,2);
+//	p.drawRoundedRect(rect().adjusted(-2, -2, 2, 2), 12, 12);
+//}
+
+/*=============================================================
  * TASK   :	when the main window moves if there are open 
  *			history or variable window coupled with it it will move
  *			those too
@@ -1040,40 +1067,40 @@ static int __ReadAndSplitLine(QTextStream& ifs, QStringList& data)
 
 void FalconCalcQt::_SetupFramelessWindow()
 {
+	setAttribute(Qt::WA_TranslucentBackground);
 	setWindowFlags(Qt::FramelessWindowHint | Qt::Window);
+	// create a custom menu bar and add the actions from the original menu bar to it
+	QWidget *pMenuWidget = ui.menuWidget;
+	pMenuWidget->setFixedHeight(menuBar()->height());
+	pMenuWidget->setFixedWidth(width()-20);
+	QMenuBar* pMenu = new QMenuBar(ui.menuWidget);
+	for (QAction* a : menuBar()->actions())
+		pMenu->addAction(a);
+
+	// also create custom minimize and close buttons
 	_pBtnMin = new QToolButton(this);
 	_pBtnMin->setText("_");
+	//_pBtnMin->setFixedWidth(20);
 
 	_pBtnClose = new QToolButton(this);
-	_pBtnClose->setText("Χ");
+	_pBtnClose->setText("×");
+	//_pBtnClose->setFixedWidth(20);
 
 	connect(_pBtnMin, &QToolButton::clicked,
 		this, &QWidget::showMinimized);
 
 	connect(_pBtnClose, &QToolButton::clicked,
 		this, &QWidget::close);
-	int cntActions = menuBar()->actions().size();
-	QAction* pA = menuBar()->actions().at(cntActions-1);
-	int left = 0;
-	if (pA)
-	{
-		QRect r = menuBar()->actionGeometry(pA);
-		left = r.right() + 10;
-	}
-	QWidget* controls = new QWidget;
-	QHBoxLayout* layout = new QHBoxLayout(controls);
-	layout->setContentsMargins(0, 0, 0, 0);
-	layout->addWidget(_pBtnMin);
-	layout->addWidget(_pBtnClose);
+	// add these to widget layout
+	QHBoxLayout* layoutMenu = new QHBoxLayout(pMenuWidget);
+	layoutMenu->setContentsMargins(0, 0, 0, 0);
+	layoutMenu->addWidget(pMenu);
 
-	menuBar()->setCornerWidget(controls, Qt::TopRightCorner);
-	int wc= controls->sizeHint().width()+ controls->sizeHint().height();
-	int w0 = menuBar()->width() - wc;
-	QWidget* pMover = new QWidget(this);
-	pMover->setFixedHeight(menuBar()->height());
-	pMover->setFixedWidth(w0-left);
-	pMover->move(left, 0);// w0 - w, 0);
-
+	menuBar()->hide();
+	pMenu->actions().append(menuBar()->actions());
+	layoutMenu->addSpacerItem(new QSpacerItem(0, 0, QSizePolicy::Expanding, QSizePolicy::Minimum));
+	layoutMenu->addWidget(_pBtnMin);
+	layoutMenu->addWidget(_pBtnClose);
 }
 
 void FalconCalcQt::_EnableMyTimer(bool enable)
