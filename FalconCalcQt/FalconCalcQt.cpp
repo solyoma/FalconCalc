@@ -90,7 +90,7 @@ FalconCalcQt::FalconCalcQt(QWidget *parent)  : QMainWindow(parent)
 	actionGroup->addAction(ui.actionDarkMode);
 	actionGroup->addAction(ui.actionBlackMode);
 	actionGroup->addAction(ui.actionBlueMode);
-		// same for variable
+		// same for variables and functions
 	actionGroup = new QActionGroup(this);
 	actionGroup->setExclusive(true);
 	actionGroup->addAction(ui.actionEditVars);
@@ -1045,29 +1045,35 @@ void FalconCalcQt::_SetupFramelessWindow()
 	_pBtnMin->setText("_");
 
 	_pBtnClose = new QToolButton(this);
-	_pBtnClose->setText("X");
+	_pBtnClose->setText("Χ");
 
 	connect(_pBtnMin, &QToolButton::clicked,
 		this, &QWidget::showMinimized);
 
 	connect(_pBtnClose, &QToolButton::clicked,
 		this, &QWidget::close);
-
+	int cntActions = menuBar()->actions().size();
+	QAction* pA = menuBar()->actions().at(cntActions-1);
+	int left = 0;
+	if (pA)
+	{
+		QRect r = menuBar()->actionGeometry(pA);
+		left = r.right() + 10;
+	}
 	QWidget* controls = new QWidget;
 	QHBoxLayout* layout = new QHBoxLayout(controls);
 	layout->setContentsMargins(0, 0, 0, 0);
 	layout->addWidget(_pBtnMin);
 	layout->addWidget(_pBtnClose);
-	int w = layout->sizeHint().width()+10,
-		w0= menuBar()->width()-200;
-
-	QWidget* pMover = new QWidget(this);
-	//pMover->setStyleSheet("background-color:red");
-	pMover->setFixedHeight(menuBar()->height());
-	pMover->setFixedWidth(w0-w);
-	pMover->move(200, 0);// w0 - w, 0);
 
 	menuBar()->setCornerWidget(controls, Qt::TopRightCorner);
+	int wc= controls->sizeHint().width()+ controls->sizeHint().height();
+	int w0 = menuBar()->width() - wc;
+	QWidget* pMover = new QWidget(this);
+	pMover->setFixedHeight(menuBar()->height());
+	pMover->setFixedWidth(w0-left);
+	pMover->move(left, 0);// w0 - w, 0);
+
 }
 
 void FalconCalcQt::_EnableMyTimer(bool enable)

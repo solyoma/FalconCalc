@@ -333,6 +333,7 @@ static std::vector<QString> __SchemeItemNames = {
 	"MenuSeparatorColor",		// %27
 	"MenuDisabled",				// %28
 	"TableWidgetAlternateColor",// %29
+	"WindowBorderColor",		// %30
 };
 
 static std::vector<QString>
@@ -367,6 +368,7 @@ static std::vector<QString>
 		"#101010",		// %27	MenuSeparatorColor
 		"#aaaaaa",		// %28	MenuDisabledBackground
 		"#aaaaaa",		// %29	TableWidgetAlternateColor
+		"#a0a0a0",		// %30	WindowBorderColor
 	},
 	__darkV =
 	{
@@ -394,11 +396,12 @@ static std::vector<QString>
 		"#a0a0a0",		// %22	MenuSelectedBackground
 		"#000000",		// %23	MenuSelectedColor
 		"#303030",		// %24	TableWidgetBackground
-		"#aaaaaa",		// %25	TableWidgetColor
+		"#aaaaaa",		// %25	TableWidgetColor	
 		"#505050",		// %26	TableWidgetAlternateBackground
 		"#aaaaaa",		// %27	MenuSeparatorColor
 		"#aaaaaa",		// %28	MenuDisabledBackground
 		"#aaaaaa",		// %29	TableWidgetAlternateColor
+		"#a0a0a0",		// %30	WindowBorderColor
 },
 	__blackV =
 	{
@@ -431,6 +434,7 @@ static std::vector<QString>
 		"#aaaaaa",		// %27	MenuSeparatorColor
 		"#aaaaaa",		// %28	MenuDisabledBackground
 		"#aaaaaa",		// %29	TableWidgetAlternateColor
+		"#a0a0a0",		// %30	WindowBorderColor
 },
 	__blueV =
 	{
@@ -463,6 +467,7 @@ static std::vector<QString>
 		"#aaaaaa",		// %27	MenuSeparatorColor
 		"#aaaaaa",		// %28	MenuDisabledBackground
 		"#aaaaaa",		// %29	TableWidgetAlternateColor
+		"#a0a0a0",		// %30	WindowBorderColor
 	};
 
 FalconCalcScheme FSchemeVector::light("Light:Világos",  __SchemeItemNames, __lightV);
@@ -646,8 +651,8 @@ Scheme FSchemeVector::PrepStyle(Scheme m)
 	{
 
 		//__SaveString("fcStyles.str", fcStyles);
-		ss =				//		variable
-			QString(fcStyles)		//   index    name
+		ss =			//		variable
+			QString(fcStyles)				//   index    name
 			.arg(sch._values[ 0].second)	// %1	sBackground
 			.arg(sch._values[ 1].second)	// %2	sTextColor
 			.arg(sch._values[ 2].second)	// %3	sBorderColor
@@ -676,7 +681,8 @@ Scheme FSchemeVector::PrepStyle(Scheme m)
 			.arg(sch._values[25].second)	// %26	ListAlternateBackground
 			.arg(sch._values[26].second)	// %27	ListAlternateColor
 			.arg(sch._values[27].second)	// %28	ListSelectionBackground
-			.arg(sch._values[28].second);	// %29	ListSelectionColor
+			.arg(sch._values[28].second)	// %29	ListSelectionColor
+			.arg(sch._values[29].second);	// %30	WindowBorderColor
 
 		eraseComments(ss);
 	}
