@@ -15,6 +15,9 @@
 
 #include <vector>
 
+// DEBUG
+#include <QtDebug>
+
 #include "SmartStringQt.h"
 
 using namespace SmString;
@@ -138,11 +141,54 @@ FalconCalcQt::~FalconCalcQt()
 	delete _schemeVector;
 }
 
+void FalconCalcQt::_SetupFramelessWindow()
+{
+    setAttribute(Qt::WA_TranslucentBackground);
+    setWindowFlags(Qt::FramelessWindowHint | Qt::Window);
+    // create a custom menu bar and add the actions from the original menu bar to it
+    QWidget *pMenuWidget = ui.menuWidget;
+    //	pMenuWidget->setFixedHeight(menuBar()->height());
+    //	pMenuWidget->setFixedWidth(width()-20);
+    QMenuBar* pMenu = new QMenuBar(ui.menuWidget);
+
+    pMenu->setNativeMenuBar(false);     // ??
+    pMenu->setSizePolicy(
+        QSizePolicy::Minimum,
+        QSizePolicy::Preferred);
+
+    for (QAction* a : menuBar()->actions())
+        pMenu->addAction(a);
+
+    menuBar()->clear();
+    // also create custom minimize and close buttons
+    _pBtnMin = new QToolButton(pMenuWidget);
+    _pBtnMin->setText("_");
+    //_pBtnMin->setFixedWidth(20);
+
+    _pBtnClose = new QToolButton(pMenuWidget);
+    _pBtnClose->setText("×");
+    //_pBtnClose->setFixedWidth(20);
+
+    connect(_pBtnMin, &QToolButton::clicked,
+            this, &QWidget::showMinimized);
+
+    connect(_pBtnClose, &QToolButton::clicked,
+            this, &QWidget::close);
+    // add these to widget layout
+    QHBoxLayout* layoutMenu = new QHBoxLayout(pMenuWidget);
+    layoutMenu->setContentsMargins(0, 0, 0, 0);
+    layoutMenu->addWidget(pMenu, 1);
+
+    layoutMenu->addStretch();
+    layoutMenu->addWidget(_pBtnMin);
+    layoutMenu->addWidget(_pBtnClose);
+}
+
 void FalconCalcQt::showEvent(QShowEvent * event)
 {
     if (!_bAlreadyShown)
     {
-#ifndef _MSVC_VER
+#ifndef _MSC_VER
 		if (_actScheme == Scheme::schSystem)
 		{
 			_actScheme = Scheme::schLight;
@@ -156,7 +202,34 @@ void FalconCalcQt::showEvent(QShowEvent * event)
 		if (!_hexOpen)
 			on_btnOpenCloseHexOptions_clicked();
 
-// DEBUG
+        QLayout *pbLayout = ui.menuWidget->layout();
+        pbLayout->invalidate();
+        pbLayout->activate();
+        ui.menuWidget->updateGeometry();
+
+    // DEBUG
+   //      for (int i = 0; i < pbLayout->count(); ++i)
+   //      {
+   //          QLayoutItem *item = pbLayout->itemAt(i);
+   //          if (item->widget())
+            // {
+   //              qDebug() << "widget " << item->widget() << item->geometry();
+            // 	if (item->widget()->actions().size())
+            // 	{
+            // 		for (int i =0; i < item->widget()->actions().size(); ++i)
+            // 		{
+            // 			QAction* a = item->widget()->actions()[i];
+            // 			qDebug() << "  action " << a->text() << " geometry: "
+            // 				<< dynamic_cast<QMenuBar*>(item->widget())->actionGeometry(a);
+            // 		}
+            // 	}
+   //          } else if (item->layout())
+            // {
+   //              qDebug() << "recurse into layout"; // recurse into sub-layout
+   //          }
+   //      }
+	// /DEBUG
+
 //#ifdef _WIN32
 //		static bool iconSet = false;
 //		if (!iconSet) {
@@ -181,6 +254,25 @@ void FalconCalcQt::showEvent(QShowEvent * event)
 		_bAlreadyShown = true;
 		ui.cbInfix->setFocus();
 	}
+}
+
+void FalconCalcQt::_EnableMyTimer(bool enable)
+{
+    if (enable)
+        emit _StartTimer();
+    else
+        emit _StopTimer();
+}
+
+int FalconCalcQt::_GetVersion(QStringRef s)	const // format "Vx.y.z
+{
+    if (s[0] != QChar('V'))
+        return _version;
+    int i1 = s.indexOf('.', 1),
+        i2 = s.indexOf('.', i1 + 1);
+    return (s.mid(1, i1 - 1).toInt() << 16) +
+           (s.mid(i1+1, i2-i1 - 1).toInt() << 8) +
+           (s.mid(i2+1).toInt());
 }
 
 /*=============================================================
@@ -1063,63 +1155,6 @@ static int __ReadAndSplitLine(QTextStream& ifs, QStringList& data)
 	data.push_back(qs.left(n));
 	data += qs.mid(n+1).split('|');
 	return data.size();
-}
-
-void FalconCalcQt::_SetupFramelessWindow()
-{
-	setAttribute(Qt::WA_TranslucentBackground);
-	setWindowFlags(Qt::FramelessWindowHint | Qt::Window);
-	// create a custom menu bar and add the actions from the original menu bar to it
-	QWidget *pMenuWidget = ui.menuWidget;
-	pMenuWidget->setFixedHeight(menuBar()->height());
-	pMenuWidget->setFixedWidth(width()-20);
-	QMenuBar* pMenu = new QMenuBar(ui.menuWidget);
-	for (QAction* a : menuBar()->actions())
-		pMenu->addAction(a);
-
-	// also create custom minimize and close buttons
-	_pBtnMin = new QToolButton(this);
-	_pBtnMin->setText("_");
-	//_pBtnMin->setFixedWidth(20);
-
-	_pBtnClose = new QToolButton(this);
-	_pBtnClose->setText("×");
-	//_pBtnClose->setFixedWidth(20);
-
-	connect(_pBtnMin, &QToolButton::clicked,
-		this, &QWidget::showMinimized);
-
-	connect(_pBtnClose, &QToolButton::clicked,
-		this, &QWidget::close);
-	// add these to widget layout
-	QHBoxLayout* layoutMenu = new QHBoxLayout(pMenuWidget);
-	layoutMenu->setContentsMargins(0, 0, 0, 0);
-	layoutMenu->addWidget(pMenu);
-
-	menuBar()->hide();
-	pMenu->actions().append(menuBar()->actions());
-	layoutMenu->addSpacerItem(new QSpacerItem(0, 0, QSizePolicy::Expanding, QSizePolicy::Minimum));
-	layoutMenu->addWidget(_pBtnMin);
-	layoutMenu->addWidget(_pBtnClose);
-}
-
-void FalconCalcQt::_EnableMyTimer(bool enable)
-{	  
-	if (enable)
-		emit _StartTimer();
-	else
-		emit _StopTimer();
-}
-
-int FalconCalcQt::_GetVersion(QStringRef s)	const // format "Vx.y.z
-{
-	if (s[0] != QChar('V'))
-		return _version;
-	int i1 = s.indexOf('.', 1),
-		i2 = s.indexOf('.', i1 + 1);
-	return (s.mid(1, i1 - 1).toInt() << 16) + 
-		   (s.mid(i1+1, i2-i1 - 1).toInt() << 8) + 
-		   (s.mid(i2+1).toInt());
 }
 
 bool FalconCalcQt::_LoadState()

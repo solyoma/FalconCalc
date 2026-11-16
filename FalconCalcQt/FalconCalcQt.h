@@ -10,7 +10,7 @@
 #if QT_VERSION < QT_VERSION_CHECK(6,0,0)
     #include <QStringRef>
 #else
-    #define QStringRef QString
+    #define QStringRef QString                                                        
 #endif
 
 #include "version.h"
