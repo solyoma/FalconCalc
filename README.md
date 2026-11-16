@@ -3,7 +3,13 @@ Multi language Windows scientist's and programmer's calculator featuring arbitra
 # FalconCalcQt
 Qt based version of the calculator for multi platform (Windows, Linux, OsX) usage, with more options than the windows-only version (e.g. light, dark, black, blue styles)
 # Screenshots
-
+<img width="2560" height="1440" alt="image" src="https://github.com/user-attachments/assets/abd2c8bf-767b-45aa-a0d7-ab9bde2276fa" />
+<img width="2560" height="1440" alt="image" src="https://github.com/user-attachments/assets/54e0eb05-1be6-4958-9fd1-a86b6b4a84bc" />
+<img width="2560" height="1440" alt="image" src="https://github.com/user-attachments/assets/b52f20bb-df65-4214-befb-df39332c9c6d" />
+<img width="2560" height="1440" alt="image" src="https://github.com/user-attachments/assets/7ac5ab35-1ee8-40f5-8537-f1b747eafdcc" />
+<img width="2560" height="1440" alt="image" src="https://github.com/user-attachments/assets/3ef1d44c-7953-43e6-adc1-2c8e7165a542" />
+<img width="2560" height="1440" alt="image" src="https://github.com/user-attachments/assets/dc38836b-6bd6-4f7d-8141-e03a730aa6c1" />
+<img width="2560" height="1440" alt="image" src="https://github.com/user-attachments/assets/4c810a79-0a50-4c7c-bfaf-f67ebe68fe9d" />
 
 # Description
   Every OS has a desktop calculator. These usually works like the physical calculators did, with buttons, separate normal and scientific modes. 
