@@ -208,26 +208,26 @@ void FalconCalcQt::showEvent(QShowEvent * event)
         ui.menuWidget->updateGeometry();
 
     // DEBUG
-         for (int i = 0; i < pbLayout->count(); ++i)
-         {
-             QLayoutItem *item = pbLayout->itemAt(i);
-             if (item->widget())
-             {
-                 qDebug() << "widget " << item->widget() << item->geometry();
-             	if (item->widget()->actions().size())
-             	{
-             		for (int i =0; i < item->widget()->actions().size(); ++i)
-             		{
-             			QAction* a = item->widget()->actions()[i];
-             			qDebug() << "  action " << a->text() << " geometry: "
-             				<< dynamic_cast<QMenuBar*>(item->widget())->actionGeometry(a);
-             		}
-             	}
-             } else if (item->layout())
-             {
-                 qDebug() << "recurse into layout"; // recurse into sub-layout
-             }
-         }
+         //for (int i = 0; i < pbLayout->count(); ++i)
+         //{
+         //    QLayoutItem *item = pbLayout->itemAt(i);
+         //    if (item->widget())
+         //    {
+         //        qDebug() << "widget " << item->widget() << item->geometry();
+         //    	if (item->widget()->actions().size())
+         //    	{
+         //    		for (int i =0; i < item->widget()->actions().size(); ++i)
+         //    		{
+         //    			QAction* a = item->widget()->actions()[i];
+         //    			qDebug() << "  action " << a->text() << " geometry: "
+         //    				<< dynamic_cast<QMenuBar*>(item->widget())->actionGeometry(a);
+         //    		}
+         //    	}
+         //    } else if (item->layout())
+         //    {
+         //        qDebug() << "recurse into layout"; // recurse into sub-layout
+         //    }
+         //}
 	// /DEBUG
 
 //#ifdef _WIN32
