@@ -4,8 +4,6 @@ Multi language Windows scientist's and programmer's calculator featuring arbitra
 Qt based version of the calculator for multi platform (Windows, Linux, OsX) usage, with more options than the windows-only version (e.g. light, dark, black, blue styles)
 # Screenshots
 
-![falconcalc1](https://github.com/user-attachments/assets/24b50146-f20c-4fcf-b2ea-e351b4cf5240)
-![falconcalc2](https://github.com/user-attachments/assets/d280df82-9c94-45a7-84d0-f9dd8633fbf2)
 
 # Description
   Every OS has a desktop calculator. These usually works like the physical calculators did, with buttons, separate normal and scientific modes. 
@@ -34,21 +32,21 @@ Qt based version of the calculator for multi platform (Windows, Linux, OsX) usag
                            'FalconCalc'       - character string     1.5610851718... x 10^45
 
     - Results are displayed simultaneously as decimal, hexadecimal, octal and binary numbers and as a 
-      string of characters. Either of these can be copied tothe clipboard.
+      string of characters. Each of these can be copied to the system clipboard.
 
     - Decimal formats: general, scientific and engeneering
 
     - Decimal display formats:  normal (1.2·10³), html (1.2x10<sup>3</sup>), TEX (1.2\cdot10^{8}) and 'E' (1.2E3)
       with 
-      (Inputs always use the 'E' format)
+      (Inputs always use the 'E' format, and 'e' is also accepted.)
 
     - Hexadecimal formats: normal or grouped as bytes, words or dwords each with or without the 0x prefix. 
       Also as Big- or little endian, unsigned or signed numbers.
 	  For smaller numbers that fits inside an IEEE754 single or double number the hexadecimal representation for
 	  that format can also be selected. (For large numbers the display will be incorrect!)
 
-    - Angles for triginometric functions can be entered as degrees, radians, gradians or turns.
-	  (The full circle is 360°, 2π, 400 grad, 1 turn)
+    - Angles for trigonometric functions can be entered as degrees, radians, gradians or turns.
+	  (The full circle is 360°, 2π rad, 400 grad or 1 turn)
 
     - Formulas may contain the following operators (+ and - may be unary):
           arithmetics: +, -, *, /, ^(power), | (or 'or'), & (or 'and'), xor, << (or 'shl' - shift left), 
@@ -79,7 +77,7 @@ Qt based version of the calculator for multi platform (Windows, Linux, OsX) usag
            u - atomic mass unit
 
     - Any number of user variables/constants and functions may be defined with any valid arithmetic formula 
-      including other constants and variables.
+      including other constants and variables. Names are case insensitive!
 
     - When a user variable is modified the value of all dependent user variables and functions are automatically changed
 

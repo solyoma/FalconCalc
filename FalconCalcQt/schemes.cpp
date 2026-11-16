@@ -143,7 +143,7 @@ QMenuBar::item {
 } 
 
 QFrame#centralWidget {
-	border: 4px solid %30;			/* (30) Dialog border */
+    border: 2px solid %30;			/* (30) Dialog border */
 	border-radius: 10px;
 }
 QGroupBox,
@@ -410,7 +410,7 @@ static std::vector<QString>
 		"#aaaaaa",		// %27	MenuSeparatorColor
 		"#aaaaaa",		// %28	MenuDisabledBackground
 		"#aaaaaa",		// %29	TableWidgetAlternateColor
-		"#a0a0a0",		// %30	WindowBorderColor
+        "#ea8808",		// %30	WindowBorderColor
 },
 	__blackV =
 	{
@@ -443,7 +443,7 @@ static std::vector<QString>
 		"#aaaaaa",		// %27	MenuSeparatorColor
 		"#aaaaaa",		// %28	MenuDisabledBackground
 		"#aaaaaa",		// %29	TableWidgetAlternateColor
-		"#a0a0a0",		// %30	WindowBorderColor
+        "#ea8808",		// %30	WindowBorderColor
 },
 	__blueV =
 	{
@@ -476,7 +476,7 @@ static std::vector<QString>
 		"#aaaaaa",		// %27	MenuSeparatorColor
 		"#aaaaaa",		// %28	MenuDisabledBackground
 		"#aaaaaa",		// %29	TableWidgetAlternateColor
-		"#a0a0a0",		// %30	WindowBorderColor
+        "#088dea",		// %30	WindowBorderColor
 	};
 
 FalconCalcScheme FSchemeVector::light("Light:Világos",  __SchemeItemNames, __lightV);
