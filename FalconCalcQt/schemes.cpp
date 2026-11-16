@@ -139,7 +139,7 @@ QTreeView {
 QMenuBar::item { 
     border: 0px; /* Qt5 bug: without this on linux the menu bar would only contain
 					the overflow button '>>' at the right and the menu items would appear only 
-					when the menu bar is clicked */
+					when that is clicked */
 } 
 
 QFrame#centralWidget {
