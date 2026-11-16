@@ -59,7 +59,7 @@ class FSchemeVector : public  QVector<FalconCalcScheme>
 {
 	static FalconCalcScheme light, dark, black, blue;
 public:
-	Scheme currentScheme = Scheme::schSystem;
+	Scheme currentScheme = Scheme::schLight;	// no schSystem any more, because it can't be used with the new style sheets
 	bool wasSaved = false; // set from outside
 
 	FSchemeVector();

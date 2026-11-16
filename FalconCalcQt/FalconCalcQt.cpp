@@ -88,7 +88,7 @@ FalconCalcQt::FalconCalcQt(QWidget *parent)  : QMainWindow(parent)
 // make mode selection actions exclusive
 	QActionGroup* actionGroup = new QActionGroup(this);
 	actionGroup->setExclusive(true);
-	actionGroup->addAction(ui.actionSystemMode);
+	// actionGroup->addAction(ui.actionSystemMode); // select light or dark, depending on system display theme no reliable method
 	actionGroup->addAction(ui.actionLightMode);
 	actionGroup->addAction(ui.actionDarkMode);
 	actionGroup->addAction(ui.actionBlackMode);
@@ -189,11 +189,11 @@ void FalconCalcQt::showEvent(QShowEvent * event)
     if (!_bAlreadyShown)
     {
 #ifndef _MSC_VER
-		if (_actScheme == Scheme::schSystem)
-		{
-			_actScheme = Scheme::schLight;
-			_actScheme = Scheme::schSystem;
-		}
+		//if (_actScheme == Scheme::schSystem)
+		//{
+		//	_actScheme = Scheme::schLight;
+		//	_actScheme = Scheme::schSystem;
+		//}
 #endif
         hDecOptionsHeight = ui.frmDecimal->height();
         hHexOptionsHeight = ui.gbHexOptions->height();
@@ -570,12 +570,12 @@ void FalconCalcQt::on_actionSetLocale_triggered()
 	delete pdlg;
 }
 
-void FalconCalcQt::on_actionSystemMode_triggered()
-{
-	_actScheme = Scheme::schSystem;
-	_schemeVector->PrepStyle(_actScheme);
-	ui.actionSystemMode->setChecked(true);
-}
+//void FalconCalcQt::on_actionSystemMode_triggered()
+//{
+//	_actScheme = Scheme::schSystem;
+//	_schemeVector->PrepStyle(_actScheme);
+//	ui.actionSystemMode->setChecked(true);
+//}
 void FalconCalcQt::on_actionLightMode_triggered()
 {
 	_actScheme = Scheme::schLight;
@@ -1367,7 +1367,11 @@ bool FalconCalcQt::_LoadState()
 				if(data[2].toInt() == 0)
 					_hexOpen = false;
 				if (n == 4)
+				{
 					_actScheme = (Scheme)data[3].toInt();
+					if (_actScheme == Scheme::schSystem)	// no system mode because of no window caption bar
+						_actScheme = Scheme::schLight;
+				}
 				return true;
 			}
 			return false;
@@ -1446,12 +1450,12 @@ bool FalconCalcQt::_LoadState()
 
 	switch (_actScheme)
 	{
-		case Scheme::schSystem:
-//#ifndef _MSC_VER
-			_actScheme = Scheme::schBlack;		 // to signal to make size changes under linux
-//#endif
-			on_actionSystemMode_triggered();
-			break;
+//		case Scheme::schSystem:
+////#ifndef _MSC_VER
+//			_actScheme = Scheme::schBlack;		 // to signal to make size changes under linux
+////#endif
+//			on_actionSystemMode_triggered();
+//			break;
 		case Scheme::schLight:
 			on_actionLightMode_triggered();
 			break;

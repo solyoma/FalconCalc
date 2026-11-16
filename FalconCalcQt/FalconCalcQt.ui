@@ -45,7 +45,7 @@
    <string notr="true"/>
   </property>
   <widget class="QFrame" name="centralWidget">
-    <layout class="QVBoxLayout" name="verticalLayout_3" stretch="0,0,0,0,0,0,0,0">
+   <layout class="QVBoxLayout" name="verticalLayout_3" stretch="0,0,0,0,0,0,0,0">
     <property name="spacing">
      <number>2</number>
     </property>
@@ -1223,7 +1223,6 @@
      <property name="title">
       <string>St&amp;yle</string>
      </property>
-     <addaction name="actionSystemMode"/>
      <addaction name="actionLightMode"/>
      <addaction name="actionDarkMode"/>
      <addaction name="actionBlackMode"/>
@@ -1394,6 +1393,9 @@
   </action>
   <action name="actionLightMode">
    <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
     <bool>true</bool>
    </property>
    <property name="text">

@@ -645,10 +645,16 @@ Scheme FSchemeVector::PrepStyle(Scheme m)
 		};
 
 	QString ss;
+	if (m == Scheme::schSystem)	  // can't use with new style
+	{
+		m = Scheme::schLight;
+	}
+
 	FalconCalcScheme sch( SchemeFor(m) );
 
-	if (m == Scheme::schSystem)
+/*	if (m == Scheme::schSystem)	  // can't use with new style
 	{
+
 		//ss = "QGroupBox#gbResults::title,\n"
 		//	"QGroupBox#gbDecOptions::title,\n"
 		//	"QGroupBox#gbHexOptions::title {\n"
@@ -658,7 +664,7 @@ Scheme FSchemeVector::PrepStyle(Scheme m)
 	}
 	else
 	{
-
+*/
 		//__SaveString("fcStyles.str", fcStyles);
 		ss =			//		variable
 			QString(fcStyles)				//   index    name
@@ -694,14 +700,16 @@ Scheme FSchemeVector::PrepStyle(Scheme m)
 			.arg(sch._values[29].second);	// %30	WindowBorderColor
 
 		eraseComments(ss);
+/*
 	}
+*/
 	((QApplication*)(QApplication::instance()))->setStyleSheet(ss);
 
 #ifdef NothingImportant
 		QString s;
 		switch (m)
 		{
-			case Scheme::schSystem:s = "system"; break;
+//			case Scheme::schSystem:s = "system"; break;
 			case Scheme::schLight: s = "light"; break;
 			case Scheme::schDark:  s = "dark"; break;
 			case Scheme::schBlack: s = "black"; break;

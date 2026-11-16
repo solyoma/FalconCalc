@@ -75,7 +75,7 @@ private slots:
     void on_actionPasteAfter_triggered();
     void on_actionSelectFont_triggered();
     void on_actionSetLocale_triggered();
-    void on_actionSystemMode_triggered();
+//    void on_actionSystemMode_triggered();
     void on_actionLightMode_triggered();
     void on_actionDarkMode_triggered();
     void on_actionBlackMode_triggered();
@@ -134,7 +134,7 @@ private:
     bool _decOpen = true;       // during load state before the window is shown?
     bool _hexOpen = true;       //  -"
     FSchemeVector *_schemeVector = nullptr;
-    Scheme _actScheme = Scheme::schSystem;
+    Scheme _actScheme = Scheme::schLight;       // was  schSystem which now can't be used
 
     int hHexOptionsHeight = 78, // before display these cannot be determined
         hDecOptionsHeight = 124;
