@@ -3,9 +3,7 @@ Multi language Windows scientist's and programmer's calculator featuring arbitra
 # FalconCalcQt
 Qt based version of the calculator for multi platform (Windows, Linux, OsX) usage, with more options than the windows-only version (e.g. light, dark, black, blue styles)
 # Screenshots
-<img width="522" height="426" alt="image" src="https://github.com/user-attachments/assets/7c166854-d0ce-4587-8888-b86da5652746" />
-<img width="522" height="496" alt="image" src="https://github.com/user-attachments/assets/e8d36043-808d-43ef-a24d-b359e4c533e3" />
-<img width="522" height="271" alt="image" src="https://github.com/user-attachments/assets/1358f926-d528-4941-a34a-edd9f2b17dd1" />
+<img width="1065" height="806" alt="FCQT_screenshot" src="https://github.com/user-attachments/assets/490b316a-04b1-4c6e-9490-5b8f249fab39" />
 <img width="540" height="691" alt="image" src="https://github.com/user-attachments/assets/f4dcfda8-1019-41ba-a4f4-3d528e6fd94d" />
 
 # Description
