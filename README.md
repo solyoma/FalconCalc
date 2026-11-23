@@ -3,7 +3,8 @@ Multi language Windows scientist's and programmer's calculator featuring arbitra
 # FalconCalcQt
 Qt based version of the calculator for multi platform (Windows, Linux, OsX) usage, with more options than the windows-only version (e.g. light, dark, black, blue styles)
 # Screenshots
-
+<img width="1065" height="806" alt="FCQT_screenshot" src="https://github.com/user-attachments/assets/490b316a-04b1-4c6e-9490-5b8f249fab39" />
+<img width="540" height="691" alt="image" src="https://github.com/user-attachments/assets/f4dcfda8-1019-41ba-a4f4-3d528e6fd94d" />
 
 # Description
   Every OS has a desktop calculator. These usually works like the physical calculators did, with buttons, separate normal and scientific modes. 
@@ -83,3 +84,20 @@ Qt based version of the calculator for multi platform (Windows, Linux, OsX) usag
 
     - User defined functions may have any number of arguments with any names that is different from the name of any 
       built-in function or constant.
+
+# Installation
+	Installation depends on wheter you are on Windows or on Linux. On Windows you may want to use the native version (FalconCalc) 
+	or the Qt version (FalconCalcQt). Both of these are 32 bit programs. On Linux you need to have the 64 bit Qt 15.15.x 
+	runtime libraries already installed.
+	- Windows with the native version - the latest build here is the 1.1.1. Just extract the executable file from the archive
+	  into any folder and it should run.
+	- Windows with the Qt version. First extract the 32 bit Qt5 runtime libraries from here, into any folder then extract the 
+	  executable from the latest archive. If you installed the runtime dlls already, just overwrite the executable
+	  from the newest archive.
+	- On a 64 bit Linux you need to have the Qt5 runtime installed then extract the 64 bit Qt5 executable (the one without
+	  the extension .exe) into any folder.
+	  from there.
+
+# Copyright notice
+	This software is open source and - except the nlib library - can be freely modified, copied and used.
+	Three are no warranties, express or implied, use it at your own risk.
