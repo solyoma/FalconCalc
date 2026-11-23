@@ -1,10 +1,13 @@
 #include "HistoryDialog.h"
 #include <QMoveEvent>
 
-HistoryDialog::HistoryDialog(const QStringList& lstHist, QWidget* parent) : QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint)
+HistoryDialog::HistoryDialog(const QStringList& lstHist, ModernDialogParams& params, QWidget* parent) 
+	: ModernDialog(params, parent)
 {
-	ui.setupUi(this);
-	ui.lstHistory->addItems(lstHist);
+	Ui::HistoryDialogClass::setupUi(ContentWidget());
+	QMetaObject::connectSlotsByName(this);
+
+	lstHistory->addItems(lstHist);
 }
 
 HistoryDialog::~HistoryDialog()
@@ -14,13 +17,13 @@ HistoryDialog::~HistoryDialog()
 
 void HistoryDialog::SetList(const QStringList& lstHist)
 {
-	ui.lstHistory->clear();
-	ui.lstHistory->addItems(lstHist);
+	lstHistory->clear();
+	lstHistory->addItems(lstHist);
 }
 
 void HistoryDialog::Clear()
 {
-	ui.lstHistory->clear();
+	lstHistory->clear();
 }
 
 void HistoryDialog::closeEvent(QCloseEvent* e)
@@ -58,12 +61,12 @@ void HistoryDialog::on_btnRemoveAll_clicked()
 
 void HistoryDialog::on_btnRemove_clicked()
 {
-	int i = ui.lstHistory->currentIndex().row();
+	int i = lstHistory->currentIndex().row();
 	emit SignalRemoveHistLine(i);
 }
 
 void HistoryDialog::on_lstHistory_doubleClicked(const QModelIndex &index)
 {
-	QString s = ui.lstHistory->item(index.row())->text();
+	QString s = lstHistory->item(index.row())->text();
 	emit SignalSelection(s);
 }

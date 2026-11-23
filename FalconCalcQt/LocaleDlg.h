@@ -3,22 +3,22 @@
 #define _LOCALEDIALOG_H
 #include <QtWidgets/QDialog>
 #include <QLocale>
+#include "ModernDialog.h"
 #include "ui_LocaleDlg.h"
 
-class LocaleDlg : public QDialog
+class LocaleDlg : public ModernDialog, private Ui::LocaleDlgClass
 {
 	Q_OBJECT
 public:
-	LocaleDlg(QWidget* parent = nullptr);
+	explicit LocaleDlg(QWidget* parent = nullptr);
 	~LocaleDlg() {}
 
 	QLocale GetNewLocale() const;
 
 	static int LocaleVisible;
-private:
-	Ui::LocaleDlgClass ui;
-//private slots:
-	// void on_edtLocale_textChanged(QString newText);
+private slots:
+	void on_buttonBox_accepted();
+	void on_buttonBox_rejected();
 };
 
 #endif

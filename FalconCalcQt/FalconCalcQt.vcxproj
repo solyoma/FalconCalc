@@ -122,6 +122,7 @@
     </ClCompile>
     <ClCompile Include="HistoryOptions.cpp" />
     <ClCompile Include="LocaleDlg.cpp" />
+    <ClCompile Include="ModernDialog.cpp" />
     <ClCompile Include="schemes.cpp" />
     <ClCompile Include="VariablesFunctionsDialog.cpp" />
     <QtRcc Include="FalconCalcQt.qrc" />
@@ -148,6 +149,7 @@
     <ClInclude Include="..\common\FontMetrics.h" />
     <ClInclude Include="..\common\LongNumber.h" />
     <ClInclude Include="..\common\version.h" />
+    <QtMoc Include="ModernDialog.h" />
     <ClInclude Include="SmartStringQt.h" />
     <QtMoc Include="VarFuncDefDialog.h" />
     <QtMoc Include="AboutDialog.h" />

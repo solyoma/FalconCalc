@@ -1,24 +1,24 @@
 #pragma once
 #ifndef _ABOUTDIALOG_H
 	#define _ABOUTDIALOG_H
-#include <QtWidgets/QDialog>
+#include "ModernDialog.h"
 #include "ui_AboutDialog.h"
 #include "version.h"
 
-class AboutDialog : public QDialog
+class AboutDialog : public ModernDialog, private Ui::AboutDialogClass
 {
 	Q_OBJECT
 public:
-	AboutDialog(int version, QWidget* parent = nullptr) : QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint)
+	AboutDialog(ModernDialogParams params,int version, QWidget* parent = nullptr) : ModernDialog(params, parent)
 	{
-		ui.setupUi(this);									// e.g.	0x00 09 02;      // version 0.9.2
-		ui.lblVersion->setText(QString(tr("Version %1").arg(VERSION_STRING)) );
+		Ui::AboutDialogClass::setupUi(ContentWidget());
+		// version: e.g.	0x00 09 02;      // version 0.9.2
+		lblVersion->setText(QString(tr("Version %1").arg(VERSION_STRING)) );
+		connect(okButton, &QPushButton::clicked, this, [this](){ accept(); });
 	}
 	~AboutDialog() {}
 
 	static int AboutVisible;
-private:
-	Ui::AboutDialogClass ui;
 };
 
 #endif

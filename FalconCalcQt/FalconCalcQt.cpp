@@ -38,6 +38,7 @@ using namespace FalconCalc;
 #include "FCSettings.h"
 #include "schemes.h"
 #include "LocaleDlg.h"
+#include "ModernDialog.h"
 
 // DEBUG
 //#ifdef _WIN32
@@ -393,7 +394,10 @@ void FalconCalcQt::on_actionEditHist_triggered()
 	}
 	else			// create and show history dialog
 	{
-		_pHist = new HistoryDialog(_slHistory, this);
+		ModernDialogParams params;
+		params.text = tr("FalconCalc - History");
+		params.isResizable = true;
+		_pHist = new HistoryDialog(_slHistory, params, this);
 		ui.actionEditHist->setChecked(true);
 		connect(_pHist, &HistoryDialog::SignalSelection		, this, &FalconCalcQt::_SlotDataFromHistory);
 		connect(_pHist, &HistoryDialog::SignalRemoveHistLine, this, &FalconCalcQt::_SlotRemoveHistLine );
@@ -459,7 +463,9 @@ void FalconCalcQt::_EditVarsCommon(int which)
 	}
 	else
 	{
-		_pVF = new VariablesFunctionsDialog(which, this);
+		ModernDialogParams params;
+		params.text = tr("FalconCalc - Variables & Functions");
+		_pVF = new VariablesFunctionsDialog(which, params, this);
 		connect(_pVF, &VariablesFunctionsDialog::finished, this, &FalconCalcQt::_SlotVarsFuncsFinished);
 		connect(_pVF, &VariablesFunctionsDialog::SignalVarFuncClose, this, &FalconCalcQt::_SlotVarsFuncsClosing);
 		connect(_pVF, &VariablesFunctionsDialog::SignalTabChange, this, &FalconCalcQt::_SlotVarTabChanged);
@@ -522,6 +528,7 @@ void FalconCalcQt::on_actionHistOptions_triggered()
 	hoData.maxHistDepth  = _maxHistDepth;
 	hoData.historySorted = _historySorted;
 	hoData.minCharLength = _minCharLength;
+	hoData.params.hasTitleBar = false;
 
 	HistoryOptions *pHistOpt = new HistoryOptions(hoData, this);
 	pHistOpt->setModal(true);
@@ -655,8 +662,12 @@ void FalconCalcQt::on_actionHelp_triggered()
 }
 void FalconCalcQt::on_actionAbout_triggered()
 {
-	AboutDialog* pAbD = new AboutDialog(_version, this);
+	ModernDialogParams params;
+	params.hasTitleBar = false;
+	//params.text = tr("About FalconCalc");
+	AboutDialog* pAbD = new AboutDialog(params, _version, this);
 	pAbD->setAttribute(Qt::WA_DeleteOnClose);
+	pAbD->setWindowModality(Qt::ApplicationModal);
 	pAbD->show();
 }
 void FalconCalcQt::on_btnBinary_clicked()
@@ -761,7 +772,12 @@ void FalconCalcQt::on_btnOpenCloseHexOptions_clicked()
 
 void FalconCalcQt::on_btnStringFont_clicked()
 {
-	ui.lblChars->setFont(QFontDialog::getFont(0, ui.lblChars->font(), this));
+	ModernDialogParams params;
+	params.text = tr("Select Font");
+	ModernFontDialog* pmfDlg = new ModernFontDialog(ui.lblChars->font(),params, this);
+	if(pmfDlg->exec() == QDialog::Accepted)
+		ui.lblChars->setFont(pmfDlg->selectedFont());
+	delete pmfDlg;
 }
 
 void FalconCalcQt::on_btnClearInfix_clicked()

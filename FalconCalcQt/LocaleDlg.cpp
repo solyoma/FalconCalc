@@ -3,21 +3,25 @@
 #include <QtWidgets/QPushButton>
 #include "LocaleDlg.h"
 
-LocaleDlg::LocaleDlg(QWidget* parent) : QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint)
+LocaleDlg::LocaleDlg(QWidget* parent) : ModernDialog(ModernDialogParams(false, 0), parent)
 {
-	ui.setupUi(this);
+	Ui::LocaleDlgClass::setupUi(ContentWidget());
 	QString currentLocaleName;
 	
-	QLocale locale = ui.edtLocale->locale();
+	QLocale locale = edtLocale->locale();
 	QString localeName = locale.name(); // e.g. "en_US"
 
-	ui.lblCurrentLocale->setText(localeName);
-	ui.edtLocale->setText(localeName);
+	lblCurrentLocale->setText(localeName);
+	edtLocale->setText(localeName);
+	connect(buttonBox, &QDialogButtonBox::accepted,
+		this, &LocaleDlg::on_buttonBox_accepted);
+	connect(buttonBox, &QDialogButtonBox::rejected,
+		this, &LocaleDlg::on_buttonBox_rejected);
 }
 
 QLocale LocaleDlg::GetNewLocale() const
 {
-	return QLocale(ui.edtLocale->text().trimmed());
+	return QLocale(edtLocale->text().trimmed());
 }
 
 //void LocaleDlg::on_edtLocale_textChanged(QString newText)
@@ -27,3 +31,13 @@ QLocale LocaleDlg::GetNewLocale() const
 //	if (pb)
 //		pb->setEnabled(!state);
 //}
+
+void LocaleDlg::on_buttonBox_accepted()
+{
+	accept();
+}
+
+void LocaleDlg::on_buttonBox_rejected()
+{
+	reject();
+}

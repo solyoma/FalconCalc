@@ -114,9 +114,12 @@ QString GetBuiltinTextForId(BuiltinDescId bdId)
 
 /* ============================ VariablesFunctionsDialog =================*/
 
-VariablesFunctionsDialog::VariablesFunctionsDialog(int initialTabIndex, QWidget* parent) : QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint)
+VariablesFunctionsDialog::VariablesFunctionsDialog(int initialTabIndex, ModernDialogParams &params, QWidget* parent) 
+			: ModernDialog(params, parent)
 {
-	ui.setupUi(this);
+	Ui::VariablesFunctionsDialogClass::setupUi(ContentWidget());
+	QMetaObject::connectSlotsByName(this);
+
 	_busy = true;
 		// map									contains 
 	_pUserFuncsMap = new RowDataMap();		// actual functions
@@ -128,12 +131,12 @@ VariablesFunctionsDialog::VariablesFunctionsDialog(int initialTabIndex, QWidget*
 	_FillFuncTables();
 
 	// Enable the button if any rows are selected button->setEnabled(!tableWidget->selectedItems().isEmpty()); })
-	QToolButton* pbtn = ui.btnRemoveRow;
-	connect(ui.tblUserVars->selectionModel(), &QItemSelectionModel::selectionChanged, this, [this, pbtn]() {
-		pbtn->setEnabled(!ui.tblUserVars->selectedItems().isEmpty());
+	QToolButton* pbtn = btnRemoveRow;
+	connect(tblUserVars->selectionModel(), &QItemSelectionModel::selectionChanged, this, [this, pbtn]() {
+		pbtn->setEnabled(!tblUserVars->selectedItems().isEmpty());
 		});
-	connect(ui.tblUserFuncs->selectionModel(), &QItemSelectionModel::selectionChanged, this, [this, pbtn]() {
-		pbtn->setEnabled(!ui.tblUserFuncs->selectedItems().isEmpty());
+	connect(tblUserFuncs->selectionModel(), &QItemSelectionModel::selectionChanged, this, [this, pbtn]() {
+		pbtn->setEnabled(!tblUserFuncs->selectedItems().isEmpty());
 		});
 	/*----------------------------------------------------------*/
 	// connect sectionResized signal to update the item when the column is resized
@@ -147,36 +150,36 @@ VariablesFunctionsDialog::VariablesFunctionsDialog(int initialTabIndex, QWidget*
 	//		}
 	//	};
 
-	connect(ui.tblUserVars->horizontalHeader(),		&QHeaderView::sectionResized, [this](int index, int, int newSize)
+	connect(tblUserVars->horizontalHeader(),		&QHeaderView::sectionResized, [this](int index, int, int newSize)
 		{
-			for (int row = 0; row < ui.tblUserVars->rowCount(); ++row) {
-				auto item = ui.tblUserVars->item(row, index);
+			for (int row = 0; row < tblUserVars->rowCount(); ++row) {
+				auto item = tblUserVars->item(row, index);
 				if (item) {
-					ui.tblUserVars->update();  // Trigger a repaint to update the elided text
+					tblUserVars->update();  // Trigger a repaint to update the elided text
 				}
 			}
 		}
 	);
-//	connect(ui.tblUserFuncs->horizontalHeader(),		&QHeaderView::sectionResized, resFunc);
-	connect(ui.tblBuiltinVars->horizontalHeader(), &QHeaderView::sectionResized, [this](int index, int, int newSize)
+//	connect(tblUserFuncs->horizontalHeader(),		&QHeaderView::sectionResized, resFunc);
+	connect(tblBuiltinVars->horizontalHeader(), &QHeaderView::sectionResized, [this](int index, int, int newSize)
 		{
-			for (int row = 0; row < ui.tblBuiltinVars->rowCount(); ++row) {
-				auto item = ui.tblBuiltinVars->item(row, index);
+			for (int row = 0; row < tblBuiltinVars->rowCount(); ++row) {
+				auto item = tblBuiltinVars->item(row, index);
 				if (item) {
-					ui.tblBuiltinVars->update();  // Trigger a repaint to update the elided text
+					tblBuiltinVars->update();  // Trigger a repaint to update the elided text
 				}
 			}
 		}
 	);
-//	connect(ui.tblBuiltinFuncs->horizontalHeader(),	&QHeaderView::sectionResized, resFunc);
+//	connect(tblBuiltinFuncs->horizontalHeader(),	&QHeaderView::sectionResized, resFunc);
 	/*----------------------------------------------------------*/
 
 	if (initialTabIndex)
-		_pActUserTable = ui.tblUserFuncs;
+		_pActUserTable = tblUserFuncs;
 	else
-		_pActUserTable = ui.tblUserVars;
+		_pActUserTable = tblUserVars;
 
-	ui.tabHeader->setCurrentIndex(initialTabIndex);
+	tabHeader->setCurrentIndex(initialTabIndex);
 	_busy = false;
 }
 
@@ -191,7 +194,7 @@ VariablesFunctionsDialog::~VariablesFunctionsDialog()
 
 void VariablesFunctionsDialog::SlotSetColWidths(int which, int cw1, int cw2, int cw3, int cw4)
 {
-	QTableWidget* ptw = which ? ui.tblBuiltinVars : ui.tblUserVars;
+	QTableWidget* ptw = which ? tblBuiltinVars : tblUserVars;
 
 	auto setw = [&]()
 		{
@@ -203,7 +206,7 @@ void VariablesFunctionsDialog::SlotSetColWidths(int which, int cw1, int cw2, int
 
 	setw();
 
-	ptw = which ? ui.tblBuiltinFuncs : ui.tblUserFuncs;
+	ptw = which ? tblBuiltinFuncs : tblUserFuncs;
 	setw();
 }
 
@@ -215,9 +218,9 @@ void VariablesFunctionsDialog::moveEvent(QMoveEvent* e)
 void VariablesFunctionsDialog::on_tabHeader_currentChanged(int index)
 {
 	if (index)
-		_pActUserTable = ui.tblUserFuncs;
+		_pActUserTable = tblUserFuncs;
 	else
-		_pActUserTable = ui.tblUserVars;
+		_pActUserTable = tblUserVars;
 	_EnableButtons();
 //	qDebug("on_tabHeader_currentChanged()");
 }
@@ -287,7 +290,7 @@ void VariablesFunctionsDialog::on_btnUndo_clicked()
 
 	UndoItem lastRemoved = _undoStack.pop();
 	if(lastRemoved.table != ActualTab())
-		ui.tabHeader->setCurrentIndex(lastRemoved.table);
+		tabHeader->setCurrentIndex(lastRemoved.table);
 	int cnt = lastRemoved.data.size();
 	for(int i = 0; i < cnt; ++i)
 	{
@@ -345,7 +348,7 @@ void VariablesFunctionsDialog::on_btnSave_clicked()
 		lengine->AddUserFunctions(sv);
 	}
 
-	ui.btnSave->setEnabled(false); //  _changed[] = false);
+	btnSave->setEnabled(false); //  _changed[] = false);
 
 	lengine->clean = _changed[0] = _changed[1] = false;			
 	if(lengine->SaveUserData())
@@ -369,14 +372,14 @@ void VariablesFunctionsDialog::on_btnAddRow_clicked()
 	int row = _cntRowsWithData[ActualTab()];
 	if (ActualTab() ==  FUNCTIONS)
 	{
-		ui.tblUserFuncs->selectRow(row);
-		ui.tblUserFuncs->setFocus();
+		tblUserFuncs->selectRow(row);
+		tblUserFuncs->setFocus();
 		on_tblUserFuncs_cellDoubleClicked(row, 1);
 	}
 	else
 	{
-		ui.tblUserVars->setFocus();
-		ui.tblUserVars->selectRow(row);
+		tblUserVars->setFocus();
+		tblUserVars->selectRow(row);
 		on_tblUserVars_cellDoubleClicked(_cntRowsWithData[VARIABLES], 1);
 	}
 }
@@ -391,7 +394,7 @@ void VariablesFunctionsDialog::on_tblUserVars_currentItemChanged(QTableWidgetIte
 
 	int	rowc = current ? current->row() : -1,
 		colc = current ? current->column() : -1;
-	_GetItemText(ui.tblUserVars,rowc, colc);
+	_GetItemText(tblUserVars,rowc, colc);
 }
 
 void VariablesFunctionsDialog::_UserTableEditCommon(QTableWidget* ptw, int row, int col)
@@ -401,8 +404,10 @@ void VariablesFunctionsDialog::_UserTableEditCommon(QTableWidget* ptw, int row, 
 	vfd.body = _GetItemText(ptw, row, 1);
 	vfd.unit = _GetItemText(ptw, row, 2);
 	vfd.comment = _GetItemText(ptw, row, 3);
-	vfd.isFunction = (ptw == ui.tblUserFuncs);
-	VarFuncDefDialog vfdDialog(vfd, this);
+	vfd.isFunction = (ptw == tblUserFuncs);
+	ModernDialogParams mdParams;
+	mdParams.text = tr("FalconCalc - Define Variables or Functions");
+	VarFuncDefDialog vfdDialog(vfd, mdParams, this);
 	if(vfdDialog.exec() == QDialog::Accepted)
 	{
 		_changed[vfd.isFunction] |= (vfd.name != _GetItemText(ptw, row, 0)) ||
@@ -414,16 +419,16 @@ void VariablesFunctionsDialog::_UserTableEditCommon(QTableWidget* ptw, int row, 
 		_AddCellText(ptw, row, 2, vfd.unit);
 		_AddCellText(ptw, row, 3, vfd.comment);
 
-		ui.btnSave->setEnabled(_changed[0] || _changed[1]);
+		btnSave->setEnabled(_changed[0] || _changed[1]);
 	}
 }
 
 void VariablesFunctionsDialog::on_tblUserVars_cellDoubleClicked(int row, int col)
 {
 	if (col == 0) // only name column
-		_TableDoubleClickedCommon(ui.tblUserVars,row,col);
+		_TableDoubleClickedCommon(tblUserVars,row,col);
 	else
-		_UserTableEditCommon(ui.tblUserVars,row,col);
+		_UserTableEditCommon(tblUserVars,row,col);
 }
 
 void VariablesFunctionsDialog::on_tblUserFuncs_currentItemChanged(QTableWidgetItem* current, QTableWidgetItem* previous)
@@ -441,7 +446,7 @@ void VariablesFunctionsDialog::on_tblUserVars_cellChanged(int row, int col)
 {
 	if (_busy)
 		return;
-	QString qsCellData = _GetItemText(ui.tblUserVars, row, col);
+	QString qsCellData = _GetItemText(tblUserVars, row, col);
 	_changed[VARIABLES] = _changed[VARIABLES] || _sTmp != qsCellData;
 	_EnableButtons();
 	//qDebug("on_tblUserVars_cellChanged at (%d,%d) _changed: %s", row, col,_changed ? "yes" :"no");
@@ -452,7 +457,7 @@ void VariablesFunctionsDialog::on_tblUserFuncs_cellChanged(int row, int col)
 	if (_busy)
 		return;
 	
-	QString qsCellData = _GetItemText(ui.tblUserVars, row, col);
+	QString qsCellData = _GetItemText(tblUserVars, row, col);
 	_changed[FUNCTIONS] = _changed[FUNCTIONS] || _sTmp != qsCellData;
 	_EnableButtons();
 }
@@ -460,15 +465,15 @@ void VariablesFunctionsDialog::on_tblUserFuncs_cellChanged(int row, int col)
 void VariablesFunctionsDialog::on_tblUserFuncs_cellDoubleClicked(int row, int col)
 {
 	if (col == 0) // name column: copy name to cbInfix's edit box and set focus to there
-		_TableDoubleClickedCommon(ui.tblUserFuncs, row, col);
+		_TableDoubleClickedCommon(tblUserFuncs, row, col);
 	else
-		_UserTableEditCommon(ui.tblUserFuncs,row,col);
+		_UserTableEditCommon(tblUserFuncs,row,col);
 }
 
 void VariablesFunctionsDialog::_TableDoubleClickedCommon(QTableWidget* ptw, int row, int col)
 {
 	QString name = _GetItemText(ptw, row, 0);
-	if ((ptw == ui.tblBuiltinFuncs) || (ptw == ui.tblUserFuncs))
+	if ((ptw == tblBuiltinFuncs) || (ptw == tblUserFuncs))
 		name = name.mid(0, name.indexOf('(')+1); // remove arguments)
 
 	emit SignalTableDoubleClicked(name);
@@ -476,12 +481,12 @@ void VariablesFunctionsDialog::_TableDoubleClickedCommon(QTableWidget* ptw, int 
 
 void VariablesFunctionsDialog::on_tblBuiltinVars_cellDoubleClicked(int row, int col)
 {
-	_TableDoubleClickedCommon(ui.tblBuiltinVars, row, col);
+	_TableDoubleClickedCommon(tblBuiltinVars, row, col);
 }
 
 void VariablesFunctionsDialog::on_tblBuiltinFuncs_cellDoubleClicked(int row, int col)
 {
-	_TableDoubleClickedCommon(ui.tblBuiltinFuncs, row, col);
+	_TableDoubleClickedCommon(tblBuiltinFuncs, row, col);
 }
 
 
@@ -496,7 +501,7 @@ void VariablesFunctionsDialog::_FillBuiltinFuncTable()
 	ElidingTableWidgetItem* ptw;
 	QString qs;
 	int cntFunctions = LittleEngine::builtinFunctions.size();
-	ui.tblBuiltinFuncs->setRowCount(cntFunctions);
+	tblBuiltinFuncs->setRowCount(cntFunctions);
 
 	auto argStr = [](BuiltinFunc& f)
 		{
@@ -508,20 +513,20 @@ void VariablesFunctionsDialog::_FillBuiltinFuncTable()
 		BuiltinFunc& bif = LittleEngine::builtinFunctions[row];
 
 		ptw = new ElidingTableWidgetItem(bif.name.toQString() + argStr(bif));	
-		ui.tblBuiltinFuncs->setItem(row, 0, ptw);
+		tblBuiltinFuncs->setItem(row, 0, ptw);
 		ptw = new ElidingTableWidgetItem("-");
-		ui.tblBuiltinFuncs->setItem(row, 1, ptw);
+		tblBuiltinFuncs->setItem(row, 1, ptw);
 		ptw = new ElidingTableWidgetItem("-");
-		ui.tblBuiltinFuncs->setItem(row, 2, ptw);
+		tblBuiltinFuncs->setItem(row, 2, ptw);
 		ptw = new ElidingTableWidgetItem(GetBuiltinTextForId(bif.binDesc));	
-		ui.tblBuiltinFuncs->setItem(row, 3, ptw);
+		tblBuiltinFuncs->setItem(row, 3, ptw);
 	}
 }
 
 void VariablesFunctionsDialog::_FillUserFuncTable()
 {
-	if(ui.tblUserFuncs->rowCount() < LittleEngine::functions.size())
-		ui.tblUserFuncs->setRowCount(LittleEngine::functions.size());
+	if(tblUserFuncs->rowCount() < LittleEngine::functions.size())
+		tblUserFuncs->setRowCount(LittleEngine::functions.size());
 	RowData rd;
 	for (int row = 0; row < LittleEngine::functions.size(); ++row)
 	{
@@ -534,10 +539,10 @@ void VariablesFunctionsDialog::_FillUserFuncTable()
 			s += f.args.at(i) + ",";
 		s += f.args.at(i) + ")";
 
-		_AddCellText(ui.tblUserFuncs, row, 0, s);
-		_AddCellText(ui.tblUserFuncs, row, 1, f.body.toQString());
-		_AddCellText(ui.tblUserFuncs, row, 2, f.unit.toQString());
-		_AddCellText(ui.tblUserFuncs, row, 3, f.desc.toQString());
+		_AddCellText(tblUserFuncs, row, 0, s);
+		_AddCellText(tblUserFuncs, row, 1, f.body.toQString());
+		_AddCellText(tblUserFuncs, row, 2, f.unit.toQString());
+		_AddCellText(tblUserFuncs, row, 3, f.desc.toQString());
 	}
 	*_pUserFuncsInMap = *_pUserFuncsMap;
 }
@@ -552,7 +557,7 @@ void VariablesFunctionsDialog::_FillBuiltinVarTable()
 {
 	QString qs;
 	LongNumber::ConstantsMap builtIns;
-	ui.tblBuiltinVars->setRowCount(builtIns.size());
+	tblBuiltinVars->setRowCount(builtIns.size());
 	DisplayFormat df;
 	df.expFormat = ExpFormat::rnsfUTF8;
 	df.nFormatSwitchFracLength = 3;
@@ -561,18 +566,18 @@ void VariablesFunctionsDialog::_FillBuiltinVarTable()
 	int row = 0;
 	for (auto &bi: builtIns)
 	{
-		_AddCellText(ui.tblBuiltinVars, row, 0, bi.second->name.toQString());
-		_AddCellText(ui.tblBuiltinVars, row, 1, bi.second->value.ToDecimalString(df).toQString());
-		_AddCellText(ui.tblBuiltinVars, row, 2, bi.second->unit.toQString());
-		_AddCellText(ui.tblBuiltinVars, row, 3, GetBuiltinTextForId(bi.second->binDesc));
+		_AddCellText(tblBuiltinVars, row, 0, bi.second->name.toQString());
+		_AddCellText(tblBuiltinVars, row, 1, bi.second->value.ToDecimalString(df).toQString());
+		_AddCellText(tblBuiltinVars, row, 2, bi.second->unit.toQString());
+		_AddCellText(tblBuiltinVars, row, 3, GetBuiltinTextForId(bi.second->binDesc));
 		++row;
 	}
 }
 
 void VariablesFunctionsDialog::_FillUserVarTable()
 {
-	if(ui.tblUserVars->rowCount() < LittleEngine::variables.size())
-		ui.tblUserVars->setRowCount(LittleEngine::variables.size());
+	if(tblUserVars->rowCount() < LittleEngine::variables.size())
+		tblUserVars->setRowCount(LittleEngine::variables.size());
 
 	RowData rd;
 	auto toUnicodeSuperscriptFormat = [](SmartString s)
@@ -603,10 +608,10 @@ void VariablesFunctionsDialog::_FillUserVarTable()
 		Variable& v = LittleEngine::variables[row];
 		rd = { v.name, v.body, v.unit, v.desc };
 		(*_pUserVarsMap)[v.name] = rd;
-		_AddCellText(ui.tblUserVars, row, 0, v.name.toQString());
-		_AddCellText(ui.tblUserVars, row, 1, toUnicodeSuperscriptFormat(v.body.toQString()));
-		_AddCellText(ui.tblUserVars, row, 2, v.unit.toQString());
-		_AddCellText(ui.tblUserVars, row, 3, v.desc.toQString());
+		_AddCellText(tblUserVars, row, 0, v.name.toQString());
+		_AddCellText(tblUserVars, row, 1, toUnicodeSuperscriptFormat(v.body.toQString()));
+		_AddCellText(tblUserVars, row, 2, v.unit.toQString());
+		_AddCellText(tblUserVars, row, 3, v.desc.toQString());
 	}
 	*_pUserVarsInMap = *_pUserVarsMap;
 
@@ -628,7 +633,7 @@ void VariablesFunctionsDialog::_FillVarTables()
 //		pvf = &_vf;
 //	auto _serialize = [this](int which, VarFuncInfoQt * pvf)
 //		{
-//			QTableWidget* pw = which ? ui.tblUserFuncs : ui.tblUserVars;
+//			QTableWidget* pw = which ? tblUserFuncs : tblUserVars;
 //			QString& qs = which ? _vf.sUserFuncs : _vf.sUserVars;
 //			unsigned& cnt = (which ? pvf->uUserFuncCnt : pvf->uUserVarCnt);
 //			int n = 0; // count of user variables/functions
@@ -666,7 +671,7 @@ void VariablesFunctionsDialog::_CollectFrom(int table)
 {
 	RowDataMap  * pDmIn = table ?	_pUserFuncsInMap	: _pUserVarsInMap,
 				* pDm = table ?		_pUserFuncsMap		: _pUserVarsMap;
-	QTableWidget* ptw = table ?		ui.tblUserFuncs		: ui.tblUserVars;
+	QTableWidget* ptw = table ?		tblUserFuncs		: tblUserVars;
 
 	RowData rd;
 	// collect data from table into the actual (non-input) variables
@@ -696,19 +701,19 @@ void VariablesFunctionsDialog::_CollectFrom(int table)
 			_changed[table] = true;
 			break;
 		}
-	ui.btnSave->setEnabled(_changed[0] || _changed[1]);
+	btnSave->setEnabled(_changed[0] || _changed[1]);
 }
 
 void VariablesFunctionsDialog::_EnableButtons()
 {
-	ui.btnSave->setEnabled(_changed[VARIABLES] || _changed[FUNCTIONS] || _undoStack.size());
+	btnSave->setEnabled(_changed[VARIABLES] || _changed[FUNCTIONS] || _undoStack.size());
 		
 	(void)_GetActualDataCount(-1);
-	ui.btnRemoveAll->setEnabled(_cntRowsWithData[ActualTab()]);
+	btnRemoveAll->setEnabled(_cntRowsWithData[ActualTab()]);
 
-	ui.btnRemoveRow->setEnabled(!_pActUserTable->selectedItems().isEmpty() && 
+	btnRemoveRow->setEnabled(!_pActUserTable->selectedItems().isEmpty() && 
 		                        !_pActUserTable->selectedItems()[0]->text().isEmpty());
-	ui.btnUndo->setEnabled(_undoStack.size());
+	btnUndo->setEnabled(_undoStack.size());
 
 }
 
@@ -724,9 +729,9 @@ bool VariablesFunctionsDialog::_GetActualDataCount(int index)
 		};
 
 	if (index == VARIABLES || index < 0)
-			_cntRowsWithData[VARIABLES] = GetCnt(ui.tblUserVars);
+			_cntRowsWithData[VARIABLES] = GetCnt(tblUserVars);
 	if (index == FUNCTIONS || index < 0)
-			_cntRowsWithData[FUNCTIONS] = GetCnt(ui.tblUserFuncs);
+			_cntRowsWithData[FUNCTIONS] = GetCnt(tblUserFuncs);
 	return index == VARIABLES ?
 			_cntRowsWithData[VARIABLES] != 0:
 					index == FUNCTIONS ? _cntRowsWithData[FUNCTIONS] != 0 :
@@ -735,5 +740,5 @@ bool VariablesFunctionsDialog::_GetActualDataCount(int index)
 
 void VariablesFunctionsDialog::SlotSelectTab(int tab)
 {
-		ui.tabHeader->setCurrentIndex(tab);
+		tabHeader->setCurrentIndex(tab);
 }

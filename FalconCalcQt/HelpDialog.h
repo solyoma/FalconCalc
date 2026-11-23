@@ -1,10 +1,12 @@
 #pragma once
 #ifndef _HELPDIALOG_H
-	#define _HELPDIALOG_H
-	#include <QtWidgets/QDialog>
-	#include "ui_HelpDialog.h"
+	
+#define _HELPDIALOG_H
+#include <QtWidgets/QDialog>
+#include "ui_HelpDialog.h"
+#include "ModernDialog.h"
 
-class HelpDialog : public QDialog
+class HelpDialog : public ModernDialog, private Ui::HelpDialogClass
 {
 	Q_OBJECT
 public:
@@ -12,8 +14,9 @@ public:
 	~HelpDialog();
 
 	static int helpVisible;
-private:
-	Ui::HelpDialogClass ui;
+
+protected:
+	void showEvent(QShowEvent* event) override;
 };
 
 #endif

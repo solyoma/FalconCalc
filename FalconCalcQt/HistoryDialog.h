@@ -1,16 +1,17 @@
 #pragma once
 #include <QtWidgets/QDialog>
+#include "ModernDialog.h"
 #include "ui_HistoryDialog.h"
 #include <QtWidgets/QListWidget>
 
-class HistoryDialog : public QDialog
+class HistoryDialog : public ModernDialog, private Ui::HistoryDialogClass
 {
 	Q_OBJECT
 public:
-	HistoryDialog(const QStringList& lstHist, QWidget* parent = nullptr);
+	HistoryDialog(const QStringList& lstHist, ModernDialogParams &params, QWidget* parent = nullptr);
 	~HistoryDialog();
 
-	QListWidget* pListWidget() const { return ui.lstHistory; }
+	QListWidget* pListWidget() const { return lstHistory; }
 	void SetList(const QStringList& lstHist);
 	void Clear();
 protected:

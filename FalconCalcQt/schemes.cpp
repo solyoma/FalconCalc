@@ -141,11 +141,28 @@ QMenuBar::item {
 					the overflow button '>>' at the right and the menu items would appear only 
 					when that is clicked */
 } 
+	/* For ModernDialog based dialogs */
+#DialogFrame {
+    background-color: %1;
+    border: 2px solid %30;
+    border-radius: 10px;
+}
+
+#titleBar {
+    background-color: %1;
+    border: none;
+}
+
+#DialogContent {
+    background-color: %1;
+    border: none;
+}
 
 QFrame#centralWidget {
     border: 2px solid %30;			/* (30) Dialog border */
 	border-radius: 10px;
 }
+
 QGroupBox,
 QPushButton,
 QSpinBox,

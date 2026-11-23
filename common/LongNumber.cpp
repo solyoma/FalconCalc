@@ -1406,8 +1406,8 @@ SmartString RealNumber::ToDecimalString(const DisplayFormat &format)
 		result += _dsplD.strExponent;
 #ifdef QTSA_PROJECT
 // DEBUG
-	qDebug("result string:%s", result.toUtf8String().c_str());
-	qDebug("expLen:%d, decDigits:%d, nRoundPos: %d, result length:%d", _dsplD.expLen, _dsplD.fmt.decDigits, _dsplD.nRoundPos, result.length());
+	//qDebug("result string:%s", result.toUtf8String().c_str());
+	//qDebug("expLen:%d, decDigits:%d, nRoundPos: %d, result length:%d", _dsplD.expLen, _dsplD.fmt.decDigits, _dsplD.nRoundPos, result.length());
 // /DEBUG
 #endif
 	return result;

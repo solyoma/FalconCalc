@@ -1,10 +1,14 @@
 #pragma once
-#include <QtWidgets/QDialog>
+#include <QScreen>
+#include <QWidget>
+
+#include "ModernDialog.h"
 #include "ui_HistoryOptions.h"
 
 
 struct HistOptionData
 {
+	ModernDialogParams params;	// see ModernDialog.h
 	int watchTimeout  = 0;
 	int maxHistDepth  = 0;
 	int historySorted = 0;
@@ -24,12 +28,23 @@ struct HistOptionData
 	}
 };
 
-class HistoryOptions : public QDialog
+class HistoryOptions : public ModernDialog, private Ui::HistoryOptionsClass
 {
 	Q_OBJECT
 public:
 	 HistoryOptions(HistOptionData &data, QWidget* parent = nullptr);
 	~HistoryOptions();
+
+protected:
+	void showEvent(QShowEvent* event) override
+	{
+		int w = screen()->geometry().width();
+		int h = screen()->geometry().height();
+		w -= geometry().width();
+		h -= geometry().height();
+		move(w / 2, h / 2);
+
+	}
 
 private:
 	Ui::HistoryOptionsClass ui;

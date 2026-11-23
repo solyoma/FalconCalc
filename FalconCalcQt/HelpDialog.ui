@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
  <class>HelpDialogClass</class>
- <widget class="QDialog" name="HelpDialogClass">
+ <widget class="QWidget" name="HelpDialogClass">
+  <property name="modal" stdset="0">
+   <bool>false</bool>
+  </property>
   <property name="windowModality">
    <enum>Qt::NonModal</enum>
   </property>
@@ -19,9 +22,6 @@
   <property name="windowIcon">
    <iconset resource="FalconCalcQt.qrc">
     <normaloff>:/FalconCalcQt/Resources/calculator.ico</normaloff>:/FalconCalcQt/Resources/calculator.ico</iconset>
-  </property>
-  <property name="modal">
-   <bool>false</bool>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_3">
    <item>
@@ -137,22 +137,5 @@
  <resources>
   <include location="FalconCalcQt.qrc"/>
  </resources>
- <connections>
-  <connection>
-   <sender>okButton</sender>
-   <signal>clicked()</signal>
-   <receiver>HelpDialogClass</receiver>
-   <slot>accept()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>278</x>
-     <y>253</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>96</x>
-     <y>254</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
+ <connections/>
 </ui>

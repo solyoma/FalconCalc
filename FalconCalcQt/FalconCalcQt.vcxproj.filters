@@ -70,6 +70,9 @@
     <ClCompile Include="..\common\EngineErrors.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ModernDialog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\common\calculate.h">
@@ -149,6 +152,9 @@
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="VarFuncDefDialog.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="ModernDialog.h">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>

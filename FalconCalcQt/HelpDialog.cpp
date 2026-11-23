@@ -5,16 +5,25 @@
 #endif
 int HelpDialog::helpVisible = false;
 
-HelpDialog::HelpDialog(QWidget* parent) :QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint)
+HelpDialog::HelpDialog(QWidget* parent) : ModernDialog(ModernDialogParams(), parent)
 {
-	ui.setupUi(this);
-//    ui.lblHelptext->setText(sHelpText);
+	Ui::HelpDialogClass::setupUi(ContentWidget());
     QScreen* screen = QGuiApplication::primaryScreen();
-    move(screen->geometry().center() - geometry().center());
     ++helpVisible;
+    connect(okButton, &QPushButton::clicked, this, [this]() { accept(); });
 }
+
 HelpDialog::~HelpDialog()
 {
     if(helpVisible)
         --helpVisible;
+}
+
+void HelpDialog::showEvent(QShowEvent *e)
+{
+    int w = screen()->geometry().width() ;
+    int h = screen()->geometry().height();
+    w -= geometry().width();
+    h -= geometry().height();
+    move(w/2, h/2);
 }

@@ -12,6 +12,7 @@ using namespace SmString;
 using namespace LongNumber;
 #include "calculate.h"
 
+#include "ModernDialog.h"
 #include "ui_VariablesFunctionsDialog.h"
 
 namespace FalconCalc {
@@ -65,14 +66,14 @@ public:
 	}
 };
 
-class VariablesFunctionsDialog : public QDialog
+class VariablesFunctionsDialog : public ModernDialog, private Ui::VariablesFunctionsDialogClass
 {
 	Q_OBJECT
 public:
-	VariablesFunctionsDialog(int initialTabIndex, QWidget* parent = nullptr);
+	VariablesFunctionsDialog(int initialTabIndex, ModernDialogParams &params, QWidget* parent = nullptr);
 	~VariablesFunctionsDialog();
 
-	inline int ActualTab() const { return ui.tabHeader->currentIndex(); }
+	inline int ActualTab() const { return tabHeader->currentIndex(); }
 signals:
 	void SignalVarFuncClose();
 	void SignalTabChange(int tab);

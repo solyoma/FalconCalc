@@ -1336,7 +1336,7 @@
   </action>
   <action name="actionAbout">
    <property name="text">
-    <string>&amp;A&amp;bout</string>
+    <string>&amp;About</string>
    </property>
   </action>
   <action name="actionDec">
