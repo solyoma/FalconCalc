@@ -33,7 +33,10 @@ struct ModernDialogTitle
 
 struct ModernDialogResizeData
 {
-	ModernDialogResizeData(bool isResizeable = false) : isResizable(isResizable) {}
+	ModernDialogResizeData(bool isResizable = false) : isResizable(isResizable) 
+	{
+		;
+	}
 	bool isResizable = false;
 	int resizeBorderWidth = 6;
 	int minSizeX = 100, minSizeY = 100;
@@ -98,12 +101,14 @@ public:
 	// can be called even when it wasn't. If any color is empty the one from the palette is used.
 	void SetDialogTitle(const ModernDialogParams &title);
 protected:
+	bool eventFilter(QObject* watched, QEvent* event) override;
 	void mousePressEvent(QMouseEvent* event) override;
-	void mouseMoveEvent(QMouseEvent* event) override;
+//	void mouseMoveEvent(QMouseEvent* event) override;
 	void leaveEvent(QEvent* event) override;
 private:
 	Qt::Edges _ResizeEdgesAt(const QPoint& pos) const;
-	void _UpdateResizeCursor(const QPoint& pos);
+	void _InstallResizeTracking(QWidget* widget);
+	void _SetResizeCursor(QWidget* widget, Qt::Edges edges);
 
 	ModernDialogParams _params;
 	QWidget* _pContentWidget = nullptr,

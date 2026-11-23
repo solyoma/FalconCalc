@@ -464,6 +464,7 @@ void FalconCalcQt::_EditVarsCommon(int which)
 	else
 	{
 		ModernDialogParams params;
+		params.isResizable = true;
 		params.text = tr("FalconCalc - Variables & Functions");
 		_pVF = new VariablesFunctionsDialog(which, params, this);
 		connect(_pVF, &VariablesFunctionsDialog::finished, this, &FalconCalcQt::_SlotVarsFuncsFinished);
@@ -894,48 +895,59 @@ void FalconCalcQt::_SaveHistory()
 
 void FalconCalcQt::_PlaceWidget(QWidget& w, Placement pm)
 {
-	int xw,		// place window top left here
-		yw;		// includes border and title bar for the dialog widget
-	QScreen *actScreen = screen();	  // calls QWidget::screen() to get actual screen
-	QRect geom = frameGeometry();
-	Placement pm0 = pm;
+	int xw = 0,		// w's screen coordinate, place w's top left here
+		yw = 0;		// no border and title bar for a ModernDialog widget
+	QScreen *actScreen = screen();		// actual screen for this window (the main window)
+	QRect geom = geometry();			// of main window
+	QSize s = w.isVisible() ? w.size() : w.sizeHint();				// approx. geometry after show()
+	Placement pm0 = pm;					// originally tried to place it here
 
-	auto goodPlacement = [&]()->bool
+	auto geomByPlacement = [&]()
 		{
 			switch (pm)
 			{
 				case Placement::pmTop:
-					xw = geom.x(); yw = geom.y() - w.frameGeometry().height();
+					xw = geom.x(); yw = geom.y() - s.height();
 					break;
 				case Placement::pmRight:
-					xw = geom.right()+2; yw = geom.y();
+					xw = geom.right(); yw = geom.y();
 					break;
 				case Placement::pmBottom:
 					xw = geom.x(); yw = geom.bottom();
 					break;
 				default:
 				case Placement::pmLeft:
-					xw = geom.x() - w.frameGeometry().width() - 2; yw = geom.y();
+					xw = geom.x() - s.width(); yw = geom.y();
 					break;
 			}
-			return (pm == Placement::pmRight && xw + w.frameGeometry().width() <= actScreen->geometry().width() )
-					&&
-				   (pm == Placement::pmBottom && yw + w.frameGeometry().height() <= actScreen->geometry().height());
 		};
 
-	while(!goodPlacement() )
+	for(int i =0; i < 2; ++i)
 	{
-		if( (pm0 == Placement::pmRight && pm == Placement::pmLeft)	// right was bad already, left is also wrong, so keep right
-			||	(pm0 == Placement::pmBottom && pm == Placement::pmTop) )// bottom was bad already
+		geomByPlacement();
+
+		switch (pm)
 		{
-			pm = pm0;
-			(void)goodPlacement();
-			break;
+			case Placement::pmTop:
+				if (yw < 0)
+					pm = Placement::pmBottom;
+				break;
+			case Placement::pmRight:
+				if (xw + w.width() > actScreen->geometry().width())
+					pm = Placement::pmLeft;
+				break;
+			case Placement::pmBottom:
+				if (yw + w.height() > actScreen->geometry().bottom())
+					pm = Placement::pmTop;
+				break;
+			default:
+			case Placement::pmLeft:
+				if (xw < 0)
+					pm = Placement::pmRight;
+				break;
 		}
-		if (pm0 == Placement::pmRight)
-			pm = Placement::pmLeft;
-		else if (pm0 == Placement::pmBottom)
-			pm = Placement::pmTop;
+		if (pm == pm0)	// either OK or tried the other possibility, but that is also wrong
+			break;
 	}
 	w.move(xw, yw);
 }

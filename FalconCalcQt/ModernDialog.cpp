@@ -1,6 +1,9 @@
 ﻿#include <QFormLayout> 
 
 #include "ModernDialog.h"
+#ifdef DEBUG
+#include "qdebug.h"
+#endif
 
 // ---------------------------------------------------------
 // ModernTitleBar
@@ -136,12 +139,11 @@ ModernDialog::ModernDialog(const ModernDialogParams& params, QWidget* parent)
     frameLayout->addWidget(_pContentWidget, 1);
 
     _pMainLayout = new QVBoxLayout(this);
-    _pMainLayout->setContentsMargins(0, 0, 0, 0);
     _pMainLayout->setSpacing(0);
     _pMainLayout->addWidget(_pFrameWidget);
+    SetResizable(_params.isResizable);
 
     setMouseTracking(true);
-    SetResizable(_params.isResizable);
 }
 
 void ModernDialog::SetDialogTitle(const ModernDialogParams& params)
@@ -197,49 +199,108 @@ void ModernDialog::SetResizable(bool resizable)
     _pMainLayout->setContentsMargins(m, m, m, m);
 
     setMouseTracking(resizable);
+    _InstallResizeTracking(_pFrameWidget);
     unsetCursor();
 
     if (resizable)
-        setMinimumSize(200, 120);
+    {
+        setMinimumSize(_params.minSizeX, _params.minSizeY);
+        setMaximumSize(_params.maxSizeX, _params.maxSizeY);
+    }
 }
 
 Qt::Edges ModernDialog::_ResizeEdgesAt(const QPoint& pos) const
 {
     Qt::Edges edges;
+    const QRect r = _pFrameWidget->geometry();
+    const int b = _params.resizeBorderWidth;
 
-    if (pos.x() < _params.resizeBorderWidth)
+    if (pos.x() <= r.left() + b)
         edges |= Qt::LeftEdge;
-    else if (pos.x() >= width() - _params.resizeBorderWidth)
+    else if (pos.x() >= r.right() - b)
         edges |= Qt::RightEdge;
 
-    if (pos.y() < _params.resizeBorderWidth)
+    if (pos.y() <= r.top() + b)
         edges |= Qt::TopEdge;
-    else if (pos.y() >= height() - _params.WIPresizeBorderWidth)
+    else if (pos.y() >= r.bottom() - b)
         edges |= Qt::BottomEdge;
 
     return edges;
 }
 
-void ModernDialog::_UpdateResizeCursor(const QPoint& pos)
+void ModernDialog::_SetResizeCursor(QWidget* widget, Qt::Edges edges)
 {
-    Qt::Edges edges = _ResizeEdgesAt(pos);
-
     if ((edges == (Qt::LeftEdge | Qt::TopEdge)) ||
         (edges == (Qt::RightEdge | Qt::BottomEdge)))
-        setCursor(Qt::SizeFDiagCursor);
+        widget->setCursor(Qt::SizeFDiagCursor);
 
     else if ((edges == (Qt::RightEdge | Qt::TopEdge)) ||
         (edges == (Qt::LeftEdge | Qt::BottomEdge)))
-        setCursor(Qt::SizeBDiagCursor);
+        widget->setCursor(Qt::SizeBDiagCursor);
 
     else if (edges & (Qt::LeftEdge | Qt::RightEdge))
-        setCursor(Qt::SizeHorCursor);
+        widget->setCursor(Qt::SizeHorCursor);
 
     else if (edges & (Qt::TopEdge | Qt::BottomEdge))
-        setCursor(Qt::SizeVerCursor);
+        widget->setCursor(Qt::SizeVerCursor);
 
     else
-        unsetCursor();
+        widget->unsetCursor();
+}
+
+void ModernDialog::_InstallResizeTracking(QWidget* widget)
+{
+    widget->setMouseTracking(_params.isResizable);
+    widget->installEventFilter(this);
+
+    const auto children = widget->findChildren<QWidget*>();
+
+    for (QWidget* child : children)
+    {
+        child->setMouseTracking(_params.isResizable);
+        child->installEventFilter(this);
+    }
+}
+
+bool ModernDialog::eventFilter(QObject *watched, QEvent *event)
+{
+    QWidget *widget = qobject_cast<QWidget *>(watched);
+
+    if (_params.isResizable && widget)
+    {
+        if (event->type() == QEvent::MouseMove)
+        {
+            auto *mouse = static_cast<QMouseEvent *>(event);
+
+            QPoint pos = widget->mapTo(this, mouse->pos());
+
+            _SetResizeCursor(widget, _ResizeEdgesAt(pos));
+        }
+        else if (event->type() == QEvent::MouseButtonPress)
+        {
+            auto *mouse = static_cast<QMouseEvent *>(event);
+
+            if (mouse->button() == Qt::LeftButton)
+            {
+                QPoint pos = widget->mapTo(this, mouse->pos());
+                Qt::Edges edges = _ResizeEdgesAt(pos);
+
+                if (edges)
+                {
+                    if (windowHandle())
+                        windowHandle()->startSystemResize(edges);
+
+                    return true;
+                }
+            }
+        }
+        else if (event->type() == QEvent::Leave)
+        {
+            widget->unsetCursor();
+        }
+    }
+
+    return QDialog::eventFilter(watched, event);
 }
 
 void ModernDialog::mousePressEvent(QMouseEvent* event)
@@ -261,13 +322,13 @@ void ModernDialog::mousePressEvent(QMouseEvent* event)
     QDialog::mousePressEvent(event);
 }
 
-void ModernDialog::mouseMoveEvent(QMouseEvent* event)
-{
-    if (_params.isResizable)
-        _UpdateResizeCursor(event->pos());
-
-    QDialog::mouseMoveEvent(event);
-}
+//void ModernDialog::mouseMoveEvent(QMouseEvent* event)
+//{
+//    if (_params.isResizable)
+//        _UpdateResizeCursor(event->pos());
+//
+//    QDialog::mouseMoveEvent(event);
+//}
 
 void ModernDialog::leaveEvent(QEvent* event)
 {

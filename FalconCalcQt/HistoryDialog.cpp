@@ -5,6 +5,7 @@ HistoryDialog::HistoryDialog(const QStringList& lstHist, ModernDialogParams& par
 	: ModernDialog(params, parent)
 {
 	Ui::HistoryDialogClass::setupUi(ContentWidget());
+	//SetResizable(IsResizable());
 	QMetaObject::connectSlotsByName(this);
 
 	lstHistory->addItems(lstHist);
