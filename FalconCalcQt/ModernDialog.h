@@ -82,7 +82,7 @@ struct ModernDialogParams : public ModernDialogTitleData, public ModernDialogRes
 						ModernDialogResizeData resizeData = ModernDialogResizeData())
 					:	ModernDialogTitleData(buttons), hasTitleBar(hasTitleBar) 
 	{
-		ModernDialogResizeData(this) = resizeData;
+		ModernDialogResizeData::operator==(resizeData);
 	}
 	ModernDialogParams(const ModernDialogParams& o) : ModernDialogTitleData(o), ModernDialogResizeData(o)
 	{
