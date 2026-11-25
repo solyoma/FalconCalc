@@ -4,7 +4,7 @@
 <context>
     <name>AboutDialog</name>
     <message>
-        <location filename="../AboutDialog.h" line="15"/>
+        <location filename="../AboutDialog.h" line="18"/>
         <source>Version %1</source>
         <translation>%1 Verzió</translation>
     </message>
@@ -60,35 +60,50 @@
 <context>
     <name>FalconCalcQt</name>
     <message>
-        <location filename="../FalconCalcQt.cpp" line="357"/>
+        <location filename="../FalconCalcQt.cpp" line="398"/>
+        <source>FalconCalc - History</source>
+        <translation>FalconCalcQt - ELőzmények</translation>
+    </message>
+    <message>
+        <location filename="../FalconCalcQt.cpp" line="468"/>
+        <source>FalconCalc - Variables &amp; Functions</source>
+        <translation>falconCalc - Változók és függvények</translation>
+    </message>
+    <message>
+        <location filename="../FalconCalcQt.cpp" line="505"/>
         <source>FalconCalc - Question</source>
         <translation>GalconCalc - Kérdés</translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.cpp" line="357"/>
+        <location filename="../FalconCalcQt.cpp" line="505"/>
         <source>This will remove the whole of history.
 Are you sure?</source>
         <translation>Ez az összes előzményt törli. Ezt akarod?</translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.cpp" line="369"/>
-        <location filename="../FalconCalcQt.cpp" line="414"/>
+        <location filename="../FalconCalcQt.cpp" line="517"/>
+        <location filename="../FalconCalcQt.cpp" line="563"/>
         <source>FalconCalc</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.cpp" line="369"/>
-        <location filename="../FalconCalcQt.cpp" line="414"/>
+        <location filename="../FalconCalcQt.cpp" line="517"/>
+        <location filename="../FalconCalcQt.cpp" line="563"/>
         <source>Restart the program to change the language!</source>
         <translation>A nyelv megváltoztatásához indítsd újra a programot!</translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.cpp" line="1053"/>
+        <location filename="../FalconCalcQt.cpp" line="777"/>
+        <source>Select Font</source>
+        <translation>Betűkészlet</translation>
+    </message>
+    <message>
+        <location filename="../FalconCalcQt.cpp" line="1215"/>
         <source>FalconCalcQt - Error</source>
         <translation>FalconCalcQt - Hiba</translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.cpp" line="1053"/>
+        <location filename="../FalconCalcQt.cpp" line="1215"/>
         <source>%1 is for a newer version of the program.
 There might be problems with it.</source>
         <translation>A %1 file a program újabb verziójához tartozik/ Ez problémákat okozhat.</translation>
@@ -97,67 +112,67 @@ There might be problems with it.</source>
 <context>
     <name>FalconCalcQtClass</name>
     <message>
-        <location filename="../FalconCalcQt.ui" line="491"/>
+        <location filename="../FalconCalcQt.ui" line="546"/>
         <source>&amp;Scientific format</source>
         <translation>&amp;Tudományos formátum</translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="567"/>
+        <location filename="../FalconCalcQt.ui" line="646"/>
         <source>Decimal d&amp;igits:</source>
         <translation>Tizedesjegyek &amp;száma:</translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="522"/>
+        <location filename="../FalconCalcQt.ui" line="595"/>
         <source>Use &amp;Thousand separator:</source>
         <translation>E&amp;zres elválasztó:</translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="498"/>
+        <location filename="../FalconCalcQt.ui" line="559"/>
         <source>Use D&amp;ecimal separator</source>
         <translation>Tizedes &amp;rész elválasztó</translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="515"/>
+        <location filename="../FalconCalcQt.ui" line="582"/>
         <source>&amp;Engineering format</source>
         <translation>&amp;Mérnöki formátum</translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="808"/>
+        <location filename="../FalconCalcQt.ui" line="934"/>
         <source>&amp;E</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="923"/>
+        <location filename="../FalconCalcQt.ui" line="1073"/>
         <source>As &amp;Dwords</source>
         <translation>Du&amp;plaszóként</translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="936"/>
+        <location filename="../FalconCalcQt.ui" line="1092"/>
         <source>0&amp;x prefix</source>
         <translation>0&amp;x előtag</translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="946"/>
+        <location filename="../FalconCalcQt.ui" line="1108"/>
         <source>M&amp;inus sign</source>
         <translation>Elő&amp;jel</translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="972"/>
+        <location filename="../FalconCalcQt.ui" line="1146"/>
         <source>As IEEE 7&amp;54 double</source>
         <translation>IEEE &amp;754 duplapontos</translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="130"/>
+        <location filename="../FalconCalcQt.ui" line="146"/>
         <source>Results:</source>
         <translation>Eredmények:</translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="415"/>
+        <location filename="../FalconCalcQt.ui" line="464"/>
         <source>▼--------------Decimal options-------------</source>
         <translation>▼--------------Decimális opciók-------------</translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="836"/>
+        <location filename="../FalconCalcQt.ui" line="968"/>
         <source>▼----------Hexadecimal Options-----------</source>
         <translation>▼-----------Hexadecimális opciók----------</translation>
     </message>
@@ -182,82 +197,82 @@ There might be problems with it.</source>
         <translation type="vanished">Mérnöki formátum</translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="536"/>
+        <location filename="../FalconCalcQt.ui" line="609"/>
         <source>Space</source>
         <translation>Betűköz</translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="541"/>
+        <location filename="../FalconCalcQt.ui" line="614"/>
         <source>,</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="546"/>
+        <location filename="../FalconCalcQt.ui" line="619"/>
         <source>.</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="622"/>
+        <location filename="../FalconCalcQt.ui" line="701"/>
         <source>As string</source>
         <translation>Karakterláncként</translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="674"/>
+        <location filename="../FalconCalcQt.ui" line="758"/>
         <source>&amp;Font...</source>
         <translation>&amp;Betű...</translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="690"/>
+        <location filename="../FalconCalcQt.ui" line="774"/>
         <source>Angles in</source>
         <translation>Szögek</translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="714"/>
+        <location filename="../FalconCalcQt.ui" line="804"/>
         <source>De&amp;g</source>
         <translation>&amp;Fok</translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="724"/>
+        <location filename="../FalconCalcQt.ui" line="820"/>
         <source>&amp;Rad</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="731"/>
+        <location filename="../FalconCalcQt.ui" line="833"/>
         <source>&amp;Grad</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="738"/>
+        <location filename="../FalconCalcQt.ui" line="846"/>
         <source>&amp;Turns</source>
         <translation>Ford&amp;ulat</translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="754"/>
+        <location filename="../FalconCalcQt.ui" line="862"/>
         <source>Display</source>
         <translation>Megjelenítés</translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="784"/>
+        <location filename="../FalconCalcQt.ui" line="892"/>
         <source>Norm&amp;al</source>
         <translation>&amp;Alap</translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="794"/>
+        <location filename="../FalconCalcQt.ui" line="908"/>
         <source>HT&amp;ML</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="801"/>
+        <location filename="../FalconCalcQt.ui" line="921"/>
         <source>&amp;TeX</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="903"/>
+        <location filename="../FalconCalcQt.ui" line="1041"/>
         <source>As B&amp;ytes</source>
         <translation>Bá&amp;jtként</translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="913"/>
+        <location filename="../FalconCalcQt.ui" line="1057"/>
         <source>As &amp;Words</source>
         <translation>&amp;Szóként</translation>
     </message>
@@ -274,7 +289,7 @@ There might be problems with it.</source>
         <translation type="vanished">Előjel</translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="953"/>
+        <location filename="../FalconCalcQt.ui" line="1121"/>
         <source>&amp;Little endian</source>
         <translation>&amp;Intel formátum</translation>
     </message>
@@ -283,40 +298,40 @@ There might be problems with it.</source>
         <translation type="vanished">IEEE &amp;754 duplapontos</translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="988"/>
+        <location filename="../FalconCalcQt.ui" line="1168"/>
         <source>As IEEE &amp;754 single</source>
         <translation>IEEE 7&amp;54 szimpla</translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="188"/>
+        <location filename="../FalconCalcQt.ui" line="207"/>
         <source>Deci&amp;mal</source>
         <translation>Deci&amp;mális</translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="213"/>
-        <location filename="../FalconCalcQt.ui" line="272"/>
-        <location filename="../FalconCalcQt.ui" line="331"/>
-        <location filename="../FalconCalcQt.ui" line="390"/>
+        <location filename="../FalconCalcQt.ui" line="238"/>
+        <location filename="../FalconCalcQt.ui" line="303"/>
+        <location filename="../FalconCalcQt.ui" line="368"/>
+        <location filename="../FalconCalcQt.ui" line="433"/>
         <source>???</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="247"/>
+        <location filename="../FalconCalcQt.ui" line="272"/>
         <source>He&amp;xadecimal</source>
         <translation>He&amp;xadec.</translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="306"/>
+        <location filename="../FalconCalcQt.ui" line="337"/>
         <source>O&amp;ctal</source>
         <translation>O&amp;ktális</translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="365"/>
+        <location filename="../FalconCalcQt.ui" line="402"/>
         <source>&amp;Binary</source>
         <translation>&amp;Bináris</translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="100"/>
+        <location filename="../FalconCalcQt.ui" line="116"/>
         <source>Enter formula here</source>
         <translation>Ide írd be a képletet</translation>
     </message>
@@ -326,27 +341,27 @@ There might be problems with it.</source>
         <translation>FalconCalc</translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="1012"/>
+        <location filename="../FalconCalcQt.ui" line="1192"/>
         <source>&amp;File</source>
         <translation>&amp;Fájl</translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="1018"/>
+        <location filename="../FalconCalcQt.ui" line="1198"/>
         <source>&amp;Edit</source>
         <translation>S&amp;zerkesztés</translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="1022"/>
+        <location filename="../FalconCalcQt.ui" line="1202"/>
         <source>User &amp;Data...</source>
         <translation>&amp;Felhasználói adat...</translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="1040"/>
+        <location filename="../FalconCalcQt.ui" line="1220"/>
         <source>&amp;Options</source>
         <translation>&amp;Lehetőségek</translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="1044"/>
+        <location filename="../FalconCalcQt.ui" line="1224"/>
         <source>St&amp;yle</source>
         <translation>&amp;Magjelenés</translation>
     </message>
@@ -355,72 +370,72 @@ There might be problems with it.</source>
         <translation type="vanished">&amp;Nyelv</translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="1069"/>
+        <location filename="../FalconCalcQt.ui" line="1248"/>
         <source>&amp;Help</source>
         <translation>&amp;Súgó</translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="1076"/>
+        <location filename="../FalconCalcQt.ui" line="1255"/>
         <source>&amp;View</source>
         <translation>&amp;Nézet</translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="1089"/>
+        <location filename="../FalconCalcQt.ui" line="1268"/>
         <source>E&amp;xit</source>
         <translation>&amp;Kilépés</translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="1092"/>
+        <location filename="../FalconCalcQt.ui" line="1271"/>
         <source>Alt+X</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="1097"/>
+        <location filename="../FalconCalcQt.ui" line="1276"/>
         <source>&amp;Copy expression</source>
         <translation>&amp;Képlet vágólapra</translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="1100"/>
+        <location filename="../FalconCalcQt.ui" line="1279"/>
         <source>Ctrl+C</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="1105"/>
+        <location filename="../FalconCalcQt.ui" line="1284"/>
         <source>&amp;Paste expression</source>
         <translation>&amp;Beillesztés</translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="1108"/>
+        <location filename="../FalconCalcQt.ui" line="1287"/>
         <source>Ctrl+V</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="1113"/>
+        <location filename="../FalconCalcQt.ui" line="1292"/>
         <source>&amp;Paste &amp;After expression</source>
         <translation>&amp;Hozzáadás</translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="1116"/>
+        <location filename="../FalconCalcQt.ui" line="1295"/>
         <source>Ctrl+Shift+V</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="1124"/>
+        <location filename="../FalconCalcQt.ui" line="1303"/>
         <source>Edit &amp;History...</source>
         <translation>Elő&amp;zmények szerk.</translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="1127"/>
+        <location filename="../FalconCalcQt.ui" line="1306"/>
         <source>Alt+3</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="1132"/>
+        <location filename="../FalconCalcQt.ui" line="1311"/>
         <source>History &amp;Options</source>
         <translation>Előzmények &amp;beállításai</translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="1137"/>
+        <location filename="../FalconCalcQt.ui" line="1316"/>
         <source>&amp;Clear history</source>
         <translation>Előzmények &amp;törlése</translation>
     </message>
@@ -433,132 +448,136 @@ There might be problems with it.</source>
         <translation type="vanished">Betű a &quot;Karakterlánc&quot;-hoz</translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="1054"/>
+        <location filename="../FalconCalcQt.ui" line="1233"/>
         <source>La&amp;nguage</source>
         <translation>&amp;Nyelv</translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="1142"/>
+        <location filename="../FalconCalcQt.ui" line="1321"/>
         <source>Set &amp;Locale ...</source>
         <translation>&amp;Helyi beállítás...</translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="1147"/>
+        <location filename="../FalconCalcQt.ui" line="1326"/>
         <source>Select &amp;Font for &apos;As String&apos; Display</source>
         <translation>&amp;Betű a &quot;Karakterlánc&quot;-hoz</translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="1152"/>
+        <location filename="../FalconCalcQt.ui" line="1331"/>
         <source>&amp;General Help</source>
         <translation>Á&amp;ltalános súgó</translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="1155"/>
+        <location filename="../FalconCalcQt.ui" line="1334"/>
         <source>F1</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="1160"/>
         <source>&amp;A&amp;bout</source>
+        <translation type="vanished">&amp;Névjegy</translation>
+    </message>
+    <message>
+        <location filename="../FalconCalcQt.ui" line="1339"/>
+        <source>&amp;About</source>
         <translation>&amp;Névjegy</translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="1165"/>
+        <location filename="../FalconCalcQt.ui" line="1344"/>
         <source>Show &amp;Decimal options</source>
         <translation>Decimális opciók megjel.</translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="1168"/>
+        <location filename="../FalconCalcQt.ui" line="1347"/>
         <source>Ctrl+D</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="1173"/>
+        <location filename="../FalconCalcQt.ui" line="1352"/>
         <source>Show &amp;Hexadecimal options</source>
         <translation>&amp;Hexadecimális opciók</translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="1176"/>
+        <location filename="../FalconCalcQt.ui" line="1355"/>
         <source>Ctrl+H</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="1181"/>
+        <location filename="../FalconCalcQt.ui" line="1360"/>
         <source>Copy &amp;Decimal</source>
         <translation>D&amp;ecimális érték vágólapra</translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="1186"/>
+        <location filename="../FalconCalcQt.ui" line="1365"/>
         <source>Copy &amp;Hexadecimal</source>
         <translation>He&amp;xadec. érték vágólapra</translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="1191"/>
+        <location filename="../FalconCalcQt.ui" line="1370"/>
         <source>Copy &amp;Octal</source>
         <translation>&amp;Oktális érték vágólapra</translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="1196"/>
+        <location filename="../FalconCalcQt.ui" line="1375"/>
         <source>Copy Binary</source>
         <translation>&amp;Bináris érték vágólapra</translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="1201"/>
+        <location filename="../FalconCalcQt.ui" line="1380"/>
         <source>Edit user &amp;Variables</source>
         <translation>Felhasználói &amp;változók szerk.</translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="1204"/>
+        <location filename="../FalconCalcQt.ui" line="1383"/>
         <source>Alt+1</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="1209"/>
+        <location filename="../FalconCalcQt.ui" line="1388"/>
         <source>Edit user &amp;Functions</source>
         <translation>&amp;felhasználói függvények szerk.</translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="1212"/>
+        <location filename="../FalconCalcQt.ui" line="1391"/>
         <source>Alt+2</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="1220"/>
+        <location filename="../FalconCalcQt.ui" line="1402"/>
         <source>&amp;Light</source>
         <translation>&amp;Világos</translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="1228"/>
+        <location filename="../FalconCalcQt.ui" line="1410"/>
         <source>&amp;Dark</source>
         <translation>&amp;Sötét</translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="1236"/>
+        <location filename="../FalconCalcQt.ui" line="1418"/>
         <source>&amp;Blue</source>
         <translation>&amp;Kék</translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="1247"/>
+        <location filename="../FalconCalcQt.ui" line="1429"/>
         <source>S&amp;ystem</source>
         <translation>&amp;Rendszer</translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="1255"/>
+        <location filename="../FalconCalcQt.ui" line="1437"/>
         <source>Blac&amp;k</source>
         <translation>Fe&amp;kete</translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="1260"/>
+        <location filename="../FalconCalcQt.ui" line="1442"/>
         <source>-</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="1271"/>
+        <location filename="../FalconCalcQt.ui" line="1453"/>
         <source>&amp;English</source>
         <translation>&amp;Angol</translation>
     </message>
     <message>
-        <location filename="../FalconCalcQt.ui" line="1279"/>
+        <location filename="../FalconCalcQt.ui" line="1461"/>
         <source>&amp;Hungarian</source>
         <translation>&amp;Magyar</translation>
     </message>
@@ -566,7 +585,7 @@ There might be problems with it.</source>
 <context>
     <name>HelpDialogClass</name>
     <message>
-        <location filename="../HelpDialog.ui" line="17"/>
+        <location filename="../HelpDialog.ui" line="20"/>
         <source>FalconCalcQt - Help</source>
         <translation>FalconCalcQt - Súgó</translation>
     </message>
@@ -594,29 +613,48 @@ There might be problems with it.</source>
 <context>
     <name>HistoryDialogClass</name>
     <message>
-        <location filename="../HistoryDialog.ui" line="14"/>
+        <location filename="../HistoryDialog.ui" line="20"/>
         <source>FalconCalc - History</source>
         <translation>FalconCalcQt - ELőzmények</translation>
     </message>
     <message>
-        <location filename="../HistoryDialog.ui" line="81"/>
+        <location filename="../HistoryDialog.ui" line="69"/>
+        <source>Close</source>
+        <translation>Bezárás</translation>
+    </message>
+    <message>
+        <location filename="../HistoryDialog.ui" line="120"/>
+        <source>Remove selected</source>
+        <translation>Kiválasztott törlése</translation>
+    </message>
+    <message>
+        <location filename="../HistoryDialog.ui" line="123"/>
         <source>remove</source>
         <translation>Eltávolítás</translation>
     </message>
     <message>
-        <location filename="../HistoryDialog.ui" line="98"/>
+        <location filename="../HistoryDialog.ui" line="164"/>
+        <source>Remove All</source>
+        <translation>Előzmények törlése</translation>
+    </message>
+    <message>
+        <location filename="../HistoryDialog.ui" line="167"/>
         <source>remove all</source>
         <translation>Minden eldobása</translation>
     </message>
     <message>
-        <location filename="../HistoryDialog.ui" line="140"/>
+        <location filename="../HistoryDialog.ui" line="209"/>
+        <source>Settings</source>
+        <translation>Beállítások</translation>
+    </message>
+    <message>
+        <location filename="../HistoryDialog.ui" line="212"/>
         <source>options</source>
         <translation>Lehetőségek</translation>
     </message>
     <message>
-        <location filename="../HistoryDialog.ui" line="167"/>
         <source>Cancel</source>
-        <translation>Elvet</translation>
+        <translation type="vanished">Elvet</translation>
     </message>
 </context>
 <context>
@@ -714,157 +752,157 @@ There might be problems with it.</source>
 <context>
     <name>QApplication</name>
     <message>
-        <location filename="../../src/EngineErrors.cpp" line="9"/>
+        <location filename="../../common/EngineErrors.cpp" line="9"/>
         <source>Result:</source>
         <translation>Eredmény:</translation>
     </message>
     <message>
-        <location filename="../../src/EngineErrors.cpp" line="10"/>
+        <location filename="../../common/EngineErrors.cpp" line="10"/>
         <source>Variable definition missing</source>
         <translation>A változó definíciója hiányzik</translation>
     </message>
     <message>
-        <location filename="../../src/EngineErrors.cpp" line="11"/>
+        <location filename="../../common/EngineErrors.cpp" line="11"/>
         <source>Unknown function in expression</source>
         <translation>Ismeretlen függvény a képletben</translation>
     </message>
     <message>
-        <location filename="../../src/EngineErrors.cpp" line="12"/>
+        <location filename="../../common/EngineErrors.cpp" line="12"/>
         <source>Syntax error</source>
         <translation>Hibás szintaxis</translation>
     </message>
     <message>
-        <location filename="../../src/EngineErrors.cpp" line="13"/>
+        <location filename="../../common/EngineErrors.cpp" line="13"/>
         <source>Stack error</source>
         <translation>Stack hiba</translation>
     </message>
     <message>
-        <location filename="../../src/EngineErrors.cpp" line="14"/>
+        <location filename="../../common/EngineErrors.cpp" line="14"/>
         <source>Overflow error</source>
         <translation>Túlcsordulási hiba</translation>
     </message>
     <message>
-        <location filename="../../src/EngineErrors.cpp" line="15"/>
+        <location filename="../../common/EngineErrors.cpp" line="15"/>
         <source>Domain error</source>
         <translation>Ért. tartomány hiba</translation>
     </message>
     <message>
-        <location filename="../../src/EngineErrors.cpp" line="16"/>
+        <location filename="../../common/EngineErrors.cpp" line="16"/>
         <source>Missing closing &apos;}&apos;</source>
         <translation>Záró &apos;}&apos; hiányzik</translation>
     </message>
     <message>
-        <location filename="../../src/EngineErrors.cpp" line="17"/>
+        <location filename="../../common/EngineErrors.cpp" line="17"/>
         <source>Number can&apos;t fit in a 64 bit integer</source>
         <translation>A szám hosszabb, mint 64 bit</translation>
     </message>
     <message>
-        <location filename="../../src/EngineErrors.cpp" line="18"/>
+        <location filename="../../common/EngineErrors.cpp" line="18"/>
         <source>Recursive functions are not allowed</source>
         <translation>Rekurzív függvény. Nem megengedett</translation>
     </message>
     <message>
-        <location filename="../../src/EngineErrors.cpp" line="19"/>
+        <location filename="../../common/EngineErrors.cpp" line="19"/>
         <source>No function argument</source>
         <translation>Nincsenek függvényparaméterek</translation>
     </message>
     <message>
-        <location filename="../../src/EngineErrors.cpp" line="20"/>
+        <location filename="../../common/EngineErrors.cpp" line="20"/>
         <source>Missing binary number</source>
         <translation>Hiányzó bináris szám</translation>
     </message>
     <message>
-        <location filename="../../src/EngineErrors.cpp" line="21"/>
+        <location filename="../../common/EngineErrors.cpp" line="21"/>
         <source>Mismatched parenthesis</source>
         <translation>Zárójelezési hiba</translation>
     </message>
     <message>
-        <location filename="../../src/EngineErrors.cpp" line="22"/>
+        <location filename="../../common/EngineErrors.cpp" line="22"/>
         <source>Invalid function definition</source>
         <translation>Hibás függvény definíció</translation>
     </message>
     <message>
-        <location filename="../../src/EngineErrors.cpp" line="23"/>
+        <location filename="../../common/EngineErrors.cpp" line="23"/>
         <source>Invalid character in function definition</source>
         <translation>Rossz karakter a függvény definícióban</translation>
     </message>
     <message>
-        <location filename="../../src/EngineErrors.cpp" line="24"/>
+        <location filename="../../common/EngineErrors.cpp" line="24"/>
         <source>Illegal operator at end of expression</source>
         <translation>Műveleti jel a kifejezés végén</translation>
     </message>
     <message>
-        <location filename="../../src/EngineErrors.cpp" line="25"/>
+        <location filename="../../common/EngineErrors.cpp" line="25"/>
         <source>Illegal octal number</source>
         <translation>Nem oktális szám</translation>
     </message>
     <message>
-        <location filename="../../src/EngineErrors.cpp" line="26"/>
+        <location filename="../../common/EngineErrors.cpp" line="26"/>
         <source>Illegal number #2</source>
         <translation>Nem szám #2</translation>
     </message>
     <message>
-        <location filename="../../src/EngineErrors.cpp" line="27"/>
+        <location filename="../../common/EngineErrors.cpp" line="27"/>
         <source>Illegal number #1</source>
         <translation>Nem szám #1</translation>
     </message>
     <message>
-        <location filename="../../src/EngineErrors.cpp" line="28"/>
+        <location filename="../../common/EngineErrors.cpp" line="28"/>
         <source>Illegal hexadecimal number</source>
         <translation>Nem hexadecimális szám</translation>
     </message>
     <message>
-        <location filename="../../src/EngineErrors.cpp" line="29"/>
+        <location filename="../../common/EngineErrors.cpp" line="29"/>
         <source>Illegal character number</source>
         <translation>Hibás betűk</translation>
     </message>
     <message>
-        <location filename="../../src/EngineErrors.cpp" line="30"/>
+        <location filename="../../common/EngineErrors.cpp" line="30"/>
         <source>Illegal binary number</source>
         <translation>Nem bináris szám</translation>
     </message>
     <message>
-        <location filename="../../src/EngineErrors.cpp" line="31"/>
+        <location filename="../../common/EngineErrors.cpp" line="31"/>
         <source>Illegal at line end</source>
         <translation>Sor végén nem megengedett</translation>
     </message>
     <message>
-        <location filename="../../src/EngineErrors.cpp" line="32"/>
+        <location filename="../../common/EngineErrors.cpp" line="32"/>
         <source>Function missing opening brace</source>
         <translation>A függvény definíció nyitó zárójele hiányzik</translation>
     </message>
     <message>
-        <location filename="../../src/EngineErrors.cpp" line="33"/>
+        <location filename="../../common/EngineErrors.cpp" line="33"/>
         <source>Function definition missing right brace</source>
         <translation>A függvény definíció záró zárójele hiányzik</translation>
     </message>
     <message>
-        <location filename="../../src/EngineErrors.cpp" line="34"/>
+        <location filename="../../common/EngineErrors.cpp" line="34"/>
         <source>Expression error</source>
         <translation>Hiba a kifejezésben</translation>
     </message>
     <message>
-        <location filename="../../src/EngineErrors.cpp" line="35"/>
+        <location filename="../../common/EngineErrors.cpp" line="35"/>
         <source>Separator or decimal character or parenthesis mismatch</source>
         <translation>Rossz tizedesjel, elválasztó karakter, vagy zárójel</translation>
     </message>
     <message>
-        <location filename="../../src/EngineErrors.cpp" line="36"/>
+        <location filename="../../common/EngineErrors.cpp" line="36"/>
         <source>Divison by 0</source>
         <translation>0-val osztás</translation>
     </message>
     <message>
-        <location filename="../../src/EngineErrors.cpp" line="37"/>
+        <location filename="../../common/EngineErrors.cpp" line="37"/>
         <source>Closing quote not found</source>
         <translation>Záró idézőjel hiányzik</translation>
     </message>
     <message>
-        <location filename="../../src/EngineErrors.cpp" line="38"/>
+        <location filename="../../common/EngineErrors.cpp" line="38"/>
         <source>Builtin variables cannot be redefined</source>
         <translation>Beépített változókat nem lehet átdefiniálni</translation>
     </message>
     <message>
-        <location filename="../../src/EngineErrors.cpp" line="39"/>
+        <location filename="../../common/EngineErrors.cpp" line="39"/>
         <source>Builtin functions cannot be redefined</source>
         <translation>Beépített függvényeket nem lehet átdefiniálni</translation>
     </message>
@@ -872,7 +910,7 @@ There might be problems with it.</source>
 <context>
     <name>QMainWindow</name>
     <message>
-        <location filename="../schemes.cpp" line="514"/>
+        <location filename="../schemes.cpp" line="567"/>
         <source>System</source>
         <translation>Rendszer</translation>
     </message>
@@ -1255,16 +1293,30 @@ There might be problems with it.</source>
         <source>x-th root of y</source>
         <translation>y x-dik gyöke</translation>
     </message>
+    <message>
+        <location filename="../FCSettings.cpp" line="28"/>
+        <source>FalconCalc - Warning</source>
+        <translation>FalconCalcQt - Figyelmeztetés</translation>
+    </message>
+    <message>
+        <location filename="../FCSettings.cpp" line="29"/>
+        <source>Can&apos;t create folder
+&apos;%1&apos;
+Calculater state and history will not be preserved</source>
+        <translation>nem tudom létrehozni a 
+&apos;%1&apos;
+ mappát. A számológép állapota és az előzmények nem maradnbak meg</translation>
+    </message>
 </context>
 <context>
     <name>VarFuncDefDialog</name>
     <message>
-        <location filename="../VarFuncDefDialog.h" line="30"/>
+        <location filename="../VarFuncDefDialog.h" line="36"/>
         <source>&amp;Function:</source>
         <translation>&amp;Függvény:</translation>
     </message>
     <message>
-        <location filename="../VarFuncDefDialog.h" line="31"/>
+        <location filename="../VarFuncDefDialog.h" line="37"/>
         <source>&amp;Definition:</source>
         <translation>&amp;Definició:</translation>
     </message>
@@ -1303,117 +1355,125 @@ There might be problems with it.</source>
     </message>
 </context>
 <context>
+    <name>VariablesFunctionsDialog</name>
+    <message>
+        <location filename="../VariablesFunctionsDialog.cpp" line="410"/>
+        <source>FalconCalc - Define Variables or Functions</source>
+        <translation>falconCalc - Változók és függvények definiálása</translation>
+    </message>
+</context>
+<context>
     <name>VariablesFunctionsDialogClass</name>
     <message>
-        <location filename="../VariablesFunctionsDialog.ui" line="20"/>
+        <location filename="../VariablesFunctionsDialog.ui" line="26"/>
         <source>FalconCalc - Variables &amp; Functions</source>
         <translation>falconCalc - Változók és függvények</translation>
     </message>
     <message>
-        <location filename="../VariablesFunctionsDialog.ui" line="55"/>
+        <location filename="../VariablesFunctionsDialog.ui" line="67"/>
         <source>Variables</source>
         <translation>Változók</translation>
     </message>
     <message>
-        <location filename="../VariablesFunctionsDialog.ui" line="137"/>
-        <location filename="../VariablesFunctionsDialog.ui" line="376"/>
+        <location filename="../VariablesFunctionsDialog.ui" line="149"/>
+        <location filename="../VariablesFunctionsDialog.ui" line="388"/>
         <source>User</source>
         <translation>Saját</translation>
     </message>
     <message>
-        <location filename="../VariablesFunctionsDialog.ui" line="185"/>
-        <location filename="../VariablesFunctionsDialog.ui" line="275"/>
+        <location filename="../VariablesFunctionsDialog.ui" line="197"/>
+        <location filename="../VariablesFunctionsDialog.ui" line="287"/>
         <source>Variable</source>
         <translation>Változó</translation>
     </message>
     <message>
-        <location filename="../VariablesFunctionsDialog.ui" line="190"/>
-        <location filename="../VariablesFunctionsDialog.ui" line="280"/>
+        <location filename="../VariablesFunctionsDialog.ui" line="202"/>
+        <location filename="../VariablesFunctionsDialog.ui" line="292"/>
         <source>Value</source>
         <translation>Értéke</translation>
     </message>
     <message>
-        <location filename="../VariablesFunctionsDialog.ui" line="195"/>
-        <location filename="../VariablesFunctionsDialog.ui" line="285"/>
-        <location filename="../VariablesFunctionsDialog.ui" line="431"/>
-        <location filename="../VariablesFunctionsDialog.ui" line="521"/>
+        <location filename="../VariablesFunctionsDialog.ui" line="207"/>
+        <location filename="../VariablesFunctionsDialog.ui" line="297"/>
+        <location filename="../VariablesFunctionsDialog.ui" line="443"/>
+        <location filename="../VariablesFunctionsDialog.ui" line="533"/>
         <source>Unit</source>
         <translation>Egysége</translation>
     </message>
     <message>
-        <location filename="../VariablesFunctionsDialog.ui" line="200"/>
-        <location filename="../VariablesFunctionsDialog.ui" line="290"/>
-        <location filename="../VariablesFunctionsDialog.ui" line="436"/>
-        <location filename="../VariablesFunctionsDialog.ui" line="526"/>
+        <location filename="../VariablesFunctionsDialog.ui" line="212"/>
+        <location filename="../VariablesFunctionsDialog.ui" line="302"/>
+        <location filename="../VariablesFunctionsDialog.ui" line="448"/>
+        <location filename="../VariablesFunctionsDialog.ui" line="538"/>
         <source>Comment</source>
         <translation>Megjegyzés</translation>
     </message>
     <message>
-        <location filename="../VariablesFunctionsDialog.ui" line="230"/>
-        <location filename="../VariablesFunctionsDialog.ui" line="466"/>
+        <location filename="../VariablesFunctionsDialog.ui" line="242"/>
+        <location filename="../VariablesFunctionsDialog.ui" line="478"/>
         <source>Built-ins</source>
         <translation>Beépített</translation>
     </message>
     <message>
-        <location filename="../VariablesFunctionsDialog.ui" line="306"/>
+        <location filename="../VariablesFunctionsDialog.ui" line="318"/>
         <source>Functions</source>
         <translation>Függvények</translation>
     </message>
     <message>
-        <location filename="../VariablesFunctionsDialog.ui" line="421"/>
-        <location filename="../VariablesFunctionsDialog.ui" line="511"/>
+        <location filename="../VariablesFunctionsDialog.ui" line="433"/>
+        <location filename="../VariablesFunctionsDialog.ui" line="523"/>
         <source>Function</source>
         <translation>Függvény</translation>
     </message>
     <message>
-        <location filename="../VariablesFunctionsDialog.ui" line="426"/>
-        <location filename="../VariablesFunctionsDialog.ui" line="516"/>
+        <location filename="../VariablesFunctionsDialog.ui" line="438"/>
+        <location filename="../VariablesFunctionsDialog.ui" line="528"/>
         <source>Body</source>
         <translation>Képlet</translation>
     </message>
     <message>
-        <location filename="../VariablesFunctionsDialog.ui" line="580"/>
+        <location filename="../VariablesFunctionsDialog.ui" line="592"/>
         <source>Remove all user defineditems</source>
         <translation>Minden saját elem eltávolítása</translation>
     </message>
     <message>
-        <location filename="../VariablesFunctionsDialog.ui" line="583"/>
+        <location filename="../VariablesFunctionsDialog.ui" line="595"/>
         <source>remove all</source>
         <translation>Minden eldobása</translation>
     </message>
     <message>
-        <location filename="../VariablesFunctionsDialog.ui" line="594"/>
+        <location filename="../VariablesFunctionsDialog.ui" line="606"/>
         <source>Undo last operation</source>
         <translation>utolsó művelet visszavonása</translation>
     </message>
     <message>
-        <location filename="../VariablesFunctionsDialog.ui" line="597"/>
-        <location filename="../VariablesFunctionsDialog.ui" line="648"/>
+        <location filename="../VariablesFunctionsDialog.ui" line="609"/>
+        <location filename="../VariablesFunctionsDialog.ui" line="660"/>
         <source>...</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../VariablesFunctionsDialog.ui" line="645"/>
+        <location filename="../VariablesFunctionsDialog.ui" line="657"/>
         <source>Add a new row</source>
         <translation>Áj oszlop hozzáadása</translation>
     </message>
     <message>
-        <location filename="../VariablesFunctionsDialog.ui" line="668"/>
+        <location filename="../VariablesFunctionsDialog.ui" line="680"/>
         <source>Remove selected item</source>
         <translation>Kiválasztott törlése</translation>
     </message>
     <message>
-        <location filename="../VariablesFunctionsDialog.ui" line="671"/>
+        <location filename="../VariablesFunctionsDialog.ui" line="683"/>
         <source>remove</source>
         <translation>Eltávolítás</translation>
     </message>
     <message>
-        <location filename="../VariablesFunctionsDialog.ui" line="707"/>
+        <location filename="../VariablesFunctionsDialog.ui" line="719"/>
         <source>Save</source>
         <translation>Elment</translation>
     </message>
     <message>
-        <location filename="../VariablesFunctionsDialog.ui" line="714"/>
+        <location filename="../VariablesFunctionsDialog.ui" line="726"/>
         <source>Cancel</source>
         <translation>Elvet</translation>
     </message>
