@@ -110,8 +110,8 @@ class ModernTitleBar : public QWidget
 	Q_OBJECT
 public:
 	explicit ModernTitleBar(const ModernDialogTitleData &title, QWidget* parent = nullptr);
-	ModernTitleBar(const ModernTitleBar& o) { *this = o; };
-	ModernTitleBar(const ModernTitleBar&& o)
+	ModernTitleBar(const ModernTitleBar& o)  { *this = o; };
+	ModernTitleBar(const ModernTitleBar&& o) noexcept
 	{
 		_title = o._title;
 		_pTitleLabel	 = o._pTitleLabel;	   delete _pTitleLabel	   	;	 _pTitleLabel	  = nullptr;

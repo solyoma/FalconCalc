@@ -26,6 +26,7 @@ HEADERS += \
 	HistoryDialog.h		\
 	HistoryOptions.h	\
 	LocaleDlg.h		\
+	ModernDialog.h \
 	resource.h		\
 	schemes.h		\
 	SmartStringQt.h		\
@@ -42,6 +43,7 @@ SOURCES += \
 	HistoryOptions.cpp      \
 	LocaleDlg.cpp           \
 	main.cpp                \
+	ModernDialog.cpp 		\
 	schemes.cpp             \
 	VariablesFunctionsDialog.cpp
 
