@@ -62,12 +62,12 @@ struct ModernDialogResizeData
 	bool operator==(const ModernDialogResizeData& o) const
 	{
 		return
-		isResizable			== isResizable		 &&
-		resizeBorderWidth	== resizeBorderWidth &&
-		minSizeX			== minSizeX			 &&
-		minSizeY			== minSizeY			 &&
-		maxSizeX			== maxSizeX			 &&
-		maxSizeY			== maxSizeY			 ;
+		isResizable			== o.isResizable		 &&
+		resizeBorderWidth	== o.resizeBorderWidth &&
+		minSizeX			== o.minSizeX			 &&
+		minSizeY			== o.minSizeY			 &&
+		maxSizeX			== o.maxSizeX			 &&
+		maxSizeY			== o.maxSizeY			 ;
 
 	}
 	bool isResizable = false;
