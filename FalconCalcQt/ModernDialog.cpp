@@ -9,22 +9,26 @@
 // ModernTitleBar
 // ---------------------------------------------------------
 
-ModernTitleBar::ModernTitleBar(const ModernDialogTitle& title, QWidget* parent)
+ModernTitleBar::ModernTitleBar(const ModernDialogTitleData& title, QWidget* parent)
         : _title(title), QWidget(parent)
 {
     setObjectName("titleBar");
     setFixedHeight(42);
 
-    _pTitle = new QLabel(_title.text, this);
-    _pTitle->setObjectName("dialogTitle");
+    _pTitleLabel = new QLabel(_title.text, this);
+    _pTitleLabel->setFont(title.font);
+    //_pTitleLabel->SetColor(title.color);
+    //_pTitleLabel->SetBackgroundColor(title.backgroundColor);
+    _pTitleLabel->setObjectName("dialogTitle");
 
     // Let mouse events reach the title bar for dragging.
-    _pTitle->setAttribute(Qt::WA_TransparentForMouseEvents);
+    _pTitleLabel->setAttribute(Qt::WA_TransparentForMouseEvents);
+
 
     QHBoxLayout* layout = new QHBoxLayout(this);
     layout->setContentsMargins(12, 4, 6, 4);
     layout->setSpacing(0);
-    layout->addWidget(_pTitle);
+    layout->addWidget(_pTitleLabel);
 
     if (_title.buttons)
     {
@@ -62,7 +66,42 @@ ModernTitleBar::ModernTitleBar(const ModernDialogTitle& title, QWidget* parent)
 
 void ModernTitleBar::SetTitleText(const QString& title)
 {
-    _pTitle->setText(title);
+    _title.text = title;
+    if(_pTitleLabel)
+        _pTitleLabel->setText(title);
+}
+void ModernTitleBar::SetFont(const QFont& font)
+{
+    if (_pTitleLabel)
+    {
+        _pTitleLabel->setFont(_title.font);
+    }
+}
+
+void ModernTitleBar::SetFont(const QString family, int pointSize, int weight, bool italic)
+{ 
+    _title.font = QFont(family, pointSize,  weight, italic);
+    SetFont(_title.font); 
+}
+void ModernTitleBar::SetColor(const QColor& color) 
+{ 
+    _title.color = color.name();
+    if (_pTitleLabel)
+    {
+        QPalette pal = _pTitleLabel->palette();
+        pal.setColor(QPalette::WindowText, color);
+        _pTitleLabel->setPalette(pal);
+    }
+}
+void ModernTitleBar::SetBackgroundColor(const QColor& color) 
+{ 
+    _title.backgroundColor = color.name();
+    if (_pTitleLabel)
+    {
+        QPalette pal = palette();
+        pal.setColor(QPalette::Window, color);
+        setPalette(pal);
+    }
 }
 
 void ModernTitleBar::mousePressEvent(QMouseEvent* event)
@@ -121,12 +160,12 @@ ModernDialog::ModernDialog(const ModernDialogParams& params, QWidget* parent)
     _pFrameWidget = new QWidget(this);
     _pFrameWidget->setObjectName("DialogFrame");
     QVBoxLayout* frameLayout = new QVBoxLayout(_pFrameWidget);
-    frameLayout->setContentsMargins(2, 6, 6, 6);
+    frameLayout->setContentsMargins(_contentMargins);
     frameLayout->setSpacing(0);
 
     if (params.hasTitleBar)
     {
-        _pTitleBar = new ModernTitleBar(params, this);
+        _pTitleBar = new ModernTitleBar((const ModernDialogTitleData&)params, this);
         frameLayout->addWidget(_pTitleBar);
 		if (params.buttons & ModernDialogButtons::MinimizeButton)
             connect(_pTitleBar, &ModernTitleBar::SignalMinimize,
@@ -146,47 +185,52 @@ ModernDialog::ModernDialog(const ModernDialogParams& params, QWidget* parent)
     setMouseTracking(true);
 }
 
-void ModernDialog::SetDialogTitle(const ModernDialogParams& params)
+void ModernDialog::SetDialogTitle(const ModernDialogParams& newParams)
 {
-    if (!params.hasTitleBar)
-    {
-       if(_params.hasTitleBar)
-       {
-            _params.hasTitleBar = false;
-            if (_pTitleBar)
-                _pTitleBar->hide();
-       }    
-	   return;
-    }
-    if( params.buttons == ModernDialogButtons::NoButtons)
+    if (newParams == _params)
+        return;
+
+    bool bTitleBar = _pTitleBar && _pTitleBar->isVisible();
+
+    if( newParams.buttons == ModernDialogButtons::NoButtons)
     {
         if (_params.buttons != ModernDialogButtons::NoButtons)
         {
             _params.buttons = ModernDialogButtons::NoButtons;
-            if (!_params.hasTitleBar && _pTitleBar)
+            if (!_params.hasTitleBar && bTitleBar)
                 _pTitleBar->hide();
         }
-		return;
     }
+
     if (_pTitleBar)
     {
-        _pTitleBar->SetTitleText(params.text);
-        if (params.color.isEmpty())
+        _pTitleBar->SetTitleText(newParams.text);
+        if (newParams.color.isEmpty())
         {
             QPalette pal = _pTitleBar->palette();
             pal.setColor(QPalette::WindowText, palette().color(QPalette::WindowText));
             _pTitleBar->setPalette(pal);
         }
         else
-			_pTitleBar->SetColor(QColor(params.color));
-        if (params.backgroundColor.isEmpty())
+			_pTitleBar->SetColor(QColor(newParams.color));
+        if (newParams.backgroundColor.isEmpty())
         {
             QPalette pal = _pTitleBar->palette();
             pal.setColor(QPalette::Window, palette().color(QPalette::Window));
             _pTitleBar->setPalette(pal);
         }
 		else
-            _pTitleBar->SetBackgroundColor(QColor(params.backgroundColor));
+            _pTitleBar->SetBackgroundColor(QColor(newParams.backgroundColor));
+    }
+      // must be the last
+    if (newParams.hasTitleBar != _params.hasTitleBar)
+    {
+       if(_params.hasTitleBar)
+       {
+            _params.hasTitleBar = false;
+            if (bTitleBar)
+                _pTitleBar->hide();
+       }    
     }
 }
 

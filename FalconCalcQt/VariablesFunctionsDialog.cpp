@@ -119,7 +119,8 @@ VariablesFunctionsDialog::VariablesFunctionsDialog(int initialTabIndex, ModernDi
 {
 	Ui::VariablesFunctionsDialogClass::setupUi(ContentWidget());
 	QMetaObject::connectSlotsByName(this);
-	//SetResizable(IsResizable());
+	resize(FullSize());
+
 	_busy = true;
 		// map									contains 
 	_pUserFuncsMap = new RowDataMap();		// actual functions

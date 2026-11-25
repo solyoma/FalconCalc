@@ -4,6 +4,7 @@ HistoryOptions::HistoryOptions(HistOptionData& data, QWidget* parent) :
 	ModernDialog(data.params, parent),_data0(data), _data(data)
 {
 	Ui::HistoryOptionsClass::setupUi(ContentWidget());
+	resize(FullSize());
 
 	if (data.historySorted)
 		chksorted->setChecked(true);

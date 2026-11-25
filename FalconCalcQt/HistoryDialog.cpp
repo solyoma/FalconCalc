@@ -1,12 +1,28 @@
 #include "HistoryDialog.h"
 #include <QMoveEvent>
+// DEBUG
+#include <QDebug>
 
 HistoryDialog::HistoryDialog(const QStringList& lstHist, ModernDialogParams& params, QWidget* parent) 
 	: ModernDialog(params, parent)
 {
 	Ui::HistoryDialogClass::setupUi(ContentWidget());
-	//SetResizable(IsResizable());
+	resize(FullSize());
+	// DEL SetResizable(IsResizable());
 	QMetaObject::connectSlotsByName(this);
+
+	// DEBUG
+	//qDebug() << "size" << size();
+	//qDebug() << "geometry" << geometry();
+	//qDebug() << "min" << minimumSize();
+	//qDebug() << "max" << maximumSize();
+	//qDebug() << "hint" << sizeHint();
+
+	//if (layout())
+	//{
+	//	qDebug() << "layout hint" << layout()->sizeHint();
+	//	qDebug() << "constraint" << layout()->sizeConstraint();
+	//}
 
 	lstHistory->addItems(lstHist);
 }

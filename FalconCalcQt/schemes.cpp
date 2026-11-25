@@ -199,6 +199,9 @@ QListWidget {
 }
 
 /* ------------------ colors --------------------*/
+#dialogTitle {
+	color:
+}
 QLineEdit {
 	background:%7;				/* (7)	InputBackground */
 }
@@ -360,6 +363,8 @@ static std::vector<QString> __SchemeItemNames = {
 	"MenuDisabled",				// %28
 	"TableWidgetAlternateColor",// %29
 	"WindowBorderColor",		// %30
+	"DialogTitleColor",			// %31
+	"DialogTitleBackground",	// %32
 };
 
 static std::vector<QString>
@@ -395,6 +400,8 @@ static std::vector<QString>
 		"#aaaaaa",		// %28	MenuDisabledBackground
 		"#aaaaaa",		// %29	TableWidgetAlternateColor
 		"#a0a0a0",		// %30	WindowBorderColor
+		"#202020",		// %31	DialogTitleColor
+		"#D0D0D0",		// %32	DialogTitleBackground
 	},
 	__darkV =
 	{
@@ -428,6 +435,8 @@ static std::vector<QString>
 		"#aaaaaa",		// %28	MenuDisabledBackground
 		"#aaaaaa",		// %29	TableWidgetAlternateColor
         "#ea8808",		// %30	WindowBorderColor
+		"#cccccc",		// %31	DialogTitleColor
+		"#404040",		// %32	DialogTitleBackground
 },
 	__blackV =
 	{
@@ -461,6 +470,8 @@ static std::vector<QString>
 		"#aaaaaa",		// %28	MenuDisabledBackground
 		"#aaaaaa",		// %29	TableWidgetAlternateColor
         "#ea8808",		// %30	WindowBorderColor
+		"#e0e0e0",		// %31	DialogTitleColor
+		"#080808",		// %32	DialogTitleBackground
 },
 	__blueV =
 	{
@@ -494,6 +505,8 @@ static std::vector<QString>
 		"#aaaaaa",		// %28	MenuDisabledBackground
 		"#aaaaaa",		// %29	TableWidgetAlternateColor
         "#088dea",		// %30	WindowBorderColor
+		"#CCCCCC",		// %31	DialogTitleColor
+		"#2a435c",		// %32	DialogTitleBackground
 	};
 
 FalconCalcScheme FSchemeVector::light("Light:Világos",  __SchemeItemNames, __lightV);

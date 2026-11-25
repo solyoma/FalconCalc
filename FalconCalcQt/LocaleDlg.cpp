@@ -6,6 +6,8 @@
 LocaleDlg::LocaleDlg(QWidget* parent) : ModernDialog(ModernDialogParams(false, 0), parent)
 {
 	Ui::LocaleDlgClass::setupUi(ContentWidget());
+	resize(FullSize());
+
 	QString currentLocaleName;
 	
 	QLocale locale = edtLocale->locale();

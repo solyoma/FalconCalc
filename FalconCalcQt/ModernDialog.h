@@ -20,15 +20,37 @@
 #include <QMouseEvent>
 
 enum ModernDialogButtons{ NoButtons, MinimizeButton, CloseButton};
-struct ModernDialogTitle
+
+struct ModernDialogTitleData
 {
-	ModernDialogTitle(int buttons = 0) : buttons(buttons){}
+	ModernDialogTitleData(int buttons = 0) : buttons(buttons){}
+	//ModernDialogTitleData& operator=(const ModernDialogTitleData& o)
+	//{
+	//	buttons = o.buttons ;
+	//	text = o.text ;
+	//	color = o.color ;
+	//	backgroundColor = o.backgroundColor ;
+	//	font = o.font ;
+	//	alignment == o.alignment;
+	//	return *this;
+	//}
+
+	bool operator==(const ModernDialogTitleData& o) const
+	{
+		return buttons == o.buttons &&
+			text == o.text &&
+			color == o.color &&
+			backgroundColor == o.backgroundColor &&
+			font == o.font &&
+			alignment == o.alignment;
+	}
 
 	QString text, 
 			color, 
 			backgroundColor;
-	QFont font;
-	int buttons;
+	QFont font = QFont("Arial", 12, 700, false);
+	Qt::Alignment alignment = Qt::AlignHCenter;
+	int buttons = 0;
 };
 
 struct ModernDialogResizeData
@@ -37,18 +59,43 @@ struct ModernDialogResizeData
 	{
 		;
 	}
+	bool operator==(const ModernDialogResizeData& o) const
+	{
+		return
+		isResizable			== isResizable		 &&
+		resizeBorderWidth	== resizeBorderWidth &&
+		minSizeX			== minSizeX			 &&
+		minSizeY			== minSizeY			 &&
+		maxSizeX			== maxSizeX			 &&
+		maxSizeY			== maxSizeY			 ;
+
+	}
 	bool isResizable = false;
 	int resizeBorderWidth = 6;
 	int minSizeX = 100, minSizeY = 100;
 	int maxSizeX = 16777215, maxSizeY = 16777215;
 };
 
-struct ModernDialogParams : public ModernDialogTitle, public ModernDialogResizeData
+struct ModernDialogParams : public ModernDialogTitleData, public ModernDialogResizeData
 {
-	ModernDialogParams(bool haveTitleBar = true, int buttons = NoButtons, ModernDialogResizeData resizeData = ModernDialogResizeData()):
-		ModernDialogTitle(buttons), hasTitleBar(haveTitleBar) 
+	ModernDialogParams(bool hasTitleBar = true, int buttons = NoButtons, 
+						ModernDialogResizeData resizeData = ModernDialogResizeData())
+					:	ModernDialogTitleData(buttons), hasTitleBar(hasTitleBar) 
 	{
 		ModernDialogResizeData(this) = resizeData;
+	}
+	ModernDialogParams operator=(const ModernDialogParams& o)
+	{
+		hasTitleBar = o.hasTitleBar;
+		ModernDialogTitleData::operator=(o);
+		ModernDialogResizeData::operator=(o);
+		return *this;
+	}
+	bool operator==(const ModernDialogParams& o) const
+	{
+		return hasTitleBar == o.hasTitleBar &&
+			ModernDialogTitleData::operator==(o) &&
+			ModernDialogResizeData::operator==(o);
 	}
 	bool hasTitleBar;
 
@@ -58,12 +105,31 @@ class ModernTitleBar : public QWidget
 {
 	Q_OBJECT
 public:
-	explicit ModernTitleBar(const ModernDialogTitle &title, QWidget* parent = nullptr);
+	explicit ModernTitleBar(const ModernDialogTitleData &title, QWidget* parent = nullptr);
+	ModernTitleBar(const ModernTitleBar& o) { *this = o; };
+	ModernTitleBar(const ModernTitleBar&& o)
+	{
+		_title = o._title;
+		_pTitleLabel	 = o._pTitleLabel;	   delete _pTitleLabel	   	;	 _pTitleLabel	  = nullptr;
+		_pCloseButton	 = o._pCloseButton;	   delete _pCloseButton		;	 _pCloseButton	  = nullptr;
+		_pMinimizeButton = o._pMinimizeButton; delete _pMinimizeButton	;	 _pMinimizeButton = nullptr;
+	}
+	~ModernTitleBar() { delete _pTitleLabel; delete _pCloseButton; delete _pMinimizeButton; }
+	ModernTitleBar& operator=(const ModernTitleBar& o)
+	{
+		_title = o._title;
+		_pTitleLabel = new QLabel(o._pTitleLabel);
+		_pCloseButton = new QPushButton(o._pCloseButton);
+		_pMinimizeButton = new QPushButton(o._pMinimizeButton);
+		return *this;
+	}
+
 	void SetTitleText(const QString& title);
-	void SetFont(const QFont& font) { _pTitle->setFont(font); }
-	void SetColor(const QColor& color) { QPalette pal = _pTitle->palette(); pal.setColor(QPalette::WindowText, color); _pTitle->setPalette(pal); }
-	void SetBackgroundColor(const QColor& color) { QPalette pal = palette(); pal.setColor(QPalette::Window, color); setPalette(pal); }
-	QFont Font() const { return _pTitle->font(); }
+	void SetFont(const QFont &font);
+	void SetFont(const QString family, int size=-1, int weight = -1, bool italic = false);
+	void SetColor(const QColor& color);
+	void SetBackgroundColor(const QColor& color);
+	QFont Font() const { return _pTitleLabel->font(); }
 signals:
 	void SignalClose();
 	void SignalMinimize();
@@ -71,8 +137,8 @@ protected:
 	void mousePressEvent(QMouseEvent* event) override;
 	// void mouseMoveEvent(QMouseEvent* event) override; we'll be using startSytemMove()
 private:
-	ModernDialogTitle _title;
-	QLabel* _pTitle = nullptr;			  // if these three are all nullptr, then the title bar is not visible
+	ModernDialogTitleData _title;
+	QLabel* _pTitleLabel = nullptr;			  // if these three are all nullptr, then the title bar is not visible
 	QPushButton* _pCloseButton = nullptr,
 			   * _pMinimizeButton = nullptr;
 
@@ -95,6 +161,10 @@ public:
 	explicit ModernDialog(const ModernDialogParams& params, QWidget* parent = nullptr);
 	~ModernDialog() {}	// no need to delete anything, Qt does it automatically
 	QWidget* ContentWidget() const { return _pContentWidget; }
+	QSize FullSize() const 
+	{ 
+		return _pContentWidget->size().grownBy(_contentMargins);
+	}
 	void SetResizable(bool resizable);
 	bool IsResizable() const { return _params.isResizable; }
 	// SetDialogTitle only sets the title if the dialog was created with a title bar, but
@@ -110,9 +180,10 @@ private:
 	void _InstallResizeTracking(QWidget* widget);
 	void _SetResizeCursor(QWidget* widget, Qt::Edges edges);
 
-	ModernDialogParams _params;
+	ModernDialogParams _params;	// all data from title, resize and resize flag
 	QWidget* _pContentWidget = nullptr,
 		   * _pFrameWidget = nullptr;	
+	QMargins _contentMargins = QMargins(2, 6, 6, 6);
 	ModernTitleBar* _pTitleBar = nullptr;
 	QVBoxLayout *_pMainLayout;	// allows us to change the outer margins when enabling or disabling resizing.
 };

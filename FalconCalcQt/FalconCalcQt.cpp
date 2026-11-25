@@ -398,6 +398,7 @@ void FalconCalcQt::on_actionEditHist_triggered()
 		params.text = tr("FalconCalc - History");
 		params.isResizable = true;
 		_pHist = new HistoryDialog(_slHistory, params, this);
+		_PlaceWidget(*_pHist, Placement::pmBottom);
 		ui.actionEditHist->setChecked(true);
 		connect(_pHist, &HistoryDialog::SignalSelection		, this, &FalconCalcQt::_SlotDataFromHistory);
 		connect(_pHist, &HistoryDialog::SignalRemoveHistLine, this, &FalconCalcQt::_SlotRemoveHistLine );
@@ -405,7 +406,6 @@ void FalconCalcQt::on_actionEditHist_triggered()
 		connect(_pHist, &HistoryDialog::SignalHistClose			, this, &FalconCalcQt::_SlotHistClosing);
 		connect(_pHist, &HistoryDialog::SignalHistOptions	, this, &FalconCalcQt::_SlotHistOptions);
 		connect(_pHist, &HistoryDialog::SignalHistMoved			, this, &FalconCalcQt::_SlotHistMoved);
-		_PlaceWidget(*_pHist, Placement::pmBottom);
 		_pHist->show();
 		_histDialogSnapped = true;
 	}
@@ -899,7 +899,7 @@ void FalconCalcQt::_PlaceWidget(QWidget& w, Placement pm)
 		yw = 0;		// no border and title bar for a ModernDialog widget
 	QScreen *actScreen = screen();		// actual screen for this window (the main window)
 	QRect geom = geometry();			// of main window
-	QSize s = w.isVisible() ? w.size() : w.sizeHint();				// approx. geometry after show()
+	QSize s = w.sizeHint();				// approx. geometry after show()
 	Placement pm0 = pm;					// originally tried to place it here
 
 	auto geomByPlacement = [&]()
@@ -933,11 +933,11 @@ void FalconCalcQt::_PlaceWidget(QWidget& w, Placement pm)
 					pm = Placement::pmBottom;
 				break;
 			case Placement::pmRight:
-				if (xw + w.width() > actScreen->geometry().width())
+				if (xw + s.width() > actScreen->geometry().width())
 					pm = Placement::pmLeft;
 				break;
 			case Placement::pmBottom:
-				if (yw + w.height() > actScreen->geometry().bottom())
+				if (yw + s.height() > actScreen->geometry().bottom())
 					pm = Placement::pmTop;
 				break;
 			default:
@@ -950,6 +950,9 @@ void FalconCalcQt::_PlaceWidget(QWidget& w, Placement pm)
 			break;
 	}
 	w.move(xw, yw);
+	// DEBUG
+	qDebug() << "main window: " << geom;
+	qDebug() << "window initial geom. and size hint:" << w.geometry() << ", " << s;
 }
 
 void FalconCalcQt::_SetResultLabelText(EngineErrorCodes eec)

@@ -8,6 +8,8 @@ int HelpDialog::helpVisible = false;
 HelpDialog::HelpDialog(QWidget* parent) : ModernDialog(ModernDialogParams(), parent)
 {
 	Ui::HelpDialogClass::setupUi(ContentWidget());
+    resize(FullSize());
+
     QScreen* screen = QGuiApplication::primaryScreen();
     ++helpVisible;
     connect(okButton, &QPushButton::clicked, this, [this]() { accept(); });

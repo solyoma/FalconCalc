@@ -22,7 +22,8 @@ public:						 // vfd changed on dialog acceptance
 	VarFuncDefDialog(VarFuncData &vfd, ModernDialogParams& params, QWidget* parent = nullptr) : _vfd(vfd), ModernDialog(params, parent)
 	{
 		Ui::VarFuncDefDialogClass::setupUi(ContentWidget());
-		QMetaObject::connectSlotsByName(this);	
+		resize(FullSize());
+		QMetaObject::connectSlotsByName(this);
 		connect(buttonBox, &QDialogButtonBox::accepted, this, &QDialog::accept);
 		connect(buttonBox, &QDialogButtonBox::rejected, this, &QDialog::reject);
 
